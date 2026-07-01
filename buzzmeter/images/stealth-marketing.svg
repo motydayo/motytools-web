@@ -1,0 +1,35 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0B1220"/>
+  <radialGradient id="g1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(880 78) rotate(137) scale(650 520)">
+    <stop stop-color="#60A5FA" stop-opacity=".45"/>
+    <stop offset="1" stop-color="#0B1220" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="g2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(230 540) rotate(-28) scale(540 380)">
+    <stop stop-color="#F59E0B" stop-opacity=".28"/>
+    <stop offset="1" stop-color="#0B1220" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="1200" height="630" fill="url(#g1)"/>
+  <rect width="1200" height="630" fill="url(#g2)"/>
+  <g opacity=".16">
+    <path d="M0 122H1200M0 246H1200M0 370H1200M0 494H1200" stroke="white"/>
+    <path d="M132 0V630M304 0V630M476 0V630M648 0V630M820 0V630M992 0V630" stroke="white"/>
+  </g>
+  <rect x="82" y="84" width="508" height="442" rx="34" fill="white" fill-opacity=".96"/>
+  <rect x="124" y="128" width="180" height="26" rx="13" fill="#DBEAFE"/>
+  <circle cx="142" cy="214" r="34" fill="#2563EB"/>
+  <rect x="198" y="188" width="292" height="22" rx="11" fill="#CBD5E1"/>
+  <rect x="198" y="226" width="232" height="18" rx="9" fill="#E2E8F0"/>
+  <rect x="124" y="302" width="390" height="22" rx="11" fill="#0F172A"/>
+  <rect x="124" y="346" width="330" height="18" rx="9" fill="#CBD5E1"/>
+  <rect x="124" y="382" width="292" height="18" rx="9" fill="#CBD5E1"/>
+  <rect x="124" y="444" width="156" height="46" rx="23" fill="#F59E0B"/>
+  <text x="155" y="475" fill="white" font-family="-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif" font-size="24" font-weight="800">PR?</text>
+  <rect x="640" y="138" width="412" height="122" rx="28" fill="white" fill-opacity=".14" stroke="white" stroke-opacity=".18"/>
+  <text x="684" y="186" fill="#EAF2FF" font-family="-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif" font-size="28" font-weight="800">広告なのか、感想なのか</text>
+  <text x="684" y="226" fill="#AFC3DD" font-family="-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="700">見えない関係性が疑念を広げる</text>
+  <rect x="690" y="318" width="326" height="96" rx="48" fill="#2563EB"/>
+  <text x="748" y="379" fill="white" font-family="-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif" font-size="34" font-weight="900">ステマ規制</text>
+  <path d="M650 500C726 448 810 448 886 500C962 552 1046 552 1122 500" stroke="#93C5FD" stroke-width="14" stroke-linecap="round"/>
+  <path d="M650 540C726 488 810 488 886 540C962 592 1046 592 1122 540" stroke="#FBBF24" stroke-width="14" stroke-linecap="round" opacity=".8"/>
+  <text x="82" y="590" fill="#94A3B8" font-family="-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif" font-size="24" font-weight="800">真相メモ</text>
+</svg>
