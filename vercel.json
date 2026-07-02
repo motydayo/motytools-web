@@ -1,4 +1,8 @@
 {
+  "redirects": [
+    { "source": "/memomail/lp", "destination": "/memomail/", "permanent": false },
+    { "source": "/memomail/lp/", "destination": "/memomail/", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/privacy/pitto-kigen", "destination": "/privacy/pitto-kigen.html" }
