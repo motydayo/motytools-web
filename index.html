@@ -274,6 +274,20 @@
       --card-icon-bg: rgba(17,24,39,0.1);
       --card-tag-bg: rgba(17,24,39,0.08);
     }
+    /* ピッと期限 */
+    .card-pitto-kigen {
+      --card-color: #22c55e;
+      --card-glow: radial-gradient(ellipse at top left, rgba(34,197,94,0.06) 0%, transparent 60%);
+      --card-icon-bg: rgba(34,197,94,0.12);
+      --card-tag-bg: rgba(34,197,94,0.1);
+    }
+    /* ピッと最安 */
+    .card-pitto-saiyasu {
+      --card-color: #f59e0b;
+      --card-glow: radial-gradient(ellipse at top left, rgba(245,158,11,0.06) 0%, transparent 60%);
+      --card-icon-bg: rgba(245,158,11,0.12);
+      --card-tag-bg: rgba(245,158,11,0.1);
+    }
 
     .coming-soon {
       opacity: 0.6;
@@ -380,6 +394,30 @@
           </span>
         </a>
 
+        <!-- ピッと期限 -->
+        <div class="card card-pitto-kigen">
+          <div class="card-icon">📦</div>
+          <span class="card-tag">iOS アプリ</span>
+          <div class="card-name">ピッと期限</div>
+          <p class="card-desc">バーコードとOCRで賞味期限を登録。食品ロスを減らすための期限管理アプリ。</p>
+          <span class="card-link">
+            近日公開
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 9.5L9.5 2.5M9.5 2.5H4.5M9.5 2.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+
+        <!-- ピッと最安 -->
+        <div class="card card-pitto-saiyasu">
+          <div class="card-icon">🏷️</div>
+          <span class="card-tag">iOS アプリ</span>
+          <div class="card-name">ピッと最安</div>
+          <p class="card-desc">バーコードをスキャンして楽天・Yahooの最安値を比較。お得な買い物をサポート。</p>
+          <span class="card-link">
+            近日公開
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 9.5L9.5 2.5M9.5 2.5H4.5M9.5 2.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+
       </div>
     </div>
   </section>
@@ -387,7 +425,7 @@
   <footer>
     <div class="inner">
       <p>© 2026 motytools</p>
-      <p>データと技術で便利を届ける</p>
+      <p><a href="/privacy" style="color: inherit; text-decoration: none;">プライバシーポリシー</a></p>
     </div>
   </footer>
 

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>プライバシーポリシー — メモびゅん</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      line-height: 1.7;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .app-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .app-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #007AFF;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1d1d1f;
+    }
+    .date {
+      font-size: 14px;
+      color: #6e6e73;
+      margin-bottom: 40px;
+    }
+    h2 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 32px 0 12px;
+      color: #1d1d1f;
+    }
+    p, li {
+      font-size: 15px;
+      color: #3a3a3c;
+      margin-bottom: 10px;
+    }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    a { color: #007AFF; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .lang-switch {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .lang-switch a {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: #e8e8ed;
+      color: #3a3a3c;
+      font-size: 14px;
+      margin: 0 4px;
+    }
+    .lang-switch a.active {
+      background: #007AFF;
+      color: #fff;
+    }
+    .section-ja, .section-en { display: none; }
+    .section-ja.visible, .section-en.visible { display: block; }
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 13px;
+      color: #6e6e73;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="app-header">
+      <div class="app-name">メモびゅん</div>
+    </div>
+
+    <div class="lang-switch">
+      <a href="#" class="active" onclick="switchLang('ja'); return false;">日本語</a>
+      <a href="#" onclick="switchLang('en'); return false;">English</a>
+    </div>
+
+    <!-- 日本語 -->
+    <div class="section-ja visible" id="lang-ja">
+      <h1>プライバシーポリシー</h1>
+      <p class="date">最終更新日: 2026年6月14日</p>
+
+      <div class="card">
+        <h2>1. はじめに</h2>
+        <p>メモびゅん（以下「本アプリ」）は、motytools（以下「当方」）が提供するiPhoneアプリです。本プライバシーポリシーは、本アプリがどのような情報を収集し、どのように利用するかをご説明します。</p>
+      </div>
+
+      <div class="card">
+        <h2>2. 収集する情報</h2>
+        <ul>
+          <li><strong>メールアドレス</strong>: ログイン認証および送信先として使用します。</li>
+          <li><strong>送信したメモの内容</strong>: お客様が入力したメモをメールで送信するために一時的に処理します。メモは端末内の履歴（最大80件）にのみ保存され、サーバーには保存されません。</li>
+          <li><strong>利用状況データ</strong>: アプリの改善を目的として、匿名の行動ログ（送信回数、機能の使用状況など）を収集します。</li>
+          <li><strong>購入情報</strong>: Proプランの購入・管理のために、RevenueCatを通じてApp Storeの購入情報を処理します。クレジットカード番号などの決済情報は当方では保持しません。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>3. 利用目的</h2>
+        <ul>
+          <li>メールOTP認証によるアカウント管理</li>
+          <li>指定のメールアドレスへのメモ送信</li>
+          <li>アプリの品質改善・バグ修正</li>
+          <li>Proプランの利用権限管理</li>
+          <li>リマインダー通知の送信</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>4. 利用する第三者サービス</h2>
+        <ul>
+          <li><strong><a href="https://supabase.com/privacy" target="_blank">Supabase</a></strong>: 認証・データベース管理</li>
+          <li><strong><a href="https://resend.com/privacy" target="_blank">Resend</a></strong>: メール送信サービス</li>
+          <li><strong><a href="https://posthog.com/privacy" target="_blank">PostHog</a></strong>: 匿名の利用状況分析</li>
+          <li><strong><a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a></strong>: アプリ内課金・サブスクリプション管理</li>
+        </ul>
+        <p>各サービスのプライバシーポリシーについては、上記リンク先をご確認ください。</p>
+      </div>
+
+      <div class="card">
+        <h2>5. データの保存期間</h2>
+        <p>アカウントを削除すると、当方が保持するすべてのデータ（メールアドレス、送信先アドレス、認証情報）は速やかに削除されます。端末内の履歴データはアプリをアンインストールすることで削除されます。</p>
+      </div>
+
+      <div class="card">
+        <h2>6. データの第三者への提供</h2>
+        <p>当方は、法令で定められた場合を除き、お客様の個人情報を第三者に販売・提供することはありません。</p>
+      </div>
+
+      <div class="card">
+        <h2>7. 子どもについて</h2>
+        <p>本アプリは13歳未満の方を対象としていません。13歳未満の方の個人情報を意図的に収集することはありません。</p>
+      </div>
+
+      <div class="card">
+        <h2>8. お問い合わせ</h2>
+        <p>プライバシーに関するご質問・ご要望は、アプリ内の「ご意見・要望を送る」からお問い合わせください。</p>
+      </div>
+    </div>
+
+    <!-- English -->
+    <div class="section-en" id="lang-en">
+      <h1>Privacy Policy</h1>
+      <p class="date">Last updated: June 14, 2026</p>
+
+      <div class="card">
+        <h2>1. Introduction</h2>
+        <p>メモびゅん (the "App") is an iPhone application provided by motytools ("we", "us"). This Privacy Policy explains what information the App collects and how it is used.</p>
+      </div>
+
+      <div class="card">
+        <h2>2. Information We Collect</h2>
+        <ul>
+          <li><strong>Email address</strong>: Used for login authentication and as a memo delivery destination.</li>
+          <li><strong>Memo content</strong>: Text you enter is processed temporarily to send it as an email. Memos are stored only in the local history on your device (up to 80 items) and are never stored on our servers.</li>
+          <li><strong>Usage data</strong>: Anonymous behavioral logs (e.g., send count, feature usage) are collected to improve the App.</li>
+          <li><strong>Purchase information</strong>: App Store purchase data is processed via RevenueCat to manage Pro plan subscriptions. We never store your payment card details.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>3. How We Use Your Information</h2>
+        <ul>
+          <li>Account management via email OTP authentication</li>
+          <li>Delivering memos to your registered email address(es)</li>
+          <li>App quality improvement and bug fixes</li>
+          <li>Managing Pro plan entitlements</li>
+          <li>Sending reminder notifications</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>4. Third-Party Services</h2>
+        <ul>
+          <li><strong><a href="https://supabase.com/privacy" target="_blank">Supabase</a></strong>: Authentication and database management</li>
+          <li><strong><a href="https://resend.com/privacy" target="_blank">Resend</a></strong>: Email delivery service</li>
+          <li><strong><a href="https://posthog.com/privacy" target="_blank">PostHog</a></strong>: Anonymous usage analytics</li>
+          <li><strong><a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a></strong>: In-app purchases and subscription management</li>
+        </ul>
+        <p>Please refer to each service's privacy policy at the links above for more details.</p>
+      </div>
+
+      <div class="card">
+        <h2>5. Data Retention</h2>
+        <p>When you delete your account, all data we hold (email address, recipient addresses, authentication tokens) is promptly deleted. Local history on your device is removed when you uninstall the App.</p>
+      </div>
+
+      <div class="card">
+        <h2>6. Sharing of Information</h2>
+        <p>We do not sell or provide your personal information to third parties except as required by law.</p>
+      </div>
+
+      <div class="card">
+        <h2>7. Children</h2>
+        <p>The App is not directed to children under 13. We do not knowingly collect personal information from children under 13.</p>
+      </div>
+
+      <div class="card">
+        <h2>8. Contact</h2>
+        <p>For privacy-related inquiries, please use the "Send Feedback" option in the App.</p>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2026 motytools · <a href="https://motytools.com">motytools.com</a></p>
+    </footer>
+  </div>
+
+  <script>
+    function switchLang(lang) {
+      document.querySelectorAll('.lang-switch a').forEach(a => a.classList.remove('active'));
+      document.querySelectorAll('.section-ja, .section-en').forEach(el => el.classList.remove('visible'));
+      document.getElementById('lang-' + lang).classList.add('visible');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>
