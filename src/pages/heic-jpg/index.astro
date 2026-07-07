@@ -1,0 +1,368 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+
+const faqs: Faq[] = [
+  {
+    q: '変換すると画質は落ちますか？',
+    a: 'JPG（品質0.9）に変換する場合、ほとんど気付かない程度のわずかな圧縮がかかりますが、実用上は元の写真とほぼ変わらない画質を保てます。PNGを選んだ場合は圧縮による劣化がない可逆形式のため画質は落ちませんが、その分ファイルサイズは大きくなります。',
+  },
+  {
+    q: '位置情報などのExif情報はどうなりますか？',
+    a: 'ブラウザでの変換処理の過程で、撮影日時・カメラ機種・位置情報（GPS）などのExif情報の一部、または全部が失われる場合があります。SNSなどで写真を共有する際に位置情報が意図せず公開されてしまう心配が少なくなるという意味では、むしろ安心材料になることもあります。位置情報を残したい場合は、変換前の元ファイルを別途保管しておくことをおすすめします。',
+  },
+  {
+    q: '一度に何枚変換できますか？',
+    a: '枚数の上限はありませんが、すべてブラウザの中で処理するため、非常に多くのファイルを一度に処理すると変換に時間がかかることがあります。連写で撮影された1つのHEICファイルに複数の画像が含まれている場合は、それぞれが自動的に別ファイルとして展開されます。',
+  },
+  {
+    q: 'なぜブラウザだけで変換できるのですか？',
+    a: 'このツールは、HEIC画像を解析してJPEGやPNGに変換するオープンソースのプログラムをブラウザ上で直接動かしています。サーバーに写真を送って処理する必要がないため、変換の速さとプライバシーの両方を確保できます。',
+  },
+];
+---
+
+<ToolLayout
+  slug="heic-jpg"
+  lead="iPhoneで撮ったHEIC形式の写真を、アプリのインストールなしでJPGやPNGに変換します。写真はブラウザの外に出ません。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="HEIC→JPG変換">
+    <div class="field-grid cols-2">
+      <div class="field">
+        <span class="field-label" id="hj-format-label">出力形式</span>
+        <div class="choice-row" role="radiogroup" aria-labelledby="hj-format-label">
+          <label class="choice"><input type="radio" name="hj-format" value="jpeg" checked />JPG（品質0.9）</label>
+          <label class="choice"><input type="radio" name="hj-format" value="png" />PNG</label>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="hj-dropzone"
+      class="dropzone mt-5"
+      tabindex="0"
+      role="button"
+      aria-label="HEIC/HEIFファイルを選択またはドラッグ&ドロップ"
+    >
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+      <p><strong>クリックしてHEICファイルを選択</strong>、またはここにドラッグ&ドロップ</p>
+      <p class="sub">iPhoneのHEIC/HEIF形式に対応・複数選択可</p>
+      <input id="hj-file-input" type="file" accept=".heic,.heif,image/heic,image/heif" multiple style="display:none" />
+    </div>
+
+    <div class="result-actions mt-4" id="hj-loading" hidden>
+      <div class="spinner"></div>
+      <span class="small text-2">変換エンジンを読み込み中…</span>
+    </div>
+
+    <p class="error-text mt-4" id="hj-error" hidden></p>
+
+    <div class="mt-5" id="hj-results" hidden>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>ファイル名</th>
+              <th class="num">変換前</th>
+              <th class="num">変換後</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="hj-results-body"></tbody>
+        </table>
+      </div>
+      <div class="result-actions">
+        <button type="button" class="btn btn-primary btn-sm" id="hj-download-zip" hidden>すべてZIPでダウンロード</button>
+      </div>
+    </div>
+
+    <div class="notice mt-5">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>
+      <p>写真はサーバーに送信されません。ブラウザ内で変換されます。</p>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>出力形式（JPGまたはPNG）を選びます。</li>
+      <li>HEIC/HEIF形式の写真をドロップゾーンにドラッグ&ドロップするか、クリックして選択します。初回は変換エンジンの読み込みに数秒かかります。</li>
+      <li>変換が完了した写真からリストに表示されます。個別にダウンロードするか、2枚以上ある場合は「すべてZIPでダウンロード」でまとめて保存できます。</li>
+    </ol>
+
+    <h2 id="what-is-heic">HEICとは何か</h2>
+    <p>
+      HEIC（High Efficiency Image Container）は、iPhoneが標準の写真保存形式として採用しているファイル形式です。従来のJPEGと比べて同じ画質でもファイルサイズを半分程度に抑えられる高い圧縮効率が特長ですが、Windowsパソコンの一部や古いアプリ・Webサービスでは、そのままでは開けなかったり、非対応と表示されたりすることがあります。
+    </p>
+
+    <h2 id="why-convert">なぜJPGに変換するのか</h2>
+    <p>
+      JPGは25年以上前から使われている非常に普及した画像形式で、パソコン・スマートフォン・ほぼすべてのWebサービスで問題なく開けます。HEICのままメールに添付したり、写真をブログにアップロードしたりすると「開けない」「表示されない」といったトラブルが起きることがあるため、共有前にJPGへ変換しておくと安心です。
+    </p>
+
+    <h2 id="iphone-setting">iPhone側で最初からJPGで撮る設定</h2>
+    <p>
+      毎回変換する手間を省きたい場合は、iPhone本体の設定を変更することもできます。「設定」→「カメラ」→「フォーマット」と進み、「互換性優先」を選ぶと、以降に撮影する写真がHEICではなくJPGで保存されるようになります。ただし、その分ファイルサイズはHEICより大きくなる点にご注意ください。
+    </p>
+    <p class="xs text-3">変換処理にはオープンソースの heic2any / libheif を使用しています。</p>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { zipSync } from 'fflate';
+
+  interface ResultItem {
+    id: string;
+    originalName: string;
+    outputName: string;
+    originalSize: number;
+    outputSize: number | null;
+    status: 'processing' | 'done' | 'error';
+    blob: Blob | null;
+    thumbUrl: string | null;
+    errorMessage?: string;
+  }
+
+  const dropzone = document.getElementById('hj-dropzone') as HTMLDivElement;
+  const fileInput = document.getElementById('hj-file-input') as HTMLInputElement;
+  const loadingEl = document.getElementById('hj-loading') as HTMLDivElement;
+  const errorEl = document.getElementById('hj-error') as HTMLParagraphElement;
+  const resultsWrap = document.getElementById('hj-results') as HTMLDivElement;
+  const resultsBody = document.getElementById('hj-results-body') as HTMLTableSectionElement;
+  const downloadZipBtn = document.getElementById('hj-download-zip') as HTMLButtonElement;
+
+  const results: ResultItem[] = [];
+  // heic2anyには型定義がないため any 相当で保持する
+  let heic2anyFn: ((opts: { blob: Blob; toType: string; quality?: number }) => Promise<Blob | Blob[]>) | null = null;
+  let loadingPromise: Promise<void> | null = null;
+
+  async function ensureLibraryLoaded() {
+    if (heic2anyFn) return;
+    if (!loadingPromise) {
+      loadingPromise = (async () => {
+        loadingEl.hidden = false;
+        try {
+          // @ts-ignore heic2anyには型定義が同梱されていない
+          const mod = await import('heic2any');
+          heic2anyFn = (mod.default ?? mod) as typeof heic2anyFn;
+        } finally {
+          loadingEl.hidden = true;
+        }
+      })();
+    }
+    await loadingPromise;
+  }
+
+  function isHeicFile(file: File): boolean {
+    const name = file.name.toLowerCase();
+    return (
+      name.endsWith('.heic') ||
+      name.endsWith('.heif') ||
+      file.type === 'image/heic' ||
+      file.type === 'image/heif'
+    );
+  }
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('is-dragover');
+  });
+  dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('is-dragover');
+  });
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('is-dragover');
+    if (e.dataTransfer?.files?.length) {
+      handleFiles(Array.from(e.dataTransfer.files));
+    }
+  });
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files?.length) {
+      handleFiles(Array.from(fileInput.files));
+      fileInput.value = '';
+    }
+  });
+
+  function formatBytes(bytes: number): string {
+    if (bytes < 1024) return `${bytes}B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)}MB`;
+  }
+
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c));
+  }
+
+  async function handleFiles(files: File[]) {
+    errorEl.hidden = true;
+    const valid: File[] = [];
+    const errors: string[] = [];
+
+    for (const file of files) {
+      if (!isHeicFile(file)) {
+        errors.push(`${file.name}: HEIC/HEIF形式のファイルを選んでください`);
+        continue;
+      }
+      valid.push(file);
+    }
+
+    if (errors.length > 0) {
+      errorEl.textContent = errors.join(' / ');
+      errorEl.hidden = false;
+    }
+
+    if (valid.length === 0) return;
+
+    try {
+      await ensureLibraryLoaded();
+    } catch {
+      errorEl.textContent = '変換エンジンの読み込みに失敗しました。通信環境を確認して再度お試しください。';
+      errorEl.hidden = false;
+      return;
+    }
+
+    resultsWrap.hidden = false;
+
+    const formatChoice = (document.querySelector('input[name="hj-format"]:checked') as HTMLInputElement)?.value || 'jpeg';
+    const toType = formatChoice === 'png' ? 'image/png' : 'image/jpeg';
+    const ext = formatChoice === 'png' ? 'png' : 'jpg';
+
+    for (const file of valid) {
+      const baseId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const baseName = file.name.replace(/\.[^.]+$/, '');
+      const placeholderItem: ResultItem = {
+        id: baseId,
+        originalName: file.name,
+        outputName: `${baseName}.${ext}`,
+        originalSize: file.size,
+        outputSize: null,
+        status: 'processing',
+        blob: null,
+        thumbUrl: null,
+      };
+      results.push(placeholderItem);
+      renderRow(placeholderItem);
+
+      try {
+        if (!heic2anyFn) throw new Error('変換エンジンが読み込まれていません');
+        const output = await heic2anyFn({ blob: file, toType, quality: 0.9 });
+        const outputs = Array.isArray(output) ? output : [output];
+
+        // プレースホルダーを削除し、実際の変換結果に差し替える
+        const idx = results.indexOf(placeholderItem);
+        if (idx !== -1) results.splice(idx, 1);
+        removeRow(placeholderItem.id);
+
+        outputs.forEach((blob, i) => {
+          const name = outputs.length > 1 ? `${baseName}_${i + 1}.${ext}` : `${baseName}.${ext}`;
+          const item: ResultItem = {
+            id: `${baseId}-${i}`,
+            originalName: file.name,
+            outputName: name,
+            originalSize: file.size,
+            outputSize: blob.size,
+            status: 'done',
+            blob,
+            thumbUrl: URL.createObjectURL(blob),
+          };
+          results.push(item);
+          renderRow(item);
+        });
+      } catch (e) {
+        placeholderItem.status = 'error';
+        placeholderItem.errorMessage = '変換に失敗しました';
+        renderRow(placeholderItem);
+      }
+      updateZipButton();
+    }
+  }
+
+  function renderRow(item: ResultItem) {
+    let row = document.getElementById(`hj-row-${item.id}`) as HTMLTableRowElement | null;
+    if (!row) {
+      row = document.createElement('tr');
+      row.id = `hj-row-${item.id}`;
+      resultsBody.appendChild(row);
+    }
+
+    if (item.status === 'processing') {
+      row.innerHTML = `
+        <td><div class="spinner"></div></td>
+        <td>${escapeHtml(item.originalName)}</td>
+        <td class="num">${formatBytes(item.originalSize)}</td>
+        <td class="num">—</td>
+        <td></td>
+      `;
+      return;
+    }
+
+    if (item.status === 'error') {
+      row.innerHTML = `
+        <td></td>
+        <td>${escapeHtml(item.originalName)}</td>
+        <td class="num">${formatBytes(item.originalSize)}</td>
+        <td class="num"><span class="error-text">${escapeHtml(item.errorMessage || '変換に失敗しました')}</span></td>
+        <td></td>
+      `;
+      return;
+    }
+
+    row.innerHTML = `
+      <td><img src="${item.thumbUrl}" alt="" width="48" height="48" style="object-fit:cover;border-radius:6px;" /></td>
+      <td>${escapeHtml(item.outputName)}</td>
+      <td class="num">${formatBytes(item.originalSize)}</td>
+      <td class="num">${formatBytes(item.outputSize || 0)}</td>
+      <td><a class="btn btn-ghost btn-sm" href="${item.thumbUrl}" download="${escapeHtml(item.outputName)}">DL</a></td>
+    `;
+  }
+
+  function removeRow(id: string) {
+    const row = document.getElementById(`hj-row-${id}`);
+    row?.remove();
+  }
+
+  function updateZipButton() {
+    const done = results.filter((r) => r.status === 'done');
+    downloadZipBtn.hidden = done.length < 2;
+  }
+
+  downloadZipBtn.addEventListener('click', async () => {
+    const done = results.filter((r) => r.status === 'done' && r.blob);
+    if (done.length < 2) return;
+    const files: Record<string, Uint8Array> = {};
+    const usedNames = new Set<string>();
+    for (const item of done) {
+      let name = item.outputName;
+      let counter = 1;
+      while (usedNames.has(name)) {
+        const base = item.outputName.replace(/(\.[^.]+)$/, '');
+        const ext = item.outputName.match(/(\.[^.]+)$/)?.[1] || '';
+        name = `${base}_${counter}${ext}`;
+        counter++;
+      }
+      usedNames.add(name);
+      const buf = new Uint8Array(await item.blob!.arrayBuffer());
+      files[name] = buf;
+    }
+    const zipped = zipSync(files);
+    const blob = new Blob([zipped], { type: 'application/zip' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'converted.zip';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+</script>

@@ -1,0 +1,319 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+
+const faqs: Faq[] = [
+  {
+    q: '絵文字は何文字と数えますか？',
+    a: 'このツールは絵文字1つを1文字として数えます。にこにこ顔のような絵文字や、肌の色つき絵文字・複数の絵文字を組み合わせた表現も、見た目どおり1文字としてカウントされます。単純に文字コードの数で数えると絵文字が2文字や4文字に数えられてしまうことがありますが、このツールはその誤差を補正しています。',
+  },
+  {
+    q: 'Xの「140字」と「280字」の関係がわかりません。全角と半角で違うのですか？',
+    a: 'X（旧Twitter）は日本語などの全角文字を2単位、半角の英数字や記号を1単位として数え、合計280単位までが上限です。そのため全角文字だけで書くと実質140文字が目安になり、これが「日本語は140字まで」と言われる理由です。英数字を混ぜるとその分カウントできる文字数が増えます。なお、このツールの判定はURLの短縮（t.co変換）は考慮していない簡易計算です。',
+  },
+  {
+    q: '原稿用紙換算はどうやって数えていますか？',
+    a: '入力した文字数（スペース・改行を含む）を400字詰め原稿用紙の1枚あたりの文字数で割り、端数を切り上げて枚数を出しています。例えば850文字なら850÷400=2.125枚となり、切り上げて3枚と表示します。実際の原稿用紙は句読点のマス送りなどで多少前後するため、あくまで目安としてご利用ください。',
+  },
+  {
+    q: '入力した文章はサーバーに送信されますか？',
+    a: '送信されません。文字数のカウントはすべてお使いのブラウザの中だけで行われます。下書きの自動保存も、ブラウザのlocalStorageというお使いの端末内だけに保存する仕組みを使っており、外部のサーバーには一切送られません。',
+  },
+  {
+    q: '全角と半角はどうやって判定していますか？',
+    a: '半角英数字・半角カナ・半角記号を「半角文字」、それ以外（ひらがな・カタカナ・漢字・全角記号など）を「全角文字」として判定しています。日本語の文章はほとんどが全角文字になるのが通常です。',
+  },
+];
+---
+
+<ToolLayout
+  slug="moji-count"
+  lead="文章を貼り付けるだけで、文字数・行数・原稿用紙換算・SNSごとの残り文字数まで、その場で一括表示します。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="文字数カウント">
+    <div class="field">
+      <label for="mc-input" class="visually-hidden">カウントする文章</label>
+      <textarea
+        id="mc-input"
+        class="textarea"
+        style="min-height: 260px;"
+        placeholder="ここに文章を貼り付け"
+        autofocus
+      ></textarea>
+    </div>
+    <div class="result-actions">
+      <button type="button" class="btn btn-secondary btn-sm" id="mc-clear">クリア</button>
+      <button type="button" class="btn btn-secondary btn-sm btn-copy" id="mc-copy" disabled>
+        <span class="label-default">文章をコピー</span>
+        <span class="label-done">コピーしました</span>
+      </button>
+    </div>
+
+    <div class="notice mt-5">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>
+      <p>入力内容は送信されず、端末内にのみ保存されます。下書きは自動保存され、次に開いたときも復元されます。</p>
+    </div>
+
+    <div class="result mt-5" aria-live="polite">
+      <p class="result-label">文字数（スペース・改行含む）</p>
+      <p class="result-value"><span id="mc-total">0</span><span class="unit">文字</span></p>
+      <p class="result-sub" id="mc-total-sub">文章を入力するとカウントが始まります</p>
+    </div>
+
+    <div class="field-grid cols-3 mt-5">
+      <div class="panel" style="padding: var(--sp-4);">
+        <p class="result-label">文字数（スペース除く）</p>
+        <p class="result-value" style="font-size: var(--fs-xl);"><span id="mc-nospace">0</span><span class="unit">文字</span></p>
+      </div>
+      <div class="panel" style="padding: var(--sp-4);">
+        <p class="result-label">文字数（スペース・改行除く）</p>
+        <p class="result-value" style="font-size: var(--fs-xl);"><span id="mc-nospacenl">0</span><span class="unit">文字</span></p>
+      </div>
+      <div class="panel" style="padding: var(--sp-4);">
+        <p class="result-label">UTF-8バイト数</p>
+        <p class="result-value" style="font-size: var(--fs-xl);"><span id="mc-bytes">0</span><span class="unit">バイト</span></p>
+      </div>
+      <div class="panel" style="padding: var(--sp-4);">
+        <p class="result-label">全角文字数</p>
+        <p class="result-value" style="font-size: var(--fs-xl);"><span id="mc-fullwidth">0</span><span class="unit">文字</span></p>
+      </div>
+      <div class="panel" style="padding: var(--sp-4);">
+        <p class="result-label">半角文字数</p>
+        <p class="result-value" style="font-size: var(--fs-xl);"><span id="mc-halfwidth">0</span><span class="unit">文字</span></p>
+      </div>
+      <div class="panel" style="padding: var(--sp-4);">
+        <p class="result-label">原稿用紙換算（400字詰め）</p>
+        <p class="result-value" style="font-size: var(--fs-xl);"><span id="mc-genko">0</span><span class="unit">枚</span></p>
+      </div>
+      <div class="panel" style="padding: var(--sp-4);">
+        <p class="result-label">行数</p>
+        <p class="result-value" style="font-size: var(--fs-xl);"><span id="mc-lines">0</span><span class="unit">行</span></p>
+      </div>
+      <div class="panel" style="padding: var(--sp-4);">
+        <p class="result-label">段落数</p>
+        <p class="result-value" style="font-size: var(--fs-xl);"><span id="mc-paragraphs">0</span><span class="unit">個</span></p>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <p class="field-label mb-4">SNS・用途別の残り文字数</p>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>用途</th>
+              <th class="num">上限</th>
+              <th class="num">現在の文字数</th>
+              <th class="num">残り</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                X（旧Twitter）
+                <div class="xs text-3">全角2単位・半角1単位で計算（URLの短縮は考慮しません）</div>
+              </td>
+              <td class="num">280単位</td>
+              <td class="num"><span id="mc-x-count">0</span></td>
+              <td class="num"><span id="mc-x-remain">280</span></td>
+            </tr>
+            <tr>
+              <td>Instagramキャプション</td>
+              <td class="num">2,200字</td>
+              <td class="num"><span id="mc-ig-count">0</span></td>
+              <td class="num"><span id="mc-ig-remain">2,200</span></td>
+            </tr>
+            <tr>
+              <td>YouTubeタイトル</td>
+              <td class="num">100字</td>
+              <td class="num"><span id="mc-yt-count">0</span></td>
+              <td class="num"><span id="mc-yt-remain">100</span></td>
+            </tr>
+            <tr>
+              <td>meta description目安</td>
+              <td class="num">120字</td>
+              <td class="num"><span id="mc-meta-count">0</span></td>
+              <td class="num"><span id="mc-meta-remain">120</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>上のテキストエリアに文章を貼り付けるか、直接入力します。</li>
+      <li>入力した瞬間に、文字数・行数・原稿用紙換算・SNSごとの残り文字数が一斉に更新されます。</li>
+      <li>入力内容は自動的に端末内へ下書き保存されるので、ページを閉じても次回開いたときに復元されます。不要になったら「クリア」で消去できます。</li>
+    </ol>
+
+    <h2 id="how-it-counts">文字数はどう数えているか</h2>
+    <p>
+      このツールは<code>Intl.Segmenter</code>という文字の区切りを判定する仕組みを使い、絵文字や結合文字（肌の色を変える絵文字、国旗の絵文字など）も見た目どおり1文字として数えます。対応していない古いブラウザでは、簡易的な文字数カウントに自動的に切り替わります。
+    </p>
+    <p>
+      全角・半角の判定は、半角英数字・半角カナ・半角記号を「半角」、ひらがな・カタカナ・漢字・全角記号などを「全角」として振り分けています。日本語の文章の大部分は全角文字になります。
+    </p>
+    <p>
+      UTF-8バイト数は、メールの本文制限やシステムの入力欄制限（バイト数で管理されていることがある）を確認したいときに便利です。日本語の1文字は多くの場合3バイトとして数えられます。
+    </p>
+
+    <h2 id="genko-yoshi">原稿用紙換算の考え方</h2>
+    <p>
+      400字詰め原稿用紙を基準に、入力した文字数（スペース・改行を含む）を400で割り、端数を切り上げて必要な枚数を表示しています。例えば850文字であれば850÷400=2.125枚となり、3枚と算出されます。学校の作文や小論文の文字数目安の確認に使えます。
+    </p>
+
+    <h2 id="use-cases">よくある使いどころ</h2>
+    <ul>
+      <li><strong>SNS投稿</strong> — X・Instagramの文字数制限内に収まっているかその場で確認</li>
+      <li><strong>ブログ・記事執筆</strong> — meta descriptionやYouTubeタイトルの文字数調整</li>
+      <li><strong>学校・仕事の文書</strong> — 作文や小論文の原稿用紙換算、指定文字数の確認</li>
+      <li><strong>フォーム入力</strong> — 文字数制限のある申込フォームやプロフィール欄の下書き作成</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { bindCopy } from '../../lib/format';
+
+  const input = document.getElementById('mc-input') as HTMLTextAreaElement;
+  const clearBtn = document.getElementById('mc-clear') as HTMLButtonElement;
+  const copyBtn = document.getElementById('mc-copy') as HTMLButtonElement;
+
+  const $ = (id: string) => document.getElementById(id)!;
+
+  const STORAGE_KEY = 'moji-count-draft';
+
+  function graphemeCount(text: string): number {
+    if (!text) return 0;
+    try {
+      // @ts-ignore Intl.Segmenter は新しい環境のみ型定義に存在
+      if (typeof Intl !== 'undefined' && 'Segmenter' in Intl) {
+        // @ts-ignore
+        const seg = new Intl.Segmenter('ja', { granularity: 'grapheme' });
+        return Array.from(seg.segment(text)).length;
+      }
+    } catch {
+      // フォールバックへ
+    }
+    return Array.from(text).length;
+  }
+
+  function isHalfWidth(ch: string): boolean {
+    return /[ -~｡-ﾟ]/.test(ch);
+  }
+
+  function xWeight(text: string): number {
+    let weight = 0;
+    for (const ch of Array.from(text)) {
+      weight += isHalfWidth(ch) ? 1 : 2;
+    }
+    return weight;
+  }
+
+  function update() {
+    const text = input.value;
+    const total = graphemeCount(text);
+    const noSpace = graphemeCount(text.replace(/[ 　]/g, ''));
+    const noSpaceNl = graphemeCount(text.replace(/[ 　\r\n]/g, ''));
+    const bytes = new TextEncoder().encode(text).length;
+
+    let fullwidth = 0;
+    let halfwidth = 0;
+    for (const ch of Array.from(text)) {
+      if (/\s/.test(ch)) continue;
+      if (isHalfWidth(ch)) halfwidth++;
+      else fullwidth++;
+    }
+
+    const lines = text.length === 0 ? 0 : text.split(/\r\n|\r|\n/).length;
+    const paragraphs =
+      text.trim().length === 0
+        ? 0
+        : text
+            .split(/(?:\r\n|\r|\n){2,}/)
+            .map((p) => p.trim())
+            .filter((p) => p.length > 0).length;
+
+    const genko = total === 0 ? 0 : Math.ceil(total / 400);
+
+    $('mc-total').textContent = total.toLocaleString('ja-JP');
+    $('mc-total-sub').textContent =
+      total === 0 ? '文章を入力するとカウントが始まります' : `スペース・改行を除くと ${noSpaceNl.toLocaleString('ja-JP')} 文字です`;
+    $('mc-nospace').textContent = noSpace.toLocaleString('ja-JP');
+    $('mc-nospacenl').textContent = noSpaceNl.toLocaleString('ja-JP');
+    $('mc-bytes').textContent = bytes.toLocaleString('ja-JP');
+    $('mc-fullwidth').textContent = fullwidth.toLocaleString('ja-JP');
+    $('mc-halfwidth').textContent = halfwidth.toLocaleString('ja-JP');
+    $('mc-genko').textContent = genko.toLocaleString('ja-JP');
+    $('mc-lines').textContent = lines.toLocaleString('ja-JP');
+    $('mc-paragraphs').textContent = paragraphs.toLocaleString('ja-JP');
+
+    updateLimit('x', xWeight(text), 280);
+    updateLimit('ig', total, 2200);
+    updateLimit('yt', total, 100);
+    updateLimit('meta', total, 120);
+
+    copyBtn.disabled = text.length === 0;
+  }
+
+  function updateLimit(prefix: string, count: number, limit: number) {
+    const countEl = $(`mc-${prefix}-count`);
+    const remainEl = $(`mc-${prefix}-remain`);
+    countEl.textContent = count.toLocaleString('ja-JP');
+    const remain = limit - count;
+    if (remain < 0) {
+      remainEl.textContent = `${Math.abs(remain).toLocaleString('ja-JP')}字オーバー`;
+      remainEl.classList.add('error-text');
+    } else {
+      remainEl.textContent = remain.toLocaleString('ja-JP');
+      remainEl.classList.remove('error-text');
+    }
+  }
+
+  let saveTimer: ReturnType<typeof setTimeout> | null = null;
+  function scheduleSave() {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try {
+        if (input.value) {
+          localStorage.setItem(STORAGE_KEY, input.value);
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      } catch {
+        // localStorageが使えない環境は無視
+      }
+    }, 500);
+  }
+
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) input.value = saved;
+  } catch {
+    // 無視
+  }
+
+  input.addEventListener('input', () => {
+    update();
+    scheduleSave();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // 無視
+    }
+    update();
+    input.focus();
+  });
+
+  bindCopy(copyBtn, () => input.value);
+
+  update();
+</script>
