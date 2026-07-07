@@ -1,0 +1,223 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+import { calcDenki, DENKI_PRESETS, DEFAULT_UNIT_PRICE } from '../../lib/denki';
+import { fmtNum, fmtYen } from '../../lib/format';
+
+const faqs: Faq[] = [
+  {
+    q: 'エアコンの電気代は1時間いくらですか？',
+    a: '冷房（6畳用・570W）の場合、単価31円/kWhで計算すると1時間あたり約17.7円です。1日8時間×1ヶ月（30日）使うと、約4,241円になります。暖房（660W）の場合は1時間あたり約20.5円です。',
+  },
+  {
+    q: '単価31円/kWhはどこから来た数字ですか？',
+    a: '全国家庭電気製品公正取引協議会が家電製品のカタログ表示用に定めている目安単価（2022年7月改定）です。実際の電気料金は契約している電力会社・プラン・季節・使用量によって変わるため、正確な金額は電気料金の明細でご確認ください。',
+  },
+  {
+    q: 'つけっぱなしと、こまめに入り切りするのはどちらが得ですか？',
+    a: '一般的にエアコンは、短時間の外出であれば運転を止めるより「つけっぱなし」のほうが再起動時の消費電力を抑えられ、結果的に得になるといわれています。ただし機種の性能や外出時間の長さによって最適な使い方は変わるため、一概には言えません。',
+  },
+  {
+    q: '冷蔵庫の消費電力が29Wと小さいのはなぜですか？',
+    a: '冷蔵庫は常時運転していますが、庫内が設定温度に達するとコンプレッサーの運転を弱めたり止めたりするため、年間消費電力量を24時間365日で割った平均値で見ると消費電力は小さく見えます。実際の瞬間的な消費電力はコンプレッサー稼働時にはもっと高くなります。',
+  },
+  {
+    q: '電気代を節約するにはどの家電から見直すべきですか？',
+    a: '消費電力（W）が大きく、かつ使用時間が長い家電から見直すのが効果的です。例えばエアコンやドライヤー、電気ケトルのようにワット数が高い家電は、使用時間をわずかに減らすだけでも電気代の削減効果が大きくなります。',
+  },
+];
+
+// 記事内の計算例（エアコン冷房8時間×1ヶ月）をビルド時に生成
+const example = calcDenki(570, 8, DEFAULT_UNIT_PRICE);
+const presetOptions = DENKI_PRESETS;
+---
+
+<ToolLayout
+  slug="denkidai"
+  lead="家電の消費電力（W）と使用時間を入れると、1時間・1日・1ヶ月・1年の電気代をその場で計算。主要家電のプリセットからも選べます。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="電気代計算機">
+    <div class="field">
+      <label for="preset-select">家電を選ぶ（任意）</label>
+      <select id="preset-select" class="select">
+        <option value="">選択してください（目安のW数が入ります）</option>
+        {presetOptions.map((p) => (
+          <option value={p.watt}>{p.label}（{p.watt}W）</option>
+        ))}
+      </select>
+    </div>
+
+    <div class="field-grid cols-2 mt-4">
+      <div class="field">
+        <label for="watt-input">消費電力</label>
+        <div class="input-group">
+          <input id="watt-input" class="input" type="text" inputmode="decimal" placeholder="例: 570" autocomplete="off" value="570" />
+          <span class="suffix">W</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="price-input">電気料金の単価</label>
+        <div class="input-group">
+          <input id="price-input" class="input" type="text" inputmode="decimal" placeholder="例: 31" autocomplete="off" value="31" />
+          <span class="suffix">円/kWh</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="field mt-4">
+      <label for="hours-range">1日の使用時間</label>
+      <input id="hours-range" class="range" type="range" min="0.5" max="24" step="0.5" value="8" />
+      <p class="hint" id="hours-display">8時間</p>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <p class="result-label">1時間あたりの電気代</p>
+      <p class="result-value"><span id="denki-result">—</span><span class="unit" id="denki-unit"></span></p>
+      <p class="result-sub" id="denki-sub">消費電力・使用時間・単価を入力してください</p>
+
+      <div class="mt-5" id="denki-breakdown" hidden>
+        <div class="result-row">
+          <span class="k">1日あたり</span>
+          <span class="v" id="row-day">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">1ヶ月あたり（30日換算）</span>
+          <span class="v" id="row-month">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">1年あたり（365日換算）</span>
+          <span class="v" id="row-year">—</span>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn btn-secondary btn-sm btn-copy" id="denki-copy" disabled>
+          <span class="label-default">結果をコピー</span>
+          <span class="label-done">コピーしました</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="notice mt-5">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <p>単価は全国家庭電気製品公正取引協議会の目安単価（31円/kWh・2022年7月改定）を初期値にしています。実際の料金は契約プランによって異なるため、目安としてご利用ください。家電のプリセット値もカタログ等をもとにした目安です。</p>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>家電を選ぶと消費電力（W）が自動入力されます。手入力も可能です。</li>
+      <li>1日の使用時間をスライダーで調整します。</li>
+      <li>単価（円/kWh）を必要に応じて変更すると、その場で電気代が計算されます。</li>
+    </ol>
+
+    <h2 id="formula">計算式</h2>
+    <p>
+      電気代は、消費電力（W）を1000で割ってkW（キロワット）に直し、使用時間と単価をかけて計算します。
+    </p>
+    <p><code>電気代 = 消費電力(W) ÷ 1000 × 使用時間(h) × 単価(円/kWh)</code></p>
+    <p>
+      例えば消費電力1,200Wの家電を1時間使うと、単価31円/kWhの場合は <strong>1,200 ÷ 1,000 × 1 × 31 = 37.2円</strong> です。
+    </p>
+    <p>
+      エアコンの冷房（570W）を1日8時間、1ヶ月（30日）使い続けた場合は、1時間あたり約{example ? fmtNum(example.perHour, 1) : '17.7'}円 × 8時間 × 30日で、約{example ? fmtYen(example.perMonth) : '4,241円'}になる計算です。
+    </p>
+
+    <h2 id="setsuden">節電の考え方</h2>
+    <p>
+      電気代は「消費電力（W）× 使用時間」に比例するため、節電効果を大きくしたいときは、消費電力が大きい家電、または使用時間が長い家電から見直すのが効率的です。ドライヤーや電気ケトルのようにワット数が高くても使用時間が短い家電より、エアコンやテレビのように使用時間が長い家電のほうが年間の電気代への影響は大きくなりがちです。
+    </p>
+
+    <h2 id="use-cases">こんなときに使えます</h2>
+    <ul>
+      <li><strong>家電の買い替え検討</strong> — 消費電力の異なる家電で年間電気代を比較する</li>
+      <li><strong>節電対策の優先順位づけ</strong> — どの家電から使用時間を見直すべきか判断する</li>
+      <li><strong>一人暮らしの生活費見積もり</strong> — 主要家電の電気代を積み上げて月々の目安を把握する</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseNum, fmtNum, fmtYen, bindCopy } from '../../lib/format';
+  import { calcDenki } from '../../lib/denki';
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+
+  const presetSelect = $('preset-select');
+  const wattInput = $('watt-input');
+  const priceInput = $('price-input');
+  const hoursRange = $('hours-range');
+  const hoursDisplay = document.getElementById('hours-display')!;
+
+  const resultEl = document.getElementById('denki-result')!;
+  const unitEl = document.getElementById('denki-unit')!;
+  const subEl = document.getElementById('denki-sub')!;
+  const breakdownEl = document.getElementById('denki-breakdown')!;
+  const copyBtn = document.getElementById('denki-copy') as HTMLButtonElement;
+
+  let copyText = '';
+
+  function update() {
+    const watt = parseNum(wattInput.value);
+    const hours = parseFloat(hoursRange.value);
+    const price = parseNum(priceInput.value);
+
+    hoursDisplay.textContent = `${hours}時間`;
+
+    const r = calcDenki(watt, hours, price);
+    if (!r) {
+      resultEl.textContent = '—';
+      unitEl.textContent = '';
+      subEl.textContent = '消費電力・使用時間・単価を入力してください';
+      breakdownEl.hidden = true;
+      copyBtn.disabled = true;
+      copyText = '';
+      return;
+    }
+
+    resultEl.textContent = fmtNum(r.perHour, 1);
+    unitEl.textContent = '円';
+    subEl.textContent = `${fmtNum(watt)}W × ${fmtNum(hours, 1)}時間 × ${fmtNum(price, 2)}円/kWh`;
+
+    breakdownEl.hidden = false;
+    document.getElementById('row-day')!.textContent = fmtYen(r.perDay);
+    document.getElementById('row-month')!.textContent = fmtYen(r.perMonth);
+    document.getElementById('row-year')!.textContent = fmtYen(r.perYear);
+
+    copyBtn.disabled = false;
+    copyText = `${fmtNum(watt)}W・1日${fmtNum(hours, 1)}時間 → 1時間 ${fmtNum(r.perHour, 1)}円 / 1ヶ月 ${fmtYen(r.perMonth)}`;
+
+    const url = new URL(location.href);
+    url.searchParams.set('watt', String(watt));
+    url.searchParams.set('hours', String(hours));
+    url.searchParams.set('price', String(price));
+    history.replaceState(null, '', url);
+  }
+
+  presetSelect.addEventListener('change', () => {
+    if (presetSelect.value) {
+      wattInput.value = presetSelect.value;
+      update();
+    }
+  });
+  wattInput.addEventListener('input', () => {
+    presetSelect.value = '';
+    update();
+  });
+  priceInput.addEventListener('input', update);
+  hoursRange.addEventListener('input', update);
+  bindCopy(copyBtn, () => copyText);
+
+  // URLクエリから復元
+  const sp = new URLSearchParams(location.search);
+  const qWatt = sp.get('watt');
+  const qHours = sp.get('hours');
+  const qPrice = sp.get('price');
+  if (qWatt && Number.isFinite(parseNum(qWatt))) wattInput.value = qWatt;
+  if (qHours && Number.isFinite(Number(qHours))) hoursRange.value = qHours;
+  if (qPrice && Number.isFinite(parseNum(qPrice))) priceInput.value = qPrice;
+
+  update();
+</script>

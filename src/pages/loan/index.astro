@@ -1,0 +1,308 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+import { calcLoan } from '../../lib/loan';
+import { fmtMan, fmtYen } from '../../lib/format';
+
+const faqs: Faq[] = [
+  {
+    q: '3000万円を35年・金利1.5%で借りると月々いくらになりますか？',
+    a: '元利均等返済の場合、毎月の返済額は91,855円です。総返済額は約3,858万円で、そのうち利息は約858万円になります。',
+  },
+  {
+    q: '変動金利と固定金利はどちらを選ぶ人が多いですか？',
+    a: '一般的には、当初の返済額を抑えやすい変動金利を選ぶ人が多いとされますが、将来の金利上昇リスクを避けたい人は固定金利を選びます。どちらが適しているかは家計の状況や金利動向の見通しによって異なるため、本ツールでは特定の選択を推奨していません。',
+  },
+  {
+    q: '繰上返済をするとどれくらい効果がありますか？',
+    a: '繰上返済で元金を早く減らすと、その分にかかるはずだった将来の利息がまるごと軽減されます。返済期間の早い段階ほど元金に対する利息の割合が大きいため、借入から数年以内の繰上返済ほど利息軽減効果が大きくなる傾向があります。',
+  },
+  {
+    q: '借入可能額の目安はどう考えればいいですか？',
+    a: '一般的な目安として、年間返済額が年収の25%程度に収まる借入額が無理のないラインとされています。本ツールの「年収に対する目安」の欄で、毎月の返済額から逆算した目安年収を確認できます。',
+  },
+  {
+    q: '元利均等と元金均等、どちらが総返済額は少なくなりますか？',
+    a: '同じ借入額・金利・期間であれば、元金均等返済のほうが総返済額は少なくなります。これは元金均等では元金の減りが早く、利息の対象となる残高がより早く減っていくためです。ただし元金均等は返済開始当初の返済額が元利均等より高くなる点に注意が必要です。',
+  },
+];
+
+// 記事内の金利差計算例（3000万・35年、1.0%→1.5%）をビルド時に生成
+const loan10 = calcLoan(30_000_000, 1.0, 35, 'gentei');
+const loan15 = calcLoan(30_000_000, 1.5, 35, 'gentei');
+const rateDiff = loan10 && loan15 ? loan15.totalPayment - loan10.totalPayment : 0;
+---
+
+<ToolLayout
+  slug="loan"
+  lead="借入額・金利・返済期間を入れると、住宅ローンの毎月の返済額と総返済額をその場で計算。元利均等と元金均等の比較にも対応しています。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="住宅ローンシミュレーター">
+    <div class="field">
+      <label for="amount-input">借入額</label>
+      <div class="input-group">
+        <input id="amount-input" class="input" type="text" inputmode="decimal" placeholder="例: 3000" autocomplete="off" value="3000" />
+        <span class="suffix">万円</span>
+      </div>
+      <input id="amount-range" class="range" type="range" min="500" max="10000" step="10" value="3000" aria-label="借入額スライダー" />
+    </div>
+
+    <div class="field-grid cols-2 mt-4">
+      <div class="field">
+        <label for="rate-input">年利</label>
+        <div class="input-group">
+          <input id="rate-input" class="input" type="text" inputmode="decimal" placeholder="例: 1.5" autocomplete="off" value="1.5" />
+          <span class="suffix">%</span>
+        </div>
+        <input id="rate-range" class="range" type="range" min="0" max="5" step="0.01" value="1.5" aria-label="年利スライダー" />
+      </div>
+      <div class="field">
+        <label for="years-input">返済期間</label>
+        <div class="input-group">
+          <input id="years-input" class="input" type="text" inputmode="numeric" placeholder="例: 35" autocomplete="off" value="35" />
+          <span class="suffix">年</span>
+        </div>
+        <input id="years-range" class="range" type="range" min="1" max="50" step="1" value="35" aria-label="返済期間スライダー" />
+      </div>
+    </div>
+
+    <div class="field mt-4">
+      <span class="field-label" id="repay-label">返済方法</span>
+      <div class="choice-row" role="radiogroup" aria-labelledby="repay-label">
+        <label class="choice"><input type="radio" name="repay" value="gentei" checked />元利均等</label>
+        <label class="choice"><input type="radio" name="repay" value="genkin" />元金均等</label>
+      </div>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <p class="result-label" id="loan-result-label">毎月の返済額（概算）</p>
+      <p class="result-value"><span id="loan-result">—</span><span class="unit" id="loan-unit"></span></p>
+      <p class="result-sub" id="loan-sub">借入額・年利・返済期間を入力してください</p>
+
+      <div class="mt-5" id="loan-breakdown" hidden>
+        <div class="result-row">
+          <span class="k">総返済額</span>
+          <span class="v" id="row-total">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">うち利息</span>
+          <span class="v" id="row-interest">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">年収に対する目安（返済負担率25%換算）</span>
+          <span class="v" id="row-nenshu">—</span>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn btn-secondary btn-sm btn-copy" id="loan-copy" disabled>
+          <span class="label-default">結果をコピー</span>
+          <span class="label-done">コピーしました</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="notice mt-5">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <p>ボーナス払い・諸費用・団体信用生命保険・金利変動は含まない概算です。</p>
+    </div>
+
+    <div class="mt-6">
+      <p class="result-label mb-4">年別のローン残高</p>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>経過年</th>
+              <th class="num">ローン残高</th>
+              <th class="num">支払利息累計</th>
+            </tr>
+          </thead>
+          <tbody id="loan-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>借入額（万円）を入力するか、スライダーで動かします。</li>
+      <li>年利と返済期間を入力します。</li>
+      <li>返済方法（元利均等・元金均等）を選ぶと、その場で毎月の返済額と総返済額が計算されます。</li>
+    </ol>
+
+    <h2 id="formula">元利均等と元金均等の違い</h2>
+    <p>
+      <strong>元利均等返済</strong>は、毎月の返済額（元金＋利息の合計）が返済期間を通じて一定になる方式です。返済計画が立てやすく、多くの住宅ローンで採用されている標準的な方式です。計算式は次の通りです。
+    </p>
+    <p><code>月々の返済額 = 借入額 × 月利 × (1 + 月利)^返済月数 ÷ ((1 + 月利)^返済月数 − 1)</code></p>
+    <p>
+      <strong>元金均等返済</strong>は、毎月返済する元金部分が一定で、そこに残高に応じた利息が上乗せされる方式です。返済開始当初の返済額は元利均等より高くなりますが、元金の減りが早いため総返済額は元利均等より少なくなります。
+    </p>
+    <p>
+      例えば借入額3,000万円・返済期間35年の場合、金利が1.0%から1.5%に上がると、総返済額は約{fmtMan(loan10?.totalPayment ?? 0)}から約{fmtMan(loan15?.totalPayment ?? 0)}に増え、その差は約{fmtMan(rateDiff)}にもなります。わずか0.5%の金利差でも、長期間の借入では総返済額に大きな影響を与えることがわかります。
+    </p>
+
+    <h2 id="use-cases">こんなときに使えます</h2>
+    <ul>
+      <li><strong>住宅購入の資金計画</strong> — 毎月の返済額から無理のない借入額を検討する</li>
+      <li><strong>金利タイプの比較</strong> — 金利が変わったときの総返済額の違いを確認する</li>
+      <li><strong>返済方法の比較</strong> — 元利均等と元金均等で総返済額がどれだけ違うかを確認する</li>
+    </ul>
+    <p>
+      購入前にエリアの相場を調べたい方は <a href="https://sumai-kakaku-navi.com">住まいの価格ナビ</a>（当スタジオの姉妹サービス）へ。
+    </p>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseNum, fmtNum, fmtMan, fmtYen, bindCopy } from '../../lib/format';
+  import { calcLoan, type RepayType } from '../../lib/loan';
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+
+  const amountInput = $('amount-input');
+  const amountRange = $('amount-range');
+  const rateInput = $('rate-input');
+  const rateRange = $('rate-range');
+  const yearsInput = $('years-input');
+  const yearsRange = $('years-range');
+
+  const resultLabel = document.getElementById('loan-result-label')!;
+  const resultEl = document.getElementById('loan-result')!;
+  const unitEl = document.getElementById('loan-unit')!;
+  const subEl = document.getElementById('loan-sub')!;
+  const breakdownEl = document.getElementById('loan-breakdown')!;
+  const copyBtn = document.getElementById('loan-copy') as HTMLButtonElement;
+  const tableBody = document.getElementById('loan-table-body')!;
+
+  let copyText = '';
+
+  function getRepayType(): RepayType {
+    const el = document.querySelector('input[name="repay"]:checked') as HTMLInputElement;
+    return (el?.value as RepayType) ?? 'gentei';
+  }
+
+  function syncRangeFromInput(input: HTMLInputElement, range: HTMLInputElement, min: number, max: number) {
+    const v = parseNum(input.value);
+    if (Number.isFinite(v)) {
+      range.value = String(Math.min(max, Math.max(min, v)));
+    }
+  }
+
+  function update() {
+    const amountMan = parseNum(amountInput.value);
+    const rate = parseNum(rateInput.value);
+    const years = parseNum(yearsInput.value);
+    const repayType = getRepayType();
+
+    if (!Number.isFinite(amountMan) || amountMan <= 0 || !Number.isFinite(rate) || rate < 0 || !Number.isFinite(years) || years <= 0) {
+      resultEl.textContent = '—';
+      unitEl.textContent = '';
+      subEl.textContent = '借入額・年利・返済期間を入力してください';
+      breakdownEl.hidden = true;
+      copyBtn.disabled = true;
+      copyText = '';
+      return;
+    }
+
+    const r = calcLoan(amountMan * 10000, rate, years, repayType);
+    if (!r) {
+      resultEl.textContent = '—';
+      unitEl.textContent = '';
+      subEl.textContent = '数値を入力してください';
+      breakdownEl.hidden = true;
+      copyBtn.disabled = true;
+      copyText = '';
+      return;
+    }
+
+    if (repayType === 'genkin' && Math.round(r.monthlyPaymentFirst) !== Math.round(r.monthlyPaymentLast)) {
+      resultLabel.textContent = '毎月の返済額（初回→最終回・概算）';
+      resultEl.textContent = `${fmtNum(r.monthlyPaymentFirst)} → ${fmtNum(r.monthlyPaymentLast)}`;
+      unitEl.textContent = '円';
+    } else {
+      resultLabel.textContent = '毎月の返済額（概算）';
+      resultEl.textContent = fmtNum(r.monthlyPaymentFirst);
+      unitEl.textContent = '円';
+    }
+    subEl.textContent = `総返済額 ${fmtMan(r.totalPayment)}（うち利息 ${fmtMan(r.totalInterest)}）`;
+
+    breakdownEl.hidden = false;
+    document.getElementById('row-total')!.textContent = fmtYen(r.totalPayment);
+    document.getElementById('row-interest')!.textContent = fmtYen(r.totalInterest);
+    const nenshuMokuyasu = (r.monthlyPaymentFirst * 12) / 0.25;
+    document.getElementById('row-nenshu')!.textContent = `約${fmtMan(nenshuMokuyasu)}`;
+
+    tableBody.innerHTML = r.rows
+      .map((row) => `<tr><td>${row.year}年</td><td class="num">${fmtYen(row.zandaka)}</td><td class="num">${fmtYen(row.risokuRuikei)}</td></tr>`)
+      .join('');
+
+    copyBtn.disabled = false;
+    copyText =
+      repayType === 'genkin'
+        ? `借入${fmtMan(amountMan * 10000)}・年利${rate}%・${years}年（元金均等） → 毎月 ${fmtNum(r.monthlyPaymentFirst)}円〜${fmtNum(r.monthlyPaymentLast)}円`
+        : `借入${fmtMan(amountMan * 10000)}・年利${rate}%・${years}年（元利均等） → 毎月 ${fmtNum(r.monthlyPaymentFirst)}円`;
+
+    const url = new URL(location.href);
+    url.searchParams.set('amount', String(amountMan));
+    url.searchParams.set('rate', String(rate));
+    url.searchParams.set('years', String(years));
+    url.searchParams.set('repay', repayType);
+    history.replaceState(null, '', url);
+  }
+
+  amountInput.addEventListener('input', () => {
+    syncRangeFromInput(amountInput, amountRange, 500, 10000);
+    update();
+  });
+  amountRange.addEventListener('input', () => {
+    amountInput.value = amountRange.value;
+    update();
+  });
+  rateInput.addEventListener('input', () => {
+    syncRangeFromInput(rateInput, rateRange, 0, 5);
+    update();
+  });
+  rateRange.addEventListener('input', () => {
+    rateInput.value = rateRange.value;
+    update();
+  });
+  yearsInput.addEventListener('input', () => {
+    syncRangeFromInput(yearsInput, yearsRange, 1, 50);
+    update();
+  });
+  yearsRange.addEventListener('input', () => {
+    yearsInput.value = yearsRange.value;
+    update();
+  });
+  document.querySelectorAll<HTMLInputElement>('input[name="repay"]').forEach((el) => el.addEventListener('change', update));
+  bindCopy(copyBtn, () => copyText);
+
+  // URLクエリから復元
+  const sp = new URLSearchParams(location.search);
+  const qAmount = sp.get('amount');
+  const qRate = sp.get('rate');
+  const qYears = sp.get('years');
+  const qRepay = sp.get('repay');
+  if (qAmount && Number.isFinite(parseNum(qAmount))) {
+    amountInput.value = qAmount;
+    syncRangeFromInput(amountInput, amountRange, 500, 10000);
+  }
+  if (qRate && Number.isFinite(parseNum(qRate))) {
+    rateInput.value = qRate;
+    syncRangeFromInput(rateInput, rateRange, 0, 5);
+  }
+  if (qYears && Number.isFinite(parseNum(qYears))) {
+    yearsInput.value = qYears;
+    syncRangeFromInput(yearsInput, yearsRange, 1, 50);
+  }
+  if (qRepay) {
+    const el = document.querySelector(`input[name="repay"][value="${qRepay}"]`) as HTMLInputElement;
+    if (el) el.checked = true;
+  }
+
+  update();
+</script>
