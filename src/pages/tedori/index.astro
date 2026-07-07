@@ -1,0 +1,320 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+import { calcTedori } from '../../lib/tedori';
+import { fmtMan, fmtYen } from '../../lib/format';
+
+const faqs: Faq[] = [
+  {
+    q: '年収400万円の手取りはいくらですか？',
+    a: '独身・40歳未満の場合、社会保険料や税金を差し引いた手取り額は概算で約317万円（月額換算で約26.4万円）です。扶養家族がいる場合や年齢区分が異なる場合は金額が変わります。',
+  },
+  {
+    q: 'ボーナス（賞与）がある場合はどう計算すればいいですか？',
+    a: 'このツールは年収（賞与を含む額面の合計）を12で割った月額をもとに社会保険料を概算する簡易計算です。実際の賞与には賞与用の社会保険料率が別途適用されるため、賞与の割合が大きい人ほど実際の手取りとの誤差が大きくなる点に注意してください。',
+  },
+  {
+    q: '額面と手取りの違いは何ですか？',
+    a: '額面（年収）は会社から支払われる給与の総額で、そこから健康保険・厚生年金・雇用保険などの社会保険料と、所得税・住民税が天引きされた後に実際に振り込まれる金額が手取りです。年収400万円台では額面の8割前後が手取りの目安になります。',
+  },
+  {
+    q: '住民税が給与から引かれ始めるのはいつからですか？',
+    a: '住民税はその年の所得をもとに翌年6月から翌々年5月にかけて天引きされる「前年所得課税」の仕組みです。そのため入社1年目は原則として住民税が発生せず、2年目の6月分の給与から天引きが始まります。本ツールは当年所得ベースの概算のため、この時差は反映していません。',
+  },
+  {
+    q: '扶養に入れると手取りはどう変わりますか？',
+    a: '扶養人数が1人増えるごとに、所得税の課税所得から38万円、住民税の課税所得から33万円が扶養控除として差し引かれ、その分の所得税・住民税が軽くなります。年収400万円台なら扶養1人につき年間で数万円ほど手取りが増える計算になります。',
+  },
+  {
+    q: '40歳以上と40歳未満で手取りが違うのはなぜですか？',
+    a: '40歳になると介護保険料（本人負担分で月額給与の0.795%相当）が新たに社会保険料に加わるためです。65歳以上も在職中であれば同じ介護保険料がかかります（本ツールでは40〜64歳のみ加算する簡易区分にしています）。',
+  },
+];
+
+// 記事内の静的早見表（独身・40歳未満）をビルド時に同じ関数で生成
+const mitokashiNenshu = [300, 400, 500, 600, 700, 800, 1000, 1200];
+const mitokashi = mitokashiNenshu.map((man) => {
+  const r = calcTedori(man * 10000, 'u40', 0);
+  return { man, tedori: r ? r.tedori : 0 };
+});
+---
+
+<ToolLayout
+  slug="tedori"
+  lead="年収（額面）を入れるだけで、社会保険料と税金を差し引いた手取り額を概算します。年齢区分・扶養人数を選ぶとその場で結果が更新されます。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="手取り計算機">
+    <div class="field-grid cols-2">
+      <div class="field">
+        <label for="nenshu-input">年収（額面・万円）</label>
+        <div class="input-group">
+          <input
+            id="nenshu-input"
+            class="input"
+            type="text"
+            inputmode="decimal"
+            placeholder="例: 400"
+            autocomplete="off"
+            value="400"
+          />
+          <span class="suffix">万円</span>
+        </div>
+        <input id="nenshu-range" class="range" type="range" min="100" max="2000" step="10" value="400" aria-label="年収スライダー" />
+      </div>
+
+      <div class="field">
+        <span class="field-label" id="dependents-label">扶養人数</span>
+        <select id="dependents-select" class="select" aria-labelledby="dependents-label">
+          <option value="0" selected>0人</option>
+          <option value="1">1人</option>
+          <option value="2">2人</option>
+          <option value="3">3人</option>
+          <option value="4">4人</option>
+          <option value="5">5人</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field mt-4">
+      <span class="field-label" id="ageband-label">年齢区分</span>
+      <div class="choice-row" role="radiogroup" aria-labelledby="ageband-label">
+        <label class="choice"><input type="radio" name="ageband" value="u40" checked />40歳未満</label>
+        <label class="choice"><input type="radio" name="ageband" value="40-64" />40〜64歳</label>
+        <label class="choice"><input type="radio" name="ageband" value="65+" />65歳以上</label>
+      </div>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <p class="result-label">手取り年額（概算）</p>
+      <p class="result-value"><span id="tedori-result">—</span><span class="unit" id="tedori-unit"></span></p>
+      <p class="result-sub" id="tedori-sub">年収を入力してください</p>
+
+      <div class="mt-5" id="tedori-breakdown" hidden>
+        <div class="result-row">
+          <span class="k">手取り月額</span>
+          <span class="v" id="row-tsuki">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">額面に対する手取り比率</span>
+          <span class="v" id="row-hiritsu">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">健康保険料（年間）</span>
+          <span class="v" id="row-kenko">—</span>
+        </div>
+        <div class="result-row" id="row-kaigo-wrap">
+          <span class="k">介護保険料（年間）</span>
+          <span class="v" id="row-kaigo">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">厚生年金保険料（年間）</span>
+          <span class="v" id="row-kosei">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">雇用保険料（年間）</span>
+          <span class="v" id="row-koyo">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">所得税（年間）</span>
+          <span class="v" id="row-shotoku">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">住民税（年間）</span>
+          <span class="v" id="row-jumin">—</span>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn btn-secondary btn-sm btn-copy" id="tedori-copy" disabled>
+          <span class="label-default">結果をコピー</span>
+          <span class="label-done">コピーしました</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="notice mt-5">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <p>協会けんぽ（東京）・令和7年度料率での概算です。賞与の扱い・iDeCo・生命保険料控除・住宅ローン控除などは反映していません。住民税は当年所得で概算しています（実際は前年所得ベースで課税されます）。</p>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>年収（額面・万円）を入力するか、スライダーで動かします。</li>
+      <li>年齢区分（40歳未満・40〜64歳・65歳以上）と扶養人数を選びます。</li>
+      <li>入力するとその場で手取り年額・月額・内訳が計算されます。</li>
+    </ol>
+
+    <h2 id="formula">計算の仕組み</h2>
+    <p>
+      手取り額は、年収から社会保険料（健康保険・介護保険・厚生年金・雇用保険）と税金（所得税・住民税）を差し引いて求めます。
+      <code>手取り = 年収 − 社会保険料合計 − 所得税 − 住民税</code>
+    </p>
+    <p>
+      社会保険料は月額給与（年収÷12）をもとに、健康保険料率9.91%・介護保険料率1.59%（40〜64歳のみ）・厚生年金保険料率18.3%をそれぞれ本人負担分（労使折半のため2分の1）で計算します。雇用保険料は年収の0.55%です。
+    </p>
+    <p>
+      所得税は、年収から給与所得控除と基礎控除・扶養控除・社会保険料控除を差し引いた課税所得に累進税率をかけ、復興特別所得税（2.1%）を上乗せして求めます。住民税は課税所得の10%に均等割5,000円を足し、調整控除2,500円を引いて計算します。
+    </p>
+    <p>
+      例えば年収400万円・独身・40歳未満の場合、社会保険料が約58.6万円、所得税が約6.6万円、住民税が約17.7万円かかり、手取りは約317万円（月額換算で約26.4万円）になります。
+    </p>
+
+    <h2 id="mitokashi">手取り早見表（独身・40歳未満）</h2>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>年収</th>
+            <th class="num">手取り年額（概算）</th>
+            <th class="num">手取り月額（概算）</th>
+          </tr>
+        </thead>
+        <tbody>
+          {mitokashi.map((row) => (
+            <tr>
+              <td>{row.man}万円</td>
+              <td class="num">{fmtMan(row.tedori)}</td>
+              <td class="num">{fmtMan(row.tedori / 12)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="use-cases">こんなときに使えます</h2>
+    <ul>
+      <li><strong>転職・就職活動</strong> — 提示された年収から、実際に使える手取り額のイメージをつかむ</li>
+      <li><strong>家計の見直し</strong> — 年収と手取りの差を把握し、住宅ローンや貯蓄計画の目安にする</li>
+      <li><strong>扶養控除の確認</strong> — 扶養人数を変えたときの手取りへの影響を比較する</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseNum, fmtYen, fmtMan, fmtNum, bindCopy } from '../../lib/format';
+  import { calcTedori, type AgeBand } from '../../lib/tedori';
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+
+  const nenshuInput = $('nenshu-input');
+  const nenshuRange = $('nenshu-range');
+  const dependentsSelect = $('dependents-select');
+  const resultEl = document.getElementById('tedori-result')!;
+  const unitEl = document.getElementById('tedori-unit')!;
+  const subEl = document.getElementById('tedori-sub')!;
+  const breakdownEl = document.getElementById('tedori-breakdown')!;
+  const kaigoWrap = document.getElementById('row-kaigo-wrap')!;
+  const copyBtn = document.getElementById('tedori-copy') as HTMLButtonElement;
+
+  let copyText = '';
+
+  function getAgeBand(): AgeBand {
+    const el = document.querySelector('input[name="ageband"]:checked') as HTMLInputElement;
+    return (el?.value as AgeBand) ?? 'u40';
+  }
+
+  function syncFromInput() {
+    const v = parseNum(nenshuInput.value);
+    if (Number.isFinite(v)) {
+      const clamped = Math.min(2000, Math.max(100, v));
+      nenshuRange.value = String(clamped);
+    }
+  }
+
+  function syncFromRange() {
+    nenshuInput.value = nenshuRange.value;
+  }
+
+  function update() {
+    const nenshuMan = parseNum(nenshuInput.value);
+    const dependents = Number(dependentsSelect.value);
+    const ageBand = getAgeBand();
+
+    if (!Number.isFinite(nenshuMan) || nenshuMan <= 0) {
+      resultEl.textContent = '—';
+      unitEl.textContent = '';
+      subEl.textContent = '年収を入力してください';
+      breakdownEl.hidden = true;
+      copyBtn.disabled = true;
+      copyText = '';
+      updateUrl(null);
+      return;
+    }
+
+    const r = calcTedori(nenshuMan * 10000, ageBand, dependents);
+    if (!r) {
+      resultEl.textContent = '—';
+      unitEl.textContent = '';
+      subEl.textContent = '数値を入力してください';
+      breakdownEl.hidden = true;
+      copyBtn.disabled = true;
+      copyText = '';
+      return;
+    }
+
+    resultEl.textContent = fmtNum(r.tedori);
+    unitEl.textContent = '円';
+    subEl.textContent = `額面 ${fmtMan(r.nenshu)} の ${fmtNum(r.tedoriHiritsu, 1)}%`;
+
+    breakdownEl.hidden = false;
+    kaigoWrap.hidden = ageBand !== '40-64';
+    document.getElementById('row-tsuki')!.textContent = fmtYen(r.tedoriTsuki);
+    document.getElementById('row-hiritsu')!.textContent = `${fmtNum(r.tedoriHiritsu, 1)}%`;
+    document.getElementById('row-kenko')!.textContent = fmtYen(r.kenkoHoken);
+    document.getElementById('row-kaigo')!.textContent = fmtYen(r.kaigoHoken);
+    document.getElementById('row-kosei')!.textContent = fmtYen(r.koseiNenkin);
+    document.getElementById('row-koyo')!.textContent = fmtYen(r.koyoHoken);
+    document.getElementById('row-shotoku')!.textContent = fmtYen(r.shotokuzei);
+    document.getElementById('row-jumin')!.textContent = fmtYen(r.juminzei);
+
+    copyBtn.disabled = false;
+    copyText = `年収${fmtMan(r.nenshu)} → 手取り年額 ${fmtYen(r.tedori)}（月額 ${fmtYen(r.tedoriTsuki)}）`;
+
+    updateUrl({ nenshu: String(nenshuMan), age: ageBand, dep: String(dependents) });
+  }
+
+  function updateUrl(params: { nenshu: string; age: string; dep: string } | null) {
+    const url = new URL(location.href);
+    if (params) {
+      url.searchParams.set('nenshu', params.nenshu);
+      url.searchParams.set('age', params.age);
+      url.searchParams.set('dep', params.dep);
+    }
+    history.replaceState(null, '', url);
+  }
+
+  nenshuInput.addEventListener('input', () => {
+    syncFromInput();
+    update();
+  });
+  nenshuRange.addEventListener('input', () => {
+    syncFromRange();
+    update();
+  });
+  dependentsSelect.addEventListener('change', update);
+  document.querySelectorAll<HTMLInputElement>('input[name="ageband"]').forEach((el) => el.addEventListener('change', update));
+
+  bindCopy(copyBtn, () => copyText);
+
+  // URLクエリから復元
+  const sp = new URLSearchParams(location.search);
+  const qNenshu = sp.get('nenshu');
+  const qAge = sp.get('age');
+  const qDep = sp.get('dep');
+  if (qNenshu && Number.isFinite(parseNum(qNenshu))) {
+    nenshuInput.value = qNenshu;
+    syncFromInput();
+  }
+  if (qAge) {
+    const el = document.querySelector(`input[name="ageband"][value="${qAge}"]`) as HTMLInputElement;
+    if (el) el.checked = true;
+  }
+  if (qDep) {
+    dependentsSelect.value = qDep;
+  }
+
+  update();
+</script>

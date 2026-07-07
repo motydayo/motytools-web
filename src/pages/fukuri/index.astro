@@ -1,0 +1,344 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+import { calcFukuri } from '../../lib/fukuri';
+import { fmtMan } from '../../lib/format';
+
+const faqs: Faq[] = [
+  {
+    q: '想定利回りは何%にすればいいですか？',
+    a: '全世界株式やS&P500に連動するインデックス投資では、過去の実績をもとに年3〜7%程度を目安にするケースが多く見られます。ただしこれはあくまで過去の実績であり、将来の運用成果を保証するものではありません。慎重に見積もりたい場合は3%前後、標準的な想定なら5%前後で試算するとよいでしょう。',
+  },
+  {
+    q: '複利と単利の違いは何ですか？',
+    a: '単利は元本にのみ利息がつくのに対し、複利は「元本＋それまでに得た利息」に対して次の利息がつく仕組みです。運用期間が長くなるほど複利の効果は大きくなり、同じ利回りでも単利より複利のほうが最終的な資産は大きくなります。',
+  },
+  {
+    q: '新NISAの年間投資枠はいくらまでですか？',
+    a: '新NISAの年間投資枠は、つみたて投資枠が120万円、成長投資枠が240万円で、合計最大360万円です。毎月の積立額に換算すると月30万円が上限の目安になります。',
+  },
+  {
+    q: '毎月3万円を20年積み立てると、いくらになりますか？',
+    a: '想定利回り年5%・初期投資0円の場合、20年後の資産額は概算で約1,233万円になります（元本合計は720万円、運用収益は約513万円）。利回りが変われば結果も大きく変わるため、複数の利回りで試算することをおすすめします。',
+  },
+  {
+    q: '新NISAの生涯投資枠はいくらですか？',
+    a: '新NISAの生涯投資枠（非課税保有限度額）は1,800万円です。年間360万円ずつ積み立てると、最短5年でこの上限に達します。上限に達した後は非課税枠での新規投資ができなくなります（保有商品の売却後は枠が復活します）。',
+  },
+  {
+    q: '課税口座とNISAで最終的な受取額はどれくらい違いますか？',
+    a: '課税口座では運用収益に対して20.315%の税金がかかります。例えば運用収益が500万円の場合、課税口座では約101.6万円が税金として引かれ、NISA口座であればその分がそのまま手元に残ります。',
+  },
+];
+
+// 記事内の計算例（月3万・年5%・20年）をビルド時に生成
+const example = calcFukuri(0, 30000, 5, 20, 'nisa');
+---
+
+<ToolLayout
+  slug="fukuri"
+  lead="毎月の積立額・想定利回り・期間を入れると、複利で増える資産額をその場でシミュレーション。グラフと年別テーブルで推移が一目でわかります。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="複利・積立シミュレーター">
+    <div class="field-grid cols-2">
+      <div class="field">
+        <label for="initial-input">初期投資額</label>
+        <div class="input-group">
+          <input id="initial-input" class="input" type="text" inputmode="decimal" placeholder="例: 0" autocomplete="off" value="0" />
+          <span class="suffix">万円</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="monthly-input">毎月の積立額</label>
+        <div class="input-group">
+          <input id="monthly-input" class="input" type="text" inputmode="decimal" placeholder="例: 3" autocomplete="off" value="3" />
+          <span class="suffix">万円</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-grid cols-2 mt-4">
+      <div class="field">
+        <label for="rate-range">想定利回り（年率）</label>
+        <input id="rate-range" class="range" type="range" min="0" max="10" step="0.1" value="5" />
+        <p class="hint" id="rate-display">5.0%</p>
+      </div>
+      <div class="field">
+        <label for="years-range">積立期間</label>
+        <input id="years-range" class="range" type="range" min="1" max="40" step="1" value="20" />
+        <p class="hint" id="years-display">20年</p>
+      </div>
+    </div>
+
+    <div class="field mt-4">
+      <span class="field-label" id="account-label">口座の種類</span>
+      <div class="choice-row" role="radiogroup" aria-labelledby="account-label">
+        <label class="choice"><input type="radio" name="account" value="nisa" checked />NISA（非課税）</label>
+        <label class="choice"><input type="radio" name="account" value="taxable" />課税口座（20.315%）</label>
+      </div>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <p class="result-label">最終資産額（概算）</p>
+      <p class="result-value"><span id="fukuri-result">—</span><span class="unit" id="fukuri-unit"></span></p>
+      <p class="result-sub" id="fukuri-sub">積立額・利回り・期間を入力してください</p>
+
+      <div class="mt-5" id="fukuri-breakdown" hidden>
+        <div class="result-row">
+          <span class="k">元本合計</span>
+          <span class="v" id="row-gankin">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">運用収益</span>
+          <span class="v" id="row-eki">—</span>
+        </div>
+        <div class="result-row" id="row-tax-wrap" hidden>
+          <span class="k">税額（20.315%）</span>
+          <span class="v" id="row-tax">—</span>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn btn-secondary btn-sm btn-copy" id="fukuri-copy" disabled>
+          <span class="label-default">結果をコピー</span>
+          <span class="label-done">コピーしました</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="notice mt-5" id="nisa-notice" hidden>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <p id="nisa-notice-text"></p>
+    </div>
+
+    <div class="mt-6">
+      <p class="result-label mb-4">資産推移グラフ</p>
+      <svg id="fukuri-chart" viewBox="0 0 600 260" role="img" aria-label="資産推移グラフ" style="width:100%;height:auto;">
+        <polygon id="chart-area" points="" fill="var(--accent-soft)" />
+        <polyline id="chart-line-value" points="" fill="none" stroke="var(--accent)" stroke-width="2.5" />
+        <polyline id="chart-line-gankin" points="" fill="none" stroke="var(--text-3)" stroke-width="1.5" stroke-dasharray="4 3" />
+        <text id="chart-label-start" x="8" y="252" font-size="11" fill="var(--text-3)"></text>
+        <text id="chart-label-mid" x="300" y="252" font-size="11" fill="var(--text-3)" text-anchor="middle"></text>
+        <text id="chart-label-end" x="592" y="252" font-size="11" fill="var(--text-3)" text-anchor="end"></text>
+        <text id="chart-label-max" x="8" y="14" font-size="11" fill="var(--text-3)"></text>
+      </svg>
+    </div>
+
+    <div class="mt-6">
+      <p class="result-label mb-4">年別の推移</p>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>年</th>
+              <th class="num">元本累計</th>
+              <th class="num">評価額</th>
+              <th class="num">運用収益</th>
+            </tr>
+          </thead>
+          <tbody id="fukuri-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>初期投資額と毎月の積立額を万円単位で入力します。</li>
+      <li>想定利回り（年率）と積立期間をスライダーで調整します。</li>
+      <li>NISA（非課税）か課税口座かを選ぶと、その場で最終資産額が計算されます。</li>
+    </ol>
+
+    <h2 id="formula">計算式</h2>
+    <p>
+      毎月の積立を複利で運用したときの将来価値は、次の式で計算します。
+    </p>
+    <p>
+      <code>最終資産額 = 初期投資額 × (1 + r/12)^n + 毎月積立額 × (((1 + r/12)^n − 1) ÷ (r/12))</code>
+    </p>
+    <p>
+      ここで r は想定年利、n は積立月数です。利回りが0%の場合は単純に「初期投資額 ＋ 毎月積立額 × 月数」で計算します。
+    </p>
+    <p>
+      例えば初期投資0円・毎月3万円・想定利回り年5%で20年間積み立てると、元本合計は720万円ですが、複利の効果で最終資産額は約{example ? fmtMan(example.finalValue) : '1,233万円'}まで増える計算になります（運用収益は約{example ? fmtMan(example.unyouEki) : '513万円'}）。
+    </p>
+
+    <h2 id="nisa">新NISAとの関係</h2>
+    <p>
+      新NISAの年間投資枠は、つみたて投資枠120万円と成長投資枠240万円を合わせた最大360万円です。毎月の積立額に換算すると月30万円が上限の目安になります。また、生涯にわたって非課税で保有できる上限額（生涯投資枠）は1,800万円と定められています。積立額がこれらの上限に近づく場合は、複数の口座や制度の組み合わせを検討する必要があります。
+    </p>
+
+    <h2 id="use-cases">こんなときに使えます</h2>
+    <ul>
+      <li><strong>資産形成の計画</strong> — 毎月いくら積み立てれば目標額に届くかのシミュレーション</li>
+      <li><strong>利回りの感度確認</strong> — 想定利回りを変えたときの最終資産額の違いを比較</li>
+      <li><strong>NISAと課税口座の比較</strong> — 同じ条件での税引後受取額の差を確認</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseNum, fmtNum, fmtMan, bindCopy } from '../../lib/format';
+  import { calcFukuri, type AccountType } from '../../lib/fukuri';
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+
+  const initialInput = $('initial-input');
+  const monthlyInput = $('monthly-input');
+  const rateRange = $('rate-range');
+  const yearsRange = $('years-range');
+  const rateDisplay = document.getElementById('rate-display')!;
+  const yearsDisplay = document.getElementById('years-display')!;
+
+  const resultEl = document.getElementById('fukuri-result')!;
+  const unitEl = document.getElementById('fukuri-unit')!;
+  const subEl = document.getElementById('fukuri-sub')!;
+  const breakdownEl = document.getElementById('fukuri-breakdown')!;
+  const taxWrap = document.getElementById('row-tax-wrap')!;
+  const copyBtn = document.getElementById('fukuri-copy') as HTMLButtonElement;
+  const nisaNotice = document.getElementById('nisa-notice')!;
+  const nisaNoticeText = document.getElementById('nisa-notice-text')!;
+  const tableBody = document.getElementById('fukuri-table-body')!;
+
+  let copyText = '';
+
+  function getAccountType(): AccountType {
+    const el = document.querySelector('input[name="account"]:checked') as HTMLInputElement;
+    return (el?.value as AccountType) ?? 'nisa';
+  }
+
+  function renderChart(rows: { year: number; gankin: number; hyoka: number }[]) {
+    const w = 600;
+    const h = 260;
+    const padTop = 20;
+    const padBottom = 30;
+    const padLeft = 8;
+    const padRight = 8;
+    const maxVal = Math.max(...rows.map((r) => r.hyoka), 1);
+
+    const chartW = w - padLeft - padRight;
+    const chartH = h - padTop - padBottom;
+
+    function xOf(i: number) {
+      return padLeft + (rows.length <= 1 ? 0 : (chartW * i) / (rows.length - 1));
+    }
+    function yOf(v: number) {
+      return padTop + chartH - (chartH * v) / maxVal;
+    }
+
+    const linePointsValue = rows.map((r, i) => `${xOf(i).toFixed(1)},${yOf(r.hyoka).toFixed(1)}`).join(' ');
+    const linePointsGankin = rows.map((r, i) => `${xOf(i).toFixed(1)},${yOf(r.gankin).toFixed(1)}`).join(' ');
+    const areaPoints = `${padLeft},${(padTop + chartH).toFixed(1)} ${linePointsValue} ${xOf(rows.length - 1).toFixed(1)},${(padTop + chartH).toFixed(1)}`;
+
+    document.getElementById('chart-area')!.setAttribute('points', areaPoints);
+    document.getElementById('chart-line-value')!.setAttribute('points', linePointsValue);
+    document.getElementById('chart-line-gankin')!.setAttribute('points', linePointsGankin);
+
+    document.getElementById('chart-label-start')!.textContent = `${rows[0].year}年目`;
+    document.getElementById('chart-label-mid')!.textContent = `${rows[Math.floor((rows.length - 1) / 2)].year}年目`;
+    document.getElementById('chart-label-end')!.textContent = `${rows[rows.length - 1].year}年目`;
+    document.getElementById('chart-label-max')!.textContent = `最大 ${fmtMan(maxVal)}`;
+  }
+
+  function update() {
+    const initialMan = parseNum(initialInput.value);
+    const monthlyMan = parseNum(monthlyInput.value);
+    const rate = parseFloat(rateRange.value);
+    const years = parseFloat(yearsRange.value);
+    const accountType = getAccountType();
+
+    rateDisplay.textContent = `${rate.toFixed(1)}%`;
+    yearsDisplay.textContent = `${years}年`;
+
+    if (!Number.isFinite(initialMan) || initialMan < 0 || !Number.isFinite(monthlyMan) || monthlyMan < 0) {
+      resultEl.textContent = '—';
+      unitEl.textContent = '';
+      subEl.textContent = '積立額・利回り・期間を入力してください';
+      breakdownEl.hidden = true;
+      copyBtn.disabled = true;
+      copyText = '';
+      return;
+    }
+
+    const r = calcFukuri(initialMan * 10000, monthlyMan * 10000, rate, years, accountType);
+    if (!r) {
+      resultEl.textContent = '—';
+      unitEl.textContent = '';
+      subEl.textContent = '数値を入力してください';
+      breakdownEl.hidden = true;
+      copyBtn.disabled = true;
+      copyText = '';
+      return;
+    }
+
+    resultEl.textContent = fmtNum(r.afterTaxValue);
+    unitEl.textContent = '円';
+    subEl.textContent = `元本 ${fmtMan(r.gankinGokei)} ＋ 運用収益 ${fmtMan(r.unyouEki)}`;
+
+    breakdownEl.hidden = false;
+    document.getElementById('row-gankin')!.textContent = fmtMan(r.gankinGokei);
+    document.getElementById('row-eki')!.textContent = fmtMan(r.unyouEki);
+    taxWrap.hidden = accountType !== 'taxable';
+    if (accountType === 'taxable') {
+      document.getElementById('row-tax')!.textContent = fmtMan(r.tax);
+    }
+
+    // 新NISA枠チェック
+    const annualInvestMan = monthlyMan * 12;
+    const totalInvestMan = initialMan + monthlyMan * years * 12;
+    if (accountType === 'nisa' && annualInvestMan > 360) {
+      nisaNotice.hidden = false;
+      nisaNoticeText.textContent = `毎月${monthlyMan}万円の積立は年間${fmtNum(annualInvestMan)}万円となり、新NISAの年間投資枠（最大360万円）を超えています。`;
+    } else if (accountType === 'nisa' && totalInvestMan > 1800) {
+      nisaNotice.hidden = false;
+      nisaNoticeText.textContent = `積立総額が${fmtNum(totalInvestMan)}万円となり、新NISAの生涯投資枠（1,800万円）に達する見込みです。上限到達後は非課税枠での新規積立ができなくなります。`;
+    } else {
+      nisaNotice.hidden = true;
+    }
+
+    renderChart(r.rows.map((row) => ({ year: row.year, gankin: row.gankin, hyoka: row.hyoka })));
+
+    tableBody.innerHTML = r.rows
+      .map(
+        (row) =>
+          `<tr><td>${row.year}年</td><td class="num">${fmtMan(row.gankin)}</td><td class="num">${fmtMan(row.hyoka)}</td><td class="num">${fmtMan(row.unyouEki)}</td></tr>`
+      )
+      .join('');
+
+    copyBtn.disabled = false;
+    copyText = `毎月${fmtMan(monthlyMan * 10000).replace('万円', '')}万円を年利${rate.toFixed(1)}%で${years}年積立 → 最終資産額 ${fmtNum(r.afterTaxValue)}円`;
+
+    const url = new URL(location.href);
+    url.searchParams.set('initial', String(initialMan));
+    url.searchParams.set('monthly', String(monthlyMan));
+    url.searchParams.set('rate', String(rate));
+    url.searchParams.set('years', String(years));
+    url.searchParams.set('account', accountType);
+    history.replaceState(null, '', url);
+  }
+
+  [initialInput, monthlyInput].forEach((el) => el.addEventListener('input', update));
+  [rateRange, yearsRange].forEach((el) => el.addEventListener('input', update));
+  document.querySelectorAll<HTMLInputElement>('input[name="account"]').forEach((el) => el.addEventListener('change', update));
+  bindCopy(copyBtn, () => copyText);
+
+  // URLクエリから復元
+  const sp = new URLSearchParams(location.search);
+  const qInitial = sp.get('initial');
+  const qMonthly = sp.get('monthly');
+  const qRate = sp.get('rate');
+  const qYears = sp.get('years');
+  const qAccount = sp.get('account');
+  if (qInitial && Number.isFinite(parseNum(qInitial))) initialInput.value = qInitial;
+  if (qMonthly && Number.isFinite(parseNum(qMonthly))) monthlyInput.value = qMonthly;
+  if (qRate && Number.isFinite(Number(qRate))) rateRange.value = qRate;
+  if (qYears && Number.isFinite(Number(qYears))) yearsRange.value = qYears;
+  if (qAccount) {
+    const el = document.querySelector(`input[name="account"][value="${qAccount}"]`) as HTMLInputElement;
+    if (el) el.checked = true;
+  }
+
+  update();
+</script>
