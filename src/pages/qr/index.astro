@@ -1,0 +1,273 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+
+const faqs: Faq[] = [
+  {
+    q: '作ったQRコードに有効期限はありますか？',
+    a: '有効期限はありません。このツールが作るQRコードは、入力した文字やURLをそのまま画像として埋め込む仕組みのため、一度ダウンロードすれば画像として永久に使えます。外部サーバーを経由する短縮URL型のQRコードサービスとは異なり、サービスが終了して読み取れなくなる心配もありません。',
+  },
+  {
+    q: '商用利用はできますか？',
+    a: '商用利用も可能です。ただし「QRコード」という名称は株式会社デンソーウェーブの登録商標です。名称を使う際は一般的な表記ルールに沿ってご利用ください。QRコードの仕組み自体は誰でも自由に使えるオープンな規格です。',
+  },
+  {
+    q: '日本語のテキストは使えますか？',
+    a: '使えます。日本語を含む多くの言語の文字をQRコードに変換できます。ただし日本語のような全角文字は英数字より多くのデータ量を消費するため、長い日本語文章を入れる場合は誤り訂正レベルを「L」にするなど、データ量に余裕を持たせると読み取りやすくなります。',
+  },
+  {
+    q: '入力したURLやテキストはサーバーに送信されますか？',
+    a: '送信されません。QRコードの生成はすべてお使いのブラウザの中だけで行われるため、入力した内容が外部のサーバーに送られることは一切ありません。',
+  },
+  {
+    q: '誤り訂正レベルはどれを選べばいいですか？',
+    a: '通常の用途であれば初期設定の「M」で問題ありません。QRコードの中心にロゴを重ねたい場合や、印刷が汚れる可能性がある場所で使う場合は、訂正能力が高い「Q」や「H」を選ぶと破損しても読み取りやすくなります。ただし訂正レベルを上げるほどQRコードの模様が細かくなるため、入れられる文字数は少なくなります。',
+  },
+];
+---
+
+<ToolLayout
+  slug="qr"
+  lead="URLやテキストを入力すると、その場でQRコードが生成されます。サイズ・誤り訂正レベル・色を調整して、PNGまたはSVGでダウンロードできます。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="QRコード作成">
+    <div class="field">
+      <label for="qr-text">QRコードにするテキスト・URL</label>
+      <textarea
+        id="qr-text"
+        class="textarea"
+        style="min-height: 80px;"
+        placeholder="例: https://example.com"
+        autocomplete="off"
+      ></textarea>
+      <p class="error-text" id="qr-error" hidden></p>
+    </div>
+
+    <div class="field-grid cols-3 mt-5">
+      <div class="field">
+        <label for="qr-size">サイズ</label>
+        <select id="qr-size" class="select">
+          <option value="256">256px</option>
+          <option value="512" selected>512px</option>
+          <option value="1024">1024px</option>
+        </select>
+      </div>
+      <div class="field">
+        <span class="field-label" id="qr-ecl-label">誤り訂正レベル</span>
+        <div class="choice-row" role="radiogroup" aria-labelledby="qr-ecl-label">
+          <label class="choice"><input type="radio" name="qr-ecl" value="L" />L</label>
+          <label class="choice"><input type="radio" name="qr-ecl" value="M" checked />M</label>
+          <label class="choice"><input type="radio" name="qr-ecl" value="Q" />Q</label>
+          <label class="choice"><input type="radio" name="qr-ecl" value="H" />H</label>
+        </div>
+        <p class="hint">Hはロゴ重ね向け・データ量が増えます</p>
+      </div>
+      <div class="field">
+        <span class="field-label">色</span>
+        <div class="choice-row">
+          <label class="choice" for="qr-fg">
+            前景
+            <input type="color" id="qr-fg" value="#18181b" style="width: 28px; height: 28px; border: none; padding: 0; background: none;" />
+          </label>
+          <label class="choice" for="qr-bg">
+            背景
+            <input type="color" id="qr-bg" value="#ffffff" style="width: 28px; height: 28px; border: none; padding: 0; background: none;" />
+          </label>
+        </div>
+      </div>
+    </div>
+    <p class="error-text mt-4" id="qr-contrast-warning" hidden>前景色と背景色の明暗差が小さく、読み取りにくい配色です。</p>
+
+    <div class="result mt-5" aria-live="polite" style="text-align: center;">
+      <div id="qr-empty" class="empty">テキストを入力するとQRコードが表示されます</div>
+      <canvas id="qr-canvas" style="margin: 0 auto; max-width: 100%; height: auto; border-radius: var(--r-sm);" hidden></canvas>
+      <div class="result-actions" style="justify-content: center;">
+        <button type="button" class="btn btn-secondary btn-sm" id="qr-download-png" disabled>PNGをダウンロード</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="qr-download-svg" disabled>SVGをダウンロード</button>
+      </div>
+    </div>
+
+    <div class="notice mt-5">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>
+      <p>入力したテキストやURLはサーバーに送信されません。QRコードの生成はすべてブラウザの中だけで行われます。</p>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>テキストボックスにURLや文章を入力します。入力すると同時にQRコードが表示されます。</li>
+      <li>必要に応じてサイズ・誤り訂正レベル・色を調整します。</li>
+      <li>「PNGをダウンロード」または「SVGをダウンロード」で画像として保存できます。</li>
+    </ol>
+
+    <h2 id="format">PNGとSVG、どちらを選ぶか</h2>
+    <p>
+      チラシやSNS投稿など、そのまま画像として使う場合はPNGが手軽です。名刺やポスターなど印刷で大きく引き伸ばす可能性がある場合は、拡大しても画質が劣化しないSVG（ベクター画像）を選ぶときれいに印刷できます。
+    </p>
+
+    <h2 id="error-correction">誤り訂正レベルとは</h2>
+    <p>
+      QRコードには、汚れや破損があっても読み取れるようにする「誤り訂正」という仕組みがあります。L（約7%）・M（約15%）・Q（約25%）・H（約30%）の順に訂正できる欠損の割合が大きくなりますが、同時にコードの模様が複雑になり、格納できるデータ量は減っていきます。中央にロゴを重ねたい場合は、ロゴの分だけ読み取れなくなる面積を見込んでHを選ぶのが一般的です。
+    </p>
+
+    <h2 id="use-cases">よくある使いどころ</h2>
+    <ul>
+      <li><strong>店舗・メニュー表</strong> — 公式サイトやオンラインメニューへの誘導</li>
+      <li><strong>名刺・チラシ</strong> — 連絡先やポートフォリオサイトへのリンク</li>
+      <li><strong>イベント</strong> — 受付フォームやアンケートページへの案内</li>
+      <li><strong>Wi-Fi共有</strong> — 接続情報を直接テキストとして入力して共有</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import QRCode from 'qrcode';
+
+  const textInput = document.getElementById('qr-text') as HTMLTextAreaElement;
+  const sizeSelect = document.getElementById('qr-size') as HTMLSelectElement;
+  const fgInput = document.getElementById('qr-fg') as HTMLInputElement;
+  const bgInput = document.getElementById('qr-bg') as HTMLInputElement;
+  const errorEl = document.getElementById('qr-error') as HTMLParagraphElement;
+  const contrastWarning = document.getElementById('qr-contrast-warning') as HTMLParagraphElement;
+  const emptyEl = document.getElementById('qr-empty') as HTMLDivElement;
+  const canvas = document.getElementById('qr-canvas') as HTMLCanvasElement;
+  const downloadPngBtn = document.getElementById('qr-download-png') as HTMLButtonElement;
+  const downloadSvgBtn = document.getElementById('qr-download-svg') as HTMLButtonElement;
+
+  const MAX_BYTES = 2953;
+
+  function relativeLuminance(hex: string): number {
+    const c = hex.replace('#', '');
+    const r = parseInt(c.substring(0, 2), 16) / 255;
+    const g = parseInt(c.substring(2, 4), 16) / 255;
+    const b = parseInt(c.substring(4, 6), 16) / 255;
+    const lin = (v: number) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+  }
+
+  function contrastRatio(hex1: string, hex2: string): number {
+    const l1 = relativeLuminance(hex1);
+    const l2 = relativeLuminance(hex2);
+    const lighter = Math.max(l1, l2);
+    const darker = Math.min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  let currentText = '';
+
+  function scheduleGenerate() {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(generate, 300);
+  }
+
+  async function generate() {
+    const text = textInput.value;
+    errorEl.hidden = true;
+    contrastWarning.hidden = true;
+
+    if (!text) {
+      emptyEl.hidden = false;
+      canvas.hidden = true;
+      downloadPngBtn.disabled = true;
+      downloadSvgBtn.disabled = true;
+      currentText = '';
+      return;
+    }
+
+    const byteLength = new TextEncoder().encode(text).length;
+    if (byteLength > MAX_BYTES) {
+      errorEl.textContent = `長すぎます（${byteLength.toLocaleString('ja-JP')}バイト / 上限${MAX_BYTES.toLocaleString('ja-JP')}バイト）`;
+      errorEl.hidden = false;
+      emptyEl.hidden = true;
+      canvas.hidden = true;
+      downloadPngBtn.disabled = true;
+      downloadSvgBtn.disabled = true;
+      currentText = '';
+      return;
+    }
+
+    const fg = fgInput.value;
+    const bg = bgInput.value;
+    const ratio = contrastRatio(fg, bg);
+    contrastWarning.hidden = ratio >= 2.5;
+
+    const size = Number(sizeSelect.value);
+    const ecl = (document.querySelector('input[name="qr-ecl"]:checked') as HTMLInputElement)?.value || 'M';
+
+    try {
+      await QRCode.toCanvas(canvas, text, {
+        width: size,
+        errorCorrectionLevel: ecl,
+        margin: 2,
+        color: { dark: fg, light: bg },
+      });
+      emptyEl.hidden = true;
+      canvas.hidden = false;
+      downloadPngBtn.disabled = false;
+      downloadSvgBtn.disabled = false;
+      currentText = text;
+    } catch (e) {
+      errorEl.textContent = 'QRコードの生成に失敗しました。文字数や内容を見直してください。';
+      errorEl.hidden = false;
+      emptyEl.hidden = true;
+      canvas.hidden = true;
+      downloadPngBtn.disabled = true;
+      downloadSvgBtn.disabled = true;
+      currentText = '';
+    }
+  }
+
+  function download(url: string, filename: string) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  textInput.addEventListener('input', scheduleGenerate);
+  sizeSelect.addEventListener('change', generate);
+  fgInput.addEventListener('input', generate);
+  bgInput.addEventListener('input', generate);
+  document.querySelectorAll<HTMLInputElement>('input[name="qr-ecl"]').forEach((el) => el.addEventListener('change', generate));
+
+  downloadPngBtn.addEventListener('click', () => {
+    if (!currentText) return;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      download(url, 'qrcode.png');
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  });
+
+  downloadSvgBtn.addEventListener('click', async () => {
+    if (!currentText) return;
+    const size = Number(sizeSelect.value);
+    const fg = fgInput.value;
+    const bg = bgInput.value;
+    const ecl = (document.querySelector('input[name="qr-ecl"]:checked') as HTMLInputElement)?.value || 'M';
+    try {
+      const svgString: string = await QRCode.toString(currentText, {
+        type: 'svg',
+        width: size,
+        errorCorrectionLevel: ecl,
+        margin: 2,
+        color: { dark: fg, light: bg },
+      });
+      const blob = new Blob([svgString], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      download(url, 'qrcode.svg');
+      URL.revokeObjectURL(url);
+    } catch {
+      errorEl.textContent = 'SVGの生成に失敗しました。';
+      errorEl.hidden = false;
+    }
+  });
+
+  generate();
+</script>

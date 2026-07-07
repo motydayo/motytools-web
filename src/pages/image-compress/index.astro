@@ -1,0 +1,386 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+
+const faqs: Faq[] = [
+  {
+    q: '画質はどのくらい落ちますか？',
+    a: '品質スライダーの数値によります。初期設定の0.8であれば、写真をよく見比べないと違いがわからない程度の画質を保ちながら、ファイルサイズを大きく削減できます。品質を0.5近くまで下げると、拡大したときに輪郭のにじみが見えることがあります。SNS投稿用など画面表示が中心の用途であれば0.7〜0.8がおすすめです。',
+  },
+  {
+    q: 'どのくらい軽くなりますか？',
+    a: 'スマートフォンで撮影した写真であれば、品質0.8への圧縮で元のファイルサイズの概ね50〜80%程度削減できるのが目安です。ただし元の画像の内容（すでに圧縮済みか、色数が多いかなど）によって削減率は変わります。処理後の結果リストで、ファイルごとの削減率を確認できます。',
+  },
+  {
+    q: '何枚まで一度に処理できますか？',
+    a: '枚数の上限は設けていませんが、すべてお使いの端末のブラウザ内で処理するため、非常に多い枚数や大きなファイルを一度に処理すると時間がかかったり、端末の性能によっては動作が重くなったりすることがあります。数十枚程度まではまとめて処理しても問題なく動作します。',
+  },
+  {
+    q: 'サーバーにアップロードされない仕組みとは？',
+    a: 'このツールは画像の読み込み・縮小・圧縮のすべてを、ブラウザに標準搭載されている画像処理の機能（Canvas API）を使ってお使いの端末内だけで行います。画像データを外部のサーバーへ送信する処理が一切ないため、通信を監視しても画像が送られていないことを確認できます。',
+  },
+];
+---
+
+<ToolLayout
+  slug="image-compress"
+  lead="JPEG・PNG・WebP画像をドラッグ&ドロップするだけでブラウザ内で圧縮・リサイズ。サーバーに画像を送らないので安心です。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="画像圧縮・リサイズ">
+    <div class="field-grid cols-3">
+      <div class="field">
+        <label for="ic-quality">画質（JPEG/WebP、PNGには効きません）</label>
+        <input id="ic-quality" class="range" type="range" min="0.5" max="0.95" step="0.05" value="0.8" />
+        <p class="hint">現在: <span id="ic-quality-value">0.80</span></p>
+      </div>
+      <div class="field">
+        <label for="ic-maxsize">最大長辺</label>
+        <select id="ic-maxsize" class="select">
+          <option value="0">そのまま</option>
+          <option value="2560">2560px</option>
+          <option value="1920" selected>1920px</option>
+          <option value="1280">1280px</option>
+          <option value="800">800px</option>
+        </select>
+      </div>
+      <div class="field">
+        <span class="field-label" id="ic-format-label">出力形式</span>
+        <div class="choice-row" role="radiogroup" aria-labelledby="ic-format-label">
+          <label class="choice"><input type="radio" name="ic-format" value="same" checked />元の形式のまま</label>
+          <label class="choice"><input type="radio" name="ic-format" value="jpeg" />JPEG</label>
+          <label class="choice"><input type="radio" name="ic-format" value="webp" />WebP</label>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="ic-dropzone"
+      class="dropzone mt-5"
+      tabindex="0"
+      role="button"
+      aria-label="画像ファイルを選択またはドラッグ&ドロップ"
+    >
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+      <p><strong>クリックして画像を選択</strong>、またはここにドラッグ&ドロップ</p>
+      <p class="sub">JPEG / PNG / WebP に対応・複数選択可</p>
+      <input id="ic-file-input" type="file" accept="image/jpeg,image/png,image/webp" multiple style="display:none" />
+    </div>
+
+    <p class="error-text mt-4" id="ic-error" hidden></p>
+
+    <div class="mt-5" id="ic-results" hidden>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>ファイル名</th>
+              <th class="num">元サイズ</th>
+              <th class="num">圧縮後</th>
+              <th class="num">削減率</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ic-results-body"></tbody>
+        </table>
+      </div>
+      <div class="result-actions">
+        <button type="button" class="btn btn-primary btn-sm" id="ic-download-zip" hidden>すべてZIPでダウンロード</button>
+      </div>
+    </div>
+
+    <div class="notice mt-5">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>
+      <p>画像はサーバーにアップロードされません。すべてお使いの端末内で処理されます。</p>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>必要に応じて画質・最大長辺・出力形式をあらかじめ設定します。</li>
+      <li>画像をドロップゾームにドラッグ&ドロップするか、クリックしてファイルを選びます。複数枚まとめて選択できます。</li>
+      <li>自動で圧縮・リサイズが始まり、完了したファイルからリストに表示されます。個別にダウンロードするか、2枚以上ある場合は「すべてZIPでダウンロード」でまとめて保存できます。</li>
+    </ol>
+
+    <h2 id="how-it-works">圧縮の仕組み</h2>
+    <p>
+      画像をブラウザの画像デコード機能で読み込み、指定した最大長辺に収まるようキャンバス（Canvas）に描画し直してから、指定した品質でJPEGやWebPとして書き出しています。写真の向き情報（EXIF Orientation）を考慮して読み込むため、スマートフォンで撮った縦横の向きがおかしくなることもありません。
+    </p>
+    <p>
+      PNGをJPEGに変換する際は、透過部分が黒くならないよう白背景と合成してから書き出しています。もし圧縮した結果が元のファイルより大きくなってしまった場合は、自動的に元のファイルをそのまま採用します。
+    </p>
+
+    <h2 id="use-cases">よくある使いどころ</h2>
+    <ul>
+      <li><strong>ブログ・ECサイト</strong> — 表示速度改善のための画像軽量化</li>
+      <li><strong>メール添付</strong> — 添付容量の上限に収まるようまとめて圧縮</li>
+      <li><strong>SNS投稿</strong> — 投稿前に画像サイズを最適化</li>
+      <li><strong>ストレージ節約</strong> — スマートフォンの写真フォルダの容量整理</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { zipSync } from 'fflate';
+
+  interface ResultItem {
+    id: string;
+    originalName: string;
+    outputName: string;
+    originalSize: number;
+    outputSize: number | null;
+    status: 'processing' | 'done' | 'error';
+    blob: Blob | null;
+    thumbUrl: string | null;
+    objectUrl: string | null;
+    errorMessage?: string;
+  }
+
+  const MAX_FILE_SIZE = 50 * 1024 * 1024;
+
+  const qualityInput = document.getElementById('ic-quality') as HTMLInputElement;
+  const qualityValueEl = document.getElementById('ic-quality-value') as HTMLSpanElement;
+  const maxSizeSelect = document.getElementById('ic-maxsize') as HTMLSelectElement;
+  const dropzone = document.getElementById('ic-dropzone') as HTMLDivElement;
+  const fileInput = document.getElementById('ic-file-input') as HTMLInputElement;
+  const errorEl = document.getElementById('ic-error') as HTMLParagraphElement;
+  const resultsWrap = document.getElementById('ic-results') as HTMLDivElement;
+  const resultsBody = document.getElementById('ic-results-body') as HTMLTableSectionElement;
+  const downloadZipBtn = document.getElementById('ic-download-zip') as HTMLButtonElement;
+
+  const results: ResultItem[] = [];
+
+  qualityInput.addEventListener('input', () => {
+    qualityValueEl.textContent = Number(qualityInput.value).toFixed(2);
+  });
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('is-dragover');
+  });
+  dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('is-dragover');
+  });
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('is-dragover');
+    if (e.dataTransfer?.files?.length) {
+      handleFiles(Array.from(e.dataTransfer.files));
+    }
+  });
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files?.length) {
+      handleFiles(Array.from(fileInput.files));
+      fileInput.value = '';
+    }
+  });
+
+  function formatBytes(bytes: number): string {
+    if (bytes < 1024) return `${bytes}B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)}MB`;
+  }
+
+  async function handleFiles(files: File[]) {
+    errorEl.hidden = true;
+    const valid: File[] = [];
+    const errors: string[] = [];
+
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        errors.push(`${file.name}: 画像ファイルではありません`);
+        continue;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        errors.push(`${file.name}: 50MBを超えるファイルはスキップされました`);
+        continue;
+      }
+      valid.push(file);
+    }
+
+    if (errors.length > 0) {
+      errorEl.textContent = errors.join(' / ');
+      errorEl.hidden = false;
+    }
+
+    if (valid.length === 0) return;
+
+    resultsWrap.hidden = false;
+
+    for (const file of valid) {
+      const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const item: ResultItem = {
+        id,
+        originalName: file.name,
+        outputName: file.name,
+        originalSize: file.size,
+        outputSize: null,
+        status: 'processing',
+        blob: null,
+        thumbUrl: null,
+        objectUrl: null,
+      };
+      results.push(item);
+      renderRow(item);
+
+      try {
+        await processFile(file, item);
+      } catch (e) {
+        item.status = 'error';
+        item.errorMessage = '圧縮に失敗しました';
+      }
+      renderRow(item);
+      updateZipButton();
+    }
+  }
+
+  async function processFile(file: File, item: ResultItem) {
+    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const maxSize = Number(maxSizeSelect.value);
+    let { width, height } = bitmap;
+
+    if (maxSize > 0 && Math.max(width, height) > maxSize) {
+      const scale = maxSize / Math.max(width, height);
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d')!;
+    ctx.imageSmoothingQuality = 'high';
+
+    const formatChoice = (document.querySelector('input[name="ic-format"]:checked') as HTMLInputElement)?.value || 'same';
+    let outType = file.type || 'image/jpeg';
+    if (formatChoice === 'jpeg') outType = 'image/jpeg';
+    else if (formatChoice === 'webp') outType = 'image/webp';
+
+    const convertingToJpeg = outType === 'image/jpeg' && file.type !== 'image/jpeg';
+    if (convertingToJpeg || outType === 'image/jpeg') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+    }
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close?.();
+
+    const quality = Number(qualityInput.value);
+    const useQuality = outType === 'image/png' ? undefined : quality;
+
+    const blob: Blob | null = await new Promise((resolve) => {
+      canvas.toBlob((b) => resolve(b), outType, useQuality);
+    });
+
+    if (!blob) {
+      item.status = 'error';
+      item.errorMessage = '圧縮に失敗しました';
+      return;
+    }
+
+    let finalBlob = blob;
+    let finalType = outType;
+    if (blob.size >= file.size) {
+      finalBlob = file;
+      finalType = file.type;
+    }
+
+    const ext = finalType === 'image/png' ? 'png' : finalType === 'image/webp' ? 'webp' : 'jpg';
+    const baseName = file.name.replace(/\.[^.]+$/, '');
+    item.outputName = `${baseName}.${ext}`;
+    item.outputSize = finalBlob.size;
+    item.blob = finalBlob;
+    item.status = 'done';
+    item.thumbUrl = URL.createObjectURL(finalBlob);
+    item.objectUrl = item.thumbUrl;
+  }
+
+  function renderRow(item: ResultItem) {
+    let row = document.getElementById(`ic-row-${item.id}`) as HTMLTableRowElement | null;
+    if (!row) {
+      row = document.createElement('tr');
+      row.id = `ic-row-${item.id}`;
+      resultsBody.appendChild(row);
+    }
+
+    if (item.status === 'processing') {
+      row.innerHTML = `
+        <td><div class="spinner"></div></td>
+        <td>${escapeHtml(item.originalName)}</td>
+        <td class="num">${formatBytes(item.originalSize)}</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+        <td></td>
+      `;
+      return;
+    }
+
+    if (item.status === 'error') {
+      row.innerHTML = `
+        <td></td>
+        <td>${escapeHtml(item.originalName)}</td>
+        <td class="num">${formatBytes(item.originalSize)}</td>
+        <td class="num" colspan="2"><span class="error-text">${escapeHtml(item.errorMessage || '処理に失敗しました')}</span></td>
+        <td></td>
+      `;
+      return;
+    }
+
+    const reduction = item.outputSize != null ? Math.round((1 - item.outputSize / item.originalSize) * 100) : 0;
+    row.innerHTML = `
+      <td><img src="${item.thumbUrl}" alt="" width="48" height="48" style="object-fit:cover;border-radius:6px;" /></td>
+      <td>${escapeHtml(item.outputName)}</td>
+      <td class="num">${formatBytes(item.originalSize)}</td>
+      <td class="num">${formatBytes(item.outputSize || 0)}</td>
+      <td class="num">${reduction > 0 ? `-${reduction}%` : `${-reduction}%`}</td>
+      <td><a class="btn btn-ghost btn-sm" href="${item.thumbUrl}" download="${escapeHtml(item.outputName)}">DL</a></td>
+    `;
+  }
+
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c));
+  }
+
+  function updateZipButton() {
+    const done = results.filter((r) => r.status === 'done');
+    downloadZipBtn.hidden = done.length < 2;
+  }
+
+  downloadZipBtn.addEventListener('click', async () => {
+    const done = results.filter((r) => r.status === 'done' && r.blob);
+    if (done.length < 2) return;
+    const files: Record<string, Uint8Array> = {};
+    const usedNames = new Set<string>();
+    for (const item of done) {
+      let name = item.outputName;
+      let counter = 1;
+      while (usedNames.has(name)) {
+        const base = item.outputName.replace(/(\.[^.]+)$/, '');
+        const ext = item.outputName.match(/(\.[^.]+)$/)?.[1] || '';
+        name = `${base}_${counter}${ext}`;
+        counter++;
+      }
+      usedNames.add(name);
+      const buf = new Uint8Array(await item.blob!.arrayBuffer());
+      files[name] = buf;
+    }
+    const zipped = zipSync(files);
+    const blob = new Blob([zipped], { type: 'application/zip' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'images.zip';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+</script>
