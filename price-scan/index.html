@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ピッと最安 — 店頭でピッと、ネット最安値。</title>
+  <meta name="description" content="ピッと最安は、店頭で商品のバーコードをカメラで読むだけで、楽天市場・Yahoo!ショッピングのネット最安値がその場でわかるiPhoneアプリ。会員登録不要、無料で使えます。" />
+  <meta name="keywords" content="ピッと最安,バーコード,最安値,価格比較,JANコード,楽天,Yahoo!ショッピング,iPhoneアプリ,価格チェック" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://motytools.com/price-scan/" />
+  <meta property="og:title" content="ピッと最安 — 店頭でピッと、ネット最安値。" />
+  <meta property="og:description" content="バーコードをカメラで読むだけで、楽天・Yahoo!のネット最安値がその場でわかるiPhoneアプリ。" />
+  <meta property="og:url" content="https://motytools.com/price-scan/" />
+  <meta property="og:site_name" content="ピッと最安" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #FF6A3D;
+      --accent-dark: #E5522A;
+      --accent-soft: #FFF1EB;
+      --bg: #ffffff;
+      --bg-2: #FAFAF9;
+      --border: #ECECEA;
+      --text: #1d1d1f;
+      --text-2: #55555c;
+      --text-3: #8e8e93;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── NAV ── */
+    nav { border-bottom: 1px solid var(--border); }
+    nav .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo span { color: var(--text-3); font-weight: 400; }
+    .nav-app {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 88px 0 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 720px;
+      height: 480px;
+      background: radial-gradient(ellipse at center, rgba(255,106,61,0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero .container { position: relative; }
+
+    .app-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 32px rgba(255,106,61,0.28);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(255,106,61,0.25);
+      border-radius: 100px;
+      padding: 5px 14px;
+      margin-bottom: 24px;
+    }
+    .badge::before {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-size: clamp(34px, 7vw, 60px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    h1 .accent { color: var(--accent); }
+
+    .tagline {
+      font-size: clamp(15px, 2.5vw, 18px);
+      color: var(--text-2);
+      max-width: 480px;
+      margin: 0 auto 36px;
+      line-height: 1.8;
+    }
+
+    .store-placeholder {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--text);
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0.85;
+      cursor: default;
+    }
+    .store-placeholder .sub {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: #d1d1d6;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .store-placeholder .main {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .free-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    /* ── STEPS ── */
+    .steps {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .section-title {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 44px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .step {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .step-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .step h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.7;
+    }
+
+    /* ── FEATURES ── */
+    .features { padding: 80px 0; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .feature {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .feature:hover {
+      border-color: rgba(255,106,61,0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .feature h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .feature p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.75;
+    }
+
+    /* ── PRICE ── */
+    .pricing {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0;
+      text-align: center;
+    }
+    .price-card {
+      max-width: 420px;
+      margin: 0 auto;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+    }
+    .price-card .plan {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .price-card .price {
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    .price-card .desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.8;
+    }
+    .price-card .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 22px 0;
+    }
+
+    /* ── CTA ── */
+    .cta {
+      padding: 88px 0;
+      text-align: center;
+    }
+    .cta h2 {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    .cta p {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 28px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+    }
+    footer .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer p, footer a {
+      font-size: 12px;
+      color: var(--text-3);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--accent); }
+    footer .links { display: flex; gap: 20px; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 64px 0 56px; }
+      .step-grid, .feature-grid { grid-template-columns: 1fr; }
+      footer .inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="inner">
+      <a href="/" class="logo">moty<span>tools</span></a>
+      <span class="nav-app">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+        ピッと最安
+      </span>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <div class="app-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+          <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+          <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+          <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+          <line x1="7" y1="8" x2="7" y2="16"/>
+          <line x1="10.5" y1="8" x2="10.5" y2="16"/>
+          <line x1="13.5" y1="8" x2="13.5" y2="16"/>
+          <line x1="17" y1="8" x2="17" y2="16"/>
+        </svg>
+      </div>
+      <div><span class="badge">近日公開 — iOS アプリ</span></div>
+      <h1>店頭でピッと、<br /><span class="accent">ネット最安値。</span></h1>
+      <p class="tagline">商品のバーコードをカメラで読むだけ。楽天市場・Yahoo!ショッピングのネット最安値が、その場でわかります。会員登録もログインも一切不要。</p>
+      <div class="store-placeholder">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span>
+          <span class="sub">近日公開</span>
+          <span class="main">App Store</span>
+        </span>
+      </div>
+      <p class="free-note">無料でダウンロード（広告あり・買い切りで広告除去可能）</p>
+    </div>
+  </section>
+
+  <section class="steps">
+    <div class="container">
+      <p class="section-label">使い方</p>
+      <h2 class="section-title">やることは、読むだけ。</h2>
+      <div class="step-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+          </div>
+          <h3>アプリを起動</h3>
+          <p>開いた瞬間からカメラが待機。面倒な設定や登録は何もありません。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="8" x2="7" y2="16"/><line x1="11" y1="8" x2="11" y2="16"/><line x1="15" y1="8" x2="15" y2="16"/></svg>
+          </div>
+          <h3>バーコードをピッ</h3>
+          <p>店頭の商品のバーコード（JANコード）にかざすだけ。一瞬で読み取ります。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M15.5 9.5c0-1.4-1.6-2.5-3.5-2.5s-3.5 1.1-3.5 2.5 1.2 2 3.5 2.5 3.5 1.1 3.5 2.5-1.6 2.5-3.5 2.5-3.5-1.1-3.5-2.5"/></svg>
+          </div>
+          <h3>最安値がわかる</h3>
+          <p>楽天・Yahoo!のネット最安値を大きく表示。タップでそのまま商品ページへ。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <p class="section-label">特徴</p>
+      <h2 class="section-title">買う前の「これ、ネットならいくら？」に即答。</h2>
+      <div class="feature-grid">
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3>登録不要、起動して読むだけ</h3>
+          <p>会員登録もログインも一切なし。アプリを開いてバーコードにかざすだけで、すぐに価格がわかります。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          </div>
+          <h3>最安値を大きく表示</h3>
+          <p>楽天市場とYahoo!ショッピングを横断して、いちばん安い価格をひと目でわかる大きさで表示。タップすればそのまま商品ページに飛べます。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+          </div>
+          <h3>Amazon・価格.comにもワンタップ</h3>
+          <p>もっと比べたいときは、Amazonや価格.comの検索結果にもワンタップでジャンプできます。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 3 3 8 8 8"/><polyline points="12 7 12 12 16 14"/></svg>
+          </div>
+          <h3>スキャン履歴に自動保存</h3>
+          <p>読み取った商品はサムネイル・最安値つきで履歴に自動保存。あとで見返して比較検討できます。履歴は端末の中だけに保存されます。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="7" y1="22" x2="17" y2="22"/><line x1="12" y1="18" x2="12" y2="22"/><path d="M8 9h1M11.5 9h1M15 9h1M8 12h1M11.5 12h1M15 12h1"/></svg>
+          </div>
+          <h3>手入力にも対応</h3>
+          <p>バーコードが読みにくいときは、数字を直接入力してもOK。どんな状況でも価格を調べられます。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3>プライバシー第一</h3>
+          <p>カメラ映像は保存も送信もしません。履歴も端末内のみ。安心して使えます。</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing">
+    <div class="container">
+      <p class="section-label">価格</p>
+      <h2 class="section-title">ずっと無料で使えます。</h2>
+      <div class="price-card">
+        <p class="plan">無料</p>
+        <p class="price">¥0</p>
+        <p class="desc">すべての機能が無料で使えます（広告表示あり）。</p>
+        <div class="divider"></div>
+        <p class="desc">広告なしで使いたい方には、買い切りの広告除去オプションをご用意。月額課金はありません。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <h2>次の買い物から、<br />損しない。</h2>
+      <p>App Storeにて近日公開予定です。</p>
+      <div class="store-placeholder">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span>
+          <span class="sub">近日公開</span>
+          <span class="main">App Store</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="inner">
+      <p>© 2026 motytools</p>
+      <div class="links">
+        <a href="/price-scan/privacy/">プライバシーポリシー</a>
+        <a href="/">motytools.com</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
