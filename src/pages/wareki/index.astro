@@ -1,0 +1,350 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+import { ERAS, etoOf } from '../../data/eras';
+
+const faqs: Faq[] = [
+  {
+    q: '令和8年は西暦何年ですか？',
+    a: '西暦2026年です。令和は「西暦の下2桁から18を引く」か「西暦=令和年+2018」で覚えられます。令和8年なら2018+8=2026年です。',
+  },
+  {
+    q: '平成は何年まであるのですか？',
+    a: '平成は31年（2019年）4月30日までです。翌5月1日から令和元年が始まりました。書類で「平成32年」と書くと誤りになるため注意してください。',
+  },
+  {
+    q: '昭和64年はいつまでありましたか？',
+    a: '昭和64年は1989年1月7日までの1週間だけ存在し、翌1月8日から平成元年になりました。1989年生まれの方は誕生日によって昭和64年生まれか平成元年生まれかが分かれます。',
+  },
+  {
+    q: '履歴書の生年月日は西暦と和暦どちらで書けばよいですか？',
+    a: 'どちらでも正式な書類として通用しますが、記入欄の指定がある場合はそれに従ってください。指定がなければ、応募先の書類が和暦中心なら和暦、外資系やIT企業など西暦中心の文化なら西暦にそろえると読みやすくなります。',
+  },
+  {
+    q: '令和は西暦からどうやって計算すればいいですか？',
+    a: '「西暦から2018を引く」と覚えると簡単です。例えば2030年なら2030-2018=令和12年になります。逆に和暦から西暦を出すときは「令和の年数+2018」です。',
+  },
+  {
+    q: '元号が変わる境界の年はどう表示されますか？',
+    a: '1912年・1926年・1989年・2019年のように元号が切り替わる年は、前の元号の最終年と新しい元号の元年が同じ西暦内に存在します。このツールでは両方をあわせて表示し、切替日も注記しています。',
+  },
+];
+
+type EraRow = { seireki: number; wareki: string };
+
+function buildTable(eraName: string, maxYear: number): EraRow[] {
+  const era = ERAS.find((e) => e.name === eraName)!;
+  const rows: EraRow[] = [];
+  for (let y = 1; y <= maxYear; y++) {
+    rows.push({ seireki: era.offset + y, wareki: y === 1 ? `${eraName}元年` : `${eraName}${y}年` });
+  }
+  return rows;
+}
+
+const reiwaTable = buildTable('令和', 12);
+const heiseiTable = buildTable('平成', 31);
+const showaTable = buildTable('昭和', 64);
+---
+
+<ToolLayout
+  slug="wareki"
+  lead="「令和8年は西暦何年？」「1989年は昭和？平成？」——西暦と和暦（令和・平成・昭和・大正・明治）を入力した瞬間に変換します。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="西暦・和暦変換">
+    <div class="seg" role="tablist" aria-label="変換モード">
+      <button role="tab" id="tab-sw" aria-controls="pane-sw" aria-selected="true">西暦→和暦</button>
+      <button role="tab" id="tab-ws" aria-controls="pane-ws" aria-selected="false">和暦→西暦</button>
+    </div>
+
+    <!-- モード1: 西暦→和暦 -->
+    <div id="pane-sw" role="tabpanel" aria-labelledby="tab-sw" class="pane mt-5">
+      <div class="field-grid cols-2">
+        <div class="field">
+          <label for="sw-year">西暦年</label>
+          <div class="input-group">
+            <input id="sw-year" class="input" type="text" inputmode="numeric" placeholder="例: 2026" autocomplete="off" />
+            <span class="suffix">年</span>
+          </div>
+        </div>
+      </div>
+      <p class="error-text mt-4" id="sw-error" hidden>1868〜2100の範囲で入力してください。</p>
+      <div class="result" aria-live="polite">
+        <p class="result-label">和暦</p>
+        <p class="result-value"><span id="sw-result">—</span></p>
+        <p class="result-sub" id="sw-formula">西暦年を入力してください</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-copy" id="sw-copy" disabled>
+            <span class="label-default">結果をコピー</span>
+            <span class="label-done">コピーしました</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- モード2: 和暦→西暦 -->
+    <div id="pane-ws" role="tabpanel" aria-labelledby="tab-ws" class="pane mt-5" hidden>
+      <div class="field-grid cols-2">
+        <div class="field">
+          <label for="ws-era">元号</label>
+          <select id="ws-era" class="select">
+            <option value="令和">令和</option>
+            <option value="平成">平成</option>
+            <option value="昭和">昭和</option>
+            <option value="大正">大正</option>
+            <option value="明治">明治</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="ws-year">和暦年（元年は1）</label>
+          <div class="input-group">
+            <input id="ws-year" class="input" type="text" inputmode="numeric" placeholder="例: 8" autocomplete="off" />
+            <span class="suffix">年</span>
+          </div>
+        </div>
+      </div>
+      <p class="error-text mt-4" id="ws-error" hidden></p>
+      <div class="result" aria-live="polite">
+        <p class="result-label">西暦</p>
+        <p class="result-value"><span id="ws-result">—</span></p>
+        <p class="result-sub" id="ws-formula">元号と年を入力してください</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-copy" id="ws-copy" disabled>
+            <span class="label-default">結果をコピー</span>
+            <span class="label-done">コピーしました</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>「西暦→和暦」または「和暦→西暦」のタブを選びます。</li>
+      <li>年を入力すると、その瞬間に変換結果が表示されます。</li>
+      <li>境界年（元号が切り替わる年）は、前後の元号を両方表示します。</li>
+    </ol>
+
+    <h2 id="formula">和暦の計算方法</h2>
+    <p>
+      西暦と和暦の関係は「西暦 = 元号の開始年の前年 + 和暦年」で求められます。令和なら
+      <code>西暦 = 2018 + 令和年</code>、平成なら <code>西暦 = 1988 + 平成年</code>、昭和なら
+      <code>西暦 = 1925 + 昭和年</code> です。例えば令和8年は <strong>2018 + 8 = 2026年</strong> になります。
+    </p>
+    <p>
+      元号が切り替わる年（1912年・1926年・1989年・2019年）は、1年の途中で元号が変わるため、同じ西暦に2つの和暦が存在します。例えば1989年は
+      <strong>1月1日〜1月7日が昭和64年、1月8日〜12月31日が平成元年</strong>です。
+    </p>
+
+    <h2 id="table">西暦・和暦対照早見表</h2>
+    <h3>令和・西暦対照表</h3>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>和暦</th><th class="num">西暦</th></tr></thead>
+        <tbody>
+          {reiwaTable.map((r) => (
+            <tr><td>{r.wareki}</td><td class="num">{r.seireki}年</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <h3>平成・西暦対照表</h3>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>和暦</th><th class="num">西暦</th></tr></thead>
+        <tbody>
+          {heiseiTable.map((r) => (
+            <tr><td>{r.wareki}</td><td class="num">{r.seireki}年</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <h3>昭和・西暦対照表</h3>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>和暦</th><th class="num">西暦</th></tr></thead>
+        <tbody>
+          {showaTable.map((r) => (
+            <tr><td>{r.wareki}</td><td class="num">{r.seireki}年</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="use-cases">使いどころ</h2>
+    <ul>
+      <li><strong>書類記入</strong> — 履歴書・役所の申請書で和暦が求められたときの変換</li>
+      <li><strong>相続・登記</strong> — 古い戸籍謄本や登記簿に書かれた明治・大正・昭和の年号確認</li>
+      <li><strong>生年月日の確認</strong> — 「昭和◯年生まれは今何歳？」の下調べ</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseNum, fmtNum, bindCopy } from '../../lib/format';
+  import { ERAS, etoOf } from '../../data/eras';
+
+  // ── タブ切替 ──
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+  const panes = Array.from(document.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+
+  function selectTab(tab: HTMLButtonElement) {
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+    panes.forEach((p) => (p.hidden = p.id !== tab.getAttribute('aria-controls')));
+    const url = new URL(location.href);
+    url.searchParams.set('mode', tab.id.replace('tab-', ''));
+    history.replaceState(null, '', url);
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        next.focus();
+        selectTab(next);
+      }
+    });
+  });
+
+  const initMode = new URLSearchParams(location.search).get('mode');
+  const initTab = initMode && document.getElementById(`tab-${initMode}`);
+  if (initTab instanceof HTMLButtonElement) selectTab(initTab);
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+
+  const currentYear = new Date().getFullYear();
+
+  // 指定西暦年に含まれる和暦を全て返す（境界年は複数）
+  function warekiOf(seireki: number): { name: string; y: number; sinceLabel: string }[] {
+    const results: { name: string; y: number; sinceLabel: string }[] = [];
+    for (const era of ERAS) {
+      const sinceY = Number(era.since.slice(0, 4));
+      const untilY = era.until ? Number(era.until.slice(0, 4)) : Infinity;
+      if (seireki >= sinceY && seireki <= untilY) {
+        const y = seireki - era.offset;
+        if (y >= 1) {
+          const sinceMD = era.since.slice(5).replace('-', '/');
+          results.push({ name: era.name, y, sinceLabel: `${sinceMD}〜` });
+        }
+      }
+    }
+    // 開始年が早い順（=元号としては古い方が後）ではなく、施行が早い順に並べる
+    results.sort((a, b) => {
+      const ea = ERAS.find((e) => e.name === a.name)!;
+      const eb = ERAS.find((e) => e.name === b.name)!;
+      return ea.since.localeCompare(eb.since);
+    });
+    return results;
+  }
+
+  // ── モード1: 西暦→和暦 ──
+  {
+    const input = $('sw-year');
+    const resultEl = document.getElementById('sw-result')!;
+    const formulaEl = document.getElementById('sw-formula')!;
+    const errorEl = document.getElementById('sw-error')!;
+    const copyBtn = document.getElementById('sw-copy') as HTMLButtonElement;
+    let copyText = '';
+
+    function update() {
+      const y = parseNum(input.value);
+      errorEl.hidden = true;
+      if (!Number.isFinite(y) || !Number.isInteger(y)) {
+        resultEl.textContent = '—';
+        formulaEl.textContent = '西暦年を入力してください';
+        copyBtn.disabled = true;
+        copyText = '';
+        return;
+      }
+      if (y < 1868 || y > 2100) {
+        resultEl.textContent = '—';
+        formulaEl.textContent = '';
+        errorEl.hidden = false;
+        copyBtn.disabled = true;
+        copyText = '';
+        return;
+      }
+      const list = warekiOf(y);
+      if (list.length === 0) {
+        resultEl.textContent = '—';
+        formulaEl.textContent = '対応する元号データがありません';
+        copyBtn.disabled = true;
+        copyText = '';
+        return;
+      }
+      const labels = list.map((r) => (r.y === 1 ? `${r.name}元年` : `${r.name}${r.y}年`));
+      resultEl.textContent = labels.join(' / ');
+      const eto = etoOf(y);
+      const diff = currentYear - y;
+      let sub = `干支: ${eto}年`;
+      if (diff > 0) sub += `　今年から${fmtNum(diff)}年前`;
+      else if (diff < 0) sub += `　今年から${fmtNum(Math.abs(diff))}年後`;
+      else sub += '　今年です';
+      if (list.length > 1) {
+        sub += `　（${list.map((r) => `${r.sinceLabel}${r.name}`).join('、')}）`;
+      }
+      formulaEl.textContent = sub;
+      copyBtn.disabled = false;
+      copyText = labels.join(' / ');
+    }
+
+    input.addEventListener('input', update);
+    bindCopy(copyBtn, () => copyText);
+  }
+
+  // ── モード2: 和暦→西暦 ──
+  {
+    const eraSelect = document.getElementById('ws-era') as HTMLSelectElement;
+    const yearInput = $('ws-year');
+    const resultEl = document.getElementById('ws-result')!;
+    const formulaEl = document.getElementById('ws-formula')!;
+    const errorEl = document.getElementById('ws-error')!;
+    const copyBtn = document.getElementById('ws-copy') as HTMLButtonElement;
+    let copyText = '';
+
+    function update() {
+      const eraName = eraSelect.value;
+      const era = ERAS.find((e) => e.name === eraName)!;
+      const y = parseNum(yearInput.value);
+      errorEl.hidden = true;
+
+      if (!Number.isFinite(y) || !Number.isInteger(y) || y < 1) {
+        resultEl.textContent = '—';
+        formulaEl.textContent = '元号と年を入力してください';
+        copyBtn.disabled = true;
+        copyText = '';
+        return;
+      }
+
+      const sinceY = Number(era.since.slice(0, 4));
+      const untilY = era.until ? Number(era.until.slice(0, 4)) : new Date().getFullYear() + 50;
+      const maxY = untilY - era.offset;
+
+      if (y > maxY) {
+        resultEl.textContent = '—';
+        formulaEl.textContent = '';
+        errorEl.hidden = false;
+        errorEl.textContent = era.until
+          ? `${eraName}は${maxY}年（${era.offset + maxY}年）までです。`
+          : `${eraName}${maxY}年（西暦${era.offset + maxY}年）以前を入力してください。`;
+        copyBtn.disabled = true;
+        copyText = '';
+        return;
+      }
+
+      const seireki = era.offset + y;
+      const label = y === 1 ? `${eraName}元年` : `${eraName}${y}年`;
+      resultEl.innerHTML = `${fmtNum(seireki)}<span class="unit">年</span>`;
+      formulaEl.textContent = `${label} = 西暦${seireki}年　干支: ${etoOf(seireki)}年`;
+      copyBtn.disabled = false;
+      copyText = `西暦${seireki}年`;
+    }
+
+    eraSelect.addEventListener('change', update);
+    yearInput.addEventListener('input', update);
+    bindCopy(copyBtn, () => copyText);
+    update();
+  }

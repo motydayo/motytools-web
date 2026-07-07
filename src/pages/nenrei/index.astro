@@ -1,0 +1,263 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+import { ERAS, etoOf } from '../../data/eras';
+
+const faqs: Faq[] = [
+  {
+    q: '満年齢と数え年の違いは何ですか？',
+    a: '満年齢は生まれた日を0歳として誕生日ごとに1歳を加える、現在の日本で一般的な数え方です。数え年は生まれた日を1歳とし、以降は誕生日でなく1月1日を迎えるたびに1歳を加える伝統的な数え方で、七五三や厄年などで使われます。',
+  },
+  {
+    q: '履歴書や公的書類に書くのはどちらですか？',
+    a: '満年齢です。日本では1950年制定の「年齢のとなえ方に関する法律」により、公的な場面では満年齢を使うことが定められています。数え年は主に神社仏閣の行事（七五三・厄年）で使われます。',
+  },
+  {
+    q: '誕生日の前日に年をとるというのは本当ですか？',
+    a: '法律上は本当です。民法では誕生日の前日の午後12時（＝前日24時）に満了して1歳加算されると定められています。ただし日常生活や本ツールの表示では、一般的な感覚に合わせて「誕生日当日に年をとる」基準で計算しています。',
+  },
+  {
+    q: '2月29日生まれの人は年齢がどうなりますか？',
+    a: '平年は2月28日が経過した時点で加齢したものとして扱うのが一般的です。本ツールも2月29日生まれの方は2月28日の終わりに満年齢が上がる計算をしています。',
+  },
+  {
+    q: '年齢早見表はどう見ればいいですか？',
+    a: '表の「2026年に迎える満年齢」は、2026年中に誕生日を迎えたときの年齢です。まだ誕生日前の方は、表の年齢から1を引いた年齢が今の満年齢になります。',
+  },
+  {
+    q: '厄年や還暦は満年齢と数え年のどちらで数えますか？',
+    a: '地域や神社によって異なりますが、還暦（60歳）や厄年は伝統的に数え年で数えるのが一般的です。気になる場合はお参りする神社仏閣に確認することをおすすめします。',
+  },
+];
+
+const currentYear = new Date().getFullYear();
+
+function warekiLabel(year: number, month: number, day: number): string {
+  for (const era of ERAS) {
+    const sinceY = Number(era.since.slice(0, 4));
+    const untilY = era.until ? Number(era.until.slice(0, 4)) : Infinity;
+    if (year < sinceY || year > untilY) continue;
+    const dateStr = `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    if (dateStr >= era.since && (era.until === null || dateStr <= era.until)) {
+      const y = year - era.offset;
+      return y === 1 ? `${era.name}元年` : `${era.name}${y}年`;
+    }
+  }
+  return '';
+}
+
+type Row = { seireki: number; wareki: string; age2026: number; eto: string };
+const rows: Row[] = [];
+for (let y = 1930; y <= 2026; y++) {
+  rows.push({
+    seireki: y,
+    wareki: warekiLabel(y, 1, 1) || warekiLabel(y, 12, 31),
+    age2026: 2026 - y,
+    eto: etoOf(y),
+  });
+}
+rows.reverse();
+---
+
+<ToolLayout
+  slug="nenrei"
+  lead="生年月日を入れるだけで、今日時点の満年齢・数え年・干支・和暦の生年がその場でわかります。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="年齢計算">
+    <div class="field-grid cols-2">
+      <div class="field">
+        <label for="birth-date">生年月日</label>
+        <input id="birth-date" class="input" type="date" />
+      </div>
+    </div>
+    <p class="error-text mt-4" id="birth-error" hidden>正しい生年月日を入力してください。</p>
+    <div class="result" aria-live="polite">
+      <p class="result-label">満年齢</p>
+      <p class="result-value"><span id="age-result">—</span></p>
+      <p class="result-sub" id="age-formula">生年月日を入力してください</p>
+      <div class="result-actions">
+        <button type="button" class="btn btn-secondary btn-sm btn-copy" id="age-copy" disabled>
+          <span class="label-default">結果をコピー</span>
+          <span class="label-done">コピーしました</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="result mt-5" id="age-details" hidden>
+      <div class="result-row"><span class="k">数え年</span><span class="v num" id="detail-kazoe">—</span></div>
+      <div class="result-row"><span class="k">干支</span><span class="v" id="detail-eto">—</span></div>
+      <div class="result-row"><span class="k">和暦の生年</span><span class="v" id="detail-wareki">—</span></div>
+      <div class="result-row"><span class="k">今年の誕生日</span><span class="v" id="detail-birthday">—</span></div>
+      <div class="result-row"><span class="k">次の誕生日まで</span><span class="v num" id="detail-next">—</span></div>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>生年月日を入力します。カレンダーから選ぶか直接入力できます。</li>
+      <li>入力した瞬間に、満年齢・数え年・干支・和暦の生年が表示されます。</li>
+      <li>「結果をコピー」で満年齢をそのまま貼り付けに使えます。</li>
+    </ol>
+
+    <h2 id="formula">満年齢・数え年の計算方法</h2>
+    <p>
+      満年齢は<code>今年 − 生まれた年</code>を基本に、今年の誕生日をまだ迎えていなければ1を引いて求めます。例えば2000年2月29日生まれの人は、2026年7月8日時点ですでに誕生日（うるう年ではない年は2月28日扱い）を迎えているため、<strong>2026 − 2000 = 26歳</strong>になります。
+    </p>
+    <p>
+      数え年は<code>今年 − 生まれた年 + 1</code>で求めます。生まれた瞬間を1歳とし、1月1日が来るたびに加齢する考え方のため、誕生日前でも後でも「今年」を基準に一律で計算します。
+    </p>
+    <div class="notice">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p>2月29日生まれの方は、平年では2月28日の終わりをもって満年齢が加算されるものとして計算しています。</p>
+    </div>
+
+    <h2 id="table">年齢早見表（1930〜2026年生まれ）</h2>
+    <p>2026年中に誕生日を迎えたときの満年齢です。誕生日前の方は表の年齢から1を引いてください。</p>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th class="num">西暦</th><th>和暦</th><th class="num">2026年に迎える満年齢</th><th>干支</th></tr></thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr>
+              <td class="num">{r.seireki}年</td>
+              <td>{r.wareki}</td>
+              <td class="num">{r.age2026}歳</td>
+              <td>{r.eto}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="use-cases">使いどころ</h2>
+    <ul>
+      <li><strong>書類記入</strong> — 履歴書・申込書の満年齢欄の確認</li>
+      <li><strong>年齢確認</strong> — 未成年者向けサービスの年齢制限チェック</li>
+      <li><strong>行事の準備</strong> — 還暦・古希などの節目年齢や干支の確認</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { fmtNum, bindCopy } from '../../lib/format';
+  import { ERAS, etoOf } from '../../data/eras';
+
+  const input = document.getElementById('birth-date') as HTMLInputElement;
+  const errorEl = document.getElementById('birth-error')!;
+  const resultEl = document.getElementById('age-result')!;
+  const formulaEl = document.getElementById('age-formula')!;
+  const copyBtn = document.getElementById('age-copy') as HTMLButtonElement;
+  const detailsEl = document.getElementById('age-details')!;
+  const detailKazoe = document.getElementById('detail-kazoe')!;
+  const detailEto = document.getElementById('detail-eto')!;
+  const detailWareki = document.getElementById('detail-wareki')!;
+  const detailBirthday = document.getElementById('detail-birthday')!;
+  const detailNext = document.getElementById('detail-next')!;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  input.max = today.toISOString().slice(0, 10);
+
+  let copyText = '';
+
+  function warekiLabel(y: number, m: number, d: number): string {
+    for (const era of ERAS) {
+      const sinceY = Number(era.since.slice(0, 4));
+      const untilY = era.until ? Number(era.until.slice(0, 4)) : Infinity;
+      if (y < sinceY || y > untilY) continue;
+      const dateStr = `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      if (dateStr >= era.since && (era.until === null || dateStr <= era.until)) {
+        const yy = y - era.offset;
+        return yy === 1 ? `${era.name}元年` : `${era.name}${yy}年`;
+      }
+    }
+    return '不明';
+  }
+
+  function toUTCNoon(y: number, m: number, d: number): number {
+    return Date.UTC(y, m - 1, d, 12, 0, 0);
+  }
+
+  function update() {
+    errorEl.hidden = true;
+    if (!input.value) {
+      resultEl.textContent = '—';
+      formulaEl.textContent = '生年月日を入力してください';
+      copyBtn.disabled = true;
+      copyText = '';
+      detailsEl.hidden = true;
+      return;
+    }
+
+    const [by, bm, bd] = input.value.split('-').map(Number);
+    const birth = new Date(by, bm - 1, bd);
+    if (Number.isNaN(birth.getTime()) || birth > today) {
+      errorEl.hidden = false;
+      resultEl.textContent = '—';
+      formulaEl.textContent = '';
+      copyBtn.disabled = true;
+      copyText = '';
+      detailsEl.hidden = true;
+      return;
+    }
+
+    const ty = today.getFullYear();
+    const tm = today.getMonth() + 1;
+    const td = today.getDate();
+
+    // 誕生日を迎えたか（うるう日2/29は平年では2/28で判定される）
+    let effBm = bm;
+    let effBd = bd;
+    if (bm === 2 && bd === 29) {
+      // その年に2/29が存在しない場合は2/28扱い
+      const isLeapThisYear = new Date(ty, 1, 29).getMonth() === 1;
+      if (!isLeapThisYear) effBd = 28;
+    }
+    const hasHadBirthdayThisYear = tm > effBm || (tm === effBm && td >= effBd);
+
+    let age = ty - by;
+    if (!hasHadBirthdayThisYear) age--;
+
+    const kazoe = ty - by + 1;
+    const eto = etoOf(by);
+    const wareki = warekiLabel(by, bm, bd);
+
+    resultEl.innerHTML = `${fmtNum(age)}<span class="unit">歳</span>`;
+    formulaEl.textContent = `${ty}年 − ${by}年${!hasHadBirthdayThisYear ? ' − 1（誕生日前）' : ''} = ${age}歳`;
+    copyBtn.disabled = false;
+    copyText = `${age}歳`;
+
+    detailsEl.hidden = false;
+    detailKazoe.textContent = `${kazoe}歳`;
+    detailEto.textContent = `${eto}年`;
+    detailWareki.textContent = `${wareki}（${by}年${bm}月${bd}日）`;
+    detailBirthday.textContent = hasHadBirthdayThisYear ? '迎えました' : 'まだです';
+
+    // 次の誕生日までの日数
+    let nextBirthdayYear = ty;
+    let nextBm = bm;
+    let nextBd = bd;
+    if (bm === 2 && bd === 29) {
+      const isLeapNextCandidate = (y: number) => new Date(y, 1, 29).getMonth() === 1;
+      if (!hasHadBirthdayThisYear && !isLeapNextCandidate(ty)) nextBd = 28;
+    }
+    if (hasHadBirthdayThisYear) {
+      nextBirthdayYear = ty + 1;
+      if (bm === 2 && bd === 29 && !(new Date(nextBirthdayYear, 1, 29).getMonth() === 1)) {
+        nextBd = 28;
+      } else {
+        nextBd = bd;
+      }
+    }
+    const nextBirthday = toUTCNoon(nextBirthdayYear, nextBm, nextBd);
+    const todayUTC = toUTCNoon(ty, tm, td);
+    const daysUntil = Math.round((nextBirthday - todayUTC) / 86400000);
+    detailNext.textContent = daysUntil === 0 ? '今日です' : `${fmtNum(daysUntil)}日`;
+  }
+
+  input.addEventListener('input', update);
+  bindCopy(copyBtn, () => copyText);
+  update();
+</script>

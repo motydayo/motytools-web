@@ -1,0 +1,369 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+import { HOLIDAYS, HOLIDAY_YEARS } from '../../data/holidays';
+
+const faqs: Faq[] = [
+  {
+    q: '営業日とは何ですか？',
+    a: '土日・祝日を除いた、会社や銀行が通常営業している日のことです。このツールでは日本の祝日（内閣府発表の祝日データ）と土曜・日曜を除いて計算します。',
+  },
+  {
+    q: '5営業日後はいつになりますか？',
+    a: '基準日の翌日から数えて、土日祝を飛ばしながら5日分カウントした日です。例えば2026年7月8日（水）の3営業日後は、7月11日(土)・12日(日)を飛ばして2026年7月13日（月）になります。',
+  },
+  {
+    q: '年末年始休業は営業日から除かれますか？',
+    a: '除かれません。年末年始休業（12/29〜1/3など）は法律で定められた祝日ではなく企業ごとに異なるため、このツールでは計算に含めていません。ご自身の会社や取引先の休業期間は別途ご確認ください。',
+  },
+  {
+    q: '銀行の営業日もこのツールと同じですか？',
+    a: '銀行は土日祝に加えて、独自の休業日を定めている場合があります。多くの銀行は土日祝休業で本ツールと近い結果になりますが、正確な振込日などは各金融機関の窓口・公式サイトでの確認をおすすめします。',
+  },
+  {
+    q: '土曜日を営業日に含めることはできますか？',
+    a: 'できます。「◯営業日後」モードの「土曜を営業日に含める」を有効にすると、土曜日を除外せずに計算します（デフォルトは無効です）。',
+  },
+  {
+    q: '2028年以降の営業日も計算できますか？',
+    a: '祝日データは2025〜2027年のみ収録しています。それ以降の日付を計算した場合は、土日のみを除外した概算値になる旨を画面上に注記します。',
+  },
+];
+
+const holidayEntries2026 = Object.entries(HOLIDAYS).filter(([d]) => d.startsWith('2026'));
+const holidayEntries2027 = Object.entries(HOLIDAYS).filter(([d]) => d.startsWith('2027'));
+const WEEKDAY = ['日', '月', '火', '水', '木', '金', '土'];
+function weekdayOf(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  return WEEKDAY[new Date(y, m - 1, d).getDay()];
+}
+---
+
+<ToolLayout
+  slug="eigyobi"
+  lead="土日・日本の祝日を除いた「◯営業日後」の日付や、期間内の営業日数をその場で計算します。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="営業日計算">
+    <div class="seg" role="tablist" aria-label="計算モード">
+      <button role="tab" id="tab-add" aria-controls="pane-add" aria-selected="true">◯営業日後</button>
+      <button role="tab" id="tab-count" aria-controls="pane-count" aria-selected="false">期間内の営業日数</button>
+    </div>
+
+    <!-- モード1: ◯営業日後 -->
+    <div id="pane-add" role="tabpanel" aria-labelledby="tab-add" class="pane mt-5">
+      <div class="field-grid cols-3">
+        <div class="field">
+          <label for="add-base">基準日</label>
+          <input id="add-base" class="input" type="date" />
+        </div>
+        <div class="field">
+          <label for="add-n">営業日数</label>
+          <input id="add-n" class="input" type="text" inputmode="numeric" placeholder="例: 5" autocomplete="off" />
+        </div>
+        <div class="field">
+          <span class="field-label" id="add-dir-label">方向</span>
+          <div class="choice-row" role="radiogroup" aria-labelledby="add-dir-label">
+            <label class="choice"><input type="radio" name="add-dir" value="after" checked />後</label>
+            <label class="choice"><input type="radio" name="add-dir" value="before" />前</label>
+          </div>
+        </div>
+      </div>
+      <div class="field mt-4">
+        <div class="choice-row">
+          <label class="choice"><input type="checkbox" id="add-sat" />土曜を営業日に含める</label>
+        </div>
+      </div>
+      <p class="notice mt-4" id="add-notice" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>祝日データは2025〜2027年のみ収録しています。それ以降は土日のみを除外した概算値です。</span>
+      </p>
+      <div class="result" aria-live="polite">
+        <p class="result-label">結果の日付</p>
+        <p class="result-value"><span id="add-result">—</span></p>
+        <p class="result-sub" id="add-formula">基準日と営業日数を入力してください</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-copy" id="add-copy" disabled>
+            <span class="label-default">結果をコピー</span>
+            <span class="label-done">コピーしました</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- モード2: 期間内の営業日数 -->
+    <div id="pane-count" role="tabpanel" aria-labelledby="tab-count" class="pane mt-5" hidden>
+      <div class="field-grid cols-2">
+        <div class="field">
+          <label for="count-start">開始日</label>
+          <input id="count-start" class="input" type="date" />
+        </div>
+        <div class="field">
+          <label for="count-end">終了日</label>
+          <input id="count-end" class="input" type="date" />
+        </div>
+      </div>
+      <div class="field mt-4">
+        <span class="field-label" id="count-mode-label">数え方</span>
+        <div class="choice-row" role="radiogroup" aria-labelledby="count-mode-label">
+          <label class="choice"><input type="radio" name="count-mode" value="include" checked />初日を含める</label>
+          <label class="choice"><input type="radio" name="count-mode" value="exclude" />初日を含めない</label>
+        </div>
+      </div>
+      <p class="notice mt-4" id="count-notice" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>祝日データは2025〜2027年のみ収録しています。それ以降は土日のみを除外した概算値です。</span>
+      </p>
+      <div class="result" aria-live="polite">
+        <p class="result-label">営業日数</p>
+        <p class="result-value"><span id="count-result">—</span></p>
+        <p class="result-sub" id="count-formula">開始日と終了日を入力してください</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-copy" id="count-copy" disabled>
+            <span class="label-default">結果をコピー</span>
+            <span class="label-done">コピーしました</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>「◯営業日後」または「期間内の営業日数」のタブを選びます。</li>
+      <li>日付・営業日数を入力すると、その瞬間に結果が表示されます。</li>
+      <li>土曜日を営業日として扱いたい場合は「土曜を営業日に含める」をオンにします。</li>
+    </ol>
+
+    <h2 id="formula">営業日の数え方</h2>
+    <p>
+      営業日は「土曜・日曜・祝日を除いた平日」です。基準日の翌日から1日ずつ確認し、土日祝でない日だけをカウントして指定の営業日数に達するまで進めます。例えば2026年7月8日（水）の3営業日後は、7月9日(木)・10日(金)で2営業日、土日の7月11日・12日を飛ばして、7月13日（月）で3営業日目に達します。
+    </p>
+    <p>
+      「期間内の営業日数」は、開始日から終了日までの間にある平日（土日祝を除く）の日数をカウントします。初日を含める・含めないは「日数計算」ツールと同じ考え方で切り替えられます。
+    </p>
+
+    <h2 id="holidays-2026">2026年の祝日一覧</h2>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th class="num">日付</th><th>曜日</th><th>祝日名</th></tr></thead>
+        <tbody>
+          {holidayEntries2026.map(([date, name]) => (
+            <tr>
+              <td class="num">{date.slice(5).replace('-', '/')}</td>
+              <td>{weekdayOf(date)}</td>
+              <td>{name}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="holidays-2027">2027年の祝日一覧</h2>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th class="num">日付</th><th>曜日</th><th>祝日名</th></tr></thead>
+        <tbody>
+          {holidayEntries2027.map(([date, name]) => (
+            <tr>
+              <td class="num">{date.slice(5).replace('-', '/')}</td>
+              <td>{weekdayOf(date)}</td>
+              <td>{name}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="use-cases">使いどころ</h2>
+    <ul>
+      <li><strong>納期管理</strong> — 発注から「5営業日後」の納品予定日の確認</li>
+      <li><strong>振込・決済</strong> — 銀行振込の着金予定日の目安</li>
+      <li><strong>プロジェクト管理</strong> — 期間中の実働日数の把握</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseNum, fmtNum, bindCopy } from '../../lib/format';
+  import { HOLIDAYS, HOLIDAY_YEARS } from '../../data/holidays';
+
+  // ── タブ切替 ──
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+  const panes = Array.from(document.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+
+  function selectTab(tab: HTMLButtonElement) {
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+    panes.forEach((p) => (p.hidden = p.id !== tab.getAttribute('aria-controls')));
+    const url = new URL(location.href);
+    url.searchParams.set('mode', tab.id.replace('tab-', ''));
+    history.replaceState(null, '', url);
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        next.focus();
+        selectTab(next);
+      }
+    });
+  });
+
+  const initMode = new URLSearchParams(location.search).get('mode');
+  const initTab = initMode && document.getElementById(`tab-${initMode}`);
+  if (initTab instanceof HTMLButtonElement) selectTab(initTab);
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+
+  const now = new Date();
+  const todayISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  const WEEKDAY = ['日', '月', '火', '水', '木', '金', '土'];
+
+  function toUTCNoon(iso: string): number {
+    const [y, m, d] = iso.split('-').map(Number);
+    return Date.UTC(y, m - 1, d, 12, 0, 0);
+  }
+  function isoFromUTC(t: number): string {
+    const dt = new Date(t);
+    const y = dt.getUTCFullYear();
+    const m = String(dt.getUTCMonth() + 1).padStart(2, '0');
+    const d = String(dt.getUTCDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  function weekdayOf(iso: string): string {
+    const [y, m, d] = iso.split('-').map(Number);
+    return WEEKDAY[new Date(Date.UTC(y, m - 1, d, 12)).getUTCDay()];
+  }
+  function fmtDateJP(iso: string): string {
+    const [y, m, d] = iso.split('-').map(Number);
+    return `${y}年${m}月${d}日（${weekdayOf(iso)}）`;
+  }
+  function isOutOfHolidayRange(iso: string): boolean {
+    const y = Number(iso.slice(0, 4));
+    return !HOLIDAY_YEARS.includes(y);
+  }
+  function isBusinessDay(iso: string, includeSat: boolean): boolean {
+    const [y, m, d] = iso.split('-').map(Number);
+    const dow = new Date(Date.UTC(y, m - 1, d, 12)).getUTCDay();
+    if (dow === 0) return false;
+    if (dow === 6 && !includeSat) return false;
+    if ((HOLIDAYS as Record<string, string>)[iso]) return false;
+    return true;
+  }
+  function addBusinessDays(startISO: string, n: number, includeSat: boolean): string {
+    let t = toUTCNoon(startISO);
+    const dir = n >= 0 ? 1 : -1;
+    let remaining = Math.abs(n);
+    while (remaining > 0) {
+      t += dir * 86400000;
+      const iso = isoFromUTC(t);
+      if (isBusinessDay(iso, includeSat)) remaining--;
+    }
+    return isoFromUTC(t);
+  }
+
+  // ── モード1: ◯営業日後 ──
+  {
+    const baseInput = $('add-base');
+    baseInput.value = todayISO;
+    const nInput = $('add-n');
+    const satCheck = document.getElementById('add-sat') as HTMLInputElement;
+    const noticeEl = document.getElementById('add-notice')!;
+
+    const resultEl = document.getElementById('add-result')!;
+    const formulaEl = document.getElementById('add-formula')!;
+    const copyBtn = document.getElementById('add-copy') as HTMLButtonElement;
+    let copyText = '';
+
+    function update() {
+      const n = parseNum(nInput.value);
+      noticeEl.hidden = true;
+      if (!baseInput.value || !Number.isFinite(n) || n < 0 || !Number.isInteger(n)) {
+        resultEl.textContent = '—';
+        formulaEl.textContent = '基準日と営業日数を入力してください';
+        copyBtn.disabled = true;
+        copyText = '';
+        return;
+      }
+      const dir = (document.querySelector('input[name="add-dir"]:checked') as HTMLInputElement)?.value;
+      const sign = dir === 'before' ? -1 : 1;
+      const includeSat = satCheck.checked;
+
+      const resultISO = addBusinessDays(baseInput.value, sign * n, includeSat);
+      if (isOutOfHolidayRange(baseInput.value) || isOutOfHolidayRange(resultISO)) {
+        noticeEl.hidden = false;
+      }
+      const label = fmtDateJP(resultISO);
+      resultEl.textContent = label;
+      formulaEl.textContent = `${fmtDateJP(baseInput.value)} の ${fmtNum(n)}営業日${dir === 'before' ? '前' : '後'}`;
+      copyBtn.disabled = false;
+      copyText = label;
+    }
+
+    baseInput.addEventListener('input', update);
+    nInput.addEventListener('input', update);
+    satCheck.addEventListener('change', update);
+    document.querySelectorAll<HTMLInputElement>('input[name="add-dir"]').forEach((el) => el.addEventListener('change', update));
+    bindCopy(copyBtn, () => copyText);
+    update();
+  }
+
+  // ── モード2: 期間内の営業日数 ──
+  {
+    const startInput = $('count-start');
+    const endInput = $('count-end');
+    startInput.value = todayISO;
+    endInput.value = todayISO;
+    const noticeEl = document.getElementById('count-notice')!;
+
+    const resultEl = document.getElementById('count-result')!;
+    const formulaEl = document.getElementById('count-formula')!;
+    const copyBtn = document.getElementById('count-copy') as HTMLButtonElement;
+    let copyText = '';
+
+    function update() {
+      noticeEl.hidden = true;
+      if (!startInput.value || !endInput.value) {
+        resultEl.textContent = '—';
+        formulaEl.textContent = '開始日と終了日を入力してください';
+        copyBtn.disabled = true;
+        copyText = '';
+        return;
+      }
+      let a = startInput.value;
+      let b = endInput.value;
+      if (a > b) [a, b] = [b, a];
+
+      if (isOutOfHolidayRange(a) || isOutOfHolidayRange(b)) {
+        noticeEl.hidden = false;
+      }
+
+      const includeFirst = (document.querySelector('input[name="count-mode"]:checked') as HTMLInputElement)?.value === 'include';
+      let count = 0;
+      let t = toUTCNoon(a);
+      const endT = toUTCNoon(b);
+      let cursor = t;
+      if (!includeFirst) cursor += 86400000;
+      for (; cursor <= endT; cursor += 86400000) {
+        const iso = isoFromUTC(cursor);
+        if (isBusinessDay(iso, false)) count++;
+      }
+
+      resultEl.innerHTML = `${fmtNum(count)}<span class="unit">営業日</span>`;
+      formulaEl.textContent = `${fmtDateJP(a)} 〜 ${fmtDateJP(b)}（土日祝を除く）`;
+      copyBtn.disabled = false;
+      copyText = `${fmtNum(count)}営業日`;
+    }
+
+    startInput.addEventListener('input', update);
+    endInput.addEventListener('input', update);
+    document.querySelectorAll<HTMLInputElement>('input[name="count-mode"]').forEach((el) => el.addEventListener('change', update));
+    bindCopy(copyBtn, () => copyText);
+    update();
+  }
+</script>
