@@ -1,0 +1,272 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+
+const faqs: Faq[] = [
+  {
+    q: '初日を含む数え方はどんなときに使いますか？',
+    a: '薬の服用日数や宿泊日数を数えるときに使います。例えば「7月1日から7月5日まで5日分の薬」という場合は初日を含む数え方（1日〜5日で5日間）です。一方、契約の残り日数や締切までの日数は初日を含めない数え方が一般的です。',
+  },
+  {
+    q: '営業日だけで日数を数えたいのですが？',
+    a: 'このツールは土日祝を含めたカレンダー上の日数を計算します。土日・祝日を除いた営業日で数えたい場合は「営業日計算」ツールをご利用ください。',
+  },
+  {
+    q: '100日後はいつになりますか？',
+    a: '「◯日後・◯日前」モードで基準日を今日のまま、日数に100を入力すると即座に日付が表示されます。基準日を出産予定日や記念日にすれば、100日後・100日前の日付もすぐわかります。',
+  },
+  {
+    q: '2つの日付の間の日数と「◯週間と◯日」は何が違いますか？',
+    a: '同じ日数を単位を変えて表示しているだけです。例えば10日間は「1週間と3日」と表示されます。旅行の日程や工期の説明で週単位が使いやすい場合に活用してください。',
+  },
+  {
+    q: '過去の日付から今日までの経過日数もわかりますか？',
+    a: 'わかります。「日付の間の日数」モードで、開始日に過去の日付、終了日に今日の日付を入れると経過日数が表示されます。開始日と終了日の前後は自動で入れ替えて計算します。',
+  },
+];
+---
+
+<ToolLayout
+  slug="days"
+  lead="2つの日付の間の日数、今日から◯日後・◯日前の日付を、入力した瞬間に計算します。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="日数計算">
+    <div class="seg" role="tablist" aria-label="計算モード">
+      <button role="tab" id="tab-between" aria-controls="pane-between" aria-selected="true">日付の間の日数</button>
+      <button role="tab" id="tab-offset" aria-controls="pane-offset" aria-selected="false">◯日後・◯日前</button>
+    </div>
+
+    <!-- モード1: 日付の間の日数 -->
+    <div id="pane-between" role="tabpanel" aria-labelledby="tab-between" class="pane mt-5">
+      <div class="field-grid cols-2">
+        <div class="field">
+          <label for="btw-start">開始日</label>
+          <input id="btw-start" class="input" type="date" />
+        </div>
+        <div class="field">
+          <label for="btw-end">終了日</label>
+          <input id="btw-end" class="input" type="date" />
+        </div>
+      </div>
+      <div class="field mt-4">
+        <span class="field-label" id="btw-count-label">数え方</span>
+        <div class="choice-row" role="radiogroup" aria-labelledby="btw-count-label">
+          <label class="choice"><input type="radio" name="btw-count" value="exclude" checked />初日を含めない（単純差）</label>
+          <label class="choice"><input type="radio" name="btw-count" value="include" />初日を含める</label>
+        </div>
+      </div>
+      <div class="result" aria-live="polite">
+        <p class="result-label">日数</p>
+        <p class="result-value"><span id="btw-result">—</span></p>
+        <p class="result-sub" id="btw-formula">開始日と終了日を入力してください</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-copy" id="btw-copy" disabled>
+            <span class="label-default">結果をコピー</span>
+            <span class="label-done">コピーしました</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- モード2: ◯日後・◯日前 -->
+    <div id="pane-offset" role="tabpanel" aria-labelledby="tab-offset" class="pane mt-5" hidden>
+      <div class="field-grid cols-3">
+        <div class="field">
+          <label for="off-base">基準日</label>
+          <input id="off-base" class="input" type="date" />
+        </div>
+        <div class="field">
+          <label for="off-days">日数</label>
+          <input id="off-days" class="input" type="text" inputmode="numeric" placeholder="例: 100" autocomplete="off" />
+        </div>
+        <div class="field">
+          <span class="field-label" id="off-dir-label">方向</span>
+          <div class="choice-row" role="radiogroup" aria-labelledby="off-dir-label">
+            <label class="choice"><input type="radio" name="off-dir" value="after" checked />後</label>
+            <label class="choice"><input type="radio" name="off-dir" value="before" />前</label>
+          </div>
+        </div>
+      </div>
+      <div class="result" aria-live="polite">
+        <p class="result-label">結果の日付</p>
+        <p class="result-value"><span id="off-result">—</span></p>
+        <p class="result-sub" id="off-formula">基準日と日数を入力してください</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-copy" id="off-copy" disabled>
+            <span class="label-default">結果をコピー</span>
+            <span class="label-done">コピーしました</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>「日付の間の日数」または「◯日後・◯日前」のタブを選びます。</li>
+      <li>日付・日数を入力すると、その瞬間に結果が表示されます。</li>
+      <li>「日付の間の日数」では、初日を含める・含めないを切り替えられます。</li>
+    </ol>
+
+    <h2 id="formula">日数の計算方法</h2>
+    <p>
+      2つの日付の間の日数は<code>終了日 − 開始日</code>の単純差が基本です。例えば7月1日から7月10日までは、単純差では<strong>9日間</strong>ですが、初日を含める数え方では両端を含めて<strong>10日間</strong>になります。宿泊数や服薬日数は初日を含める数え方を使うのが一般的です。
+    </p>
+    <p>
+      「◯日後・◯日前」は基準日に日数を加算・減算して求めます。夏時間やタイムゾーンのずれで日付がずれないよう、内部の計算はすべて協定世界時（UTC）の正午を基準に行っています。
+    </p>
+
+    <h2 id="use-cases">使いどころ</h2>
+    <ul>
+      <li><strong>締切管理</strong> — 今日から締切までの残り日数の確認</li>
+      <li><strong>記念日</strong> — 出会った日・結婚した日から何日経ったかの計算</li>
+      <li><strong>体調管理</strong> — 薬の服用日数、生理周期の記録</li>
+      <li><strong>旅行・出張</strong> — 出発日から◯日後の帰着日の確認</li>
+    </ul>
+    <p>土日祝を除いた「営業日」で数えたい場合は、<a href="/eigyobi/">営業日計算ツール</a>をご利用ください。</p>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseNum, fmtNum, bindCopy } from '../../lib/format';
+
+  // ── タブ切替 ──
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+  const panes = Array.from(document.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+
+  function selectTab(tab: HTMLButtonElement) {
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+    panes.forEach((p) => (p.hidden = p.id !== tab.getAttribute('aria-controls')));
+    const url = new URL(location.href);
+    url.searchParams.set('mode', tab.id.replace('tab-', ''));
+    history.replaceState(null, '', url);
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        next.focus();
+        selectTab(next);
+      }
+    });
+  });
+
+  const initMode = new URLSearchParams(location.search).get('mode');
+  const initTab = initMode && document.getElementById(`tab-${initMode}`);
+  if (initTab instanceof HTMLButtonElement) selectTab(initTab);
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+
+  const now = new Date();
+  const todayISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  const WEEKDAY = ['日', '月', '火', '水', '木', '金', '土'];
+
+  function toUTCNoon(iso: string): number {
+    const [y, m, d] = iso.split('-').map(Number);
+    return Date.UTC(y, m - 1, d, 12, 0, 0);
+  }
+  function weekdayOf(iso: string): string {
+    const [y, m, d] = iso.split('-').map(Number);
+    return WEEKDAY[new Date(Date.UTC(y, m - 1, d, 12)).getUTCDay()];
+  }
+  function fmtDateJP(iso: string): string {
+    const [y, m, d] = iso.split('-').map(Number);
+    return `${y}年${m}月${d}日（${weekdayOf(iso)}）`;
+  }
+  function isoFromUTC(t: number): string {
+    const dt = new Date(t);
+    const y = dt.getUTCFullYear();
+    const m = String(dt.getUTCMonth() + 1).padStart(2, '0');
+    const d = String(dt.getUTCDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  // ── モード1: 日付の間の日数 ──
+  {
+    const startInput = $('btw-start');
+    const endInput = $('btw-end');
+    startInput.value = todayISO;
+    endInput.value = todayISO;
+
+    const resultEl = document.getElementById('btw-result')!;
+    const formulaEl = document.getElementById('btw-formula')!;
+    const copyBtn = document.getElementById('btw-copy') as HTMLButtonElement;
+    let copyText = '';
+
+    function update() {
+      if (!startInput.value || !endInput.value) {
+        resultEl.textContent = '—';
+        formulaEl.textContent = '開始日と終了日を入力してください';
+        copyBtn.disabled = true;
+        copyText = '';
+        return;
+      }
+      let a = startInput.value;
+      let b = endInput.value;
+      if (a > b) [a, b] = [b, a];
+
+      const includeFirst = (document.querySelector('input[name="btw-count"]:checked') as HTMLInputElement)?.value === 'include';
+      const rawDiff = Math.round((toUTCNoon(b) - toUTCNoon(a)) / 86400000);
+      const days = includeFirst ? rawDiff + 1 : rawDiff;
+
+      const weeks = Math.floor(days / 7);
+      const rem = days % 7;
+
+      resultEl.innerHTML = `${fmtNum(days)}<span class="unit">日間</span>`;
+      formulaEl.textContent = `${weeks}週間と${rem}日　${fmtDateJP(a)} 〜 ${fmtDateJP(b)}`;
+      copyBtn.disabled = false;
+      copyText = `${fmtNum(days)}日間`;
+    }
+
+    startInput.addEventListener('input', update);
+    endInput.addEventListener('input', update);
+    document.querySelectorAll<HTMLInputElement>('input[name="btw-count"]').forEach((el) => el.addEventListener('change', update));
+    bindCopy(copyBtn, () => copyText);
+    update();
+  }
+
+  // ── モード2: ◯日後・◯日前 ──
+  {
+    const baseInput = $('off-base');
+    baseInput.value = todayISO;
+    const daysInput = $('off-days');
+
+    const resultEl = document.getElementById('off-result')!;
+    const formulaEl = document.getElementById('off-formula')!;
+    const copyBtn = document.getElementById('off-copy') as HTMLButtonElement;
+    let copyText = '';
+
+    function update() {
+      const n = parseNum(daysInput.value);
+      if (!baseInput.value || !Number.isFinite(n) || n < 0) {
+        resultEl.textContent = '—';
+        formulaEl.textContent = '基準日と日数を入力してください';
+        copyBtn.disabled = true;
+        copyText = '';
+        return;
+      }
+      const dir = (document.querySelector('input[name="off-dir"]:checked') as HTMLInputElement)?.value;
+      const sign = dir === 'before' ? -1 : 1;
+      const t = toUTCNoon(baseInput.value) + sign * n * 86400000;
+      const resultISO = isoFromUTC(t);
+      const label = fmtDateJP(resultISO);
+
+      resultEl.textContent = label;
+      formulaEl.textContent = `${fmtDateJP(baseInput.value)} の ${fmtNum(n)}日${dir === 'before' ? '前' : '後'}`;
+      copyBtn.disabled = false;
+      copyText = label;
+    }
+
+    baseInput.addEventListener('input', update);
+    daysInput.addEventListener('input', update);
+    document.querySelectorAll<HTMLInputElement>('input[name="off-dir"]').forEach((el) => el.addEventListener('change', update));
+    bindCopy(copyBtn, () => copyText);
+    update();
+  }
+</script>
