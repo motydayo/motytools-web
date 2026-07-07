@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolCard from '../../components/ToolCard.astro';
+import { SITE } from '../../config';
+import { TOOLS, CATEGORIES } from '../../data/tools';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: '無料Webツール一覧 - motytools',
+    url: `${SITE.url}/tools/`,
+    inLanguage: 'ja',
+    hasPart: TOOLS.map((t) => ({
+      '@type': 'WebApplication',
+      name: t.name,
+      url: `${SITE.url}/${t.slug}/`,
+      description: t.short,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: 'ツール一覧', item: SITE.url + '/tools/' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="無料Webツール一覧｜計算・変換・画像処理がブラウザで完結"
+  description="手取り計算・住宅ローン・和暦変換・年齢早見表・文字数カウント・画像圧縮など、登録不要ですぐ使える無料Webツールの一覧。すべてブラウザ内で動くので、データが外部に送信されず安心です。"
+  path="/tools/"
+  ogImage="/og/tools.png"
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li aria-current="page">ツール一覧</li>
+      </ol>
+    </nav>
+
+    <div class="tool-hero">
+      <h1>無料Webツール一覧</h1>
+      <p class="lead">
+        登録不要・広告控えめ・スマホ対応。すべてのツールはブラウザの中だけで動くので、入力したデータや画像がサーバーへ送信されることはありません。
+      </p>
+    </div>
+
+    {CATEGORIES.map((cat) => (
+      <section class="cat-section" aria-labelledby={`cat-${cat.id}`}>
+        <div class="section-heading">
+          <h2 id={`cat-${cat.id}`}>{cat.name}</h2>
+        </div>
+        <p class="cat-desc">{cat.description}</p>
+        <div class="cards">
+          {TOOLS.filter((t) => t.category === cat.id).map((t) => <ToolCard tool={t} />)}
+        </div>
+      </section>
+    ))}
+
+    <section class="article">
+      <div class="prose">
+        <h2>motytoolsのツールについて</h2>
+        <p>
+          motytoolsのWebツールは、<strong>「検索して、開いて、すぐ使える」</strong>ことを最優先に作っています。
+          会員登録・アプリのインストール・ファイルのアップロードはすべて不要。計算も変換も画像処理も、お使いのブラウザの中だけで完結します。
+        </p>
+        <ul>
+          <li>すべて無料・登録不要で利用できます</li>
+          <li>入力内容や画像はサーバーに送信されません</li>
+          <li>スマートフォン・タブレット・PCのどれでも使えます</li>
+          <li>計算結果はワンタップでコピー・共有できます</li>
+        </ul>
+        <p>
+          「こんなツールが欲しい」というご要望があれば、各アプリ内の「ご意見・要望」からお寄せください。
+        </p>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .cat-section {
+    margin-bottom: var(--sp-7);
+  }
+  .cat-desc {
+    color: var(--text-2);
+    font-size: var(--fs-sm);
+    margin: calc(-1 * var(--sp-2)) 0 var(--sp-4);
+  }
+</style>

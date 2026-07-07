@@ -1,0 +1,301 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+
+const faqs: Faq[] = [
+  {
+    q: '消費税込みの価格を計算するには？',
+    a: '「割引・割増」モードで割増を選び、税抜価格と10%（軽減税率対象は8%）を入力してください。例えば税抜1,980円なら、10%増しで税込2,178円になります。',
+  },
+  {
+    q: '「3割引」と「30%引き」は同じ意味ですか？',
+    a: '同じ意味です。「割」は10%を表す日本語の単位なので、1割=10%、3割=30%、5割=50%です。「3割引」は30%引きとして計算してください。',
+  },
+  {
+    q: '増減率がマイナスになるのはどんなときですか？',
+    a: '変化後の値が変化前より小さいときです。例えば売上が200万円から150万円に減った場合、増減率は-25%（25%の減少）と表示されます。',
+  },
+  {
+    q: '計算結果の小数点以下はどう処理されていますか？',
+    a: '見やすさのため小数第2位までを四捨五入して表示しています。金額の割引計算では1円未満を四捨五入しています。',
+  },
+  {
+    q: '入力した数値はサーバーに送信されますか？',
+    a: '送信されません。計算はすべてお使いのブラウザの中だけで行われるため、入力内容が外部に保存・送信されることは一切ありません。',
+  },
+];
+---
+
+<ToolLayout
+  slug="percent"
+  lead="「1,980円の30%引きは？」「52人は80人の何%？」——4つのモードで、割合・割引・増減率をその場で計算。入力した瞬間に答えが出ます。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="パーセント計算機">
+    <div class="seg" role="tablist" aria-label="計算モード">
+      <button role="tab" id="tab-of" aria-controls="pane-of" aria-selected="true">〜の◯%は？</button>
+      <button role="tab" id="tab-ratio" aria-controls="pane-ratio" aria-selected="false">何%か求める</button>
+      <button role="tab" id="tab-discount" aria-controls="pane-discount" aria-selected="false">割引・割増</button>
+      <button role="tab" id="tab-change" aria-controls="pane-change" aria-selected="false">増減率</button>
+    </div>
+
+    <!-- モード1: AのB% -->
+    <div id="pane-of" role="tabpanel" aria-labelledby="tab-of" class="pane mt-5">
+      <div class="field-grid cols-2">
+        <div class="field">
+          <label for="of-base">もとの数</label>
+          <input id="of-base" class="input" type="text" inputmode="decimal" placeholder="例: 5000" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="of-rate">割合</label>
+          <div class="input-group">
+            <input id="of-rate" class="input" type="text" inputmode="decimal" placeholder="例: 20" autocomplete="off" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+      </div>
+      <div class="result" aria-live="polite">
+        <p class="result-label">計算結果</p>
+        <p class="result-value"><span id="of-result">—</span></p>
+        <p class="result-sub" id="of-formula">もとの数と割合を入力してください</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-copy" id="of-copy" disabled>
+            <span class="label-default">結果をコピー</span>
+            <span class="label-done">コピーしました</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- モード2: AはBの何% -->
+    <div id="pane-ratio" role="tabpanel" aria-labelledby="tab-ratio" class="pane mt-5" hidden>
+      <div class="field-grid cols-2">
+        <div class="field">
+          <label for="ratio-part">くらべる数（部分）</label>
+          <input id="ratio-part" class="input" type="text" inputmode="decimal" placeholder="例: 52" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="ratio-whole">もとにする数（全体）</label>
+          <input id="ratio-whole" class="input" type="text" inputmode="decimal" placeholder="例: 80" autocomplete="off" />
+        </div>
+      </div>
+      <div class="result" aria-live="polite">
+        <p class="result-label">計算結果</p>
+        <p class="result-value"><span id="ratio-result">—</span></p>
+        <p class="result-sub" id="ratio-formula">2つの数を入力してください</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-copy" id="ratio-copy" disabled>
+            <span class="label-default">結果をコピー</span>
+            <span class="label-done">コピーしました</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- モード3: 割引・割増 -->
+    <div id="pane-discount" role="tabpanel" aria-labelledby="tab-discount" class="pane mt-5" hidden>
+      <div class="field-grid cols-3">
+        <div class="field">
+          <label for="disc-price">価格</label>
+          <div class="input-group">
+            <input id="disc-price" class="input" type="text" inputmode="decimal" placeholder="例: 1980" autocomplete="off" />
+            <span class="suffix">円</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="disc-rate">割合</label>
+          <div class="input-group">
+            <input id="disc-rate" class="input" type="text" inputmode="decimal" placeholder="例: 30" autocomplete="off" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label" id="disc-dir-label">計算の向き</span>
+          <div class="choice-row" role="radiogroup" aria-labelledby="disc-dir-label">
+            <label class="choice"><input type="radio" name="disc-dir" value="off" checked />割引（−）</label>
+            <label class="choice"><input type="radio" name="disc-dir" value="on" />割増（＋）</label>
+          </div>
+        </div>
+      </div>
+      <div class="result" aria-live="polite">
+        <p class="result-label">計算結果</p>
+        <p class="result-value"><span id="disc-result">—</span></p>
+        <p class="result-sub" id="disc-formula">価格と割合を入力してください</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-copy" id="disc-copy" disabled>
+            <span class="label-default">結果をコピー</span>
+            <span class="label-done">コピーしました</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- モード4: 増減率 -->
+    <div id="pane-change" role="tabpanel" aria-labelledby="tab-change" class="pane mt-5" hidden>
+      <div class="field-grid cols-2">
+        <div class="field">
+          <label for="chg-before">変化前の値</label>
+          <input id="chg-before" class="input" type="text" inputmode="decimal" placeholder="例: 200" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="chg-after">変化後の値</label>
+          <input id="chg-after" class="input" type="text" inputmode="decimal" placeholder="例: 150" autocomplete="off" />
+        </div>
+      </div>
+      <div class="result" aria-live="polite">
+        <p class="result-label">計算結果</p>
+        <p class="result-value"><span id="chg-result">—</span></p>
+        <p class="result-sub" id="chg-formula">変化前と変化後の値を入力してください</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-copy" id="chg-copy" disabled>
+            <span class="label-default">結果をコピー</span>
+            <span class="label-done">コピーしました</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>上のタブから計算モードを選びます（割引の計算なら「割引・割増」）。</li>
+      <li>数値を入力すると、その瞬間に計算結果が表示されます。ボタンを押す必要はありません。</li>
+      <li>「結果をコピー」で計算結果をそのまま貼り付けに使えます。</li>
+    </ol>
+
+    <h2 id="formula">4つのモードの計算式</h2>
+    <h3>〜の◯%は？（割合の値を求める）</h3>
+    <p><code>もとの数 × 割合 ÷ 100</code>。例：5,000円の20%は <strong>5,000 × 20 ÷ 100 = 1,000円</strong>。</p>
+    <h3>何%か求める（割合を求める）</h3>
+    <p><code>くらべる数 ÷ もとにする数 × 100</code>。例：80人中52人が参加なら <strong>52 ÷ 80 × 100 = 65%</strong>。テストの得点率や達成率の計算がこれです。</p>
+    <h3>割引・割増（◯%引き・◯%増しの価格）</h3>
+    <p>割引は <code>価格 × (100 − 割合) ÷ 100</code>、割増は <code>価格 × (100 + 割合) ÷ 100</code>。例：1,980円の30%引きは <strong>1,980 × 0.7 = 1,386円</strong>。消費税10%の税込価格は「10%の割増」で計算できます。</p>
+    <h3>増減率（何%増えた・減った？）</h3>
+    <p><code>(変化後 − 変化前) ÷ 変化前 × 100</code>。例：売上が200万円から150万円になったら <strong>(150 − 200) ÷ 200 × 100 = −25%</strong>（25%の減少）。前年比・前月比の計算がこれです。</p>
+
+    <h2 id="use-cases">よくある使いどころ</h2>
+    <ul>
+      <li><strong>買い物</strong> — セールの「30%OFF」がいくらになるか、その場で確認</li>
+      <li><strong>消費税</strong> — 税抜価格から税込価格（10%・8%）を計算</li>
+      <li><strong>仕事</strong> — 目標達成率、前年比、コスト削減率の計算</li>
+      <li><strong>学校</strong> — テストの得点率、問題の正答率の計算</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseNum, fmtNum, bindCopy } from '../../lib/format';
+
+  // ── タブ切替 ──
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+  const panes = Array.from(document.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+
+  function selectTab(tab: HTMLButtonElement) {
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+    panes.forEach((p) => (p.hidden = p.id !== tab.getAttribute('aria-controls')));
+    const url = new URL(location.href);
+    url.searchParams.set('mode', tab.id.replace('tab-', ''));
+    history.replaceState(null, '', url);
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        next.focus();
+        selectTab(next);
+      }
+    });
+  });
+
+  // URLの ?mode= を復元
+  const initMode = new URLSearchParams(location.search).get('mode');
+  const initTab = initMode && document.getElementById(`tab-${initMode}`);
+  if (initTab instanceof HTMLButtonElement) selectTab(initTab);
+
+  // ── 各モードの計算 ──
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+
+  function wire(inputIds: string[], resultId: string, formulaId: string, copyId: string, calc: () => { value: string; formula: string; copy: string } | null) {
+    const resultEl = document.getElementById(resultId)!;
+    const formulaEl = document.getElementById(formulaId)!;
+    const copyBtn = document.getElementById(copyId) as HTMLButtonElement;
+    const emptyFormula = formulaEl.textContent || '';
+    let copyText = '';
+
+    function update() {
+      const r = calc();
+      if (r === null) {
+        resultEl.textContent = '—';
+        formulaEl.textContent = emptyFormula;
+        copyBtn.disabled = true;
+        copyText = '';
+        return;
+      }
+      resultEl.textContent = r.value;
+      formulaEl.textContent = r.formula;
+      copyBtn.disabled = false;
+      copyText = r.copy;
+    }
+
+    inputIds.forEach((id) => document.getElementById(id)?.addEventListener('input', update));
+    document.querySelectorAll<HTMLInputElement>('input[name="disc-dir"]').forEach((el) => el.addEventListener('change', update));
+    bindCopy(copyBtn, () => copyText);
+  }
+
+  wire(['of-base', 'of-rate'], 'of-result', 'of-formula', 'of-copy', () => {
+    const a = parseNum($('of-base').value);
+    const b = parseNum($('of-rate').value);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+    const v = (a * b) / 100;
+    return {
+      value: fmtNum(v, 2),
+      formula: `${fmtNum(a, 2)} × ${fmtNum(b, 2)}% = ${fmtNum(v, 2)}`,
+      copy: fmtNum(v, 2),
+    };
+  });
+
+  wire(['ratio-part', 'ratio-whole'], 'ratio-result', 'ratio-formula', 'ratio-copy', () => {
+    const part = parseNum($('ratio-part').value);
+    const whole = parseNum($('ratio-whole').value);
+    if (!Number.isFinite(part) || !Number.isFinite(whole) || whole === 0) return null;
+    const v = (part / whole) * 100;
+    return {
+      value: `${fmtNum(v, 2)}%`,
+      formula: `${fmtNum(part, 2)} ÷ ${fmtNum(whole, 2)} × 100 = ${fmtNum(v, 2)}%`,
+      copy: `${fmtNum(v, 2)}%`,
+    };
+  });
+
+  wire(['disc-price', 'disc-rate'], 'disc-result', 'disc-formula', 'disc-copy', () => {
+    const price = parseNum($('disc-price').value);
+    const rate = parseNum($('disc-rate').value);
+    if (!Number.isFinite(price) || !Number.isFinite(rate)) return null;
+    const dir = (document.querySelector('input[name="disc-dir"]:checked') as HTMLInputElement)?.value;
+    const sign = dir === 'on' ? 1 : -1;
+    const v = Math.round(price * (1 + (sign * rate) / 100));
+    const diff = Math.round((price * rate) / 100);
+    const word = sign === 1 ? '割増' : '割引';
+    return {
+      value: `${fmtNum(v)}円`,
+      formula: `${word}額は ${fmtNum(diff)}円（${fmtNum(price)}円の${fmtNum(rate, 2)}%）`,
+      copy: `${fmtNum(v)}円`,
+    };
+  });
+
+  wire(['chg-before', 'chg-after'], 'chg-result', 'chg-formula', 'chg-copy', () => {
+    const before = parseNum($('chg-before').value);
+    const after = parseNum($('chg-after').value);
+    if (!Number.isFinite(before) || !Number.isFinite(after) || before === 0) return null;
+    const v = ((after - before) / Math.abs(before)) * 100;
+    const word = v > 0 ? '増加' : v < 0 ? '減少' : '変化なし';
+    return {
+      value: `${v > 0 ? '+' : ''}${fmtNum(v, 2)}%`,
+      formula: `${fmtNum(before, 2)} → ${fmtNum(after, 2)} で ${fmtNum(Math.abs(v), 2)}%の${word}`,
+      copy: `${v > 0 ? '+' : ''}${fmtNum(v, 2)}%`,
+    };
+  });
+</script>

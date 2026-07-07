@@ -1,0 +1,338 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolCard from '../components/ToolCard.astro';
+import { SITE } from '../config';
+import { TOOLS, CATEGORIES } from '../data/tools';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'motytools',
+    url: SITE.url,
+    logo: `${SITE.url}/favicon.svg`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'motytools',
+    url: SITE.url,
+    inLanguage: 'ja',
+  },
+];
+
+const products = [
+  {
+    href: 'https://roster.motytools.com',
+    external: true,
+    cls: 'card-roster',
+    tag: 'Web サービス',
+    name: 'Roster',
+    desc: '日本のYouTubeチャンネルをカテゴリ別にランキング。バズる前に見つける、チャンネル成長率トラッカー。',
+    link: 'roster.motytools.com',
+    icon: '<rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/>',
+  },
+  {
+    href: 'https://firemap.alazora.workers.dev',
+    external: true,
+    cls: 'card-firemap',
+    tag: 'Web サービス',
+    name: '炎上マップ',
+    desc: 'ネット炎上を観測・検証する娯楽型データメディア。炎上弁護人が独自の視点で読み解く。',
+    link: '炎上マップを開く',
+    icon: '<path d="M12 2c0 0-4 4-4 9a4 4 0 0 0 8 0c0-1.5-.5-3-1.5-4.5C14 8 14 10 12 10c0-3-1-5.5-0-8z"/><path d="M9 17c-1.5 0-3-1-3-3 0-1.5.8-2.8 2-3.5"/>',
+  },
+  {
+    href: '/memomail/',
+    external: false,
+    cls: 'card-memomail',
+    tag: 'iOS アプリ',
+    name: 'メモびゅん',
+    desc: '書いたメモをワンタップでメール送信。Obsidian連携・音声入力対応のシンプルなiPhoneアプリ。',
+    link: '詳しく見る',
+    icon: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/>',
+  },
+  {
+    href: '/buzzmeter/',
+    external: false,
+    cls: 'card-buzzmeter',
+    tag: '読み物サイト',
+    name: '真相メモ',
+    desc: 'ネットで話題になった出来事を、時系列・背景・ランキングでわかりやすく整理する読み物サイト。',
+    link: '詳しく見る',
+    icon: '<circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>',
+  },
+  {
+    href: '/price-scan/',
+    external: false,
+    cls: 'card-pitto-saiyasu',
+    tag: 'iOS アプリ',
+    name: 'ピッと最安',
+    desc: 'バーコードをスキャンして楽天・Yahooの最安値を比較。お得な買い物をサポート。',
+    link: '詳しく見る',
+    icon: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+  },
+];
+---
+
+<BaseLayout
+  title="motytools — 無料Webツールとアプリのスタジオ"
+  absoluteTitle={true}
+  description="手取り計算・和暦変換・文字数カウント・画像圧縮など、登録不要ですぐ使える無料Webツールを公開中。データと技術で「便利」を届けるプロダクトスタジオ motytools。"
+  path="/"
+  appearance="dark"
+  jsonLd={jsonLd}
+>
+  <section class="hero">
+    <div class="container">
+      <div class="badge">プロダクトスタジオ</div>
+      <h1 class="hero-title">役に立つを、<br /><span class="dim">かたちにする。</span></h1>
+      <p class="tagline">
+        毎日のちょっとした不便を解消する、無料のWebツールとアプリを作っています。登録不要、すべてブラウザだけで完結。
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/tools/">無料ツールを使う</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="tools-section" aria-labelledby="tools-heading">
+    <div class="container">
+      <p class="section-label" id="tools-heading">無料Webツール</p>
+      {CATEGORIES.map((cat) => (
+        <div class="tools-cat">
+          <div class="section-heading">
+            <h2 class="h2">{cat.name}</h2>
+          </div>
+          <div class="cards">
+            {TOOLS.filter((t) => t.category === cat.id).map((t) => <ToolCard tool={t} />)}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="products" aria-labelledby="products-heading">
+    <div class="container">
+      <p class="section-label" id="products-heading">プロダクト</p>
+      <div class="grid">
+        {products.map((p) => (
+          <a
+            href={p.href}
+            class={`card ${p.cls}`}
+            target={p.external ? '_blank' : undefined}
+            rel={p.external ? 'noopener noreferrer' : undefined}
+          >
+            <div class="card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.icon} />
+            </div>
+            <span class="card-tag">{p.tag}</span>
+            <div class="card-name">{p.name}</div>
+            <p class="card-desc">{p.desc}</p>
+            <span class="card-link">
+              {p.link}
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 9.5L9.5 2.5M9.5 2.5H4.5M9.5 2.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        ))}
+        <div class="card card-pitto-kigen coming-soon">
+          <div class="card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <span class="card-tag">iOS アプリ</span>
+          <div class="card-name">ピッと期限</div>
+          <p class="card-desc">バーコードとOCRで賞味期限を登録。食品ロスを減らすための期限管理アプリ。</p>
+          <span class="card-link">近日公開</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: 96px 0 72px;
+    text-align: center;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    max-width: 100vw;
+    background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    border: 1px solid var(--border);
+    border-radius: var(--r-full);
+    padding: 4px 12px;
+    margin-bottom: var(--sp-6);
+  }
+  .badge::before {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--success);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .hero-title {
+    font-size: clamp(40px, 8vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: var(--sp-4);
+  }
+  .hero-title .dim {
+    color: var(--text-3);
+  }
+  .tagline {
+    font-size: clamp(15px, 2.5vw, 17px);
+    color: var(--text-2);
+    max-width: 430px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+  .hero-actions {
+    margin-top: var(--sp-6);
+    display: flex;
+    justify-content: center;
+    gap: var(--sp-3);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: var(--sp-6);
+    text-align: center;
+  }
+  .tools-section {
+    padding: var(--sp-7) 0 var(--sp-5);
+  }
+  .tools-cat {
+    margin-bottom: var(--sp-6);
+  }
+
+  .products {
+    padding: var(--sp-7) 0 var(--sp-6);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--sp-4);
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--card-glow, transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  .card:hover {
+    border-color: var(--card-color, var(--border-strong));
+    transform: translateY(-2px);
+  }
+  .card:hover::before {
+    opacity: 1;
+  }
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: var(--card-icon-bg, var(--surface-2));
+    color: var(--card-color, var(--text-2));
+    flex-shrink: 0;
+  }
+  .card-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.65;
+    flex: 1;
+    margin-bottom: 24px;
+  }
+  .card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--card-color, var(--text-3));
+    transition: gap 0.2s;
+  }
+  .card:hover .card-link {
+    gap: 10px;
+  }
+  .card-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--card-color, var(--text-3));
+    background: var(--card-tag-bg, var(--surface-2));
+    border-radius: var(--r-full);
+    padding: 3px 8px;
+    margin-bottom: 16px;
+    align-self: flex-start;
+  }
+  .card-roster { --card-color: #ef4444; --card-glow: radial-gradient(ellipse at top left, rgba(239,68,68,0.06) 0%, transparent 60%); --card-icon-bg: rgba(239,68,68,0.12); --card-tag-bg: rgba(239,68,68,0.1); }
+  .card-firemap { --card-color: #f97316; --card-glow: radial-gradient(ellipse at top left, rgba(249,115,22,0.06) 0%, transparent 60%); --card-icon-bg: rgba(249,115,22,0.12); --card-tag-bg: rgba(249,115,22,0.1); }
+  .card-memomail { --card-color: #3b82f6; --card-glow: radial-gradient(ellipse at top left, rgba(59,130,246,0.06) 0%, transparent 60%); --card-icon-bg: rgba(59,130,246,0.12); --card-tag-bg: rgba(59,130,246,0.1); }
+  .card-buzzmeter { --card-color: #a1a1aa; --card-glow: radial-gradient(ellipse at top left, rgba(161,161,170,0.06) 0%, transparent 60%); --card-icon-bg: rgba(161,161,170,0.12); --card-tag-bg: rgba(161,161,170,0.1); }
+  .card-pitto-kigen { --card-color: #22c55e; --card-glow: radial-gradient(ellipse at top left, rgba(34,197,94,0.06) 0%, transparent 60%); --card-icon-bg: rgba(34,197,94,0.12); --card-tag-bg: rgba(34,197,94,0.1); }
+  .card-pitto-saiyasu { --card-color: #f59e0b; --card-glow: radial-gradient(ellipse at top left, rgba(245,158,11,0.06) 0%, transparent 60%); --card-icon-bg: rgba(245,158,11,0.12); --card-tag-bg: rgba(245,158,11,0.1); }
+  .coming-soon {
+    opacity: 0.6;
+  }
+  .coming-soon:hover {
+    transform: none;
+  }
+</style>

@@ -1,4 +1,8 @@
 {
+  "framework": "astro",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "redirects": [
     { "source": "/memomail/lp", "destination": "/memomail/", "permanent": false },
     { "source": "/memomail/lp/", "destination": "/memomail/", "permanent": false }
