@@ -226,8 +226,14 @@ const showaTable = buildTable('昭和', 64);
       if (seireki >= sinceY && seireki <= untilY) {
         const y = seireki - era.offset;
         if (y >= 1) {
-          const sinceMD = era.since.slice(5).replace('-', '/');
-          results.push({ name: era.name, y, sinceLabel: `${sinceMD}〜` });
+          // その年の中での適用期間ラベル（境界年のみ意味を持つ）
+          let sinceLabel = '';
+          if (sinceY === seireki) {
+            sinceLabel = `${era.since.slice(5).replace('-', '/')}から`;
+          } else if (era.until && Number(era.until.slice(0, 4)) === seireki) {
+            sinceLabel = `${era.until.slice(5).replace('-', '/')}まで`;
+          }
+          results.push({ name: era.name, y, sinceLabel });
         }
       }
     }
@@ -284,7 +290,7 @@ const showaTable = buildTable('昭和', 64);
       else if (diff < 0) sub += `　今年から${fmtNum(Math.abs(diff))}年後`;
       else sub += '　今年です';
       if (list.length > 1) {
-        sub += `　（${list.map((r) => `${r.sinceLabel}${r.name}`).join('、')}）`;
+        sub += `　（${list.map((r) => `${r.name}は${r.sinceLabel}`).join('、')}）`;
       }
       formulaEl.textContent = sub;
       copyBtn.disabled = false;
