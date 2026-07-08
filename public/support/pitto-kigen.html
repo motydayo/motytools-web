@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>サポート — ピッと期限</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      line-height: 1.7;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .app-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .app-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #34C759;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1d1d1f;
+    }
+    .date {
+      font-size: 14px;
+      color: #6e6e73;
+      margin-bottom: 40px;
+    }
+    h2 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 32px 0 12px;
+      color: #1d1d1f;
+    }
+    p, li {
+      font-size: 15px;
+      color: #3a3a3c;
+      margin-bottom: 10px;
+    }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    a { color: #34C759; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .lang-switch {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .lang-switch a {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: #e8e8ed;
+      color: #3a3a3c;
+      font-size: 14px;
+      margin: 0 4px;
+    }
+    .lang-switch a.active {
+      background: #34C759;
+      color: #fff;
+    }
+    .section-ja, .section-en { display: none; }
+    .section-ja.visible, .section-en.visible { display: block; }
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 13px;
+      color: #6e6e73;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="app-header">
+      <div class="app-name">ピッと期限</div>
+    </div>
+
+    <div class="lang-switch">
+      <a href="#" class="active" onclick="switchLang('ja'); return false;">日本語</a>
+      <a href="#" onclick="switchLang('en'); return false;">English</a>
+    </div>
+
+    <!-- 日本語 -->
+    <div class="section-ja visible" id="lang-ja">
+      <h1>サポート</h1>
+      <p class="date">ピッと期限 サポートページ</p>
+
+      <div class="card">
+        <h2>ピッと期限について</h2>
+        <p>ピッと期限は、食品の賞味期限を手入力ゼロで管理できるiPhoneアプリです。バーコードをスキャンすると商品名を自動取得し、カメラで賞味期限を読み取って登録できます。期限が近づくと通知でお知らせします。</p>
+      </div>
+
+      <div class="card">
+        <h2>よくある質問</h2>
+        <h2>Q. バーコードを読み取っても商品名が出ません</h2>
+        <p>楽天市場・Yahoo!ショッピングに登録されていない商品は名前を取得できないことがあります。その場合は手動で商品名を入力してください。</p>
+        <h2>Q. 賞味期限がうまく読み取れません</h2>
+        <p>印刷がかすれている場合や、袋にシワがある場合は読み取りにくいことがあります。パッケージを平らにして明るい場所で撮影するか、手動で日付を入力してください。</p>
+        <h2>Q. 通知が届きません</h2>
+        <p>iPhoneの「設定」→「通知」→「ピッと期限」で通知が許可されているかご確認ください。アプリ内の設定画面からも通知の許可を確認できます。</p>
+        <h2>Q. カメラが使えません</h2>
+        <p>iPhoneの「設定」→「アプリ」→「ピッと期限」でカメラへのアクセスが許可されているかご確認ください。</p>
+        <h2>Q. データはどこに保存されますか？</h2>
+        <p>すべてのデータはお使いのiPhone内にのみ保存されます。外部サーバーには送信されません。詳しくは<a href="/privacy/pitto-kigen">プライバシーポリシー</a>をご覧ください。</p>
+        <h2>Q. データを全部消したい</h2>
+        <p>アプリ内の「設定」→「全データを消去」から削除できます。アプリをアンインストールしてもすべてのデータが削除されます。</p>
+      </div>
+
+      <div class="card">
+        <h2>お問い合わせ</h2>
+        <p>ご質問・不具合報告・機能のご要望は、アプリ内の「設定」→「ご意見・要望を送る」からお送りください。いただいた内容はすべて確認しています。</p>
+      </div>
+    </div>
+
+    <!-- English -->
+    <div class="section-en" id="lang-en">
+      <h1>Support</h1>
+      <p class="date">Pitto Kigen Support Page</p>
+
+      <div class="card">
+        <h2>About Pitto Kigen</h2>
+        <p>Pitto Kigen is an iPhone app that manages food expiration dates with zero manual typing. Scan a barcode to automatically retrieve the product name, and use the camera to read the expiration date printed on the package. The app notifies you before food expires.</p>
+      </div>
+
+      <div class="card">
+        <h2>FAQ</h2>
+        <h2>Q. The product name doesn't appear after scanning a barcode</h2>
+        <p>Products not listed on Rakuten Ichiba or Yahoo Shopping may not return a name. In that case, please enter the product name manually.</p>
+        <h2>Q. The expiration date can't be read</h2>
+        <p>Faded prints or wrinkled packaging can be hard to read. Flatten the package and scan in a well-lit place, or enter the date manually.</p>
+        <h2>Q. I don't receive notifications</h2>
+        <p>Check that notifications are allowed in Settings → Notifications → Pitto Kigen on your iPhone.</p>
+        <h2>Q. The camera doesn't work</h2>
+        <p>Check that camera access is allowed in Settings → Apps → Pitto Kigen on your iPhone.</p>
+        <h2>Q. Where is my data stored?</h2>
+        <p>All data is stored only on your device and never sent to external servers. See our <a href="/privacy/pitto-kigen">Privacy Policy</a> for details.</p>
+        <h2>Q. How do I delete all my data?</h2>
+        <p>Use Settings → Delete All Data within the app. Uninstalling the app also removes all data.</p>
+      </div>
+
+      <div class="card">
+        <h2>Contact</h2>
+        <p>For questions, bug reports, or feature requests, please use Settings → Send Feedback within the app. We read every message.</p>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2026 motytools · <a href="https://motytools.com">motytools.com</a></p>
+    </footer>
+  </div>
+
+  <script>
+    function switchLang(lang) {
+      document.querySelectorAll('.lang-switch a').forEach(a => a.classList.remove('active'));
+      document.querySelectorAll('.section-ja, .section-en').forEach(el => el.classList.remove('visible'));
+      document.getElementById('lang-' + lang).classList.add('visible');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

@@ -9,6 +9,7 @@
   ],
   "rewrites": [
     { "source": "/privacy", "destination": "/privacy.html" },
-    { "source": "/privacy/pitto-kigen", "destination": "/privacy/pitto-kigen.html" }
+    { "source": "/privacy/pitto-kigen", "destination": "/privacy/pitto-kigen.html" },
+    { "source": "/support/pitto-kigen", "destination": "/support/pitto-kigen.html" }
   ]
 }
