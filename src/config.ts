@@ -3,7 +3,7 @@ export const SITE = {
   url: 'https://motytools.com',
   name: 'motytools',
   // Google Analytics 4 の測定ID（例: 'G-XXXXXXXXXX'）。空なら出力しない。
-  gaId: '',
+  gaId: 'G-9BBHS55WYQ',
   // Search Console の meta 確認タグ content 値。空なら出力しない。
   searchConsoleToken: '',
   adsenseClient: 'ca-pub-5350371362802697',
