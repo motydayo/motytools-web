@@ -15,7 +15,7 @@
   --border-strong: #d4d4d8;
   --text: #18181b;
   --text-2: #52525b;
-  --text-3: #8a8a93;
+  --text-3: #71717a;
 
   /* accent (indigo) — 1色だけ。多用しない */
   --accent: #4f46e5;
@@ -78,7 +78,7 @@
   --border-strong: #3f3f46;
   --text: #f4f4f5;
   --text-2: #a1a1aa;
-  --text-3: #71717a;
+  --text-3: #7d7d86;
 
   --accent: #818cf8;
   --accent-hover: #a5b4fc;
@@ -242,8 +242,8 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
   background: transparent;
@@ -584,7 +584,7 @@ main {
   align-items: center;
   justify-content: center;
   gap: var(--sp-2);
-  min-height: 46px;
+  min-height: 48px;
   padding: var(--sp-2) var(--sp-5);
   font-size: var(--fs-base);
   font-weight: 600;

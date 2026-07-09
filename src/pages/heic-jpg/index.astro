@@ -115,6 +115,7 @@ const faqs: Faq[] = [
 
   interface ResultItem {
     id: string;
+    file: File;
     originalName: string;
     outputName: string;
     originalSize: number;
@@ -233,15 +234,13 @@ const faqs: Faq[] = [
 
     resultsWrap.hidden = false;
 
-    const formatChoice = (document.querySelector('input[name="hj-format"]:checked') as HTMLInputElement)?.value || 'jpeg';
-    const toType = formatChoice === 'png' ? 'image/png' : 'image/jpeg';
-    const ext = formatChoice === 'png' ? 'png' : 'jpg';
-
     for (const file of valid) {
       const baseId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
       const baseName = file.name.replace(/\.[^.]+$/, '');
+      const ext = getExt();
       const placeholderItem: ResultItem = {
         id: baseId,
+        file,
         originalName: file.name,
         outputName: `${baseName}.${ext}`,
         originalSize: file.size,
@@ -252,40 +251,72 @@ const faqs: Faq[] = [
       };
       results.push(placeholderItem);
       renderRow(placeholderItem);
-
-      try {
-        if (!heic2anyFn) throw new Error('変換エンジンが読み込まれていません');
-        const output = await heic2anyFn({ blob: file, toType, quality: 0.9 });
-        const outputs = Array.isArray(output) ? output : [output];
-
-        // プレースホルダーを削除し、実際の変換結果に差し替える
-        const idx = results.indexOf(placeholderItem);
-        if (idx !== -1) results.splice(idx, 1);
-        removeRow(placeholderItem.id);
-
-        outputs.forEach((blob, i) => {
-          const name = outputs.length > 1 ? `${baseName}_${i + 1}.${ext}` : `${baseName}.${ext}`;
-          const item: ResultItem = {
-            id: `${baseId}-${i}`,
-            originalName: file.name,
-            outputName: name,
-            originalSize: file.size,
-            outputSize: blob.size,
-            status: 'done',
-            blob,
-            thumbUrl: URL.createObjectURL(blob),
-          };
-          results.push(item);
-          renderRow(item);
-        });
-      } catch (e) {
-        placeholderItem.status = 'error';
-        placeholderItem.errorMessage = '変換に失敗しました';
-        renderRow(placeholderItem);
-      }
-      updateZipButton();
+      await convertItem(placeholderItem);
     }
   }
+
+  function getExt(): 'png' | 'jpg' {
+    const formatChoice = (document.querySelector('input[name="hj-format"]:checked') as HTMLInputElement)?.value || 'jpeg';
+    return formatChoice === 'png' ? 'png' : 'jpg';
+  }
+
+  async function convertItem(placeholderItem: ResultItem) {
+    const ext = getExt();
+    const toType = ext === 'png' ? 'image/png' : 'image/jpeg';
+    const baseName = placeholderItem.file.name.replace(/\.[^.]+$/, '');
+
+    try {
+      if (!heic2anyFn) throw new Error('変換エンジンが読み込まれていません');
+      const output = await heic2anyFn({ blob: placeholderItem.file, toType, quality: 0.9 });
+      const outputs = Array.isArray(output) ? output : [output];
+
+      // プレースホルダーを削除し、実際の変換結果に差し替える
+      const idx = results.indexOf(placeholderItem);
+      if (idx !== -1) results.splice(idx, 1);
+      removeRow(placeholderItem.id);
+
+      outputs.forEach((blob, i) => {
+        const name = outputs.length > 1 ? `${baseName}_${i + 1}.${ext}` : `${baseName}.${ext}`;
+        const item: ResultItem = {
+          id: `${placeholderItem.id}-${i}`,
+          file: placeholderItem.file,
+          originalName: placeholderItem.originalName,
+          outputName: name,
+          originalSize: placeholderItem.originalSize,
+          outputSize: blob.size,
+          status: 'done',
+          blob,
+          thumbUrl: URL.createObjectURL(blob),
+        };
+        results.push(item);
+        renderRow(item);
+      });
+    } catch (e) {
+      placeholderItem.status = 'error';
+      placeholderItem.errorMessage = '変換に失敗しました';
+      renderRow(placeholderItem);
+    }
+    updateZipButton();
+  }
+
+  resultsBody.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-retry-id]');
+    if (!btn) return;
+    const item = results.find((r) => r.id === btn.dataset.retryId);
+    if (!item) return;
+    item.status = 'processing';
+    item.errorMessage = undefined;
+    renderRow(item);
+    try {
+      await ensureLibraryLoaded();
+    } catch {
+      item.status = 'error';
+      item.errorMessage = '変換エンジンの読み込みに失敗しました。通信環境を確認して再度お試しください。';
+      renderRow(item);
+      return;
+    }
+    await convertItem(item);
+  });
 
   function renderRow(item: ResultItem) {
     let row = document.getElementById(`hj-row-${item.id}`) as HTMLTableRowElement | null;
@@ -312,7 +343,7 @@ const faqs: Faq[] = [
         <td>${escapeHtml(item.originalName)}</td>
         <td class="num">${formatBytes(item.originalSize)}</td>
         <td class="num"><span class="error-text">${escapeHtml(item.errorMessage || '変換に失敗しました')}</span></td>
-        <td></td>
+        <td><button type="button" class="btn btn-ghost btn-sm" data-retry-id="${item.id}">再試行</button></td>
       `;
       return;
     }

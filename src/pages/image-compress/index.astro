@@ -127,6 +127,7 @@ const faqs: Faq[] = [
 
   interface ResultItem {
     id: string;
+    file: File;
     originalName: string;
     outputName: string;
     originalSize: number;
@@ -220,6 +221,7 @@ const faqs: Faq[] = [
       const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
       const item: ResultItem = {
         id,
+        file,
         originalName: file.name,
         outputName: file.name,
         originalSize: file.size,
@@ -231,17 +233,31 @@ const faqs: Faq[] = [
       };
       results.push(item);
       renderRow(item);
-
-      try {
-        await processFile(file, item);
-      } catch (e) {
-        item.status = 'error';
-        item.errorMessage = '圧縮に失敗しました';
-      }
-      renderRow(item);
-      updateZipButton();
+      await runItem(item);
     }
   }
+
+  async function runItem(item: ResultItem) {
+    try {
+      await processFile(item.file, item);
+    } catch (e) {
+      item.status = 'error';
+      item.errorMessage = '圧縮に失敗しました';
+    }
+    renderRow(item);
+    updateZipButton();
+  }
+
+  resultsBody.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-retry-id]');
+    if (!btn) return;
+    const item = results.find((r) => r.id === btn.dataset.retryId);
+    if (!item) return;
+    item.status = 'processing';
+    item.errorMessage = undefined;
+    renderRow(item);
+    runItem(item);
+  });
 
   async function processFile(file: File, item: ResultItem) {
     const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
@@ -329,7 +345,7 @@ const faqs: Faq[] = [
         <td>${escapeHtml(item.originalName)}</td>
         <td class="num">${formatBytes(item.originalSize)}</td>
         <td class="num" colspan="2"><span class="error-text">${escapeHtml(item.errorMessage || '処理に失敗しました')}</span></td>
-        <td></td>
+        <td><button type="button" class="btn btn-ghost btn-sm" data-retry-id="${item.id}">再試行</button></td>
       `;
       return;
     }
