@@ -109,6 +109,12 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* hidden属性は display:flex 等のクラス指定より必ず勝つようにする
+   (詳細度で負けると読み込み中スピナーなどが消えないまま表示され続ける) */
+[hidden] {
+  display: none !important;
+}
+
 body {
   background: var(--bg);
   color: var(--text);

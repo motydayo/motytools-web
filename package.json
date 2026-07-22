@@ -12,7 +12,7 @@
   "dependencies": {
     "astro": "^5.0.0",
     "fflate": "^0.8.3",
-    "heic2any": "^0.0.4",
+    "heic-to": "^1.5.2",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {

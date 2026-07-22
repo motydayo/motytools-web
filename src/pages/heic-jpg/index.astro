@@ -106,7 +106,7 @@ const faqs: Faq[] = [
     <p>
       毎回変換する手間を省きたい場合は、iPhone本体の設定を変更することもできます。「設定」→「カメラ」→「フォーマット」と進み、「互換性優先」を選ぶと、以降に撮影する写真がHEICではなくJPGで保存されるようになります。ただし、その分ファイルサイズはHEICより大きくなる点にご注意ください。
     </p>
-    <p class="xs text-3">変換処理にはオープンソースの heic2any / libheif を使用しています。</p>
+    <p class="xs text-3">変換処理にはオープンソースの heic-to / libheif を使用しています。</p>
   </Fragment>
 </ToolLayout>
 
@@ -135,19 +135,17 @@ const faqs: Faq[] = [
   const downloadZipBtn = document.getElementById('hj-download-zip') as HTMLButtonElement;
 
   const results: ResultItem[] = [];
-  // heic2anyには型定義がないため any 相当で保持する
-  let heic2anyFn: ((opts: { blob: Blob; toType: string; quality?: number }) => Promise<Blob | Blob[]>) | null = null;
+  let heicToFn: ((opts: { blob: Blob; type: string; quality?: number }) => Promise<Blob>) | null = null;
   let loadingPromise: Promise<void> | null = null;
 
   async function ensureLibraryLoaded() {
-    if (heic2anyFn) return;
+    if (heicToFn) return;
     if (!loadingPromise) {
       loadingPromise = (async () => {
         loadingEl.hidden = false;
         try {
-          // @ts-ignore heic2anyには型定義が同梱されていない
-          const mod = await import('heic2any');
-          heic2anyFn = (mod.default ?? mod) as typeof heic2anyFn;
+          const mod = await import('heic-to');
+          heicToFn = mod.heicTo;
         } finally {
           loadingEl.hidden = true;
         }
@@ -266,31 +264,27 @@ const faqs: Faq[] = [
     const baseName = placeholderItem.file.name.replace(/\.[^.]+$/, '');
 
     try {
-      if (!heic2anyFn) throw new Error('変換エンジンが読み込まれていません');
-      const output = await heic2anyFn({ blob: placeholderItem.file, toType, quality: 0.9 });
-      const outputs = Array.isArray(output) ? output : [output];
+      if (!heicToFn) throw new Error('変換エンジンが読み込まれていません');
+      const blob = await heicToFn({ blob: placeholderItem.file, type: toType, quality: 0.9 });
 
       // プレースホルダーを削除し、実際の変換結果に差し替える
       const idx = results.indexOf(placeholderItem);
       if (idx !== -1) results.splice(idx, 1);
       removeRow(placeholderItem.id);
 
-      outputs.forEach((blob, i) => {
-        const name = outputs.length > 1 ? `${baseName}_${i + 1}.${ext}` : `${baseName}.${ext}`;
-        const item: ResultItem = {
-          id: `${placeholderItem.id}-${i}`,
-          file: placeholderItem.file,
-          originalName: placeholderItem.originalName,
-          outputName: name,
-          originalSize: placeholderItem.originalSize,
-          outputSize: blob.size,
-          status: 'done',
-          blob,
-          thumbUrl: URL.createObjectURL(blob),
-        };
-        results.push(item);
-        renderRow(item);
-      });
+      const item: ResultItem = {
+        id: `${placeholderItem.id}-0`,
+        file: placeholderItem.file,
+        originalName: placeholderItem.originalName,
+        outputName: `${baseName}.${ext}`,
+        originalSize: placeholderItem.originalSize,
+        outputSize: blob.size,
+        status: 'done',
+        blob,
+        thumbUrl: URL.createObjectURL(blob),
+      };
+      results.push(item);
+      renderRow(item);
     } catch (e) {
       placeholderItem.status = 'error';
       placeholderItem.errorMessage = '変換に失敗しました';
