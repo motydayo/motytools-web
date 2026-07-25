@@ -100,7 +100,7 @@
     <!-- 日本語 -->
     <div class="section-ja visible" id="lang-ja">
       <h1>プライバシーポリシー</h1>
-      <p class="date">最終更新日: 2026年7月1日</p>
+      <p class="date">最終更新日: 2026年7月25日</p>
 
       <div class="card">
         <h2>1. はじめに</h2>
@@ -112,42 +112,54 @@
         <ul>
           <li><strong>カメラ映像</strong>: バーコードの読み取りおよび賞味期限のOCR読み取りのためにカメラを使用します。カメラ映像はサーバーに送信・保存されません。</li>
           <li><strong>フォトライブラリ</strong>: 商品画像を手動で登録する際に使用します。選択した画像は端末内にのみ保存されます。</li>
-          <li><strong>食品データ</strong>: 登録した食品名・賞味期限・画像はすべて端末内にのみ保存されます。外部サーバーには送信されません。</li>
+          <li><strong>食品データ</strong>: 登録した食品名・賞味期限・画像は、原則として端末内にのみ保存されます。ただし「家族と共有」機能を使った場合は、共有した品目のみクラウド（後述）に保存されます（詳しくは3.をご覧ください）。</li>
           <li><strong>商品検索クエリ</strong>: バーコードから取得したJANコードや食品名を、楽天市場API・Yahoo!ショッピングAPIに送信して商品名・画像を取得します。これらのクエリには個人を特定できる情報は含まれません。</li>
         </ul>
       </div>
 
       <div class="card">
-        <h2>3. アカウント・ログインについて</h2>
-        <p>本アプリはアカウント登録・ログインを必要としません。すべてのデータは端末内にのみ保存されます。</p>
+        <h2>3. 家族と共有機能について</h2>
+        <p>本アプリには「家族と共有」という任意の機能があります。この機能を使わない限り、すべてのデータは端末内にのみ保存されます。</p>
+        <ul>
+          <li>この機能を有効にすると、氏名やメールアドレスなどの登録を必要としない匿名の識別子（デバイスごとに自動生成されるID）を使って、Google社のクラウドサービス（Firebase）に接続します。</li>
+          <li>共有をオンにした食品データ（商品名・賞味期限・画像）のみが、招待コードで参加した家族間で共有するためにクラウドに保存されます。</li>
+          <li>共有をオンにしていない品目や、共有機能自体を使わない場合のデータは、これまでどおり端末内のみに保存され、外部には送信されません。</li>
+          <li>共有をやめる（世帯から抜ける）と、クラウド上の該当データへのアクセス権は失われます。</li>
+        </ul>
       </div>
 
       <div class="card">
-        <h2>4. 利用する第三者サービス</h2>
+        <h2>4. アカウント・ログインについて</h2>
+        <p>本アプリはメールアドレスや電話番号によるアカウント登録・ログインを必要としません。「家族と共有」機能の利用時のみ、匿名の識別子が自動的に発行されます。</p>
+      </div>
+
+      <div class="card">
+        <h2>5. 利用する第三者サービス</h2>
         <ul>
           <li><strong><a href="https://webservice.rakuten.co.jp/privacypolicy/" target="_blank">楽天市場API</a></strong>: バーコードから商品名・画像を取得するために使用します。</li>
           <li><strong><a href="https://about.yahoo.co.jp/privacy/" target="_blank">Yahoo!ショッピングAPI</a></strong>: バーコードから商品名・画像を取得するために使用します。</li>
+          <li><strong><a href="https://firebase.google.com/support/privacy" target="_blank">Google Firebase</a></strong>: 「家族と共有」機能をオンにした場合のみ、共有データの保存・同期のために使用します。</li>
         </ul>
-        <p>いずれのサービスにも個人情報は送信されません。</p>
+        <p>いずれのサービスにも氏名・メールアドレス等の個人情報は送信されません。</p>
       </div>
 
       <div class="card">
-        <h2>5. 通知</h2>
+        <h2>6. 通知</h2>
         <p>賞味期限が近づいた際にローカル通知でお知らせします。通知はすべて端末内で処理され、外部サーバーは使用しません。</p>
       </div>
 
       <div class="card">
-        <h2>6. データの保存と削除</h2>
-        <p>すべてのデータは端末内にのみ保存されます。アプリをアンインストールすることでデータはすべて削除されます。アプリ内の設定画面からもデータを削除できます。</p>
+        <h2>7. データの保存と削除</h2>
+        <p>「家族と共有」を使っていない場合、すべてのデータは端末内にのみ保存され、アプリをアンインストールすることで削除されます。「家族と共有」を使った場合、共有した品目はクラウド上にも保存されますが、アプリ内の設定画面からいつでも共有をやめる（脱退する）ことができ、脱退時に共有データへのアクセス権は失われます。</p>
       </div>
 
       <div class="card">
-        <h2>7. 子どもについて</h2>
+        <h2>8. 子どもについて</h2>
         <p>本アプリは13歳未満の方を対象としていません。</p>
       </div>
 
       <div class="card">
-        <h2>8. お問い合わせ</h2>
+        <h2>9. お問い合わせ</h2>
         <p>プライバシーに関するご質問は、アプリ内の「ご意見・要望を送る」からお問い合わせください。</p>
       </div>
     </div>
@@ -155,7 +167,7 @@
     <!-- English -->
     <div class="section-en" id="lang-en">
       <h1>Privacy Policy</h1>
-      <p class="date">Last updated: July 1, 2026</p>
+      <p class="date">Last updated: July 25, 2026</p>
 
       <div class="card">
         <h2>1. Introduction</h2>
@@ -167,42 +179,54 @@
         <ul>
           <li><strong>Camera</strong>: Used to scan barcodes and read expiration dates via OCR. Camera data is never sent to or stored on external servers.</li>
           <li><strong>Photo Library</strong>: Used when you manually add a product image. Selected images are stored only on your device.</li>
-          <li><strong>Food item data</strong>: All registered food items, expiration dates, and images are stored exclusively on your device and never transmitted to external servers.</li>
+          <li><strong>Food item data</strong>: By default, all registered food items, expiration dates, and images are stored exclusively on your device. If you use the "Family Sharing" feature, only the items you choose to share are stored in the cloud (see Section 3).</li>
           <li><strong>Product search queries</strong>: JAN barcodes and food names are sent to Rakuten Ichiba API and Yahoo Shopping API to retrieve product names and images. These queries contain no personally identifiable information.</li>
         </ul>
       </div>
 
       <div class="card">
-        <h2>3. No Account Required</h2>
-        <p>The App does not require account registration or login. All data is stored only on your device.</p>
+        <h2>3. About the Family Sharing Feature</h2>
+        <p>The App includes an optional "Family Sharing" feature. Unless you turn it on, all data remains on your device only.</p>
+        <ul>
+          <li>Enabling this feature connects to Google's cloud service (Firebase) using an anonymous identifier automatically generated for your device — no name, email address, or other account registration is required.</li>
+          <li>Only the food data (name, expiration date, image) you choose to share is stored in the cloud, so it can be shared with family members who join using an invite code.</li>
+          <li>Items you don't share, or all data if you never use this feature, remain stored only on your device and are never sent externally.</li>
+          <li>Leaving a shared household revokes your access to that household's cloud data.</li>
+        </ul>
       </div>
 
       <div class="card">
-        <h2>4. Third-Party Services</h2>
+        <h2>4. No Account Required</h2>
+        <p>The App does not require registration with an email address or phone number. An anonymous identifier is issued automatically only when you use the Family Sharing feature.</p>
+      </div>
+
+      <div class="card">
+        <h2>5. Third-Party Services</h2>
         <ul>
           <li><strong><a href="https://webservice.rakuten.co.jp/privacypolicy/" target="_blank">Rakuten Ichiba API</a></strong>: Used to retrieve product names and images from barcodes.</li>
           <li><strong><a href="https://about.yahoo.co.jp/privacy/" target="_blank">Yahoo Shopping API</a></strong>: Used to retrieve product names and images from barcodes.</li>
+          <li><strong><a href="https://firebase.google.com/support/privacy" target="_blank">Google Firebase</a></strong>: Used only if you enable the Family Sharing feature, to store and sync shared data.</li>
         </ul>
-        <p>No personal information is sent to either service.</p>
+        <p>No personal information such as your name or email address is sent to any of these services.</p>
       </div>
 
       <div class="card">
-        <h2>5. Notifications</h2>
+        <h2>6. Notifications</h2>
         <p>The App sends local notifications when an expiration date is approaching. All notifications are processed on-device; no external server is involved.</p>
       </div>
 
       <div class="card">
-        <h2>6. Data Storage and Deletion</h2>
-        <p>All data is stored only on your device. Uninstalling the App removes all data. You can also delete all data from the Settings screen within the App.</p>
+        <h2>7. Data Storage and Deletion</h2>
+        <p>If you don't use Family Sharing, all data is stored only on your device and removed when you uninstall the App. If you use Family Sharing, shared items are also stored in the cloud, but you can leave a shared household at any time from the Settings screen, which revokes your access to that shared data.</p>
       </div>
 
       <div class="card">
-        <h2>7. Children</h2>
+        <h2>8. Children</h2>
         <p>The App is not directed to children under 13.</p>
       </div>
 
       <div class="card">
-        <h2>8. Contact</h2>
+        <h2>9. Contact</h2>
         <p>For privacy-related inquiries, please use the "Send Feedback" option in the App.</p>
       </div>
     </div>
