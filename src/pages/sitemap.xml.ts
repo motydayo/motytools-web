@@ -24,6 +24,9 @@ const LEGACY_PATHS = [
   '/price-scan/privacy/',
   '/privacy',
   '/privacy/pitto-kigen',
+  '/apps/lesson-techo/',
+  '/apps/lesson-techo/privacy/',
+  '/apps/lesson-techo/terms/',
 ];
 
 export const GET: APIRoute = () => {
