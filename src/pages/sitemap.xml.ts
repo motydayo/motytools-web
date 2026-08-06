@@ -27,6 +27,9 @@ const LEGACY_PATHS = [
   '/apps/lesson-techo/',
   '/apps/lesson-techo/privacy/',
   '/apps/lesson-techo/terms/',
+  '/apps/tsukulog/',
+  '/apps/tsukulog/privacy/',
+  '/apps/tsukulog/terms/',
 ];
 
 export const GET: APIRoute = () => {
