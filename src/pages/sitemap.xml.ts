@@ -30,6 +30,12 @@ const LEGACY_PATHS = [
   '/apps/tsukulog/',
   '/apps/tsukulog/privacy/',
   '/apps/tsukulog/terms/',
+  '/ooya-note/',
+  '/ooya-note/privacy/',
+  '/ooya-note/terms/',
+  '/recipescrap/',
+  '/recipescrap/privacy/',
+  '/recipescrap/terms/',
 ];
 
 export const GET: APIRoute = () => {
