@@ -165,9 +165,12 @@
       padding: 12px 24px;
       font-size: 14px;
       font-weight: 600;
-      opacity: 0.85;
-      cursor: default;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
     }
+    .store-placeholder:hover { opacity: 0.88; transform: translateY(-1px); }
+    .store-placeholder:active { transform: translateY(0); }
     .store-placeholder .sub {
       display: block;
       font-size: 10px;
@@ -413,16 +416,16 @@
           <line x1="17" y1="8" x2="17" y2="16"/>
         </svg>
       </div>
-      <div><span class="badge">近日公開 — iOS アプリ</span></div>
+      <div><span class="badge">iOS アプリ — 配信中</span></div>
       <h1>店頭でピッと、<br /><span class="accent">ネット最安値。</span></h1>
       <p class="tagline">商品のバーコードをカメラで読むだけ。楽天市場・Yahoo!ショッピングのネット最安値が、その場でわかります。会員登録もログインも一切不要。</p>
-      <div class="store-placeholder">
+      <a class="store-placeholder" href="https://apps.apple.com/jp/app/id6790871478" target="_blank" rel="noopener">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
         <span>
-          <span class="sub">近日公開</span>
+          <span class="sub">ダウンロード</span>
           <span class="main">App Store</span>
         </span>
-      </div>
+      </a>
       <p class="free-note">無料でダウンロード（広告あり・買い切りで広告除去可能）</p>
     </div>
   </section>
@@ -511,7 +514,15 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
           <h3>プライバシー第一</h3>
-          <p>カメラ映像は保存も送信もしません。履歴も端末内のみ。安心して使えます。</p>
+          <p>カメラ映像は保存も送信もしません。会員登録も不要。スキャン履歴は端末内にだけ残ります。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <h3>値下がりをお知らせ</h3>
+          <p>気になる商品をお気に入りに登録しておくと、値下がりしたときに通知でお知らせします。買いどきを逃しません。</p>
         </div>
 
       </div>
@@ -535,14 +546,14 @@
   <section class="cta">
     <div class="container">
       <h2>次の買い物から、<br />損しない。</h2>
-      <p>App Storeにて近日公開予定です。</p>
-      <div class="store-placeholder">
+      <p>App Storeで配信中。無料でダウンロードできます。</p>
+      <a class="store-placeholder" href="https://apps.apple.com/jp/app/id6790871478" target="_blank" rel="noopener">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
         <span>
-          <span class="sub">近日公開</span>
+          <span class="sub">ダウンロード</span>
           <span class="main">App Store</span>
         </span>
-      </div>
+      </a>
     </div>
   </section>
 
