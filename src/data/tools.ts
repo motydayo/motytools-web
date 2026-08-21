@@ -221,3 +221,35 @@ export function relatedTools(slug: string, limit = 4): Tool[] {
   const others = TOOLS.filter((t) => t.slug !== slug && t.category !== self.category);
   return [...sameCat, ...others].slice(0, limit);
 }
+
+// ── ツールページからiPhoneアプリへの導線 ──
+// ツールを使う人と、そのアプリを必要とする人が本当に重なる組み合わせだけを書く。
+// 関係の薄いアプリを並べると信用を落とすので、迷ったら書かない。
+// 追加する人へ: ここに1行足すだけでよい。ToolLayout.astro は触らないこと。
+
+export interface AppPromo {
+  /** アプリLPのパス（motytools.com内） */
+  href: string;
+  name: string;
+  /** なぜこのツールの利用者に向くのかが伝わる一文 */
+  pitch: string;
+  /** 24x24 stroke アイコンの内側SVG要素 */
+  icon: string;
+}
+
+const OOYA_NOTE: AppPromo = {
+  href: '/ooya-note/',
+  name: '大家ノート',
+  pitch: '家賃の入金・契約の更新日・年間収支をiPhoneだけで管理。小規模な個人大家のための賃貸管理アプリ。',
+  icon: '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+};
+
+/** ツールのslug → そのページに出すアプリ。無いツールには何も出さない。 */
+export const APP_PROMOS: Record<string, AppPromo> = {
+  // 借入の返済額を調べる人には、不動産を持っている／これから持つ人が多い
+  loan: OOYA_NOTE,
+};
+
+export function appPromo(slug: string): AppPromo | undefined {
+  return APP_PROMOS[slug];
+}

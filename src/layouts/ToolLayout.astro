@@ -2,7 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import ToolCard from '../components/ToolCard.astro';
 import { SITE } from '../config';
-import { getTool, getCategory, relatedTools } from '../data/tools';
+import { getTool, getCategory, relatedTools, appPromo } from '../data/tools';
 
 export interface Faq {
   q: string;
@@ -22,6 +22,7 @@ const tool = getTool(slug);
 const category = getCategory(tool.category);
 const path = `/${tool.slug}/`;
 const related = relatedTools(slug);
+const promo = appPromo(slug);
 
 const jsonLd: object[] = [
   {
@@ -107,6 +108,24 @@ if (faqs.length > 0) {
         </section>
       )}
     </div>
+
+    {promo && (
+      <section class="mt-8" aria-labelledby="app-promo-heading">
+        <div class="section-heading">
+          <h2 id="app-promo-heading">iPhoneアプリ</h2>
+        </div>
+        <a class="app-promo" href={promo.href}>
+          <span class="app-promo-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={promo.icon} />
+          </span>
+          <span class="app-promo-body">
+            <span class="app-promo-name">{promo.name}</span>
+            <span class="app-promo-pitch">{promo.pitch}</span>
+          </span>
+          <svg class="app-promo-arrow" width="16" height="16" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 9.5L9.5 2.5M9.5 2.5H4.5M9.5 2.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </section>
+    )}
 
     <section class="mt-8" aria-labelledby="related-heading">
       <div class="section-heading">
