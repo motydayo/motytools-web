@@ -244,10 +244,21 @@ const OOYA_NOTE: AppPromo = {
   icon: '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
 };
 
+const PITTO_KIGEN: AppPromo = {
+  href: '/pitto-kigen/',
+  name: 'ピッと期限',
+  pitch: 'バーコードで商品名、カメラで賞味期限を読み取り。手入力ゼロで食品の期限を管理して、家族と共有できるiPhoneアプリ。',
+  icon: '<path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="m9 14 2 2 4-4"/>',
+};
+
 /** ツールのslug → そのページに出すアプリ。無いツールには何も出さない。 */
 export const APP_PROMOS: Record<string, AppPromo> = {
   // 借入の返済額を調べる人には、不動産を持っている／これから持つ人が多い
   loan: OOYA_NOTE,
+  // 「◯日後はいつ」を調べる用途には、開封後◯日・解凍後◯日といった食品の期限計算が多い
+  days: PITTO_KIGEN,
+  // 家電の電気代を調べるのは家計を切り詰めたい層。冷蔵庫の中身を捨てない話と地続き
+  denkidai: PITTO_KIGEN,
 };
 
 export function appPromo(slug: string): AppPromo | undefined {
