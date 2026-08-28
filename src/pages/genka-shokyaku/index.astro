@@ -1,0 +1,343 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+import { calcDepreciation, STATUTORY_USEFUL_LIFE, straightLineRate } from '../../lib/depreciation';
+import { fmtYen } from '../../lib/format';
+
+const faqs: Faq[] = [
+  {
+    q: '木造アパートの耐用年数は何年ですか？',
+    a: '住宅用の木造建物の法定耐用年数は22年です。木骨モルタル造は20年、軽量鉄骨（骨格材3mm超4mm以下）は27年、重量鉄骨（4mm超）は34年、鉄筋コンクリート造は47年と、構造ごとに国が定めています。ただしこれは新築で取得した場合の年数で、中古で買った場合は簡便法で短くなります。',
+  },
+  {
+    q: '中古で買った物件の耐用年数はどう計算しますか？',
+    a: '簡便法を使います。築年数が法定耐用年数を過ぎている場合は「法定耐用年数×0.2」、まだ過ぎていない場合は「(法定耐用年数−築年数)＋築年数×0.2」で求め、1年未満は切り捨てます。結果が2年未満のときは2年とします。たとえば築10年の木造なら(22−10)+10×0.2＝14年です。',
+  },
+  {
+    q: '土地の分も減価償却できますか？',
+    a: 'できません。減価償却は時間の経過とともに価値が減る資産だけが対象で、土地は年月が経っても価値が減らないものとして扱われるためです。そのため計算に使うのは「建物だけの取得価額」です。売買契約書に建物価格の記載がない場合は、固定資産税評価額の土地と建物の比率で購入総額を按分する方法がよく使われます。',
+  },
+  {
+    q: '取得した年は1年分まるごと計上できますか？',
+    a: 'できません。事業に使い始めた月から年末までの月数で按分します。たとえば4月に取得した場合はその年は9か月分（9/12）になります。翌年からは満額です。',
+  },
+  {
+    q: '償却が終わると帳簿上いくら残りますか？',
+    a: '1円だけ残します。これを備忘価額といい、資産をまだ保有していることを帳簿上に残しておくための決まりです。そのため最終年の償却費は、それまでの累計が取得価額から1円を引いた額になるように調整されます。',
+  },
+  {
+    q: '定率法は使えないのですか？',
+    a: '建物については使えません。平成19年4月1日以降に取得した建物は定額法のみと定められているためです。なお建物附属設備・構築物についても平成28年4月1日以降の取得分は定額法のみとなっています。本ツールは建物の定額法だけを扱います。',
+  },
+];
+
+// 記事内の具体例をビルド時に計算する（本文の数字とツールの計算を必ず一致させる）
+const exNew = calcDepreciation({
+  buildingPrice: 18_000_000,
+  structure: 'wood',
+  builtOn: '2020-01',
+  acquiredOn: '2020-01',
+});
+const exUsed = calcDepreciation({
+  buildingPrice: 18_000_000,
+  structure: 'wood',
+  builtOn: '2010-04',
+  acquiredOn: '2020-04',
+});
+
+const STRUCTURE_TABLE: Array<{ label: string; years: number }> = [
+  { label: '木造・合成樹脂造', years: STATUTORY_USEFUL_LIFE.wood },
+  { label: '木骨モルタル造', years: STATUTORY_USEFUL_LIFE.wood_mortar },
+  { label: '軽量鉄骨（骨格材3mm以下）', years: STATUTORY_USEFUL_LIFE.steel_light_3mm },
+  { label: '軽量鉄骨（3mm超4mm以下）', years: STATUTORY_USEFUL_LIFE.steel_light_4mm },
+  { label: '重量鉄骨（4mm超）', years: STATUTORY_USEFUL_LIFE.steel_heavy },
+  { label: 'れんが・石・ブロック造', years: STATUTORY_USEFUL_LIFE.brick },
+  { label: '鉄筋コンクリート造（RC・SRC）', years: STATUTORY_USEFUL_LIFE.rc },
+];
+---
+
+<ToolLayout
+  slug="genka-shokyaku"
+  lead="建物の取得価額・構造・建築年月・取得年月を入れると、毎年の減価償却費を償却が終わる年まで一覧で計算します。中古物件の耐用年数（簡便法）にも対応しています。"
+  faqs={faqs}
+>
+  <section class="panel" aria-label="減価償却シミュレーター">
+    <div class="field">
+      <label for="price-input">建物の取得価額</label>
+      <div class="input-group">
+        <input id="price-input" class="input" type="text" inputmode="numeric" placeholder="例: 1800" autocomplete="off" value="1800" />
+        <span class="suffix">万円</span>
+      </div>
+      <p class="field-hint">土地を除いた、建物だけの金額です。</p>
+    </div>
+
+    <div class="field mt-4">
+      <label for="structure-select">建物の構造</label>
+      <select id="structure-select" class="input">
+        <option value="wood" selected>木造・合成樹脂造（22年）</option>
+        <option value="wood_mortar">木骨モルタル造（20年）</option>
+        <option value="steel_light_3mm">軽量鉄骨 骨格材3mm以下（19年）</option>
+        <option value="steel_light_4mm">軽量鉄骨 3mm超4mm以下（27年）</option>
+        <option value="steel_heavy">重量鉄骨 4mm超（34年）</option>
+        <option value="brick">れんが・石・ブロック造（38年）</option>
+        <option value="rc">鉄筋コンクリート造 RC・SRC（47年）</option>
+      </select>
+    </div>
+
+    <div class="field-grid cols-2 mt-4">
+      <div class="field">
+        <label for="built-input">建てられた年月</label>
+        <input id="built-input" class="input" type="month" value="2010-04" />
+      </div>
+      <div class="field">
+        <label for="acquired-input">取得した年月</label>
+        <input id="acquired-input" class="input" type="month" value="2020-04" />
+      </div>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <p class="result-label">1年あたりの減価償却費（満額の年）</p>
+      <p class="result-value"><span id="dep-result">—</span><span class="unit" id="dep-unit"></span></p>
+      <p class="result-sub" id="dep-sub">建物の取得価額と年月を入力してください</p>
+
+      <div class="mt-5" id="dep-breakdown" hidden>
+        <div class="result-row">
+          <span class="k">耐用年数</span>
+          <span class="v" id="row-life">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">償却率（定額法）</span>
+          <span class="v" id="row-rate">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">初年度の償却費</span>
+          <span class="v" id="row-first">—</span>
+        </div>
+        <div class="result-row">
+          <span class="k">償却が終わる年</span>
+          <span class="v" id="row-last">—</span>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn btn-secondary btn-sm btn-copy" id="dep-copy" disabled>
+          <span class="label-default">結果をコピー</span>
+          <span class="label-done">コピーしました</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <p class="result-label mb-4">年ごとの減価償却費</p>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>年</th>
+              <th class="num">月数</th>
+              <th class="num">減価償却費</th>
+              <th class="num">未償却残高</th>
+            </tr>
+          </thead>
+          <tbody id="dep-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="notice mt-5">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <p>住宅用の建物を定額法で償却する場合の概算です。建物附属設備・構築物を分けて償却する場合や、事業供用日が取得日と異なる場合は結果が変わります。実際の申告は税理士や税務署にご確認ください。</p>
+    </div>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>建物だけの取得価額を万円で入力します（土地の分は含めません）。</li>
+      <li>建物の構造を選びます。構造ごとに法定耐用年数が決まっています。</li>
+      <li>建てられた年月と、取得した年月を入れます。この2つが違えば中古取得として簡便法で計算します。</li>
+    </ol>
+
+    <h2 id="what-is">減価償却とは</h2>
+    <p>
+      建物は年月とともに価値が減っていきます。その減った分を、毎年の必要経費として計上する手続きが<strong>減価償却</strong>です。購入した年に全額を経費にするのではなく、決められた年数に分けて少しずつ費用にしていきます。
+    </p>
+    <p>
+      不動産の賃貸では、減価償却費が必要経費のなかでいちばん大きい項目になることが少なくありません。計上を忘れると不動産所得が実際より多く算出され、納める税金が過大になります。
+    </p>
+
+    <h2 id="life">構造別の法定耐用年数（住宅用）</h2>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>構造</th><th class="num">耐用年数</th><th class="num">定額法の償却率</th></tr>
+        </thead>
+        <tbody>
+          {STRUCTURE_TABLE.map((r) => (
+            <tr>
+              <td>{r.label}</td>
+              <td class="num">{r.years}年</td>
+              <td class="num">{straightLineRate(r.years).toFixed(3)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      償却率は「1 ÷ 耐用年数」を小数第4位で切り上げた値で、国税庁の減価償却資産の償却率表と一致します。
+    </p>
+
+    <h2 id="formula">計算式</h2>
+    <p><code>1年あたりの減価償却費 = 建物の取得価額 × 償却率</code></p>
+    <p>
+      取得した年だけは、事業に使い始めた月から年末までの月数で按分します。
+    </p>
+    <p><code>取得年の減価償却費 = 建物の取得価額 × 償却率 × 使用した月数 ÷ 12</code></p>
+    <p>
+      たとえば新築の木造アパートを{fmtYen(18_000_000)}（建物のみ）で1月に取得した場合、耐用年数22年・償却率{straightLineRate(22).toFixed(3)}なので、1年あたりの減価償却費は{fmtYen(exNew?.fullYearAmount ?? 0)}になります。
+    </p>
+
+    <h2 id="used">中古で買った場合は年数が短くなる</h2>
+    <p>
+      中古物件を取得したときは、残りの使用可能期間を見積もる必要があります。実務では計算が簡単な<strong>簡便法</strong>が広く使われます。
+    </p>
+    <ul>
+      <li>築年数が法定耐用年数を<strong>過ぎている</strong>場合 — <code>法定耐用年数 × 0.2</code></li>
+      <li>まだ<strong>過ぎていない</strong>場合 — <code>(法定耐用年数 − 築年数) + 築年数 × 0.2</code></li>
+    </ul>
+    <p>
+      いずれも1年未満は切り捨て、結果が2年未満のときは2年とします。同じ{fmtYen(18_000_000)}の木造でも、築10年で取得すれば耐用年数は{exUsed?.usefulLife ?? 0}年に縮み、1年あたりの減価償却費は{fmtYen(exUsed?.fullYearAmount ?? 0)}へ増えます。新築で買うより<strong>短い期間に大きく費用化できる</strong>のが中古物件の特徴です。
+    </p>
+
+    <h2 id="land">土地は減価償却できない</h2>
+    <p>
+      減価償却の対象は、時間とともに価値が減る資産に限られます。土地は年月が経っても価値が減らないものとして扱われるため対象外です。したがって計算に使うのは建物だけの金額です。
+    </p>
+    <p>
+      売買契約書に建物価格が分けて書かれていればそれを使います。書かれていない場合は、毎年届く固定資産税の課税明細に載っている土地と建物それぞれの価格の比率で、購入総額を按分する方法が一般的です。消費税額から建物価格を逆算できる場合もあります。
+    </p>
+
+    <h2 id="memo">最後は1円を残す</h2>
+    <p>
+      耐用年数が終わっても、帳簿上は<strong>1円だけ</strong>残します。これを備忘価額といい、その資産をまだ保有していることを帳簿に示しておくための決まりです。本ツールの年別の表でも、最終年の未償却残高が1円になるように調整しています。
+    </p>
+
+    <h2 id="use-cases">こんなときに使えます</h2>
+    <ul>
+      <li><strong>確定申告の準備</strong> — その年に計上できる減価償却費を確かめる</li>
+      <li><strong>物件購入の検討</strong> — 中古と新築で費用化できる金額とスピードを比べる</li>
+      <li><strong>収支計画</strong> — 償却が終わる年を把握し、その後に所得が増えることを見込んでおく</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import {
+    calcDepreciation,
+    STRUCTURE_LABEL,
+    type BuildingStructure,
+  } from '../../lib/depreciation';
+
+  const priceInput = document.getElementById('price-input') as HTMLInputElement | null;
+  const structureSelect = document.getElementById('structure-select') as HTMLSelectElement | null;
+  const builtInput = document.getElementById('built-input') as HTMLInputElement | null;
+  const acquiredInput = document.getElementById('acquired-input') as HTMLInputElement | null;
+
+  const resultEl = document.getElementById('dep-result');
+  const unitEl = document.getElementById('dep-unit');
+  const subEl = document.getElementById('dep-sub');
+  const breakdownEl = document.getElementById('dep-breakdown');
+  const rowLife = document.getElementById('row-life');
+  const rowRate = document.getElementById('row-rate');
+  const rowFirst = document.getElementById('row-first');
+  const rowLast = document.getElementById('row-last');
+  const tableBody = document.getElementById('dep-table-body');
+  const copyBtn = document.getElementById('dep-copy') as HTMLButtonElement | null;
+
+  const yen = (n: number) => '¥' + Math.round(n).toLocaleString('ja-JP');
+
+  function parseManYen(raw: string): number {
+    const n = Number(raw.replace(/[^0-9.]/g, ''));
+    return Number.isFinite(n) ? Math.round(n * 10_000) : 0;
+  }
+
+  let lastSummary = '';
+
+  function update() {
+    if (!priceInput || !structureSelect || !builtInput || !acquiredInput) return;
+
+    const result = calcDepreciation({
+      buildingPrice: parseManYen(priceInput.value),
+      structure: structureSelect.value as BuildingStructure,
+      builtOn: builtInput.value,
+      acquiredOn: acquiredInput.value,
+    });
+
+    if (!result || result.rows.length === 0) {
+      if (resultEl) resultEl.textContent = '—';
+      if (unitEl) unitEl.textContent = '';
+      if (subEl) {
+        const reversed =
+          builtInput.value && acquiredInput.value && acquiredInput.value < builtInput.value;
+        subEl.textContent = reversed
+          ? '取得した年月が、建てられた年月より前になっています'
+          : '建物の取得価額と年月を入力してください';
+      }
+      if (breakdownEl) breakdownEl.hidden = true;
+      if (tableBody) tableBody.innerHTML = '';
+      if (copyBtn) copyBtn.disabled = true;
+      lastSummary = '';
+      return;
+    }
+
+    if (resultEl) resultEl.textContent = yen(result.fullYearAmount);
+    if (unitEl) unitEl.textContent = '';
+    if (subEl) {
+      const label = STRUCTURE_LABEL[structureSelect.value as BuildingStructure];
+      subEl.textContent = result.isUsed
+        ? `${label}・中古取得のため簡便法で耐用年数${result.usefulLife}年`
+        : `${label}・新築取得のため法定耐用年数${result.usefulLife}年`;
+    }
+    if (breakdownEl) breakdownEl.hidden = false;
+    if (rowLife) rowLife.textContent = `${result.usefulLife}年`;
+    if (rowRate) rowRate.textContent = result.rate.toFixed(3);
+    if (rowFirst) rowFirst.textContent = yen(result.firstYearAmount);
+    if (rowLast) rowLast.textContent = `${result.lastYear}年`;
+
+    if (tableBody) {
+      tableBody.innerHTML = result.rows
+        .map(
+          (r) =>
+            `<tr><td class="num">${r.year}年</td><td class="num">${r.months}か月</td><td class="num">${yen(r.amount)}</td><td class="num">${yen(r.bookValue)}</td></tr>`,
+        )
+        .join('');
+    }
+
+    lastSummary = [
+      `建物の取得価額 ${yen(parseManYen(priceInput.value))}`,
+      `構造 ${STRUCTURE_LABEL[structureSelect.value as BuildingStructure]}`,
+      `耐用年数 ${result.usefulLife}年（償却率 ${result.rate.toFixed(3)}）`,
+      `1年あたりの減価償却費 ${yen(result.fullYearAmount)}`,
+      `初年度 ${yen(result.firstYearAmount)}／償却終了 ${result.lastYear}年`,
+    ].join('\n');
+    if (copyBtn) copyBtn.disabled = false;
+  }
+
+  for (const el of [priceInput, structureSelect, builtInput, acquiredInput]) {
+    el?.addEventListener('input', update);
+    el?.addEventListener('change', update);
+  }
+
+  copyBtn?.addEventListener('click', async () => {
+    if (!lastSummary) return;
+    try {
+      await navigator.clipboard.writeText(lastSummary);
+      copyBtn.classList.add('is-done');
+      setTimeout(() => copyBtn.classList.remove('is-done'), 1600);
+    } catch {
+      /* クリップボードが使えない環境では何もしない */
+    }
+  });
+
+  update();
+</script>
