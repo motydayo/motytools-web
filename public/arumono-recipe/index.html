@@ -103,7 +103,12 @@
     .shot-row { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
     .shot-row::-webkit-scrollbar { display: none; }
     .shot { flex: 0 0 220px; }
-    .shot img { width: 100%; border-radius: 20px; border: 1px solid var(--border); background: #fff; display: block; }
+    .shot img {
+      /* height:auto を書かないと、HTMLの height 属性がそのまま高さになって縦に伸びる */
+      width: 100%; height: auto; aspect-ratio: 375 / 812;
+      object-fit: cover; border-radius: 20px; border: 1px solid var(--border);
+      background: #fff; display: block;
+    }
     .shot .cap { margin-top: 12px; font-size: 13px; color: var(--text-2); line-height: 1.6; }
     .shot .cap b { display: block; color: var(--text); font-size: 14px; margin-bottom: 2px; }
 
