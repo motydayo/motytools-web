@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ピッと保証 — 保証書を撮るだけで、家電の保証期限を管理</title>
+  <meta name="description" content="ピッと保証は、家電の保証書やレシートをカメラで撮るだけで保証期限を管理できるiPhoneアプリ。切れる前に通知でお知らせ。写真は端末の中だけに保存。会員登録不要、無料。" />
+  <meta name="keywords" content="ピッと保証,保証書,保証期限,家電,レシート,管理,アプリ,延長保証,iPhone" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://motytools.com/pitto-hosho/" />
+  <meta property="og:title" content="ピッと保証 — 保証書を撮るだけで、家電の保証期限を管理" />
+  <meta property="og:description" content="家電の保証書やレシートを撮るだけで保証期限を管理。切れる前に通知。写真は端末の中だけ。" />
+  <meta property="og:url" content="https://motytools.com/pitto-hosho/" />
+  <meta property="og:site_name" content="ピッと保証" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #2563EB;
+      --accent-dark: #1D4ED8;
+      --accent-soft: #EFF6FF;
+      --bg: #ffffff;
+      --bg-2: #FAFAF9;
+      --border: #ECECEA;
+      --text: #1d1d1f;
+      --text-2: #55555c;
+      --text-3: #8e8e93;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+    nav { border-bottom: 1px solid var(--border); }
+    nav .inner {
+      max-width: 960px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+    .logo span { color: var(--text-3); font-weight: 400; }
+    .nav-app { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--accent); }
+
+    .hero { padding: 88px 0 64px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before {
+      content: ''; position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+      width: 720px; height: 480px;
+      background: radial-gradient(ellipse at center, rgba(26,107,74,0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero .container { position: relative; }
+    .app-icon {
+      width: 88px; height: 88px; border-radius: 22px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 24px; box-shadow: 0 12px 32px rgba(26,107,74,0.28);
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-soft);
+      border: 1px solid rgba(26,107,74,0.25); border-radius: 100px;
+      padding: 5px 14px; margin-bottom: 24px;
+    }
+    .badge::before { content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+
+    h1 {
+      font-size: clamp(30px, 6vw, 52px); font-weight: 900; letter-spacing: -0.03em;
+      line-height: 1.2; margin-bottom: 20px; font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    h1 .accent { color: var(--accent); }
+    .tagline { font-size: clamp(15px, 2.5vw, 18px); color: var(--text-2); max-width: 560px; margin: 0 auto 36px; line-height: 1.9; }
+
+    .store-placeholder {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--text); color: #fff; border-radius: 12px; padding: 12px 24px;
+      font-size: 14px; font-weight: 600; text-decoration: none;
+    }
+    .store-placeholder .sub { display: block; font-size: 10px; font-weight: 400; color: #d1d1d6; line-height: 1.3; text-align: left; }
+    .store-placeholder .main { display: block; font-size: 15px; font-weight: 700; line-height: 1.3; text-align: left; }
+    .free-note { margin-top: 14px; font-size: 12px; color: var(--text-3); }
+
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(24px, 4vw, 34px); font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 40px; font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+
+    .shots { padding: 64px 0 72px; background: var(--bg-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .shot-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 24px 20px;
+    }
+    .shot img {
+      /* height:auto を書かないと、HTMLの height 属性がそのまま高さになって縦に伸びる */
+      width: 100%; height: auto; aspect-ratio: 375 / 812;
+      object-fit: cover; border-radius: 20px; border: 1px solid var(--border);
+      background: #fff; display: block;
+    }
+    .shot .cap { margin-top: 12px; font-size: 13px; color: var(--text-2); line-height: 1.6; }
+    .shot .cap b { display: block; color: var(--text); font-size: 14px; margin-bottom: 2px; }
+
+    .steps { padding: 72px 0; }
+    .step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; }
+    .step { }
+    .step .num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent-soft); color: var(--accent);
+      font-size: 15px; font-weight: 800; margin-bottom: 14px;
+    }
+    .step h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+    .step p { font-size: 14px; color: var(--text-2); line-height: 1.9; }
+
+    .features { padding: 72px 0; background: var(--bg-2); border-top: 1px solid var(--border); }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+    .feature {
+      background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 26px;
+    }
+    .feature svg { color: var(--accent); margin-bottom: 14px; }
+    .feature h3 { font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+    .feature p { font-size: 14px; color: var(--text-2); line-height: 1.9; }
+
+    .pricing { padding: 72px 0; }
+    .price-card {
+      border: 1px solid var(--border); border-radius: 20px; padding: 36px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px;
+    }
+    .price-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
+    .price-card ul { list-style: none; }
+    .price-card li { font-size: 14px; color: var(--text-2); padding-left: 22px; position: relative; margin-bottom: 8px; line-height: 1.8; }
+    .price-card li::before {
+      content: ''; position: absolute; left: 4px; top: 9px; width: 7px; height: 7px;
+      border-radius: 50%; background: var(--accent);
+    }
+
+    .cta { padding: 80px 0 96px; text-align: center; border-top: 1px solid var(--border); }
+    .cta h2 { font-size: clamp(22px, 4vw, 32px); font-weight: 800; margin-bottom: 16px; font-family: 'Noto Sans JP', 'Inter', sans-serif; }
+    .cta p { color: var(--text-2); margin-bottom: 28px; font-size: 15px; }
+
+    footer { border-top: 1px solid var(--border); padding: 32px 0 48px; }
+    footer .inner {
+      max-width: 960px; margin: 0 auto; padding: 0 24px;
+      display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center;
+      font-size: 13px; color: var(--text-3);
+    }
+    footer a { color: var(--text-2); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    footer .links { display: flex; gap: 20px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="inner">
+      <a class="logo" href="/">motytools<span> / ピッと保証</span></a>
+      <span class="nav-app">iPhone アプリ</span>
+    </div>
+  </nav>
+  <section class="hero">
+    <div class="container">
+      <div class="app-icon">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M9 15l2 2 4-4" />
+        </svg>
+      </div>
+      <div class="badge">近日公開</div>
+      <h1>保証書を撮るだけで、<br /><span class="accent">家電の保証期限</span>を管理できる。</h1>
+      <p class="tagline">
+        保証書・レシート・製品ラベルのどれかをカメラで撮るだけ。品名、購入日、保証期間を読み取って、保証終了日を自動で出します。
+        切れる前に通知でお知らせ。写真はそのまま保証書の代わりになります。
+      </p>
+      <a class="store-placeholder" href="#" aria-disabled="true">
+        <span><span class="sub">App Store</span><span class="main">近日公開</span></span>
+      </a>
+      <p class="free-note">無料でお使いいただけます（広告あり・広告除去は買い切り）</p>
+    </div>
+  </section>
+  <section class="shots">
+    <div class="container">
+      <div class="section-label">Screens</div>
+      <h2 class="section-title">こんなアプリです。</h2>
+      <div class="shot-row">
+        <div class="shot">
+          <img src="/pitto-hosho/shots/01-mock.webp" alt="もうすぐ切れる家電が最初に並ぶホーム画面" loading="lazy" width="1179" height="2556" />
+          <p class="cap"><b>もうすぐ切れる順に並ぶ</b>今気にすべき家電が最初に出ます。</p>
+        </div>
+        <div class="shot">
+          <img src="/pitto-hosho/shots/02-mock.webp" alt="保証書を撮ると品名と購入日と保証期間が読み取られる画面" loading="lazy" width="1179" height="2556" />
+          <p class="cap"><b>撮るだけで読み取り</b>品名・購入日・保証期間・保証終了日が自動で入ります。</p>
+        </div>
+        <div class="shot">
+          <img src="/pitto-hosho/shots/03-mock.webp" alt="保証の詳細と保証書の写真、修理と買い替えの導線" loading="lazy" width="1179" height="2556" />
+          <p class="cap"><b>写真が保証書の代わりに</b>修理の窓口でそのまま見せられます。</p>
+        </div>
+        <div class="shot">
+          <img src="/pitto-hosho/shots/04-mock.webp" alt="通知の設定とバックアップの画面" loading="lazy" width="1179" height="2556" />
+          <p class="cap"><b>切れる前に通知</b>30日前・7日前・当日。時刻も選べます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="steps">
+    <div class="container">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">撮る。確かめる。あとは待つだけ。</h2>
+      <div class="step-grid">
+        <div class="step">
+          <div class="num">1</div>
+          <h3>保証書かレシートを撮る</h3>
+          <p>買ってきた家電の保証書、レシート、本体のラベル。どれでも構いません。端末の中の文字読み取りで、品名・メーカー・購入日・保証期間を拾います。</p>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <h3>読み取り結果を確かめる</h3>
+          <p>読み取れなかった項目は「未入力」と正直に出ます。その場で1タップ手直しして登録。読み取れない書類でも手入力で必ず登録できます。</p>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <h3>切れる前に通知が来る</h3>
+          <p>保証終了の30日前・7日前・当日に通知します。壊れたときは「修理・サポートを探す」「買い替え候補を見る」から次の行動へ。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="features">
+    <div class="container">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">「保証書、どこにやったっけ」をなくす。</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>入口は「撮る」1つだけ</h3>
+          <p>登録方法を選ぶメニューはありません。何を撮ったかはアプリが判定します。</p>
+        </div>
+        <div class="feature">
+          <h3>延長保証にも対応</h3>
+          <p>量販店の5年保証などの延長保証を登録すると、そちらの終了日で管理します。</p>
+        </div>
+        <div class="feature">
+          <h3>写真がそのまま保証書に</h3>
+          <p>原本の写真を端末の中に保存。修理を頼むとき、紙を探さずに見せられます。</p>
+        </div>
+        <div class="feature">
+          <h3>壊れたときの出口がある</h3>
+          <p>メーカーの修理・サポートを探すボタンと、買い替え候補を探すボタンを用意しています。</p>
+        </div>
+        <div class="feature">
+          <h3>データは端末の中だけ</h3>
+          <p>会員登録もログインも不要。登録した内容と写真は外部に送信されません。</p>
+        </div>
+        <div class="feature">
+          <h3>バックアップできる</h3>
+          <p>写真ごと1つのファイルに書き出して、iCloud Driveなどに保存。機種変更のときに読み込めます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="pricing">
+    <div class="container">
+      <div class="section-label">Price</div>
+      <h2 class="section-title">無料で使えます。</h2>
+      <div class="price-card">
+        <div>
+          <h3>無料</h3>
+          <ul>
+            <li>登録できる台数に上限はありません</li>
+            <li>読み取り・通知・写真の保存・バックアップ</li>
+            <li>画面の下にバナー広告が出ます</li>
+          </ul>
+        </div>
+        <div>
+          <h3>広告を消す（買い切り）</h3>
+          <ul>
+            <li>バナー広告が出なくなります</li>
+            <li>機能の制限は元から無く、増える機能もありません</li>
+            <li>機種変更しても「購入を復元する」で戻せます</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="cta">
+    <div class="container">
+      <h2>保証が切れる前に、気づける。</h2>
+      <p>App Storeでの公開を準備しています。</p>
+      <a class="store-placeholder" href="#" aria-disabled="true">
+        <span><span class="sub">App Store</span><span class="main">近日公開</span></span>
+      </a>
+    </div>
+  </section>
+  <footer>
+    <div class="inner">
+      <div>&copy; motytools</div>
+      <div class="links">
+        <a href="/">ほかのアプリ</a>
+        <a href="/pitto-hosho/privacy/">プライバシーポリシー</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

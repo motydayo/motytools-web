@@ -38,6 +38,8 @@ const LEGACY_PATHS = [
   '/recipescrap/',
   '/recipescrap/privacy/',
   '/recipescrap/terms/',
+  '/pitto-hosho/',
+  '/pitto-hosho/privacy/',
 ];
 
 export const GET: APIRoute = () => {
