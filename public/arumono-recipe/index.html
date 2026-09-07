@@ -100,9 +100,11 @@
     }
 
     .shots { padding: 64px 0 72px; background: var(--bg-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .shot-row { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
-    .shot-row::-webkit-scrollbar { display: none; }
-    .shot { flex: 0 0 220px; }
+    .shot-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 24px 20px;
+    }
     .shot img {
       /* height:auto を書かないと、HTMLの height 属性がそのまま高さになって縦に伸びる */
       width: 100%; height: auto; aspect-ratio: 375 / 812;
@@ -196,19 +198,19 @@
       <h2 class="section-title">こんなアプリです。</h2>
       <div class="shot-row">
         <div class="shot">
-          <img src="/arumono-recipe/shots/01.png" alt="今すぐ作れる料理の一覧" loading="lazy" width="750" height="1624" />
+          <img src="/arumono-recipe/shots/01-v2.png" alt="今すぐ作れる料理の一覧" loading="lazy" width="750" height="1624" />
           <p class="cap"><b>今すぐ作れる</b>持っている食材だけで完成する料理が並びます。</p>
         </div>
         <div class="shot">
-          <img src="/arumono-recipe/shots/02.png" alt="作れる料理が写真つきで並ぶ画面" loading="lazy" width="750" height="1624" />
+          <img src="/arumono-recipe/shots/02-v2.png" alt="作れる料理が写真つきで並ぶ画面" loading="lazy" width="750" height="1624" />
           <p class="cap"><b>写真で選べる</b>作れる料理が写真つきで並びます。</p>
         </div>
         <div class="shot">
-          <img src="/arumono-recipe/shots/03.png" alt="食材をタップで選ぶ画面" loading="lazy" width="750" height="1624" />
+          <img src="/arumono-recipe/shots/03-v2.png" alt="食材をタップで選ぶ画面" loading="lazy" width="750" height="1624" />
           <p class="cap"><b>食材はタップで選ぶだけ</b>調味料は最初から「ある」扱いです。</p>
         </div>
         <div class="shot">
-          <img src="/arumono-recipe/shots/04.png" alt="レシピの材料と作り方の画面" loading="lazy" width="750" height="1624" />
+          <img src="/arumono-recipe/shots/04-v2.png" alt="レシピの材料と作り方の画面" loading="lazy" width="750" height="1624" />
           <p class="cap"><b>材料と作り方まで</b>家にある材料には印が付きます。</p>
         </div>
       </div>
