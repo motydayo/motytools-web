@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ToolCard from '../components/ToolCard.astro';
 import { SITE } from '../config';
 import { TOOLS, CATEGORIES } from '../data/tools';
 
@@ -21,116 +20,111 @@ const jsonLd = [
   },
 ];
 
-const products = [
-  {
-    href: 'https://roster.motytools.com',
-    external: true,
-    cls: 'card-roster',
-    tag: 'Web サービス',
-    name: 'Roster',
-    desc: '日本のYouTubeチャンネルをカテゴリ別にランキング。バズる前に見つける、チャンネル成長率トラッカー。',
-    link: 'roster.motytools.com',
-    icon: '<rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/>',
-  },
+const popular = ['tedori', 'wareki', 'moji-count', 'image-compress'].map(
+  (slug) => TOOLS.find((t) => t.slug === slug)!,
+);
+
+// カード用の短い一言（台帳の short より短く、1行で収まる長さ）
+const shortLine: Record<string, string> = {
+  tedori: '給与から手取り額を計算します。',
+  fukuri: '将来の資産額をシミュレーション。',
+  loan: '毎月の返済額・総額を試算。',
+  'genka-shokyaku': '建物の減価償却費をかんたんに計算。',
+  denkidai: '電気代の目安をかんたんに計算。',
+  percent: '割合・増減率・割引などを計算。',
+  wareki: '西暦と和暦を変換できます。',
+  nenrei: '生年月日から年齢を計算。',
+  days: '2つの日付の間の日数を計算。',
+  eigyobi: '営業日数を自動でカウント。',
+  'moji-count': '文字数・行数・バイト数を計測。',
+  qr: 'テキストやURLからQRコードを作成。',
+  'image-compress': '画像を圧縮・リサイズして軽く。',
+  'heic-jpg': 'HEIC形式の画像をJPGに変換。',
+};
+
+// つくったもの。visual = カード上部に出す見た目の種類
+type Visual = 'chart' | 'memo' | 'barcode' | 'shot' | 'recipe';
+interface Product {
+  href: string;
+  external?: boolean;
+  name: string;
+  desc: string;
+  visual: Visual;
+  shot?: string;
+  /** スクショ上部の見出し帯を切り落とす */
+  crop?: boolean;
+  icon?: string;
+}
+const showcase: Product[] = [
   {
     href: 'https://firemap.alazora.workers.dev',
     external: true,
-    cls: 'card-firemap',
-    tag: 'Web サービス',
     name: '炎上マップ',
-    desc: 'ネット炎上を観測・検証する娯楽型データメディア。炎上弁護人が独自の視点で読み解く。',
-    link: '炎上マップを開く',
-    icon: '<path d="M12 2c0 0-4 4-4 9a4 4 0 0 0 8 0c0-1.5-.5-3-1.5-4.5C14 8 14 10 12 10c0-3-1-5.5-0-8z"/><path d="M9 17c-1.5 0-3-1-3-3 0-1.5.8-2.8 2-3.5"/>',
+    desc: '話題の投稿を時系列で可視化。',
+    visual: 'chart',
   },
   {
     href: '/memomail/',
-    external: false,
-    cls: 'card-memomail',
-    tag: 'iOS アプリ',
     name: 'メモびゅん',
-    desc: '書いたメモをワンタップでメール送信。Obsidian連携・音声入力対応のシンプルなiPhoneアプリ。',
-    link: '詳しく見る',
-    icon: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/>',
-  },
-  {
-    href: '/buzzmeter/',
-    external: false,
-    cls: 'card-buzzmeter',
-    tag: '読み物サイト',
-    name: '真相メモ',
-    desc: 'ネットで話題になった出来事を、時系列・背景・ランキングでわかりやすく整理する読み物サイト。',
-    link: '詳しく見る',
-    icon: '<circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>',
-  },
-  {
-    href: '/arumono-recipe/',
-    external: false,
-    cls: 'card-arumono-recipe',
-    tag: 'iOS アプリ — 近日公開',
-    name: 'あるものレシピ',
-    desc: '冷蔵庫にある食材をタップで選ぶだけ。いま作れる料理と、あと1つで作れる料理が並びます。477品を収録。',
-    link: '詳しく見る',
-    icon: '<path d="M3 11h18M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M6 11v8M18 11v8M4 19h16"/>',
+    desc: 'すぐ書けて、すぐ送れる。シンプルなメモ帳。',
+    visual: 'memo',
   },
   {
     href: '/price-scan/',
-    external: false,
-    cls: 'card-pitto-saiyasu',
-    tag: 'iOS アプリ — 配信中',
     name: 'ピッと最安',
-    desc: 'バーコードをスキャンして楽天・Yahooの最安値を比較。値下がり通知つき。無料でダウンロードできます。',
-    link: '詳しく見る',
-    icon: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+    desc: 'バーコードで商品を検索し最安値をチェック。',
+    visual: 'barcode',
   },
   {
     href: '/pitto-kigen/',
-    external: false,
-    cls: 'card-pitto-kigen',
-    tag: 'iOS アプリ — 配信中',
     name: 'ピッと期限',
-    desc: 'バーコードで商品名、カメラで賞味期限を読み取り。手入力ゼロで食品ロスを防ぎ、冷蔵庫の中身を家族と共有できます。',
-    link: '詳しく見る',
-    icon: '<path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="m9 14 2 2 4-4"/>',
-  },
-  {
-    href: '/ooya-note/',
-    external: false,
-    cls: 'card-ooya-note',
-    tag: 'iOS アプリ',
-    name: '大家ノート',
-    desc: '家賃の入金・契約の更新日・年間収支を端末内だけで管理。小規模な個人大家のための賃貸管理アプリ。',
-    link: '詳しく見る',
-    icon: '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
-  },
-  {
-    href: '/apps/lesson-techo/',
-    external: false,
-    cls: 'card-lesson-techo',
-    tag: 'iOS アプリ',
-    name: 'レッスン手帳',
-    desc: '生徒・月謝・振替をまとめて管理。未納が一目でわかる、個人レッスン講師のための台帳アプリ。',
-    link: '詳しく見る',
-    icon: '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
-  },
-  {
-    href: '/apps/tsukulog/',
-    external: false,
-    cls: 'card-tsukulog',
-    tag: 'iOS アプリ',
-    name: 'つくログ',
-    desc: '材料の在庫・原価から販路別の手取り、申告用CSVまで。「この値段で売ると手取りいくら」に即答するハンドメイド作家向けアプリ。',
-    link: '詳しく見る',
-    icon: '<path d="M12 2v6.5l4 2.5"/><path d="M12 22a10 10 0 1 0-8-4"/><path d="M2 22l4.5-4.5"/><path d="M2 16v6h6"/>',
+    desc: '食品や日用品の期限を管理。',
+    visual: 'shot',
+    shot: '/pitto-kigen/shots/04.jpg',
+    crop: true,
   },
   {
     href: '/recipescrap/',
-    external: false,
-    cls: 'card-recipescrap',
-    tag: 'iOS アプリ — 配信中',
     name: 'レシピスクラップ',
-    desc: 'SNSで見つけたレシピを、共有ボタンから材料と手順だけにして保存。料理名でも材料名でも探せて、調理中は大きな文字で表示。無料でダウンロードできます。',
-    link: '詳しく見る',
-    icon: '<path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/>',
+    desc: 'SNSのレシピを材料と手順だけにして保存。',
+    visual: 'recipe',
+  },
+  {
+    href: '/arumono-recipe/',
+    name: 'あるものレシピ',
+    desc: '冷蔵庫にある食材から、いま作れる料理を。',
+    visual: 'shot',
+    shot: '/arumono-recipe/shots/01-v2.png',
+  },
+];
+const compact: Product[] = [
+  {
+    href: '/ooya-note/',
+    name: '大家ノート',
+    desc: '不動産の収支・管理をシンプルに。',
+    visual: 'memo',
+    icon: '<path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-8h6v8"/>',
+  },
+  {
+    href: '/apps/lesson-techo/',
+    name: 'レッスン手帳',
+    desc: '習いごとの生徒・月謝・振替を管理。',
+    visual: 'memo',
+    icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  },
+  {
+    href: '/apps/tsukulog/',
+    name: 'つくログ',
+    desc: 'つくる過程を、ログとして残す。',
+    visual: 'memo',
+    icon: '<rect x="8" y="2" width="13" height="16" rx="2"/><path d="M4 6v14a2 2 0 0 0 2 2h11"/>',
+  },
+  {
+    href: '/buzzmeter/',
+    name: '真相メモ',
+    desc: '気になることを調べて整理。',
+    visual: 'memo',
+    icon: '<circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>',
   },
 ];
 ---
@@ -140,255 +134,1078 @@ const products = [
   absoluteTitle={true}
   description="手取り計算・和暦変換・文字数カウント・画像圧縮など、登録不要ですぐ使える無料Webツールを公開中。データと技術で「便利」を届けるプロダクトスタジオ motytools。"
   path="/"
-  appearance="dark"
+  appearance="light"
+  chrome="home"
   jsonLd={jsonLd}
 >
-  <section class="hero">
-    <div class="container">
-      <div class="badge">プロダクトスタジオ</div>
-      <h1 class="hero-title">役に立つを、<br /><span class="dim">かたちにする。</span></h1>
-      <p class="tagline">
-        毎日のちょっとした不便を解消する、無料のWebツールとアプリを作っています。登録不要、すべてブラウザだけで完結。
-      </p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="/tools/">無料ツールを使う</a>
+  <!-- ヒーロー -->
+  <section class="hm-hero">
+    <div class="container hm-hero-inner">
+      <div class="hm-hero-text">
+        <p class="hm-eyebrow">Product Studio / Tokyo</p>
+        <h1 class="hm-title">役に立つを、<br />かたちにする。</h1>
+        <p class="hm-lead">
+          毎日のちょっとした不便を解消する、<br class="hm-br-pc" />無料のWebツールとアプリを作っています。
+        </p>
+        <div class="hm-hero-actions">
+          <a class="hm-btn" href="/tools/">
+            無料ツールを使う
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="hm-textlink" href="#products">プロダクトを見る <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+      <div class="hm-hero-art" aria-hidden="true">
+        <div class="hm-mock hm-mock-a">
+          <div class="hm-mock-bar"><i></i><i></i><i></i></div>
+          <div class="hm-mock-head">
+            <span class="hm-mock-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg></span>
+            手取り計算
+          </div>
+          <div class="hm-mock-row"><span>年収（額面）</span><b>500 万円</b></div>
+          <div class="hm-mock-row"><span>賞与</span><b>年2回</b></div>
+          <div class="hm-mock-row"><span>扶養</span><b>0 人</b></div>
+          <div class="hm-mock-result">
+            <small>手取り（月額）の目安</small>
+            <strong>314,820 円</strong>
+          </div>
+          <div class="hm-mock-row hm-mock-row-sm"><span>健康保険</span><b>2.1 万円</b></div>
+          <div class="hm-mock-row hm-mock-row-sm"><span>厚生年金</span><b>3.8 万円</b></div>
+          <div class="hm-mock-row hm-mock-row-sm"><span>所得税</span><b>1.0 万円</b></div>
+        </div>
+
+        <div class="hm-mock hm-mock-b">
+          <div class="hm-mock-bar"><i></i><i></i><i></i></div>
+          <div class="hm-mock-head">
+            <span class="hm-mock-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/></svg></span>
+            文字数カウント
+          </div>
+          <div class="hm-mock-cols">
+            <p class="hm-mock-text">伝わる言葉で、誰かの毎日を少しでも楽に。motytoolsは、役に立つツールをつくり続けます。</p>
+            <div class="hm-mock-stats">
+              <div><small>文字数</small><strong>47</strong></div>
+              <div><small>空白抜き</small><b>46</b></div>
+              <div><small>行数</small><b>2</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hm-mock hm-mock-c">
+          <div class="hm-mock-bar"><i></i><i></i><i></i></div>
+          <div class="hm-mock-head">
+            <span class="hm-mock-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span>
+            画像圧縮・リサイズ
+          </div>
+          <div class="hm-mock-cols">
+            <div class="hm-mock-drop">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <span>画像をドラッグ＆ドロップ<br />または<u>ファイルを選択</u></span>
+            </div>
+            <div class="hm-mock-settings">
+              <small>出力設定</small>
+              <div class="hm-mock-row"><span>幅の最大</span><b>1920</b></div>
+              <div class="hm-mock-row"><span>画質</span><b>80</b></div>
+              <div class="hm-mock-row"><span>形式</span><b>JPEG</b></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="tools-section" aria-labelledby="tools-heading">
+  <!-- よく使われています -->
+  <div class="hm-popular">
+    <div class="container hm-popular-inner">
+      <span class="hm-popular-label">よく使われています</span>
+      <ul class="hm-popular-list">
+        {popular.map((t) => (
+          <li><a href={`/${t.slug}/`}>{t.name}</a></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <!-- 無料Webツール -->
+  <section class="hm-tools" id="tools" aria-labelledby="tools-heading">
     <div class="container">
-      <p class="section-label" id="tools-heading">無料Webツール</p>
-      {CATEGORIES.map((cat) => (
-        <div class="tools-cat">
-          <div class="section-heading">
-            <h2 class="h2">{cat.name}</h2>
-          </div>
-          <div class="cards">
-            {TOOLS.filter((t) => t.category === cat.id).map((t) => <ToolCard tool={t} />)}
-          </div>
-        </div>
-      ))}
+      <div class="hm-tools-head">
+        <h2 id="tools-heading" class="hm-h2">無料Webツール</h2>
+        <label class="hm-search">
+          <span class="sr-only">ツールを検索</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+          <input type="search" id="hm-search" placeholder="ツール名や用途で検索" autocomplete="off" />
+        </label>
+      </div>
+
+      <div class="hm-chips" role="group" aria-label="カテゴリで絞り込む">
+        <button type="button" class="hm-chip" data-cat="all" aria-pressed="true">すべて</button>
+        {CATEGORIES.map((c) => (
+          <button type="button" class="hm-chip" data-cat={c.id} aria-pressed="false">{c.name.replace('の計算', '')}</button>
+        ))}
+      </div>
+
+      <ul class="hm-tool-grid" id="hm-tool-grid">
+        {TOOLS.map((t) => (
+          <li class="hm-tool-item" data-cat={t.category} data-text={`${t.name} ${t.short} ${t.keywords.join(' ')}`.toLowerCase()}>
+            <a href={`/${t.slug}/`} class="hm-tool">
+              <span class="hm-tool-ic" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={t.icon} />
+              </span>
+              <span class="hm-tool-body">
+                <span class="hm-tool-name">{t.name}</span>
+                <span class="hm-tool-desc">{shortLine[t.slug] ?? t.short}</span>
+              </span>
+              <svg class="hm-tool-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="hm-tool-empty" id="hm-tool-empty" hidden>
+        一致するツールがありません。別の言葉で探すか、<a href="/tools/">ツール一覧</a>をご覧ください。
+      </p>
     </div>
   </section>
 
-  <section class="products" aria-labelledby="products-heading">
+  <!-- つくったもの -->
+  <section class="hm-products" id="products" aria-labelledby="products-heading">
     <div class="container">
-      <p class="section-label" id="products-heading">プロダクト</p>
-      <div class="grid">
-        {products.map((p) => (
+      <h2 id="products-heading" class="hm-h2">つくったもの</h2>
+
+      <div class="hm-showcase">
+        <a href="https://roster.motytools.com" target="_blank" rel="noopener noreferrer" class="hm-feature">
+          <div class="hm-feature-text">
+            <span class="hm-feature-ic" aria-hidden="true">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="13" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>
+            </span>
+            <span class="hm-feature-name">Roster</span>
+            <p>日本のYouTubeチャンネルをカテゴリ別にランキング。</p>
+            <span class="hm-btn hm-btn-outline">詳しく見る <span aria-hidden="true">→</span></span>
+          </div>
+          <div class="hm-feature-art" aria-hidden="true">
+            <div class="hm-roster">
+              <div class="hm-roster-side">
+                <b>Roster</b>
+                <i class="on">すべて</i><i>エンタメ</i><i>音楽</i><i>ゲーム</i><i>スポーツ</i><i>学び</i><i>ビジネス</i><i>ニュース</i><i>料理</i>
+              </div>
+              <div class="hm-roster-main">
+                <b>YouTubeチャンネルランキング</b>
+                <div class="hm-roster-search"></div>
+                <div class="hm-roster-row hm-roster-th"><span>#</span><span>チャンネル</span><span>カテゴリ</span><span>登録者</span></div>
+                <div class="hm-roster-row"><span>1</span><span><em></em><u style="width:62%"></u></span><span>エンタメ</span><span>902万</span></div>
+                <div class="hm-roster-row"><span>2</span><span><em></em><u style="width:48%"></u></span><span>エンタメ</span><span>711万</span></div>
+                <div class="hm-roster-row"><span>3</span><span><em></em><u style="width:70%"></u></span><span>ゲーム</span><span>686万</span></div>
+                <div class="hm-roster-row"><span>4</span><span><em></em><u style="width:55%"></u></span><span>音楽</span><span>671万</span></div>
+                <div class="hm-roster-row"><span>5</span><span><em></em><u style="width:40%"></u></span><span>学び</span><span>572万</span></div>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        {showcase.map((p) => (
           <a
             href={p.href}
-            class={`card ${p.cls}`}
+            class={`hm-card hm-card-${p.visual}${p.crop ? ' hm-card-crop' : ''}`}
             target={p.external ? '_blank' : undefined}
             rel={p.external ? 'noopener noreferrer' : undefined}
           >
-            <div class="card-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.icon} />
+            <span class="hm-card-name">{p.name}</span>
+            <div class="hm-card-art" aria-hidden="true">
+              {p.visual === 'chart' && (
+                <svg viewBox="0 0 200 60" preserveAspectRatio="none">
+                  <path d="M0 48 L20 44 L40 46 L60 38 L80 40 L100 30 L120 34 L140 22 L160 26 L180 12 L200 16 L200 60 L0 60 Z" fill="rgba(220,80,60,0.12)"/>
+                  <path d="M0 48 L20 44 L40 46 L60 38 L80 40 L100 30 L120 34 L140 22 L160 26 L180 12 L200 16" fill="none" stroke="#d9534a" stroke-width="2"/>
+                </svg>
+              )}
+              {p.visual === 'memo' && (
+                <div class="hm-memo">
+                  <b>買い物メモ</b>
+                  <u style="width:80%"></u><u style="width:55%"></u><u style="width:68%"></u>
+                  <span>送信</span>
+                </div>
+              )}
+              {p.visual === 'barcode' && (
+                <div class="hm-barcode">
+                  <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+                    <g fill="#1c1c1a">
+                      <rect x="2" y="0" width="3" height="40"/><rect x="7" y="0" width="1" height="40"/><rect x="10" y="0" width="2" height="40"/><rect x="15" y="0" width="4" height="40"/><rect x="21" y="0" width="1" height="40"/><rect x="24" y="0" width="3" height="40"/><rect x="30" y="0" width="1" height="40"/><rect x="33" y="0" width="2" height="40"/><rect x="38" y="0" width="4" height="40"/><rect x="44" y="0" width="1" height="40"/><rect x="48" y="0" width="2" height="40"/><rect x="52" y="0" width="3" height="40"/><rect x="58" y="0" width="1" height="40"/><rect x="61" y="0" width="4" height="40"/><rect x="67" y="0" width="2" height="40"/><rect x="71" y="0" width="1" height="40"/><rect x="75" y="0" width="3" height="40"/><rect x="80" y="0" width="1" height="40"/><rect x="84" y="0" width="4" height="40"/><rect x="90" y="0" width="2" height="40"/><rect x="94" y="0" width="1" height="40"/><rect x="98" y="0" width="3" height="40"/><rect x="103" y="0" width="1" height="40"/><rect x="106" y="0" width="2" height="40"/><rect x="111" y="0" width="4" height="40"/><rect x="117" y="0" width="1" height="40"/>
+                    </g>
+                  </svg>
+                  <em>最安 ¥178</em>
+                </div>
+              )}
+              {p.visual === 'shot' && <img src={p.shot} alt="" width="620" height="1342" loading="lazy" decoding="async" />}
+              {p.visual === 'recipe' && (
+                <div class="hm-recipe">
+                  <b>鶏むね肉の照り焼き</b>
+                  <small>材料（2人分）</small>
+                  <span>鶏むね肉 <i>1枚</i></span>
+                  <span>しょうゆ <i>大さじ2</i></span>
+                </div>
+              )}
             </div>
-            <span class="card-tag">{p.tag}</span>
-            <div class="card-name">{p.name}</div>
-            <p class="card-desc">{p.desc}</p>
-            <span class="card-link">
-              {p.link}
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 9.5L9.5 2.5M9.5 2.5H4.5M9.5 2.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="hm-card-desc">{p.desc}</span>
+          </a>
+        ))}
+      </div>
+
+      <div class="hm-compact">
+        {compact.map((p) => (
+          <a href={p.href} class="hm-mini">
+            <span class="hm-mini-ic" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.icon} />
+            </span>
+            <span class="hm-mini-body">
+              <span class="hm-mini-name">{p.name}</span>
+              <span class="hm-mini-desc">{p.desc}</span>
             </span>
           </a>
         ))}
       </div>
     </div>
   </section>
+
+  <!-- motytoolsについて -->
+  <section class="hm-about" id="about" aria-labelledby="about-heading">
+    <div class="container hm-about-inner">
+      <h2 id="about-heading" class="sr-only">motytoolsについて</h2>
+      <div class="hm-about-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <div>
+          <b>すべて無料・登録不要</b>
+          <p>面倒な登録は一切ありません。開いてすぐ使えます。</p>
+        </div>
+      </div>
+      <div class="hm-about-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <div>
+          <b>入力データはブラウザ内で処理</b>
+          <p>計算も画像処理もお使いの端末の中で完結。データが外部に送信されることはありません。</p>
+        </div>
+      </div>
+      <div class="hm-about-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg>
+        <div>
+          <b>iPhoneアプリも作っています</b>
+          <p>ご意見・ご要望は各アプリの「ご意見・要望」からお寄せください。</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
-<style>
-  .hero {
-    padding: 96px 0 72px;
-    text-align: center;
-    position: relative;
+<script>
+  // 検索とカテゴリ絞り込み（トップページだけの小さな処理）
+  const input = document.getElementById('hm-search') as HTMLInputElement | null;
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.hm-chip'));
+  const items = Array.from(document.querySelectorAll<HTMLLIElement>('.hm-tool-item'));
+  const empty = document.getElementById('hm-tool-empty');
+  let cat = 'all';
+
+  function apply() {
+    const q = (input?.value ?? '').trim().toLowerCase();
+    let shown = 0;
+    for (const li of items) {
+      const okCat = cat === 'all' || li.dataset.cat === cat;
+      const okText = !q || (li.dataset.text ?? '').includes(q);
+      const ok = okCat && okText;
+      li.hidden = !ok;
+      if (ok) shown++;
+    }
+    if (empty) empty.hidden = shown > 0;
   }
-  .hero::before {
-    content: '';
+  input?.addEventListener('input', apply);
+  for (const chip of chips) {
+    chip.addEventListener('click', () => {
+      cat = chip.dataset.cat ?? 'all';
+      for (const c of chips) c.setAttribute('aria-pressed', String(c === chip));
+      apply();
+    });
+  }
+
+  // スマホ用メニュー
+  const btn = document.querySelector<HTMLButtonElement>('.hm-menu-btn');
+  const nav = document.getElementById('hm-nav');
+  btn?.addEventListener('click', () => {
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!open));
+    btn.setAttribute('aria-label', open ? 'メニューを開く' : 'メニューを閉じる');
+    nav?.classList.toggle('is-open', !open);
+  });
+  nav?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).tagName === 'A') {
+      btn?.setAttribute('aria-expanded', 'false');
+      nav.classList.remove('is-open');
+    }
+  });
+</script>
+
+<style is:global>
+  /* ============================================================
+     トップページ専用の見た目。トップ以外のページには読み込まれない。
+     色味: 生成り色の背景 + 深緑のアクセント1色
+     ============================================================ */
+  :root {
+    --bg: #f5f4ef;
+    --bg-2: #eeede6;
+    --surface: #ffffff;
+    --surface-2: #f5f4ef;
+    --border: #e3e1d8;
+    --border-strong: #cfcdc2;
+    --text: #1c1c1a;
+    --text-2: #5a5955;
+    --text-3: #85847d;
+    --accent: #2e6b4f;
+    --accent-hover: #275b43;
+    --accent-active: #1f4a36;
+    --accent-soft: #e6efe9;
+    --accent-border: #b9d3c4;
+    --ink: #1f1f1d;
+    --container: 1080px;
+    --font-sans: 'Noto Sans JP', 'Inter', -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+    scroll-behavior: smooth;
+    scroll-padding-top: 72px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :root { scroll-behavior: auto; }
+  }
+  .sr-only {
     position: absolute;
-    top: -60px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .hm-h2 {
+    font-size: clamp(24px, 3.2vw, 32px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  /* ── ヘッダー ── */
+  .hm-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(245, 244, 239, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .hm-header-inner {
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--sp-5);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+  .hm-logo {
+    font-family: 'Inter', var(--font-sans);
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    text-decoration: none;
+    margin-right: auto;
+  }
+  .hm-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    width: 600px;
-    height: 400px;
-    max-width: 100vw;
-    background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
-    pointer-events: none;
   }
-  .badge {
+  .hm-nav a {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-2);
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: var(--r-sm);
+    transition: color 0.15s, background 0.15s;
+  }
+  .hm-nav a:hover { color: var(--text); background: var(--bg-2); }
+  .hm-nav .hm-nav-cta { display: none; }
+  .hm-header-cta {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    padding: 10px 18px;
+    border: 1.5px solid var(--text);
+    border-radius: var(--r-sm);
+    transition: background 0.15s, color 0.15s;
+  }
+  .hm-header-cta:hover { background: var(--text); color: #fff; }
+  .hm-menu-btn {
+    display: none;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    margin-right: -10px;
+  }
+  .hm-menu-btn:hover { background: var(--bg-2); }
+  .hm-menu-btn .ic-close { display: none; }
+  .hm-menu-btn[aria-expanded='true'] .ic-open { display: none; }
+  .hm-menu-btn[aria-expanded='true'] .ic-close { display: block; }
+
+  @media (max-width: 860px) {
+    .hm-header-inner { height: 56px; }
+    .hm-header-cta { display: none; }
+    .hm-menu-btn { display: inline-flex; }
+    .hm-nav {
+      display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 56px;
+      transform: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: var(--sp-2) var(--sp-4) var(--sp-4);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 12px 24px rgba(28, 28, 26, 0.08);
+    }
+    .hm-nav.is-open { display: flex; }
+    .hm-nav a { font-size: 16px; padding: 14px 8px; border-radius: 0; border-bottom: 1px solid var(--border); }
+    .hm-nav a:hover { background: transparent; }
+    .hm-nav .hm-nav-cta {
+      display: block;
+      margin-top: var(--sp-3);
+      text-align: center;
+      font-weight: 700;
+      color: #fff;
+      background: var(--accent);
+      border: 0;
+      border-radius: var(--r-sm);
+      padding: 14px;
+    }
+  }
+
+  /* ── ボタン ── */
+  .hm-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 28px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--accent);
+    border-radius: var(--r-sm);
+    text-decoration: none;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .hm-btn:hover { background: var(--accent-hover); }
+  .hm-btn:active { background: var(--accent-active); transform: scale(0.98); }
+  .hm-btn-outline {
+    color: var(--accent);
+    background: transparent;
+    border: 1.5px solid var(--accent);
+    min-height: 44px;
+    padding: 0 20px;
+    font-size: 15px;
+  }
+  .hm-btn-outline:hover { background: var(--accent-soft); }
+  .hm-textlink {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
+    min-height: 44px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 5px;
+    text-decoration-thickness: 1.5px;
+  }
+  .hm-textlink:hover { color: var(--accent-hover); }
+
+  /* ── ヒーロー ── */
+  .hm-hero { padding: 64px 0 56px; overflow: hidden; }
+  .hm-hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: center;
+    gap: var(--sp-6);
+  }
+  .hm-eyebrow {
+    font-family: 'Inter', var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--text-3);
-    border: 1px solid var(--border);
-    border-radius: var(--r-full);
-    padding: 4px 12px;
-    margin-bottom: var(--sp-6);
-  }
-  .badge::before {
-    content: '';
-    display: block;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--success);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-  .hero-title {
-    font-size: clamp(40px, 8vw, 72px);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    line-height: 1.05;
+    color: var(--accent);
     margin-bottom: var(--sp-4);
   }
-  .hero-title .dim {
-    color: var(--text-3);
+  .hm-title {
+    font-size: clamp(38px, 5.4vw, 60px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.18;
+    margin-bottom: var(--sp-5);
   }
-  .tagline {
-    font-size: clamp(15px, 2.5vw, 17px);
+  .hm-lead {
+    font-size: 16px;
+    line-height: 1.9;
     color: var(--text-2);
-    max-width: 430px;
-    margin: 0 auto;
-    line-height: 1.8;
+    margin-bottom: var(--sp-6);
   }
-  .hero-actions {
-    margin-top: var(--sp-6);
+  .hm-hero-actions {
     display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--sp-5);
+  }
+
+  /* ヒーロー右の見本カード（パソコンのみ） */
+  .hm-hero-art {
+    position: relative;
+    height: 440px;
+  }
+  .hm-mock {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 24px 48px -16px rgba(28, 28, 26, 0.18), 0 2px 6px rgba(28, 28, 26, 0.06);
+    padding: 14px 16px 16px;
+    font-size: 11px;
+    color: var(--text-2);
+    line-height: 1.5;
+  }
+  .hm-mock-a { left: 0; top: 48px; width: 256px; transform: rotate(-3deg); z-index: 4; }
+  .hm-mock-b { right: 0; top: 0; width: 296px; transform: rotate(2deg); z-index: 2; }
+  .hm-mock-c { right: 0; top: 240px; width: 300px; transform: rotate(-1.5deg); z-index: 3; }
+  .hm-mock-bar { display: flex; gap: 5px; margin-bottom: 10px; }
+  .hm-mock-bar i { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); }
+  .hm-mock-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .hm-mock-ic {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
+  }
+  .hm-mock-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .hm-mock-row b { font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+  .hm-mock-row-sm { padding: 4px 0; font-size: 10px; }
+  .hm-mock-result {
+    margin: 10px 0 6px;
+    padding: 10px 12px;
+    background: var(--accent-soft);
+    border-radius: 8px;
+  }
+  .hm-mock-result small { display: block; font-size: 10px; color: var(--accent); font-weight: 600; }
+  .hm-mock-result strong { font-size: 20px; color: var(--text); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+  .hm-mock-cols { display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px; }
+  .hm-mock-text {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 10.5px;
+    line-height: 1.7;
+    min-height: 92px;
+  }
+  .hm-mock-stats {
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 10px;
+    display: grid;
+    gap: 4px;
+  }
+  .hm-mock-stats div { display: flex; justify-content: space-between; align-items: baseline; }
+  .hm-mock-stats small { font-size: 10px; }
+  .hm-mock-stats strong { font-size: 20px; color: var(--text); }
+  .hm-mock-stats b { font-size: 12px; color: var(--text); font-weight: 600; }
+  .hm-mock-drop {
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 8px;
+    padding: 16px 10px;
+    text-align: center;
+    color: var(--text-3);
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    font-size: 10.5px;
+  }
+  .hm-mock-drop u { color: var(--accent); font-weight: 600; }
+  .hm-mock-settings { display: grid; align-content: start; }
+  .hm-mock-settings small { font-size: 10px; font-weight: 700; color: var(--text); }
+  .hm-mock-settings .hm-mock-row { font-size: 10px; padding: 5px 0; }
+
+  @media (max-width: 960px) {
+    .hm-hero-inner { grid-template-columns: 1fr; }
+    .hm-hero-art { display: none; }
+    .hm-br-pc { display: none; }
+  }
+  @media (max-width: 640px) {
+    .hm-hero { padding: 40px 0 40px; }
+    .hm-hero-actions { flex-direction: column; align-items: stretch; gap: var(--sp-4); }
+    .hm-hero-actions .hm-btn { width: 100%; }
+    .hm-hero-actions .hm-textlink { justify-content: center; }
+  }
+
+  /* ── よく使われています ── */
+  .hm-popular {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .hm-popular-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    min-height: 56px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .hm-popular-inner::-webkit-scrollbar { display: none; }
+  .hm-popular-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    padding-right: var(--sp-4);
+    border-right: 1px solid var(--border);
+  }
+  .hm-popular-list {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+  .hm-popular-list a {
+    display: inline-block;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-2);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--border-strong);
+    white-space: nowrap;
+    border-radius: var(--r-sm);
+  }
+  .hm-popular-list a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+
+  /* ── 無料Webツール ── */
+  .hm-tools { padding: 56px 0 64px; }
+  .hm-tools-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+    margin-bottom: var(--sp-4);
+  }
+  .hm-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: min(100%, 300px);
+    height: 44px;
+    padding: 0 14px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-sm);
+    color: var(--text-3);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .hm-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .hm-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .hm-search input::placeholder { color: var(--text-3); }
+  .hm-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-5);
+  }
+  .hm-chip {
+    min-height: 40px;
+    padding: 0 20px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .hm-chip:hover { border-color: var(--border-strong); color: var(--text); }
+  .hm-chip[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .hm-tool-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--sp-3);
   }
-
-  .section-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    margin-bottom: var(--sp-6);
+  .hm-tool {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    min-height: 72px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  .hm-tool:hover {
+    border-color: var(--border-strong);
+    box-shadow: 0 8px 20px -8px rgba(28, 28, 26, 0.16);
+    transform: translateY(-1px);
+  }
+  .hm-tool:active { transform: translateY(0); }
+  .hm-tool-ic {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+  }
+  .hm-tool-body { flex: 1; min-width: 0; display: grid; gap: 2px; }
+  .hm-tool-name { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+  .hm-tool-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+  .hm-tool-arrow { flex: 0 0 auto; color: var(--text-3); transition: transform 0.15s, color 0.15s; }
+  .hm-tool:hover .hm-tool-arrow { color: var(--accent); transform: translateX(3px); }
+  .hm-tool-empty {
+    padding: var(--sp-6) 0;
     text-align: center;
+    color: var(--text-2);
+    font-size: 15px;
   }
-  .tools-section {
-    padding: var(--sp-7) 0 var(--sp-5);
+  .hm-tool-empty a { color: var(--accent); }
+  @media (max-width: 960px) {
+    .hm-tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  .tools-cat {
-    margin-bottom: var(--sp-6);
+  @media (max-width: 640px) {
+    .hm-tools { padding: 40px 0 48px; }
+    .hm-search { width: 100%; }
+    .hm-tool-grid { grid-template-columns: 1fr; }
+    .hm-chip { padding: 0 16px; }
   }
 
-  .products {
-    padding: var(--sp-7) 0 var(--sp-6);
+  /* ── つくったもの ── */
+  .hm-products {
+    padding: 56px 0 64px;
+    background: var(--bg-2);
+    border-top: 1px solid var(--border);
   }
-  .grid {
+  .hm-products .hm-h2 { margin-bottom: var(--sp-5); }
+  .hm-showcase {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-auto-rows: 236px;
     gap: var(--sp-4);
   }
-  .card {
+  .hm-feature {
+    grid-column: span 2;
+    grid-row: span 2;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--r-lg);
-    padding: 28px;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    transition: border-color 0.2s, transform 0.2s;
-    position: relative;
     overflow: hidden;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
   }
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--card-glow, transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    border-radius: inherit;
-  }
-  .card:hover {
-    border-color: var(--card-color, var(--border-strong));
+  .hm-feature:hover,
+  .hm-card:hover,
+  .hm-mini:hover {
+    border-color: var(--border-strong);
+    box-shadow: 0 12px 28px -12px rgba(28, 28, 26, 0.18);
     transform: translateY(-2px);
   }
-  .card:hover::before {
-    opacity: 1;
+  .hm-feature:active, .hm-card:active, .hm-mini:active { transform: translateY(0); }
+  .hm-feature-text {
+    padding: 24px 24px 20px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 16px;
+    row-gap: 6px;
+    align-items: center;
   }
-  .card-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--r-md);
+  .hm-feature-ic { grid-row: span 2; color: var(--accent); }
+  .hm-feature-name { font-family: 'Inter', var(--font-sans); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+  .hm-feature-text p { font-size: 14px; color: var(--text-2); line-height: 1.7; }
+  .hm-feature-text .hm-btn-outline { grid-column: 2; justify-self: start; margin-top: 8px; white-space: nowrap; }
+  .hm-feature-art {
+    position: relative;
+    padding: 24px 0 0 24px;
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+  .hm-roster {
+    position: absolute;
+    inset: 24px 0 0 24px;
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: 10px 0 0 0;
+    font-size: 10px;
+    color: var(--text-2);
+    overflow: hidden;
+  }
+  .hm-roster-side {
+    border-right: 1px solid var(--border);
+    padding: 12px 10px;
+    display: grid;
+    align-content: start;
+    gap: 6px;
+  }
+  .hm-roster-side b { font-family: 'Inter', var(--font-sans); font-size: 11px; color: var(--text); margin-bottom: 6px; }
+  .hm-roster-side i { font-style: normal; padding: 3px 6px; border-radius: 4px; }
+  .hm-roster-side i.on { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+  .hm-roster-main { padding: 12px 14px; display: grid; align-content: start; gap: 6px; }
+  .hm-roster-main > b { font-size: 12px; color: var(--text); }
+  .hm-roster-search { height: 20px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface-2); }
+  .hm-roster-row {
+    display: grid;
+    grid-template-columns: 16px 1fr 48px 40px;
+    align-items: center;
+    gap: 8px;
+    height: 24px;
+    border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+  .hm-roster-th { color: var(--text-3); font-size: 9px; }
+  .hm-roster-row span:nth-child(2) { display: flex; align-items: center; gap: 6px; }
+  .hm-roster-row em { width: 14px; height: 14px; border-radius: 50%; background: var(--accent-border); flex: 0 0 auto; }
+  .hm-roster-row u { height: 7px; border-radius: 4px; background: var(--border); }
+  .hm-roster-row span:last-child { text-align: right; color: var(--text); font-weight: 600; }
+
+  .hm-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    text-decoration: none;
+    color: var(--text);
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  .hm-card-name { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+  .hm-card-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.55; margin-top: auto; }
+  .hm-card-art {
+    flex: 1;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
-    background: var(--card-icon-bg, var(--surface-2));
-    color: var(--card-color, var(--text-2));
-    flex-shrink: 0;
+    background: var(--surface-2);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
   }
-  .card-name {
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 8px;
-    letter-spacing: -0.02em;
+  .hm-card-art svg { width: 100%; height: 100%; }
+  .hm-card-shot .hm-card-art { align-items: flex-start; padding: 12px 24px 0; }
+  .hm-card-shot img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 620 / 1342;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 4px 12px rgba(28, 28, 26, 0.1);
   }
-  .card-desc {
-    font-size: 13px;
-    color: var(--text-2);
-    line-height: 1.65;
-    flex: 1;
-    margin-bottom: 24px;
+  .hm-card-crop img { transform: translateY(-24%); }
+  .hm-memo {
+    width: 80%;
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 11px;
   }
-  .card-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--card-color, var(--text-3));
-    transition: gap 0.2s;
-  }
-  .card:hover .card-link {
-    gap: 10px;
-  }
-  .card-tag {
-    display: inline-flex;
-    align-items: center;
+  .hm-memo b { font-size: 12px; }
+  .hm-memo u { height: 6px; border-radius: 3px; background: var(--border); }
+  .hm-memo span {
+    justify-self: end;
+    padding: 3px 10px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 4px;
     font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--card-color, var(--text-3));
-    background: var(--card-tag-bg, var(--surface-2));
-    border-radius: var(--r-full);
-    padding: 3px 8px;
-    margin-bottom: 16px;
-    align-self: flex-start;
+    font-weight: 700;
   }
-  .card-roster { --card-color: #ef4444; --card-glow: radial-gradient(ellipse at top left, rgba(239,68,68,0.06) 0%, transparent 60%); --card-icon-bg: rgba(239,68,68,0.12); --card-tag-bg: rgba(239,68,68,0.1); }
-  .card-firemap { --card-color: #f97316; --card-glow: radial-gradient(ellipse at top left, rgba(249,115,22,0.06) 0%, transparent 60%); --card-icon-bg: rgba(249,115,22,0.12); --card-tag-bg: rgba(249,115,22,0.1); }
-  .card-memomail { --card-color: #3b82f6; --card-glow: radial-gradient(ellipse at top left, rgba(59,130,246,0.06) 0%, transparent 60%); --card-icon-bg: rgba(59,130,246,0.12); --card-tag-bg: rgba(59,130,246,0.1); }
-  .card-buzzmeter { --card-color: #a1a1aa; --card-glow: radial-gradient(ellipse at top left, rgba(161,161,170,0.06) 0%, transparent 60%); --card-icon-bg: rgba(161,161,170,0.12); --card-tag-bg: rgba(161,161,170,0.1); }
-  .card-arumono-recipe { --card-color: #1A6B4A; --card-glow: radial-gradient(ellipse at top left, rgba(26,107,74,0.06) 0%, transparent 60%); --card-icon-bg: rgba(26,107,74,0.12); --card-tag-bg: rgba(26,107,74,0.1); }
-  .card-pitto-kigen { --card-color: #22c55e; --card-glow: radial-gradient(ellipse at top left, rgba(34,197,94,0.06) 0%, transparent 60%); --card-icon-bg: rgba(34,197,94,0.12); --card-tag-bg: rgba(34,197,94,0.1); }
-  .card-pitto-saiyasu { --card-color: #f59e0b; --card-glow: radial-gradient(ellipse at top left, rgba(245,158,11,0.06) 0%, transparent 60%); --card-icon-bg: rgba(245,158,11,0.12); --card-tag-bg: rgba(245,158,11,0.1); }
-  .card-ooya-note { --card-color: #0D9488; --card-glow: radial-gradient(ellipse at top left, rgba(13,148,136,0.06) 0%, transparent 60%); --card-icon-bg: rgba(13,148,136,0.12); --card-tag-bg: rgba(13,148,136,0.1); }
-  .card-lesson-techo { --card-color: #7C3AED; --card-glow: radial-gradient(ellipse at top left, rgba(124,58,237,0.06) 0%, transparent 60%); --card-icon-bg: rgba(124,58,237,0.12); --card-tag-bg: rgba(124,58,237,0.1); }
-  .card-tsukulog { --card-color: #C4523E; --card-glow: radial-gradient(ellipse at top left, rgba(196,82,62,0.06) 0%, transparent 60%); --card-icon-bg: rgba(196,82,62,0.12); --card-tag-bg: rgba(196,82,62,0.1); }
-  .card-recipescrap { --card-color: #E06B4E; --card-glow: radial-gradient(ellipse at top left, rgba(224,107,78,0.06) 0%, transparent 60%); --card-icon-bg: rgba(224,107,78,0.12); --card-tag-bg: rgba(224,107,78,0.1); }
-  .coming-soon {
-    opacity: 0.6;
+  .hm-barcode { width: 80%; display: grid; gap: 8px; justify-items: center; }
+  .hm-barcode svg { width: 100%; height: 40px; }
+  .hm-barcode em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .hm-recipe {
+    width: 84%;
+    display: grid;
+    gap: 4px;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--text-2);
   }
-  .coming-soon:hover {
-    transform: none;
+  .hm-recipe b { font-size: 12px; color: var(--text); }
+  .hm-recipe small { font-size: 9px; color: var(--text-3); margin-top: 2px; }
+  .hm-recipe span { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding: 2px 0; }
+  .hm-recipe i { font-style: normal; color: var(--text); }
+
+  .hm-compact {
+    margin-top: var(--sp-4);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--sp-4);
+  }
+  .hm-mini {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 72px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  .hm-mini-ic { flex: 0 0 auto; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: var(--text); }
+  .hm-mini-body { display: grid; gap: 2px; min-width: 0; }
+  .hm-mini-name { font-size: 15px; font-weight: 700; }
+  .hm-mini-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.5; }
+
+  @media (max-width: 960px) {
+    .hm-showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 220px; }
+    .hm-feature { grid-column: span 2; grid-row: span 2; }
+    .hm-compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .hm-products { padding: 40px 0 48px; }
+    .hm-showcase { gap: var(--sp-3); grid-auto-rows: 200px; }
+    .hm-feature-text { padding: 20px; }
+    .hm-compact { grid-template-columns: 1fr; gap: var(--sp-3); }
+    .hm-card { padding: 12px; }
+    .hm-card-name { font-size: 15px; }
+  }
+  @media (max-width: 400px) {
+    .hm-showcase { grid-template-columns: 1fr; grid-auto-rows: 220px; }
+    .hm-feature { grid-column: auto; grid-row: span 2; }
+  }
+
+  /* ── motytoolsについて ── */
+  .hm-about { padding: 48px 0; border-top: 1px solid var(--border); background: var(--bg); }
+  .hm-about-inner {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-6);
+  }
+  .hm-about-item { display: flex; gap: 14px; align-items: flex-start; }
+  .hm-about-item svg { flex: 0 0 auto; color: var(--accent); margin-top: 2px; }
+  .hm-about-item b { display: block; font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .hm-about-item p { font-size: 13.5px; color: var(--text-2); line-height: 1.7; }
+  @media (max-width: 860px) {
+    .hm-about-inner { grid-template-columns: 1fr; gap: var(--sp-5); }
+  }
+
+  /* ── フッター ── */
+  .hm-footer {
+    background: var(--ink);
+    color: #c9c8c0;
+    padding: 48px 0 32px;
+    font-size: 14px;
+  }
+  .hm-footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--sp-6);
+    flex-wrap: wrap;
+    padding-bottom: var(--sp-6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .hm-footer-logo {
+    display: inline-block;
+    font-family: 'Inter', var(--font-sans);
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #fff;
+    text-decoration: none;
+    margin-bottom: 10px;
+  }
+  .hm-footer-brand p { font-size: 13.5px; line-height: 1.8; color: #a8a79f; }
+  .hm-footer-nav { display: flex; flex-wrap: wrap; gap: 4px var(--sp-3); }
+  .hm-footer-nav a {
+    display: inline-block;
+    padding: 10px 8px;
+    color: #e6e5df;
+    text-decoration: none;
+    border-radius: var(--r-sm);
+  }
+  .hm-footer-nav a:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+  .hm-footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    padding-top: var(--sp-5);
+    font-size: 12.5px;
+    color: #8f8e87;
   }
 </style>
