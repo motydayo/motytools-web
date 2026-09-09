@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>サポート — ピッと保証</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      line-height: 1.7;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .app-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .app-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2563EB;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1d1d1f;
+    }
+    .date {
+      font-size: 14px;
+      color: #6e6e73;
+      margin-bottom: 40px;
+    }
+    h2 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 32px 0 12px;
+      color: #1d1d1f;
+    }
+    p, li {
+      font-size: 15px;
+      color: #3a3a3c;
+      margin-bottom: 10px;
+    }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    a { color: #2563EB; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .lang-switch {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .lang-switch a {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: #e8e8ed;
+      color: #3a3a3c;
+      font-size: 14px;
+      margin: 0 4px;
+    }
+    .lang-switch a.active {
+      background: #2563EB;
+      color: #fff;
+    }
+    .section-ja, .section-en { display: none; }
+    .section-ja.visible, .section-en.visible { display: block; }
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 13px;
+      color: #6e6e73;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="app-header">
+      <div class="app-name">ピッと保証</div>
+    </div>
+
+    <div class="lang-switch">
+      <a href="#" class="active" onclick="switchLang('ja'); return false;">日本語</a>
+      <a href="#" onclick="switchLang('en'); return false;">English</a>
+    </div>
+
+    <!-- 日本語 -->
+    <div class="section-ja visible" id="lang-ja">
+      <h1>サポート</h1>
+      <p class="date">ピッと保証 サポートページ</p>
+
+      <div class="card">
+        <h2>ピッと保証について</h2>
+        <p>ピッと保証は、家電の保証書・レシート・製品ラベルを撮るだけで保証期限を管理できるiPhoneアプリです。端末内の文字認識で品名・メーカー・購入日・保証期間を読み取り、保証が切れる前に通知でお知らせします。</p>
+      </div>
+
+      <div class="card">
+        <h2>よくある質問</h2>
+        <h2>Q. 撮っても品名や購入日が読み取れません</h2>
+        <p>印刷がかすれている場合や、光の反射がある場合は読み取りにくいことがあります。明るい場所で書類を平らにして撮影するか、「手直しする」から手動で入力してください。</p>
+        <h2>Q. 延長保証はどう登録すればいいですか</h2>
+        <p>製品の編集画面で「延長保証」の期間を選ぶと、そちらの期間で保証終了日を計算します。メーカー保証より短い延長保証を選んだ場合は、長い方の期間が使われます。</p>
+        <h2>Q. 通知が届きません</h2>
+        <p>iPhoneの「設定」→「通知」→「ピッと保証」で通知が許可されているかご確認ください。設定画面の「お知らせ」からも状態を確認できます。</p>
+        <h2>Q. カメラが使えません</h2>
+        <p>iPhoneの「設定」→「アプリ」→「ピッと保証」でカメラへのアクセスが許可されているかご確認ください。</p>
+        <h2>Q. データはどこに保存されますか？</h2>
+        <p>登録した内容と写真は、すべてお使いのiPhone内にのみ保存されます。外部サーバーには送信されません。詳しくは<a href="/pitto-hosho/privacy/">プライバシーポリシー</a>をご覧ください。</p>
+        <h2>Q. 機種変更したときはどうすればいいですか</h2>
+        <p>設定画面の「バックアップを書き出す」で1つのファイルに書き出し、新しい端末で「バックアップを読み込む」から復元できます。</p>
+      </div>
+
+      <div class="card">
+        <h2>お問い合わせ</h2>
+        <p>ご質問・不具合報告・機能のご要望は、アプリ内の「設定」→「ご意見・要望」からお送りください。いただいた内容はすべて確認しています。</p>
+      </div>
+    </div>
+
+    <!-- English -->
+    <div class="section-en" id="lang-en">
+      <h1>Support</h1>
+      <p class="date">Pitto Hosho Support Page</p>
+
+      <div class="card">
+        <h2>About Pitto Hosho</h2>
+        <p>Pitto Hosho is an iPhone app that manages home appliance warranty periods by photographing warranty cards, receipts, or product labels. On-device text recognition reads the product name, maker, purchase date, and warranty period, and notifies you before the warranty expires.</p>
+      </div>
+
+      <div class="card">
+        <h2>FAQ</h2>
+        <h2>Q. The product name or purchase date can't be read</h2>
+        <p>Faded prints or glare can make text hard to read. Flatten the document in a well-lit place, or use "Edit manually" to enter the details yourself.</p>
+        <h2>Q. How do I register an extended warranty?</h2>
+        <p>On the edit screen, choose the extended warranty period. The app uses whichever period (manufacturer or extended) ends later.</p>
+        <h2>Q. I don't receive notifications</h2>
+        <p>Check that notifications are allowed in Settings → Notifications → Pitto Hosho on your iPhone. You can also check the status in the app's Settings screen.</p>
+        <h2>Q. The camera doesn't work</h2>
+        <p>Check that camera access is allowed in Settings → Apps → Pitto Hosho on your iPhone.</p>
+        <h2>Q. Where is my data stored?</h2>
+        <p>All registered data and photos are stored only on your device and never sent to external servers. See our <a href="/pitto-hosho/privacy/">Privacy Policy</a> for details.</p>
+        <h2>Q. How do I move my data to a new phone?</h2>
+        <p>Use Settings → Export Backup to save everything to one file, then use Settings → Import Backup on your new device.</p>
+      </div>
+
+      <div class="card">
+        <h2>Contact</h2>
+        <p>For questions, bug reports, or feature requests, please use Settings → Feedback within the app. We read every message.</p>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2026 motytools · <a href="https://motytools.com">motytools.com</a></p>
+    </footer>
+  </div>
+
+  <script>
+    function switchLang(lang) {
+      document.querySelectorAll('.lang-switch a').forEach(a => a.classList.remove('active'));
+      document.querySelectorAll('.section-ja, .section-en').forEach(el => el.classList.remove('visible'));
+      document.getElementById('lang-' + lang).classList.add('visible');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>
