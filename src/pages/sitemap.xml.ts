@@ -40,6 +40,9 @@ const LEGACY_PATHS = [
   '/recipescrap/terms/',
   '/pitto-hosho/',
   '/pitto-hosho/privacy/',
+  '/apps/sodachi/',
+  '/apps/sodachi/privacy/',
+  '/apps/sodachi/terms/',
 ];
 
 export const GET: APIRoute = () => {

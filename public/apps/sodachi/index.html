@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>そだち — 子どもの成長記録・身長体重・はじめて</title>
+  <meta name="description" content="そだちは、子どもの身長・体重と「はじめて」を写真つきで記録し、国の発育データの上でどのあたりかが一言でわかるiPhoneアプリ。会員登録・通信不要、完全オフライン。毎月1日に「そだち便り」が生まれ、祖父母にそのまま送れます。" />
+  <meta name="keywords" content="そだち,子どもの成長記録,身長体重記録,育児記録アプリ,発育曲線,母子手帳,乳幼児,子育てアプリ,育児日記,はじめて記録" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://motytools.com/apps/sodachi/" />
+  <meta property="og:title" content="そだち — 子どもの成長記録・身長体重・はじめて" />
+  <meta property="og:description" content="身長・体重と「はじめて」を1分で記録。国の発育データの上に、この子の点を打ちます。毎月のそだち便りを祖父母へ。" />
+  <meta property="og:url" content="https://motytools.com/apps/sodachi/" />
+  <meta property="og:site_name" content="そだち" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #C4523E;
+      --accent-dark: #9E3D2C;
+      --accent-soft: #FFF1EC;
+      --mint: #2B6E57;
+      --mint-soft: #EAF6F1;
+      --bg: #ffffff;
+      --bg-2: #FBF8F6;
+      --border: #EFE6E1;
+      --text: #1d1d1f;
+      --text-2: #55555c;
+      --text-3: #8e8e93;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── NAV ── */
+    nav { border-bottom: 1px solid var(--border); }
+    nav .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo span { color: var(--text-3); font-weight: 400; }
+    .nav-app {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 88px 0 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 720px;
+      height: 480px;
+      background: radial-gradient(ellipse at center, rgba(196,82,62,0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero .container { position: relative; }
+
+    .app-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 32px rgba(196,82,62,0.28);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(196,82,62,0.25);
+      border-radius: 100px;
+      padding: 5px 14px;
+      margin-bottom: 24px;
+    }
+    .badge::before {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-size: clamp(32px, 6.5vw, 56px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.3;
+      margin-bottom: 20px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    h1 .accent { color: var(--accent); }
+
+    .tagline {
+      font-size: clamp(15px, 2.5vw, 18px);
+      color: var(--text-2);
+      max-width: 560px;
+      margin: 0 auto 36px;
+      line-height: 1.8;
+    }
+
+    .store-placeholder {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--text);
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0.85;
+      cursor: default;
+    }
+    .store-placeholder .sub {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: #d1d1d6;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .store-placeholder .main {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .free-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    /* ── STEPS ── */
+    .steps {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .section-title {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 44px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .step {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .step-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .step h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.7;
+    }
+
+    /* ── FEATURES ── */
+    .features { padding: 80px 0; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .feature {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .feature:hover {
+      border-color: rgba(196,82,62,0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--mint-soft);
+      color: var(--mint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .feature h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .feature p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.75;
+    }
+    .feature .plan-tag {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--accent-dark);
+      background: var(--accent-soft);
+      border-radius: 100px;
+      padding: 3px 10px;
+    }
+
+    /* ── PRICE ── */
+    .pricing {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0;
+      text-align: center;
+    }
+    .price-grid {
+      max-width: 720px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      text-align: left;
+    }
+    .price-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+    }
+    .price-card.featured {
+      border: 1px solid rgba(196,82,62,0.4);
+      box-shadow: 0 8px 24px rgba(196,82,62,0.12);
+      position: relative;
+    }
+    .price-card .plan {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .price-card .plan .recommend {
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--accent);
+      border-radius: 100px;
+      padding: 3px 10px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .price-card .price {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .price-card .price .unit {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-3);
+    }
+    .price-card .sub-price {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 16px;
+    }
+    .price-card .desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.8;
+    }
+    .price-note {
+      max-width: 560px;
+      margin: 24px auto 0;
+      font-size: 12px;
+      color: var(--text-3);
+      line-height: 1.8;
+    }
+
+    /* ── CTA ── */
+    .cta {
+      padding: 88px 0;
+      text-align: center;
+    }
+    .cta h2 {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    .cta p {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 28px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+    }
+    footer .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer p, footer a {
+      font-size: 12px;
+      color: var(--text-3);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--accent); }
+    footer .links { display: flex; gap: 20px; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 64px 0 56px; }
+      .step-grid, .feature-grid { grid-template-columns: 1fr; }
+      footer .inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="inner">
+      <a href="/" class="logo">moty<span>tools</span></a>
+      <span class="nav-app">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V8"/><path d="M12 8c0-3 2-5 6-5-1 3-2 5-6 5z"/><path d="M12 12c0-3-2-5-6-5 1 3 2 5 6 5z"/></svg>
+        そだち
+      </span>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <div class="app-icon">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22V8"/><path d="M12 8c0-3.5 2.5-6 7-6-1 3.5-2.5 6-7 6z"/><path d="M12 13c0-3.5-2.5-6-7-6 1 3.5 2.5 6 7 6z"/>
+        </svg>
+      </div>
+      <div><span class="badge">iOS アプリ</span></div>
+      <h1>身長・体重と「はじめて」を、<br /><span class="accent">1分で記録する。</span></h1>
+      <p class="tagline">会員登録も通信も不要。身長・体重と「はじめて」を写真つきで残すと、国の発育データの上にこの子の点が打たれ、同じ月齢の子の中でどのあたりかが一言でわかります。毎月1日に「そだち便り」が生まれ、そのまま祖父母に送れます。</p>
+      <div class="store-placeholder">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span>
+          <span class="sub">Download on the</span>
+          <span class="main">App Store</span>
+        </span>
+      </div>
+      <p class="free-note">無料でダウンロード（お子さま2人まで。広告除去は買い切り、そだち便りは月額または年額のそだちプラスで）</p>
+    </div>
+  </section>
+
+  <section class="steps">
+    <div class="container">
+      <p class="section-label">使い方</p>
+      <h2 class="section-title">記録は2種類だけ。3タップで終わる。</h2>
+      <div class="step-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M8 19V9l4-6 4 6v10"/></svg>
+          </div>
+          <h3>身長・体重を入れる</h3>
+          <p>数字を入れるだけ。保存した瞬間に、国の発育曲線の上にこの子の点が打たれ、「真ん中より少し高め」のような一言がわかります。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.5 5.5L20 8l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg>
+          </div>
+          <h3>「はじめて」を残す</h3>
+          <p>寝返り・はいはい・つかまり立ち・歩いた日。定型リストから選ぶか、自由に書いて、写真を1枚そえるだけで記録になります。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M9 4v16"/></svg>
+          </div>
+          <h3>そだち便りを送る</h3>
+          <p>毎月1日、前月ぶんの記録が1枚のカードに自動で組まれます。共有シートからそのまま祖父母へ送れます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <p class="section-label">特徴</p>
+      <h2 class="section-title">診断はしない。数字に振り回されない。</h2>
+      <div class="feature-grid">
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+          </div>
+          <h3>国の発育データの上に、この子の点</h3>
+          <p>令和5年乳幼児身体発育調査（0〜6歳）と令和6年度学校保健統計調査（6〜17歳）を使用。位置は5段階の一言だけで、パーセンタイルの数字や医療的な語は出しません。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          <h3>きょうの一枚</h3>
+          <p>過去の同じ日・記念日近くの写真と、毎日アプリを開くたびに再会します。特別なことをしなくても、思い出が積み上がっていきます。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 9h16"/><path d="M9 4v5"/></svg>
+          </div>
+          <h3>そだち便り・1年のアルバム</h3>
+          <p>毎月のカードに加え、誕生日を迎えたら直近1年ぶんの便りを1冊のPDFアルバムにまとめられます。</p>
+          <span class="plan-tag">そだちプラス</span>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>会員登録なし。通信もなし</h3>
+          <p>子どもの記録・写真はすべて端末内にのみ保存されます。サーバーへの送信はなく、アカウント作成も不要です。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3>機種変更をこえて消えない</h3>
+          <p>バックアップの書き出し・読み込みに対応。写真つきのまま新しい端末に引き継げます。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
+          </div>
+          <h3>広告は最小限、消すことも買い切りで</h3>
+          <p>バナー広告はそだち・はじめてタブのみ。買い切りの「広告を消す」で、一度の購入でずっと非表示にできます。</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing">
+    <div class="container">
+      <p class="section-label">価格</p>
+      <h2 class="section-title">記録は無料。便りとアルバムはそだちプラスへ。</h2>
+      <div class="price-grid">
+        <div class="price-card">
+          <p class="plan">無料</p>
+          <p class="price">¥0</p>
+          <p class="sub-price">ずっと無料</p>
+          <p class="desc">お子さま2人まで。身長・体重の記録、発育曲線、「はじめて」の記録、きょうの一枚は無料でお使いいただけます。</p>
+        </div>
+        <div class="price-card featured">
+          <p class="plan">そだちプラス <span class="recommend">おすすめ</span></p>
+          <p class="price">年額プラン<span class="unit">・7日間無料</span></p>
+          <p class="sub-price">月額プランも選べます（トライアルなし）</p>
+          <p class="desc">毎月のそだち便り、1年のアルバム、お子さまの人数無制限、広告なし。価格はApp Storeの表示に従います。</p>
+        </div>
+      </div>
+      <p class="price-note">「広告を消す」は買い切りの単体購入も可能です。サブスクリプションは自動更新で、現在の期間終了の24時間前までにApp Storeの設定から解約すれば次回の更新は行われません。価格は税込表示です。</p>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <h2>今日の記録から、そだちを始めよう。</h2>
+      <p>App Storeからダウンロードできます。</p>
+      <div class="store-placeholder">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span>
+          <span class="sub">Download on the</span>
+          <span class="main">App Store</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="inner">
+      <p>© 2026 motytools</p>
+      <div class="links">
+        <a href="/apps/sodachi/privacy/">プライバシーポリシー</a>
+        <a href="/apps/sodachi/terms/">利用規約</a>
+        <a href="/">motytools.com</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
