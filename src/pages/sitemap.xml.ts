@@ -43,6 +43,8 @@ const LEGACY_PATHS = [
   '/apps/sodachi/',
   '/apps/sodachi/privacy/',
   '/apps/sodachi/terms/',
+  '/souba-watch/',
+  '/souba-watch/privacy/',
 ];
 
 export const GET: APIRoute = () => {

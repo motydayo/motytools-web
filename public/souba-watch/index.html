@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>うちの相場ウォッチ — 自宅の不動産価格の目安がわかる</title>
+  <meta name="description" content="うちの相場ウォッチは、自宅の住所を登録するだけで、国の不動産取引データから「いまの目安価格」がわかるiPhoneアプリ。毎月1回、通知でお知らせします。" />
+  <meta name="keywords" content="うちの相場ウォッチ,不動産,マンション,戸建て,土地,相場,査定,実家,持ち家,取引価格,資産価値" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://motytools.com/souba-watch/" />
+  <meta property="og:title" content="うちの相場ウォッチ — 自宅の不動産価格の目安がわかる" />
+  <meta property="og:description" content="住所を登録するだけ。国のデータでいまの目安価格がわかります。" />
+  <meta property="og:url" content="https://motytools.com/souba-watch/" />
+  <meta property="og:site_name" content="うちの相場ウォッチ" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #2E6F5E;
+      --accent-dark: #1F5245;
+      --accent-soft: #EAF4F0;
+      --bg: #ffffff;
+      --bg-2: #FAFAF9;
+      --border: #ECECEA;
+      --text: #1d1d1f;
+      --text-2: #55555c;
+      --text-3: #8e8e93;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    nav { border-bottom: 1px solid var(--border); }
+    nav .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo span { color: var(--text-3); font-weight: 400; }
+    .nav-app {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .hero {
+      padding: 88px 0 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 720px;
+      height: 480px;
+      background: radial-gradient(ellipse at center, rgba(46,111,94,0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero .container { position: relative; }
+
+    .app-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 32px rgba(46,111,94,0.28);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(46,111,94,0.25);
+      border-radius: 100px;
+      padding: 5px 14px;
+      margin-bottom: 24px;
+    }
+    .badge::before {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-size: clamp(34px, 7vw, 56px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    h1 .accent { color: var(--accent); }
+
+    .tagline {
+      font-size: clamp(15px, 2.5vw, 18px);
+      color: var(--text-2);
+      max-width: 520px;
+      margin: 0 auto 36px;
+      line-height: 1.8;
+    }
+
+    .store-placeholder {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--text);
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+    .store-placeholder:hover { opacity: 0.88; transform: translateY(-1px); }
+    .store-placeholder:active { transform: translateY(0); }
+    .store-placeholder .sub {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: #d1d1d6;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .store-placeholder .main {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .free-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    .steps {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .section-title {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 44px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .step {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .step-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .step h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.7;
+    }
+
+    .features { padding: 80px 0; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .feature {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .feature:hover {
+      border-color: rgba(46,111,94,0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .feature h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .feature p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.75;
+    }
+
+    .scope {
+      padding: 72px 0;
+      text-align: center;
+    }
+    .scope-card {
+      max-width: 620px;
+      margin: 0 auto;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      text-align: left;
+    }
+    .scope-card p {
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text-2);
+    }
+    .scope-card p + p { margin-top: 14px; }
+    .scope-card strong { color: var(--text); font-weight: 700; }
+
+    .pricing {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0;
+      text-align: center;
+    }
+    .price-card {
+      max-width: 420px;
+      margin: 0 auto;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+    }
+    .price-card .plan {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .price-card .price {
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    .price-card .desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.8;
+    }
+    .price-card .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 22px 0;
+    }
+
+    .cta {
+      padding: 88px 0;
+      text-align: center;
+    }
+    .cta h2 {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    .cta p {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 28px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+    }
+    footer .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer p, footer a {
+      font-size: 12px;
+      color: var(--text-3);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--accent); }
+    footer .links { display: flex; gap: 20px; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 64px 0 56px; }
+      .step-grid, .feature-grid { grid-template-columns: 1fr; }
+      footer .inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="inner">
+      <a href="/" class="logo">moty<span>tools</span></a>
+      <span class="nav-app">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>
+        うちの相場ウォッチ
+      </span>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <div class="app-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/><path d="M9 9h.01"/><path d="M15 9h.01"/>
+        </svg>
+      </div>
+      <div><span class="badge">iOS アプリ</span></div>
+      <h1>うちの不動産、<br /><span class="accent">いまいくら？</span></h1>
+      <p class="tagline">自宅の住所を登録するだけ。国が公表する実際の取引データから、いまの目安価格が幅でわかります。毎月1回、通知でお知らせ。番地・氏名・メールアドレスの入力は不要です。</p>
+      <a class="store-placeholder" href="https://apps.apple.com/jp/app/id6810037716" target="_blank" rel="noopener">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span>
+          <span class="sub">ダウンロード</span>
+          <span class="main">App Store</span>
+        </span>
+      </a>
+      <p class="free-note">無料でダウンロード（広告あり・買い切りでPro機能に）</p>
+    </div>
+  </section>
+
+  <section class="steps">
+    <div class="container">
+      <p class="section-label">使い方</p>
+      <h2 class="section-title">登録は3画面、1分で終わります。</h2>
+      <div class="step-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <h3>住所を選ぶ</h3>
+          <p>都道府県・市区町村・町名まで。番地は聞きません。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          </div>
+          <h3>種別を選ぶ</h3>
+          <p>マンション・戸建て・土地から選択。広さも入力します。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.4 8.6L13 14l-3-3-4.4 4.4"/></svg>
+          </div>
+          <h3>目安価格が出る</h3>
+          <p>「1億3,170万〜1億8,780万円」のように幅で表示されます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <p class="section-label">特徴</p>
+      <h2 class="section-title">「うちはいくらだろう」に、正直に答える。</h2>
+      <div class="feature-grid">
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.4 8.6L13 14l-3-3-4.4 4.4"/></svg>
+          </div>
+          <h3>国のデータだけを使う</h3>
+          <p>国土交通省が公表する不動産取引価格情報をもとに算出。物件（マンション名）単位ではなく町単位の目安なので、公平でぶれません。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+          </div>
+          <h3>1年前と比べてどう変わったか</h3>
+          <p>同じ町・同じ種別・同じデータ源でしか比較しません。照合できない数字は出しません。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <h3>毎月1回、思い出させてくれる</h3>
+          <p>数字が動いていない月は「先月から変わっていません」と正直に伝えます。誇張しません。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3>番地・氏名・メールは聞かない</h3>
+          <p>登録するのは町名までの住所だけ。会員登録もログインも不要です。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/></svg>
+          </div>
+          <h3>物件を複数登録できる</h3>
+          <p>実家や投資用物件もまとめてウォッチ。無料で3件、Proなら10件まで登録できます。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3>売りたくなったら、査定へ</h3>
+          <p>「うちの相場ウォッチ」自体は査定をしません。気になったら、不動産会社の査定額を比べるサービスへご案内します。</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="scope">
+    <div class="container">
+      <p class="section-label">できること・できないこと</p>
+      <h2 class="section-title">正直に言うと、こういうアプリです。</h2>
+      <div class="scope-card">
+        <p><strong>できる</strong>：町単位での目安価格の把握。1年前との比較。実家・投資用物件も含めた複数物件の管理。</p>
+        <p><strong>できない</strong>：物件（マンション名）単位の価格算出。公開データが町名までのため、原理的にできません。また「査定」を名乗ることも、宅地建物取引業法・不動産鑑定士法への配慮からいたしません。</p>
+        <p>取引件数が少ない町では、市区町村単位の値を「参考値」として明示したうえで表示します。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing">
+    <div class="container">
+      <p class="section-label">価格</p>
+      <h2 class="section-title">無料で始められます。</h2>
+      <div class="price-card">
+        <p class="plan">無料</p>
+        <p class="price">¥0</p>
+        <p class="desc">物件登録3件まで、広告表示ありですべての機能が使えます。</p>
+        <div class="divider"></div>
+        <p class="desc">広告なし・登録10件までのPro（買い切り）もご用意。月額課金はありません。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <h2>うちの不動産、<br />いま見てみませんか。</h2>
+      <p>App Storeで配信中。無料でダウンロードできます。</p>
+      <a class="store-placeholder" href="https://apps.apple.com/jp/app/id6810037716" target="_blank" rel="noopener">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span>
+          <span class="sub">ダウンロード</span>
+          <span class="main">App Store</span>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="inner">
+      <p>© 2026 motytools</p>
+      <div class="links">
+        <a href="/souba-watch/privacy/">プライバシーポリシー</a>
+        <a href="/">motytools.com</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
