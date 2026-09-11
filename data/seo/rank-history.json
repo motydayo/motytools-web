@@ -1,4 +1,25 @@
 {
   "_schema": "計測の記録（追記専用・消さない）。snapshots[]: {recordedAt, startDate, endDate, days, totalRows, totalQueries, rows: {検索語: {position, impressions, clicks, page}}, unregistered: [{query, position, impressions, clicks, page}]}",
-  "snapshots": []
+  "snapshots": [
+    {
+      "recordedAt": "2026-09-11",
+      "startDate": "2026-08-12",
+      "endDate": "2026-09-08",
+      "days": 28,
+      "totalRows": 0,
+      "totalQueries": 0,
+      "rows": {},
+      "unregistered": []
+    },
+    {
+      "recordedAt": "2026-09-11",
+      "startDate": "2026-08-12",
+      "endDate": "2026-09-08",
+      "days": 28,
+      "totalRows": 0,
+      "totalQueries": 0,
+      "rows": {},
+      "unregistered": []
+    }
+  ]
 }
