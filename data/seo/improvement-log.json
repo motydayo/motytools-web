@@ -1,0 +1,4 @@
+{
+  "_schema": "改善の記録。entries[]: {id, keyword, targetUrl, actionDate, rankAtAction, impressionsAtAction, intent, gap, action, files[], status: observing|active|achieved, nextReviewDate, reviews: [{date, position7d, impressions7d, verdict, note}]}",
+  "entries": []
+}

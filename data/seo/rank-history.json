@@ -1,0 +1,4 @@
+{
+  "_schema": "計測の記録（追記専用・消さない）。snapshots[]: {recordedAt, startDate, endDate, days, totalRows, totalQueries, rows: {検索語: {position, impressions, clicks, page}}, unregistered: [{query, position, impressions, clicks, page}]}",
+  "snapshots": []
+}

@@ -1,0 +1,4 @@
+{
+  "_schema": "監視する検索語。items[]: {keyword: 検索語, targetUrl: 狙うページのURL(省略可), priority: high|normal, addedAt: YYYY-MM-DD, note: メモ}",
+  "items": []
+}

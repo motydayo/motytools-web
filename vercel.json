@@ -7,22 +7,68 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
       ]
     }
   ],
   "redirects": [
-    { "source": "/memomail/lp", "destination": "/memomail/", "permanent": false },
-    { "source": "/memomail/lp/", "destination": "/memomail/", "permanent": false }
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.motytools.com"
+        }
+      ],
+      "destination": "https://motytools.com/$1",
+      "permanent": true
+    },
+    {
+      "source": "/memomail/lp",
+      "destination": "/memomail/",
+      "permanent": false
+    },
+    {
+      "source": "/memomail/lp/",
+      "destination": "/memomail/",
+      "permanent": false
+    }
   ],
   "rewrites": [
-    { "source": "/privacy", "destination": "/privacy.html" },
-    { "source": "/privacy/pitto-kigen", "destination": "/privacy/pitto-kigen.html" },
-    { "source": "/support/pitto-kigen", "destination": "/support/pitto-kigen.html" },
-    { "source": "/support/pitto-hosho", "destination": "/support/pitto-hosho.html" }
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/privacy/pitto-kigen",
+      "destination": "/privacy/pitto-kigen.html"
+    },
+    {
+      "source": "/support/pitto-kigen",
+      "destination": "/support/pitto-kigen.html"
+    },
+    {
+      "source": "/support/pitto-hosho",
+      "destination": "/support/pitto-hosho.html"
+    }
   ]
 }
