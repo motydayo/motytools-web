@@ -33,6 +33,8 @@ const LEGACY_PATHS = [
   '/ooya-note/',
   '/ooya-note/privacy/',
   '/ooya-note/terms/',
+  '/reptile-sns/',
+  '/reptile-sns/privacy/',
   '/arumono-recipe/',
   '/arumono-recipe/privacy/',
   '/recipescrap/',

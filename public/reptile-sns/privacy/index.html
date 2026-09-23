@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>プライバシーポリシー — うちの爬虫類</title>
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://motytools.com/reptile-sns/privacy/" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #F4F6F5;
+      color: #1A1D21;
+      line-height: 1.7;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .app-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .app-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1B6B4A;
+    }
+    .app-name a {
+      color: inherit;
+      text-decoration: none;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1A1D21;
+    }
+    .date {
+      font-size: 14px;
+      color: #838C86;
+      margin-bottom: 40px;
+    }
+    h2 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 0 0 12px;
+      color: #1A1D21;
+    }
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 16px 0 8px;
+      color: #4B534E;
+    }
+    p, li {
+      font-size: 15px;
+      color: #4B534E;
+      margin-bottom: 10px;
+    }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    a { color: #1B6B4A; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .highlight {
+      background: #DCEBE3;
+      border: 1px solid rgba(27,107,74,0.25);
+      border-radius: 12px;
+      padding: 16px 18px;
+      font-weight: 600;
+      color: #164F38;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid #EAEFEC;
+      color: #4B534E;
+      vertical-align: top;
+    }
+    th { color: #1A1D21; font-weight: 600; }
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 13px;
+      color: #838C86;
+    }
+    footer a { margin: 0 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="app-header">
+      <div class="app-name"><a href="/reptile-sns/">うちの爬虫類</a></div>
+    </div>
+
+    <h1>プライバシーポリシー</h1>
+    <p class="date">制定日: 2026年9月24日</p>
+
+    <div class="card">
+      <h2>1. はじめに</h2>
+      <p>うちの爬虫類（以下「本アプリ」）は、motytools（以下「当方」）が提供するiPhoneアプリです。本アプリは、爬虫類・両生類の飼育記録と、同じ種を飼う利用者どうしの交流（部屋・質問箱）を提供するSNSです。本プライバシーポリシーは、本アプリがどのような情報を取得・利用するかをご説明します。</p>
+    </div>
+
+    <div class="card">
+      <h2>2. 取得する情報</h2>
+      <p>本アプリは、SNSとしての機能（投稿・フォロー・部屋・質問箱）を提供するため、次の情報をサーバー（Supabase）に保存します。</p>
+      <ul>
+        <li><strong>アカウント情報</strong>: Sign in with AppleまたはGoogleでのログインに伴う識別子、ハンドル名、表示名、プロフィール画像、自己紹介、飼育歴、都道府県（任意入力）</li>
+        <li><strong>個体（うちの子）の情報</strong>: 種類・名前・生年月日の精度・性別・体重や給餌などの記録・写真・状態（飼育中／譲渡済み／お別れ／非公開）</li>
+        <li><strong>投稿・交流の情報</strong>: 投稿本文・コメント・質問と回答（カルテ情報を含む）・フォロー関係・通報内容</li>
+        <li><strong>購入情報</strong>: Proプランのご購入・復元処理に伴うサブスクリプションの状態</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3. 個体の写真とEXIF（位置情報）について</h2>
+      <p>投稿・記録に添付する写真は、端末側で長辺1200pxに縮小・再圧縮する際に位置情報（EXIF）を取り除いたうえで、Cloudflare R2（画像保存サービス）にアップロードされます。当方のサーバー（Supabase）を写真データが経由することはありません。</p>
+    </div>
+
+    <div class="card">
+      <h2>4. 生餌・捕食の写真について</h2>
+      <p>投稿時にご自身で「生餌・捕食の写真」と申告した投稿は、タイムライン上でぼかし表示になります（本人がタップすれば表示できます）。不適切な投稿は通報機能で当方に報告いただけます。本アプリは12歳以上を対象としています。</p>
+    </div>
+
+    <div class="card">
+      <h2>5. 質問箱（カルテ機能）について</h2>
+      <p class="highlight">個体を選んで質問すると、種・年齢・性別・体重の変化・最終給餌・直近の拒否回数・最終排泄・最終脱皮・温湿度・最近の変更が自動で添付され、質問時点の値として固定保存されます。</p>
+      <p style="margin-top: 12px;">添付されたカルテ情報は、質問への回答者（同じアプリの利用者）が閲覧できます。質問を削除しても、通報対応・不正防止のため一定期間ログが保持される場合があります。</p>
+    </div>
+
+    <div class="card">
+      <h2>6. 通知について</h2>
+      <p>お世話のリマインダーは端末内で完結するローカル通知です。コメント・回答・フォローなどの社会的な通知は、Expo Pushを通じてサーバーから送信します。通知の送受信のために、端末のプッシュ通知用トークンを保存します。</p>
+    </div>
+
+    <div class="card">
+      <h2>7. 委託先・外部サービス</h2>
+      <table>
+        <tr><th>サービス</th><th>用途</th></tr>
+        <tr><td>Supabase</td><td>認証・データベース（アカウント情報、個体・投稿・交流データの保存）</td></tr>
+        <tr><td>Cloudflare R2</td><td>写真データの保存・配信</td></tr>
+        <tr><td>Sign in with Apple / Google</td><td>ログイン認証</td></tr>
+        <tr><td>Resend</td><td>メール送信（認証コード等）</td></tr>
+        <tr><td>RevenueCat</td><td>Proプランのご購入・復元・状態管理</td></tr>
+      </table>
+      <p style="margin-top: 12px;">本アプリは広告SDK・アクセス解析SDKを導入していません。</p>
+    </div>
+
+    <div class="card">
+      <h2>8. アプリ内課金（サブスクリプション）について</h2>
+      <p>本アプリはフリーミアムモデルを採用しています。</p>
+      <h3>無料プラン</h3>
+      <p>5匹まで個体を登録可能。記録・投稿・部屋への参加・質問箱など基本機能を無料でご利用いただけます。</p>
+      <h3>Proプラン</h3>
+      <p>月額¥300（税込）または年額¥2,400（税込）のいずれかをお選びいただけます。Proプランでは登録できる匹数が無制限になり、体重・給餌の推移グラフ、個体パスポートのPDF書き出しがご利用いただけます。価格はご利用の国・地域や為替レートにより変動する場合があります。</p>
+      <h3>お支払い・自動更新・解約について</h3>
+      <p>お支払いはAppleのApp Store決済を通じて処理され、クレジットカード番号などの支払い情報を当方が取得・保存することはありません。サブスクリプションは、現在の期間が終了する24時間前までに解約しない限り自動的に更新されます。解約は、iPhoneの「設定」アプリ内のご自身のApple IDから「サブスクリプション」を選び、本アプリを選択して手続きしてください。購入内容の復元は、本アプリの設定画面からいつでも行えます。</p>
+    </div>
+
+    <div class="card">
+      <h2>9. データの保存期間・削除</h2>
+      <p>アカウントを退会すると、個人を特定できる情報（ハンドル名・表示名・プロフィール画像・連絡先に関する情報等）は物理的に削除されます。個体の記録や投稿など、他の利用者との交流に関わる内容は、通報対応や不正防止のため、投稿者情報を匿名化したうえで一定期間保持される場合があります。</p>
+    </div>
+
+    <div class="card">
+      <h2>10. 個体の売買・譲渡について</h2>
+      <p>本アプリは個体の売買・有償譲渡・里親募集の場ではありません。本アプリ上で確認された当該行為は、通報の対象として対応します。</p>
+    </div>
+
+    <div class="card">
+      <h2>11. 子どもについて</h2>
+      <p>本アプリは13歳未満の方を対象としていません。生餌・捕食の写真を含む場合があるため、12歳以上を対象としています。</p>
+    </div>
+
+    <div class="card">
+      <h2>12. ポリシーの変更</h2>
+      <p>本ポリシーの内容を変更する場合は、本ページにて告知します。</p>
+    </div>
+
+    <div class="card">
+      <h2>13. お問い合わせ</h2>
+      <p>プライバシーに関するご質問は、アプリ内の設定画面にある「ご意見・要望」からお問い合わせください。</p>
+    </div>
+
+    <footer>
+      <p>© 2026 motytools</p>
+      <p>
+        <a href="/reptile-sns/">うちの爬虫類</a>・<a href="https://motytools.com">motytools.com</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

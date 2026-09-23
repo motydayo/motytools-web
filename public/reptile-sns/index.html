@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>うちの爬虫類 — うちの子の記録が、そのまま投稿になる。</title>
+  <meta name="description" content="うちの爬虫類は、給餌・体重・脱皮を3タップで記録できる、爬虫類・両生類の個体主役の飼育記録SNS。記録がそのまま投稿になり、同じ種の飼い主が集まる「部屋」や、カルテ付きで質問できるQ&Aも使えます。" />
+  <meta name="keywords" content="うちの爬虫類,爬虫類アプリ,両生類アプリ,飼育記録,レオパ,フトアゴ,ボールパイソン,ヘビ,カメ,カエル,爬虫類SNS,飼育日記" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://motytools.com/reptile-sns/" />
+  <meta property="og:title" content="うちの爬虫類 — うちの子の記録が、そのまま投稿になる。" />
+  <meta property="og:description" content="給餌・体重・脱皮を3タップで記録。記録がそのまま投稿になる、爬虫類・両生類の個体主役の飼育記録SNS。" />
+  <meta property="og:url" content="https://motytools.com/reptile-sns/" />
+  <meta property="og:site_name" content="うちの爬虫類" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #1B6B4A;
+      --accent-dark: #164F38;
+      --accent-soft: #DCEBE3;
+      --bg: #F4F6F5;
+      --bg-2: #EAEFEC;
+      --border: #DCE3DF;
+      --text: #1A1D21;
+      --text-2: #4B534E;
+      --text-3: #838C86;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── NAV ── */
+    nav { border-bottom: 1px solid var(--border); background: var(--bg); }
+    nav .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo span { color: var(--text-3); font-weight: 400; }
+    .nav-app {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 88px 0 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 720px;
+      height: 480px;
+      background: radial-gradient(ellipse at center, rgba(27,107,74,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero .container { position: relative; }
+
+    .app-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 32px rgba(27,107,74,0.28);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(27,107,74,0.25);
+      border-radius: 100px;
+      padding: 5px 14px;
+      margin-bottom: 24px;
+    }
+    .badge::before {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-size: clamp(32px, 6.5vw, 56px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.3;
+      margin-bottom: 20px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    h1 .accent { color: var(--accent); }
+
+    .tagline {
+      font-size: clamp(15px, 2.5vw, 18px);
+      color: var(--text-2);
+      max-width: 540px;
+      margin: 0 auto 36px;
+      line-height: 1.8;
+    }
+
+    /* App Store リンクは未公開のため「近日公開」表示。公開後はここの1箇所を差し替える。 */
+    .store-placeholder {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--text);
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: default;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .store-placeholder .sub {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: #d1d1d6;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .store-placeholder .main {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .free-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    /* ── HERO IMAGE（見出し画像。差し替え待ちの間は淡緑の面で代用） ── */
+    .hero-shot {
+      margin-top: 48px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+      aspect-ratio: 16 / 9;
+      border-radius: 20px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(27,107,74,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      overflow: hidden;
+    }
+    .hero-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ── STEPS ── */
+    .steps {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .section-title {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 44px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .step {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .step-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .step h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.7;
+    }
+
+    /* ── FEATURES ── */
+    .features { padding: 80px 0; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .feature {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .feature:hover {
+      border-color: rgba(27,107,74,0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .feature h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .feature p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.75;
+    }
+    .feature .plan-tag {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--accent-dark);
+      background: var(--accent-soft);
+      border-radius: 100px;
+      padding: 3px 10px;
+    }
+
+    /* ── ROOMS ── */
+    .rooms {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0;
+    }
+    .room-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .room-chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── PRICE ── */
+    .pricing {
+      padding: 72px 0;
+      text-align: center;
+    }
+    .price-grid {
+      max-width: 720px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      text-align: left;
+    }
+    .price-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+    }
+    .price-card.featured {
+      border: 1px solid rgba(27,107,74,0.4);
+      box-shadow: 0 8px 24px rgba(27,107,74,0.12);
+      position: relative;
+    }
+    .price-card .plan {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .price-card .plan .recommend {
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--accent);
+      border-radius: 100px;
+      padding: 3px 10px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .price-card .price {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .price-card .price .unit {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-3);
+    }
+    .price-card .sub-price {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 16px;
+    }
+    .price-card .desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.8;
+    }
+    .price-note {
+      max-width: 560px;
+      margin: 24px auto 0;
+      font-size: 12px;
+      color: var(--text-3);
+      line-height: 1.8;
+    }
+
+    /* ── CTA ── */
+    .cta {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      padding: 88px 0;
+      text-align: center;
+    }
+    .cta h2 {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    }
+    .cta p {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 28px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+    }
+    footer .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer p, footer a {
+      font-size: 12px;
+      color: var(--text-3);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--accent); }
+    footer .links { display: flex; gap: 20px; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 64px 0 56px; }
+      .step-grid, .feature-grid { grid-template-columns: 1fr; }
+      footer .inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="inner">
+      <a href="/" class="logo">moty<span>tools</span></a>
+      <span class="nav-app">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-1.5 2-2 3.5-2 5 0 1.5.8 2.5 2 2.5s2-1 2-2.5c0-1.5-.5-3-2-5Z"/><path d="M7 9c-2 .5-4 2-4 4.5 0 3 2.5 5 5.5 5"/><path d="M17 9c2 .5 4 2 4 4.5 0 3-2.5 5-5.5 5"/><path d="M8.5 18.5c1 1.5 2.2 2.5 3.5 2.5s2.5-1 3.5-2.5"/></svg>
+        うちの爬虫類
+      </span>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <div class="app-icon">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2c-1.5 2-2 3.5-2 5 0 1.5.8 2.5 2 2.5s2-1 2-2.5c0-1.5-.5-3-2-5Z"/>
+          <path d="M7 9c-2 .5-4 2-4 4.5 0 3 2.5 5 5.5 5"/>
+          <path d="M17 9c2 .5 4 2 4 4.5 0 3-2.5 5-5.5 5"/>
+          <path d="M8.5 18.5c1 1.5 2.2 2.5 3.5 2.5s2.5-1 3.5-2.5"/>
+        </svg>
+      </div>
+      <div><span class="badge">iOS アプリ・個体が主役の飼育記録SNS</span></div>
+      <h1>うちの子の記録が、<br /><span class="accent">そのまま投稿になる。</span></h1>
+      <p class="tagline">給餌・体重・脱皮を3タップで記録するだけ。記録はそのままタイムラインの投稿になり、同じ種を飼う人が集まる「部屋」でつながれます。困ったときは個体のカルテ付きで質問できる、爬虫類・両生類の飼育者のためのSNSです。</p>
+      <a class="store-placeholder" href="#" aria-disabled="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span>
+          <span class="sub">近日公開</span>
+          <span class="main">App Store</span>
+        </span>
+      </a>
+      <p class="free-note">無料で5匹まで登録可能（Proで匹数無制限に）</p>
+
+      <div class="hero-shot" aria-hidden="true">
+        <!-- 見出し画像の差し替え先: /Users/moty/deskclaude/projects/motytools-web/public/reptile-sns/shots/hero.jpg（差し替えたら下のコメントを外してimgタグに置き換える） -->
+        <!-- <img src="/reptile-sns/shots/hero.jpg" alt="うちの爬虫類のアプリ画面" /> -->
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.5">
+          <path d="M12 2c-1.5 2-2 3.5-2 5 0 1.5.8 2.5 2 2.5s2-1 2-2.5c0-1.5-.5-3-2-5Z"/>
+          <path d="M7 9c-2 .5-4 2-4 4.5 0 3 2.5 5 5.5 5"/>
+          <path d="M17 9c2 .5 4 2 4 4.5 0 3-2.5 5-5.5 5"/>
+          <path d="M8.5 18.5c1 1.5 2.2 2.5 3.5 2.5s2.5-1 3.5-2.5"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="steps">
+    <div class="container">
+      <p class="section-label">使い方</p>
+      <h2 class="section-title">記録は3タップ。それがそのまま投稿になる。</h2>
+      <div class="step-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          </div>
+          <h3>「＋」→ 種類 → 保存</h3>
+          <p>給餌・体重・脱皮を選ぶだけ。前回の値が初期値になっているので迷いません。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+          </div>
+          <h3>写真をつければ投稿に</h3>
+          <p>記録に写真を添えると、そのまま個体のタイムラインの投稿になります。記録と投稿を分けて考える必要がありません。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <h3>「今日のお世話」で次にやることが分かる</h3>
+          <p>ホームは個体ごとに次にやるべきことが1つだけ。無限スクロールに埋もれません。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <p class="section-label">特徴</p>
+      <h2 class="section-title">主役は、うちの子。</h2>
+      <div class="feature-grid">
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3>個体ページが「作品ページ」</h3>
+          <p>種・年齢・性別・体重の推移・記録の履歴がまとまった、うちの子だけのページ。個体をフォローすることもできます。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <h3>カルテ付きで質問できる</h3>
+          <p>個体を選ぶと、種・齢・体重の変化・最終給餌・最終脱皮などが自動で添付された状態で質問できます。「動物病院へ」の緊急カテゴリも用意しています。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+          </div>
+          <h3>同じ種の飼い主が集まる「部屋」</h3>
+          <p>レオパ・フトアゴ・ボールパイソン・ヤモリ／トカゲ・ヘビ・カメ・カエル／両生類。全体タイムラインより、種ごとの部屋が主役です。</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-4"/></svg>
+          </div>
+          <h3>体重・給餌の推移をグラフで</h3>
+          <p>体重の増減や給餌の間隔をグラフで振り返れます。異変にも気づきやすくなります。</p>
+          <span class="plan-tag">Pro</span>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h3>個体パスポートをPDFで書き出し</h3>
+          <p>個体のプロフィールと記録をまとめてPDFに。譲渡時の引き継ぎ資料としても使えます。</p>
+          <span class="plan-tag">Pro</span>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>お別れの後も、メモリアルとして残る</h3>
+          <p>飼育中・譲渡済み・お別れ・非公開の状態を持てます。お別れの後も記録は消さず、うちの子の一生として残ります。</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="rooms">
+    <div class="container">
+      <p class="section-label">部屋</p>
+      <h2 class="section-title">7つの部屋から、うちの子の仲間を見つける。</h2>
+      <div class="room-grid">
+        <span class="room-chip">レオパ</span>
+        <span class="room-chip">フトアゴ</span>
+        <span class="room-chip">ボールパイソン</span>
+        <span class="room-chip">ヤモリ・トカゲ</span>
+        <span class="room-chip">ヘビ</span>
+        <span class="room-chip">カメ</span>
+        <span class="room-chip">カエル・両生類</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing">
+    <div class="container">
+      <p class="section-label">価格</p>
+      <h2 class="section-title">無料で5匹まで。もっと飼っているなら、Proへ。</h2>
+      <div class="price-grid">
+        <div class="price-card">
+          <p class="plan">無料</p>
+          <p class="price">¥0</p>
+          <p class="sub-price">ずっと無料</p>
+          <p class="desc">5匹まで登録可能。記録・投稿・部屋への参加・質問箱など、基本の機能はすべて無料で使えます。</p>
+        </div>
+        <div class="price-card featured">
+          <p class="plan">Pro <span class="recommend">おすすめ</span></p>
+          <p class="price">¥300<span class="unit">/月</span></p>
+          <p class="sub-price">年額¥2,400（月あたり¥200）</p>
+          <p class="desc">登録できる匹数が無制限に。体重・給餌の推移グラフ、個体パスポートのPDF書き出しが使えます。</p>
+        </div>
+      </div>
+      <p class="price-note">サブスクリプションは自動更新です。現在の期間終了の24時間前までにApp Storeの設定から解約すれば、次回の更新は行われません。価格は税込表示です。</p>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <h2>うちの子の記録、今日から始めませんか。</h2>
+      <p>App Storeで近日公開予定です。</p>
+      <a class="store-placeholder" href="#" aria-disabled="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span>
+          <span class="sub">近日公開</span>
+          <span class="main">App Store</span>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="inner">
+      <p>© 2026 motytools</p>
+      <div class="links">
+        <a href="/reptile-sns/privacy/">プライバシーポリシー</a>
+        <a href="/">motytools.com</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
