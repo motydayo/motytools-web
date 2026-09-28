@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>まちの安全マップ — 交通事故・不審者情報・行政処分・食中毒・土地の昔を地図で見るiPhoneアプリ</title>
+  <meta name="description" content="まちの安全マップは、警察庁の交通事故統計、各都道府県警察の不審者情報、国・自治体の行政処分と食中毒の公表、国土地理院の地図を、ひとつの地図で見られるiPhoneアプリです。住所や駅名を入れると、半径500m・1kmの件数を出典つきで数えます。" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://motytools.com/machi-anzen-map/" />
+  <meta property="og:title" content="まちの安全マップ（iPhoneアプリ）" />
+  <meta property="og:description" content="交通事故・不審者情報・行政処分・食中毒・土地の昔を、公的な記録のまま地図で数えるiPhoneアプリ。" />
+  <meta property="og:url" content="https://motytools.com/machi-anzen-map/" />
+  <meta property="og:image" content="https://motytools.com/machi-anzen-map/shots/og-v1.png" />
+  <meta property="og:site_name" content="motytools" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="/machi-anzen-map/shots/icon-v1.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F4F1EA; --surface: #FBFAF6; --line: #D9D3C4;
+      --text: #1E1E1C; --sub: #5E5A52;
+      --accent: #2F5D50; --accent-press: #244A40; --dot: #D9381E;
+    }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      line-height: 1.7; -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+    header.top { border-bottom: 1px solid var(--line); background: var(--surface); }
+    header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    header.top a.home { color: var(--sub); text-decoration: none; font-size: 14px; }
+    .hero { padding: 48px 16px 32px; display: grid; gap: 32px; align-items: center; }
+    @media (min-width: 768px) { .hero { grid-template-columns: 1.1fr 0.9fr; padding: 64px 16px 48px; } }
+    .app-id { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .app-id img { width: 72px; height: 72px; border-radius: 16px; border: 1px solid var(--line); }
+    h1 { font-size: 28px; line-height: 1.3; font-weight: 700; }
+    .app-id p { font-size: 14px; color: var(--sub); }
+    .lead { font-size: 17px; margin-bottom: 24px; max-width: 34em; }
+    .store { display: inline-flex; align-items: center; gap: 12px; min-height: 48px; padding: 12px 20px; border-radius: 12px;
+      background: var(--text); color: #FBFAF6; text-decoration: none; font-weight: 700; }
+    .store svg { width: 20px; height: 20px; }
+    .store.soon { background: var(--surface); color: var(--sub); border: 1px solid var(--line); }
+    .web-link { display: inline-block; margin: 8px 0 0 0; font-size: 15px; min-height: 44px; line-height: 44px; }
+    .hero-shot { justify-self: center; }
+    .hero-shot img { width: 100%; max-width: 320px; height: auto; aspect-ratio: 645 / 1398; border-radius: 24px; border: 1px solid var(--line); display: block; }
+    section { padding: 40px 0; border-top: 1px solid var(--line); }
+    h2 { font-size: 22px; line-height: 1.4; margin-bottom: 16px; }
+    .themes { display: grid; gap: 12px; }
+    @media (min-width: 768px) { .themes { grid-template-columns: repeat(2, 1fr); } }
+    .theme { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; display: grid; grid-template-columns: 32px 1fr; gap: 12px; }
+    .theme svg { width: 28px; height: 28px; stroke: var(--text); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .theme h3 { font-size: 17px; margin-bottom: 4px; }
+    .theme p { font-size: 15px; color: var(--sub); }
+    .num { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--text); }
+    .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .shots img { width: 100%; height: auto; aspect-ratio: 645 / 1398; border-radius: 16px; border: 1px solid var(--line); display: block; }
+    ul.plain { list-style: none; display: grid; gap: 8px; }
+    ul.plain li { padding-left: 20px; position: relative; font-size: 16px; }
+    ul.plain li::before { content: ""; position: absolute; left: 4px; top: 0.75em; width: 6px; height: 6px; border-radius: 50%; background: var(--dot); }
+    table.src { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--surface); border: 1px solid var(--line); }
+    table.src th, table.src td { text-align: left; padding: 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    table.src th { width: 9em; font-weight: 700; }
+    .table-scroll { overflow-x: auto; }
+    .note { font-size: 14px; color: var(--sub); margin-top: 12px; }
+    footer { border-top: 1px solid var(--line); padding: 32px 0 48px; font-size: 14px; color: var(--sub); }
+    footer nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 12px; }
+    footer a { display: inline-block; min-height: 44px; line-height: 44px; }
+  </style>
+</head>
+<body>
+  <header class="top"><div class="wrap"><a class="home" href="/">motytools</a><a class="home" href="/machi-anzen-map/privacy/">プライバシーポリシー</a></div></header>
+
+  <main>
+    <div class="wrap hero">
+      <div>
+        <div class="app-id">
+          <img src="/machi-anzen-map/shots/icon-v1.png" alt="" width="72" height="72" />
+          <div>
+            <h1>まちの安全マップ</h1>
+            <p>iPhoneアプリ・無料（広告あり）</p>
+          </div>
+        </div>
+        <p class="lead">引っ越し先や通学路の周りで、交通事故・不審者情報・行政処分・食中毒の記録が何件あったかを、国・警察・自治体が公開した記録のまま地図で数えるアプリです。住所や駅名を入れると、半径500mと1kmの件数が出典つきで出ます。</p>
+        <span class="store soon" aria-label="App Storeで近日公開">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.5-3.8zM14.1 5.8c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1.1.1 2.1-.5 2.7-1.3z"/></svg>
+          App Storeで近日公開
+        </span>
+        <br /><a class="web-link" href="/anzen/">Web版で今すぐ見る</a>
+      </div>
+      <div class="hero-shot">
+        <img src="/machi-anzen-map/shots/01-v1.png" alt="地図に交通事故の記録が点で表示され、下のシートに半径500mの件数が出ている画面" width="645" height="1398" />
+      </div>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <h2>5つの記録を、ひとつの地図で</h2>
+        <div class="themes">
+          <div class="theme">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 20h24v-4l-3-6H11l-4 6H4z"/><circle cx="10" cy="21" r="2.5"/><circle cx="22" cy="21" r="2.5"/></svg>
+            <div><h3>交通事故</h3><p>警察庁の交通事故統計オープンデータから、2024年の全国 <span class="num">282,376</span> 件の発生地点。死亡事故と負傷事故、時間帯で見られます。</p></div>
+          </div>
+          <div class="theme">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="17" cy="6" r="2.5"/><path d="M15 11l-3 7 4 3 1 7M15 11l4 3 4 1M12 18l-4 3M16 21l-4 7"/></svg>
+            <div><h3>不審者情報</h3><p>警視庁と各道府県警察が公開した声かけ・つきまといなどの情報（<span class="num">17</span> 都道府県、直近1年）。人物の描写は載せません。</p></div>
+          </div>
+          <div class="theme">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 28V10l10-5 10 5v18M4 28h24M11 28v-8h10v8M11 14h2M19 14h2"/></svg>
+            <div><h3>行政処分</h3><p>国土交通省・消費者庁・金融庁・労働局・自治体が公表した事業者への処分 <span class="num">4,644</span> 件。法人・団体のみを載せます。</p></div>
+          </div>
+          <div class="theme">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M10 4v10M7 4v6a3 3 0 0 0 6 0V4M10 14v14M22 4c-3 2-4 6-4 10h4v14"/></svg>
+            <div><h3>食中毒</h3><p>全国158の都道府県・保健所設置市・特別区の公表を毎日確認。自治体の掲載期間を過ぎた店名は表示しません。</p></div>
+          </div>
+          <div class="theme">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 10c4-3 8 3 12 0s8 3 12 0M4 16c4-3 8 3 12 0s8 3 12 0M4 22c4-3 8 3 12 0s8 3 12 0"/></svg>
+            <div><h3>土地の昔</h3><p>国土地理院の土地条件図・治水地形分類図などから、その場所が昔は田んぼや川だったかの目安を表示します。</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>画面</h2>
+        <div class="shots">
+          <img src="/machi-anzen-map/shots/02-v1.png" alt="選んだ場所の5つの記録の件数をまとめた画面" width="645" height="1398" loading="lazy" />
+          <img src="/machi-anzen-map/shots/03-v1.png" alt="不審者情報の件数と時間帯の画面" width="645" height="1398" loading="lazy" />
+          <img src="/machi-anzen-map/shots/04-v1.png" alt="土地の昔の地図と判定の画面" width="645" height="1398" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>このアプリがしないこと</h2>
+        <ul class="plain">
+          <li>「危険度」や点数は付けません。記録の件数と出典だけを出します。</li>
+          <li>個人の名前、不審者の人相・服装などは表示しません。</li>
+          <li>会員登録はありません。保存した場所は端末の中だけに残ります。</li>
+          <li>0件は「安全」という意味ではありません。公開されていない地域は「対象外」と表示します。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>データの出典</h2>
+        <div class="table-scroll">
+          <table class="src">
+            <tr><th>交通事故</th><td>警察庁「交通事故統計情報のオープンデータ」を加工して作成</td></tr>
+            <tr><th>不審者情報</th><td>警視庁・各道府県警察などの公開情報を加工して作成（都道府県ごとの出典はアプリ内とWeb版に記載）</td></tr>
+            <tr><th>行政処分</th><td>国土交通省 ネガティブ情報等検索サイト、消費者庁、観光庁、金融庁、厚生労働省（各都道府県労働局）、都道府県・市の公表</td></tr>
+            <tr><th>食中毒</th><td>各都道府県・保健所設置市・特別区による食品衛生法に基づく公表</td></tr>
+            <tr><th>土地の昔・住所</th><td>国土地理院（地理院タイル、住所検索、逆ジオコーダ）</td></tr>
+            <tr><th>下地の地図</th><td>OpenFreeMap（© OpenMapTiles © OpenStreetMap contributors）</td></tr>
+          </table>
+        </div>
+        <p class="note">記録の件数は、公開元が公表した時点のものです。詳しい出典と弱点は<a href="/anzen/about/data/">データの出典ページ</a>にまとめています。</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>広告を消す</h2>
+        <p>アプリは無料で、画面の下に広告が出ます。設定画面の「広告を消す（買い切り）」を一度購入すると、広告が表示されなくなります。月々の支払いはありません。</p>
+        <p class="note">ご意見・ご要望は、アプリの設定画面にある「ご意見・要望」からお送りください。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <nav>
+        <a href="/machi-anzen-map/privacy/">プライバシーポリシー</a>
+        <a href="/anzen/">Web版 まちの安全マップ</a>
+        <a href="/">motytools</a>
+      </nav>
+      <p>© 2026 motytools</p>
+    </div>
+  </footer>
+</body>
+</html>

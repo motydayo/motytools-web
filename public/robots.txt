@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://motytools.com/sitemap.xml
+Sitemap: https://motytools.com/anzen/sitemap.xml
