@@ -384,6 +384,20 @@ const compact: Product[] = [
         ))}
       </div>
 
+      <!-- Rosterの主要ページへ直接リンク。motytools.comのトップはGoogleに登録済みだが、
+           Rosterのランキング・記事は「存在を認識されていない」状態だった（2026-10-04） -->
+      <nav class="hm-roster-links" aria-label="Rosterの人気ページ">
+        <span class="hm-roster-links-h">Rosterの人気ページ</span>
+        <ul>
+          <li><a href="https://roster.motytools.com/rankings">日本のYouTuberランキング（全ジャンル）</a></li>
+          <li><a href="https://roster.motytools.com/rankings/growth">今伸びてるYouTubeチャンネル（成長率順）</a></li>
+          <li><a href="https://roster.motytools.com/articles/growing-youtubers-2026-09">今伸びてるYouTuberランキング【2026年9月】</a></li>
+          <li><a href="https://roster.motytools.com/articles/kojin-vtuber-ranking-2026-09">個人勢VTuberの登録者数ランキング</a></li>
+          <li><a href="https://roster.motytools.com/articles/low-competition-genres-2026-09">YouTubeで今伸びてるジャンルはどれ？</a></li>
+          <li><a href="https://roster.motytools.com/articles">記事一覧</a></li>
+        </ul>
+      </nav>
+
       <div class="hm-compact">
         {compact.map((p) => (
           <a href={p.href} class="hm-mini">
@@ -1182,6 +1196,13 @@ const compact: Product[] = [
     .hm-showcase { grid-template-columns: 1fr; grid-auto-rows: 220px; }
     .hm-feature { grid-column: auto; grid-row: span 2; }
   }
+
+  .hm-roster-links { margin-top: var(--sp-4); padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+  .hm-roster-links-h { display: block; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .hm-roster-links ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 24px; }
+  .hm-roster-links a { display: block; padding: 8px 0; font-size: 14px; color: var(--accent); text-decoration: none; }
+  .hm-roster-links a:hover { text-decoration: underline; }
+  @media (max-width: 640px) { .hm-roster-links ul { grid-template-columns: 1fr; } }
 
   /* ── motytoolsについて ── */
   .hm-about { padding: 48px 0; border-top: 1px solid var(--border); background: var(--bg); }
