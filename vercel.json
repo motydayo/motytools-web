@@ -69,6 +69,10 @@
     {
       "source": "/support/pitto-hosho",
       "destination": "/support/pitto-hosho.html"
+    },
+    {
+      "source": "/reptile-sns/p/:id",
+      "destination": "/api/reptile-post?id=:id"
     }
   ]
 }

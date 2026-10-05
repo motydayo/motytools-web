@@ -474,6 +474,17 @@
     footer a:hover { color: var(--accent); }
     footer .links { display: flex; gap: 20px; }
 
+
+    /* ── みんなの投稿 ── */
+    .posts { padding: 56px 0; }
+    .post-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 24px; }
+    .post-tile { position: relative; display: block; aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden; background: var(--bg-2); border: 1px solid var(--border); }
+    .post-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .post-tile .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 8px 6px; font-size: 11px; font-weight: 700; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.6)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .post-tile .sample { position: absolute; top: 6px; left: 6px; font-size: 10px; font-weight: 700; color: var(--accent-dark); background: rgba(255,255,255,.92); border-radius: 999px; padding: 1px 8px; }
+    .posts-note { font-size: 12px; color: var(--text-3); margin-top: 12px; }
+    @media (max-width: 600px) { .post-grid { grid-template-columns: repeat(3, 1fr); } }
+
     @media (max-width: 600px) {
       .hero { padding: 64px 0 56px; }
       .step-grid, .feature-grid { grid-template-columns: 1fr; }
@@ -623,6 +634,15 @@
     </div>
   </section>
 
+  <section class="posts" id="posts" hidden>
+    <div class="container">
+      <p class="section-label">みんなの投稿</p>
+      <h2 class="section-title">今日も、どこかのうちの子。</h2>
+      <div class="post-grid" id="post-grid"></div>
+      <p class="posts-note">公開されている投稿の最新です。「見本」は運営が載せている見本写真です。</p>
+    </div>
+  </section>
+
   <section class="rooms">
     <div class="container">
       <p class="section-label">部屋</p>
@@ -684,6 +704,38 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    // 公開済みの公開投稿だけを表示(Supabaseの公開関数・anonキーのみ。秘密鍵は置かない)
+    (function () {
+      var SB = 'https://tuslsnbftlwdupcukugj.supabase.co';
+      var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1c2xzbmJmdGx3ZHVwY3VrdWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1MzYyNzcsImV4cCI6MjEwNTExMjI3N30.b1NW6Hx6PDeqvZ9EXksRAKFyOFRd5NebC5_erfYE3_w';
+      var R2 = 'https://pub-47b193983c2f40f7abc2ca6001fd9bea.r2.dev';
+      fetch(SB + '/rest/v1/rpc/public_recent_posts', {
+        method: 'POST',
+        headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_limit: 12 })
+      }).then(function (r) { return r.ok ? r.json() : []; }).then(function (rows) {
+        if (!rows || !rows.length) return;
+        var grid = document.getElementById('post-grid');
+        rows.forEach(function (p) {
+          if (!p.photo_path) return;
+          var a = document.createElement('a');
+          a.className = 'post-tile';
+          a.href = '/reptile-sns/p/' + encodeURIComponent(p.id);
+          var img = document.createElement('img');
+          img.loading = 'lazy';
+          img.alt = p.animal_name + 'の写真';
+          img.src = R2 + '/' + p.photo_path.split('/').map(encodeURIComponent).join('/');
+          a.appendChild(img);
+          if (p.is_sample) { var t = document.createElement('span'); t.className = 'sample'; t.textContent = '見本'; a.appendChild(t); }
+          var c = document.createElement('span'); c.className = 'cap'; c.textContent = p.animal_name; a.appendChild(c);
+          grid.appendChild(a);
+        });
+        if (grid.children.length) document.getElementById('posts').hidden = false;
+      }).catch(function () {});
+    })();
+  </script>
 
 </body>
 </html>
