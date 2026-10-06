@@ -36,7 +36,7 @@ h1{font-size:18px;font-weight:700}
 .btns{display:flex;flex-direction:column;gap:10px;margin-top:20px}
 .btn{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:15px;border-radius:12px;padding:14px 16px}
 .btn.primary{background:#1B6B4A;color:#fff}
-.btn.disabled{background:#EAEFEC;color:#838C86}
+.btn.dl{background:#000;color:#fff}
 footer{font-size:12px;color:#838C86;text-align:center;padding:24px 0}
 footer a{color:#838C86}
 </style></head><body><div class="wrap">
@@ -83,8 +83,8 @@ ${post.is_sample ? '<span class="tag">運営の見本投稿</span>' : ''}
 <p class="meta">${esc(post.species_name || '')}${post.species_name ? ' ・ ' : ''}${esc(post.author_name)} ・ ${esc(when)}</p>
 ${note ? `<p class="note">${esc(note)}</p>` : ''}
 <div class="btns">
-<a class="btn primary" href="/reptile-sns/">アプリで見る</a>
-<span class="btn disabled">App Store(近日公開)</span>
+<a class="btn primary" href="https://apps.apple.com/jp/app/id6815512730" target="_blank" rel="noopener">アプリで見る</a>
+<a class="btn dl" href="https://apps.apple.com/jp/app/id6815512730" target="_blank" rel="noopener">App Storeでダウンロード</a>
 </div></div></article>`;
   res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600');
   res.status(200).send(shell(title, desc, ogImage, canonical, body, false));
