@@ -3,6 +3,9 @@ import BaseLayout from './BaseLayout.astro';
 import ToolCard from '../components/ToolCard.astro';
 import { SITE } from '../config';
 import { getTool, getCategory, relatedTools, appPromo } from '../data/tools';
+import { getApp } from '../data/apps';
+import StoreBadge from '../components/StoreBadge.astro';
+import MoreLink from '../components/MoreLink.astro';
 
 export interface Faq {
   q: string;
@@ -23,6 +26,7 @@ const category = getCategory(tool.category);
 const path = `/${tool.slug}/`;
 const related = relatedTools(slug);
 const promo = appPromo(slug);
+const promoApp = promo ? getApp(promo.app) : undefined;
 
 const jsonLd: object[] = [
   {
@@ -109,21 +113,23 @@ if (faqs.length > 0) {
       )}
     </div>
 
-    {promo && (
+    {promo && promoApp && (
       <section class="mt-8" aria-labelledby="app-promo-heading">
         <div class="section-heading">
           <h2 id="app-promo-heading">iPhoneアプリ</h2>
+          <MoreLink href="/apps/">アプリ一覧</MoreLink>
         </div>
-        <a class="app-promo" href={promo.href}>
-          <span class="app-promo-icon" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={promo.icon} />
-          </span>
-          <span class="app-promo-body">
-            <span class="app-promo-name">{promo.name}</span>
-            <span class="app-promo-pitch">{promo.pitch}</span>
-          </span>
-          <svg class="app-promo-arrow" width="16" height="16" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 9.5L9.5 2.5M9.5 2.5H4.5M9.5 2.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
+        <div class="tool-app">
+          <img class="app-icon-img" src={promoApp.icon} width="64" height="64" alt="" loading="lazy" decoding="async" />
+          <div class="tool-app-body">
+            <a class="tool-app-name" href={promoApp.lpPath}>{promoApp.name}</a>
+            <p class="tool-app-pitch">{promo.pitch}</p>
+            <div class="app-cta-actions">
+              <StoreBadge app={promoApp} />
+              <MoreLink href={promoApp.lpPath}>詳しく見る</MoreLink>
+            </div>
+          </div>
+        </div>
       </section>
     )}
 

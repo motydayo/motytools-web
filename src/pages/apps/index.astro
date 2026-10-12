@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AppCard from '../../components/AppCard.astro';
+import MoreLink from '../../components/MoreLink.astro';
+import { SITE } from '../../config';
+import { APPS, APP_CATEGORIES } from '../../data/apps';
+import { getGuides } from '../../lib/guide';
+
+const guides = await getGuides();
+const countOf = (slug: string) => guides.filter((g) => g.data.app === slug).length;
+const cats = APP_CATEGORIES.map((c) => ({ ...c, apps: APPS.filter((a) => a.category === c.id) })).filter(
+  (c) => c.apps.length > 0
+);
+// カテゴリ順に並べたもの（構造化データの順番と画面の順番をそろえる）
+const ordered = cats.flatMap((c) => c.apps);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'motytoolsのiPhoneアプリ一覧',
+    numberOfItems: ordered.length,
+    itemListElement: ordered.map((a, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: a.name,
+      url: `${SITE.url}${a.lpPath}`,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'iPhoneアプリ一覧', item: `${SITE.url}/apps/` },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="iPhoneアプリ一覧｜レシピ保存・賞味期限・家賃管理・月謝管理など10本"
+  description="インスタのレシピ保存、冷蔵庫の残り物レシピ、賞味期限管理、家賃管理、月謝管理、ハンドメイドの原価計算、バーコード価格比較など、motytoolsのiPhoneアプリ10本の一覧。すべて無料で始められます。"
+  path="/apps/"
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li aria-current="page">iPhoneアプリ一覧</li>
+      </ol>
+    </nav>
+
+    <div class="tool-hero">
+      <h1>iPhoneアプリ一覧</h1>
+      <p class="lead">
+        motytoolsが作っているiPhoneアプリ{APPS.length}本です。すべて無料で始められて、会員登録がいらないものがほとんどです。
+      </p>
+    </div>
+
+    <ul class="jump-chips" aria-label="カテゴリへ移動">
+      {cats.map((c) => (
+        <li><a href={`#${c.id}`}>{c.name}（{c.apps.length}）</a></li>
+      ))}
+    </ul>
+
+    {cats.map((c) => (
+      <section class="cat-block" id={c.id} aria-labelledby={`h-${c.id}`}>
+        <div class="section-heading">
+          <h2 id={`h-${c.id}`}>{c.name}</h2>
+        </div>
+        <p class="cat-block-desc">{c.description}</p>
+        <div class="app-grid">
+          {c.apps.map((a) => <AppCard app={a} guideCount={countOf(a.slug)} />)}
+        </div>
+      </section>
+    ))}
+
+    <section class="article">
+      <div class="prose">
+        <h2>アプリについて</h2>
+        <p>
+          どのアプリも「1つのことを、迷わずできる」ように作っています。記録はできるだけ端末の中だけに保存し、外に送る必要がある機能（家族との共有、価格の検索など）は、それぞれの紹介ページとプライバシーポリシーに書いています。
+        </p>
+        <p>
+          使い方や、アプリで解決できる困りごとは<a href="/guide/">使い方ガイド</a>にまとめています。ご意見・ご要望は、各アプリの設定画面にある「ご意見・要望」からお寄せください。
+        </p>
+      </div>
+      <p class="mt-5"><MoreLink href="/tools/">ブラウザで使える無料ツールも見る</MoreLink></p>
+    </section>
+  </div>
+</BaseLayout>

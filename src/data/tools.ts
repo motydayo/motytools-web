@@ -243,44 +243,37 @@ export function relatedTools(slug: string, limit = 4): Tool[] {
 // ── ツールページからiPhoneアプリへの導線 ──
 // ツールを使う人と、そのアプリを必要とする人が本当に重なる組み合わせだけを書く。
 // 関係の薄いアプリを並べると信用を落とすので、迷ったら書かない。
-// 追加する人へ: ここに1行足すだけでよい。ToolLayout.astro は触らないこと。
+// アプリの名前・アイコン・App Store URL は src/data/apps.ts が正本。ここには slug と一文だけ書く。
 
-export interface AppPromo {
-  /** アプリLPのパス（motytools.com内） */
-  href: string;
-  name: string;
+export interface ToolAppPromo {
+  /** src/data/apps.ts の slug */
+  app: string;
   /** なぜこのツールの利用者に向くのかが伝わる一文 */
   pitch: string;
-  /** 24x24 stroke アイコンの内側SVG要素 */
-  icon: string;
 }
 
-const OOYA_NOTE: AppPromo = {
-  href: '/ooya-note/',
-  name: '大家ノート',
-  pitch: '家賃の入金・契約の更新日・年間収支をiPhoneだけで管理。小規模な個人大家のための賃貸管理アプリ。',
-  icon: '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
-};
-
-const PITTO_KIGEN: AppPromo = {
-  href: '/pitto-kigen/',
-  name: 'ピッと期限',
-  pitch: 'バーコードで商品名、カメラで賞味期限を読み取り。手入力ゼロで食品の期限を管理して、家族と共有できるiPhoneアプリ。',
-  icon: '<path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="m9 14 2 2 4-4"/>',
-};
+const OOYA_PITCH =
+  '家賃の入金・契約の更新日・年間収支をiPhoneだけで管理。小規模な個人大家のための賃貸管理アプリ。';
+const PITTO_KIGEN_PITCH =
+  'バーコードで商品名、カメラで賞味期限を読み取り。手入力ゼロで食品の期限を管理して、家族と共有できるiPhoneアプリ。';
 
 /** ツールのslug → そのページに出すアプリ。無いツールには何も出さない。 */
-export const APP_PROMOS: Record<string, AppPromo> = {
+export const APP_PROMOS: Record<string, ToolAppPromo> = {
   // 借入の返済額を調べる人には、不動産を持っている／これから持つ人が多い
-  loan: OOYA_NOTE,
+  loan: { app: 'ooya-note', pitch: OOYA_PITCH },
   // 建物の減価償却を調べている人は、ほぼ確実に大家か、これから大家になる人
-  'genka-shokyaku': OOYA_NOTE,
+  'genka-shokyaku': { app: 'ooya-note', pitch: OOYA_PITCH },
   // 「◯日後はいつ」を調べる用途には、開封後◯日・解凍後◯日といった食品の期限計算が多い
-  days: PITTO_KIGEN,
+  days: { app: 'pitto-kigen', pitch: PITTO_KIGEN_PITCH },
   // 家電の電気代を調べるのは家計を切り詰めたい層。冷蔵庫の中身を捨てない話と地続き
-  denkidai: PITTO_KIGEN,
+  denkidai: { app: 'pitto-kigen', pitch: PITTO_KIGEN_PITCH },
+  // 「30%引きはいくら？」を店頭で計算する人は、ネットの値段と比べたい人
+  percent: {
+    app: 'price-scan',
+    pitch: '割引後の値段、ネットならもっと安いかも。店頭でバーコードを読むだけで、楽天・Yahoo!の最安値がわかるiPhoneアプリ。',
+  },
 };
 
-export function appPromo(slug: string): AppPromo | undefined {
+export function appPromo(slug: string): ToolAppPromo | undefined {
   return APP_PROMOS[slug];
 }

@@ -1,6 +1,7 @@
 ---
 import { SITE } from '../config';
 import { TOOLS, CATEGORIES } from '../data/tools';
+import { APPS } from '../data/apps';
 import '../styles/global.css';
 
 interface Props {
@@ -17,6 +18,9 @@ interface Props {
   chrome?: 'default' | 'home';
   jsonLd?: object[];
   noindex?: boolean;
+  /** App StoreのアプリID。入れるとiPhoneのSafariで「ダウンロード帯」（Smart App Banner）が出る */
+  appleAppId?: string;
+  ogType?: 'website' | 'article';
 }
 
 const {
@@ -29,6 +33,8 @@ const {
   jsonLd = [],
   noindex = false,
   chrome = 'default',
+  appleAppId,
+  ogType = 'website',
 } = Astro.props;
 
 const fullTitle = absoluteTitle ? title : `${title} | ${SITE.name}`;
@@ -45,7 +51,8 @@ const ogImageUrl = `${SITE.url}${ogImage}`;
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
-    <meta property="og:type" content="website" />
+    {appleAppId && <meta name="apple-itunes-app" content={`app-id=${appleAppId}`} />}
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -109,8 +116,9 @@ const ogImageUrl = `${SITE.url}${ogImage}`;
           <a href="/" class="hm-logo">motytools</a>
           <nav class="hm-nav" id="hm-nav" aria-label="サイト内メニュー">
             <a href="#tools">無料ツール</a>
+            <a href="/apps/">iPhoneアプリ</a>
+            <a href="/guide/">使い方ガイド</a>
             <a href="#products">プロダクト</a>
-            <a href="#about">motytoolsについて</a>
             <a href="/tools/" class="hm-nav-cta">ツールを探す</a>
           </nav>
           <a href="/tools/" class="hm-header-cta">ツールを探す</a>
@@ -125,7 +133,9 @@ const ogImageUrl = `${SITE.url}${ogImage}`;
         <div class="inner">
           <a href="/" class="logo">moty<span>tools</span></a>
           <nav class="header-nav" aria-label="サイト内メニュー">
-            <a href="/tools/">ツール一覧</a>
+            <a href="/apps/">アプリ</a>
+            <a href="/guide/"><span class="nav-sm-hide">使い方</span>ガイド</a>
+            <a href="/tools/">ツール<span class="nav-sm-hide">一覧</span></a>
             {appearance === 'auto' && (
               <button class="theme-toggle" type="button" aria-label="ライト/ダークテーマを切り替える">
                 <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -151,6 +161,8 @@ const ogImageUrl = `${SITE.url}${ogImage}`;
             </div>
             <nav class="hm-footer-nav" aria-label="フッターメニュー">
               <a href="/tools/">無料ツール</a>
+              <a href="/apps/">iPhoneアプリ</a>
+              <a href="/guide/">使い方ガイド</a>
               <a href="#products">プロダクト</a>
               <a href="#about">motytoolsについて</a>
               <a href="/privacy">プライバシーポリシー</a>
@@ -177,14 +189,20 @@ const ogImageUrl = `${SITE.url}${ogImage}`;
               </div>
             ))}
             <div>
+              <h2>iPhoneアプリ</h2>
+              <ul>
+                {APPS.map((a) => (
+                  <li><a href={a.lpPath}>{a.name}</a></li>
+                ))}
+              </ul>
+            </div>
+            <div>
               <h2>motytools</h2>
               <ul>
                 <li><a href="/">ホーム</a></li>
                 <li><a href="/tools/">ツール一覧</a></li>
-                <li><a href="/memomail/">メモびゅん（iOSアプリ）</a></li>
-                <li><a href="/price-scan/">ピッと最安（iOSアプリ）</a></li>
-                <li><a href="/pitto-kigen/">ピッと期限（iOSアプリ）</a></li>
-                <li><a href="/recipescrap/">レシピスクラップ（iOSアプリ）</a></li>
+                <li><a href="/apps/">iPhoneアプリ一覧</a></li>
+                <li><a href="/guide/">使い方ガイド</a></li>
                 <li><a href="/privacy">プライバシーポリシー</a></li>
               </ul>
             </div>

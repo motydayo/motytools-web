@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MoreLink from '../../components/MoreLink.astro';
+import AppRow from '../../components/AppRow.astro';
+import { SITE } from '../../config';
+import { APPS } from '../../data/apps';
+import { getGuides, updatedOf, jaDate, isoDate } from '../../lib/guide';
+
+const guides = await getGuides();
+const groups = APPS.map((app) => ({ app, items: guides.filter((g) => g.data.app === app.slug) })).filter(
+  (g) => g.items.length > 0
+);
+const appsWithout = APPS.filter((a) => !groups.some((g) => g.app.slug === a.slug));
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: '使い方ガイド - motytools',
+    url: `${SITE.url}/guide/`,
+    inLanguage: 'ja',
+    hasPart: guides.map((g) => ({ '@type': 'Article', headline: g.data.title, url: `${SITE.url}/guide/${g.id}/` })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: '使い方ガイド', item: `${SITE.url}/guide/` },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="使い方ガイド｜レシピ保存・家賃管理・賞味期限管理などのやり方"
+  description="インスタのレシピ保存、家賃管理、賞味期限の管理、月謝の管理など、毎日の困りごとの解決方法を、motytoolsのiPhoneアプリの使い方とあわせて解説する記事の一覧です。"
+  path="/guide/"
+  jsonLd={jsonLd}
+  noindex={guides.length === 0}
+>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li aria-current="page">使い方ガイド</li>
+      </ol>
+    </nav>
+
+    <div class="tool-hero">
+      <h1>使い方ガイド</h1>
+      <p class="lead">毎日の困りごとの解決方法を、アプリの使い方とあわせて解説しています。アプリごとにまとめて並べています。</p>
+    </div>
+
+    {groups.length === 0 ? (
+      <div class="guide-empty">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z" /><path d="M8 7h7" /><path d="M8 11h5" /></svg>
+        <b>記事を準備しています</b>
+        <p>先にアプリの紹介をご覧ください。</p>
+        <MoreLink href="/apps/">iPhoneアプリ一覧を見る</MoreLink>
+      </div>
+    ) : (
+      groups.map(({ app, items }) => (
+        <section class="guide-group" aria-labelledby={`g-${app.slug}`}>
+          <div class="guide-group-head">
+            <img class="app-icon-img sm" src={app.icon} width="44" height="44" alt="" loading="lazy" decoding="async" />
+            <h2 id={`g-${app.slug}`}><a href={`/guide/app/${app.slug}/`}>{app.name}</a></h2>
+            <MoreLink href={`/guide/app/${app.slug}/`}>{items.length}本の記事</MoreLink>
+          </div>
+          <ul class="guide-list">
+            {items.map((g) => (
+              <li class="guide-item">
+                <a href={`/guide/${g.id}/`}>
+                  <span class="guide-item-title">{g.data.title}</span>
+                  <span class="guide-item-desc">{g.data.description}</span>
+                  <span class="guide-item-meta"><time datetime={isoDate(updatedOf(g))}>{jaDate(updatedOf(g))}更新</time></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    )}
+
+    {appsWithout.length > 0 && (
+      <section class="mt-8" aria-labelledby="more-apps">
+        <div class="section-heading">
+          <h2 id="more-apps">記事を準備中のアプリ</h2>
+          <MoreLink href="/apps/">アプリ一覧</MoreLink>
+        </div>
+        <AppRow apps={appsWithout} />
+      </section>
+    )}
+  </div>
+</BaseLayout>

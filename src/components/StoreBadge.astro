@@ -1,0 +1,13 @@
+---
+// App Store公式の日本語バッジ（public/badges/）。Appleの規定で高さ40px以上・改変禁止。
+import type { AppEntry } from '../data/apps';
+
+interface Props {
+  app: AppEntry;
+}
+const { app } = Astro.props;
+---
+
+<a class="store-badge" href={app.storeUrl} target="_blank" rel="noopener" data-app-store={app.slug}>
+  <img src="/badges/app-store-ja-black.svg" width="120" height="44" alt={`${app.name}をApp Storeからダウンロード`} loading="lazy" decoding="async" />
+</a>

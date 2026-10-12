@@ -1,0 +1,23 @@
+---
+// 控えめなアプリの並び（アイコン・名前・一言 → LP）
+import type { AppEntry } from '../data/apps';
+
+interface Props {
+  apps: AppEntry[];
+}
+const { apps } = Astro.props;
+---
+
+<ul class="app-row">
+  {apps.map((a) => (
+    <li>
+      <a href={a.lpPath}>
+        <img class="app-icon-img sm" src={a.icon} width="44" height="44" alt="" loading="lazy" decoding="async" />
+        <span class="app-row-text">
+          <span class="app-row-name">{a.name}</span>
+          <span class="app-row-tagline">{a.tagline}</span>
+        </span>
+      </a>
+    </li>
+  ))}
+</ul>

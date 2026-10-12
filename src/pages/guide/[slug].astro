@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AppCta from '../../components/AppCta.astro';
+import AppRow from '../../components/AppRow.astro';
+import MoreLink from '../../components/MoreLink.astro';
+import { SITE } from '../../config';
+import { getApp, otherApps } from '../../data/apps';
+import { getGuides, updatedOf, isoDate, jaDate, splitBody, type GuideEntry } from '../../lib/guide';
+
+export async function getStaticPaths() {
+  const guides = await getGuides();
+  return guides.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: GuideEntry;
+}
+const { entry } = Astro.props;
+const { title, description, faq, publishedAt } = entry.data;
+const app = getApp(entry.data.app);
+const updated = updatedOf(entry);
+const path = `/guide/${entry.id}/`;
+const url = `${SITE.url}${path}`;
+
+const html = entry.rendered?.html ?? '';
+const headings = (entry.rendered?.metadata?.headings ?? []).filter((h) => h.depth === 2);
+const parts = splitBody(html);
+
+const related = (await getGuides()).filter((g) => g.data.app === app.slug && g.id !== entry.id).slice(0, 6);
+const others = otherApps(app.slug, 3);
+
+const jsonLd: object[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description,
+    inLanguage: 'ja',
+    datePublished: isoDate(publishedAt),
+    dateModified: isoDate(updated),
+    image: `${SITE.url}${app.icon512}`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    author: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE.name,
+      url: SITE.url,
+      logo: { '@type': 'ImageObject', url: `${SITE.url}/favicon.svg` },
+    },
+    about: { '@type': 'SoftwareApplication', name: app.name, operatingSystem: 'iOS', url: `${SITE.url}${app.lpPath}` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: '使い方ガイド', item: `${SITE.url}/guide/` },
+      { '@type': 'ListItem', position: 3, name: app.name, item: `${SITE.url}/guide/app/${app.slug}/` },
+      { '@type': 'ListItem', position: 4, name: title, item: url },
+    ],
+  },
+];
+if (faq.length > 0) {
+  jsonLd.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  });
+}
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  path={path}
+  ogType="article"
+  appleAppId={app.appId}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li><a href="/guide/">使い方ガイド</a></li>
+        <li><a href={`/guide/app/${app.slug}/`}>{app.name}</a></li>
+        <li aria-current="page">{title}</li>
+      </ol>
+    </nav>
+
+    <article class="guide-wrap">
+      <header class="guide-head">
+        <a class="guide-app-chip" href={app.lpPath}>
+          <img src={app.icon} width="24" height="24" alt="" />
+          {app.name}
+        </a>
+        <h1>{title}</h1>
+        <p class="guide-lead">{description}</p>
+        <p class="guide-meta">
+          <time datetime={isoDate(updated)}>{jaDate(updated)}更新</time>
+          {isoDate(updated) !== isoDate(publishedAt) && <> ・ <time datetime={isoDate(publishedAt)}>{jaDate(publishedAt)}公開</time></>}
+        </p>
+      </header>
+
+      {headings.length >= 2 && (
+        <nav class="toc" aria-labelledby="toc-title">
+          <p class="toc-title" id="toc-title">目次</p>
+          <ol>
+            {headings.map((h) => (
+              <li><a href={`#${h.slug}`}>{h.text}</a></li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
+      <div class="prose guide-body">
+        {parts.map((p) =>
+          p.kind === 'html' ? <Fragment set:html={p.html} /> : <AppCta app={p.app ? getApp(p.app) : app} />
+        )}
+      </div>
+
+      <AppCta app={app} variant="end" />
+
+      {faq.length > 0 && (
+        <section class="mt-8" aria-labelledby="faq-heading">
+          <div class="section-heading">
+            <h2 id="faq-heading">よくある質問</h2>
+          </div>
+          <div class="faq">
+            {faq.map((f) => (
+              <details>
+                <summary>{f.q}</summary>
+                <p class="faq-a">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {related.length > 0 && (
+        <section class="mt-8" aria-labelledby="related-heading">
+          <div class="section-heading">
+            <h2 id="related-heading">{app.name}の関連記事</h2>
+            <MoreLink href={`/guide/app/${app.slug}/`}>すべて見る</MoreLink>
+          </div>
+          <ul class="guide-list">
+            {related.map((g) => (
+              <li class="guide-item">
+                <a href={`/guide/${g.id}/`}>
+                  <span class="guide-item-title">{g.data.title}</span>
+                  <span class="guide-item-desc">{g.data.description}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </article>
+
+    <section class="mt-8" aria-labelledby="others-heading">
+      <div class="section-heading">
+        <h2 id="others-heading">ほかのiPhoneアプリ</h2>
+        <MoreLink href="/apps/">アプリ一覧</MoreLink>
+      </div>
+      <AppRow apps={others} />
+    </section>
+  </div>
+</BaseLayout>

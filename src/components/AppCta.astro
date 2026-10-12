@@ -1,0 +1,40 @@
+---
+// 記事内・記事末尾に置くアプリ誘導ブロック。
+// variant="inline" = 本文の途中（短め）、variant="end" = 記事の最後（機能と料金つき）
+import type { AppEntry } from '../data/apps';
+import StoreBadge from './StoreBadge.astro';
+import MoreLink from './MoreLink.astro';
+
+interface Props {
+  app: AppEntry;
+  variant?: 'inline' | 'end';
+  /** 上に出す小さな見出し。省略時は variant に合わせた文言 */
+  kicker?: string;
+}
+const { app, variant = 'inline', kicker } = Astro.props;
+const label = kicker ?? (variant === 'end' ? 'この記事で紹介したiPhoneアプリ' : 'iPhoneアプリ');
+---
+
+<aside class={`app-cta app-cta--${variant}`} aria-label={`iPhoneアプリ「${app.name}」`}>
+  <img class="app-icon-img" src={app.icon} width="64" height="64" alt="" loading="lazy" decoding="async" />
+  <div class="app-cta-body">
+    <p class="app-cta-kicker">{label}</p>
+    <p class="app-cta-name">{app.name}</p>
+    <p class="app-cta-tagline">{app.tagline}</p>
+    {variant === 'end' && (
+      <ul class="app-cta-features">
+        {app.features.slice(0, 3).map((f) => (
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+            <span>{f}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+    <div class="app-cta-actions">
+      <StoreBadge app={app} />
+      <MoreLink href={app.lpPath}>アプリの詳しい紹介</MoreLink>
+    </div>
+    {variant === 'end' && <p class="app-cta-price">{app.pricing}</p>}
+  </div>
+</aside>

@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import AppCta from '../../../components/AppCta.astro';
+import AppRow from '../../../components/AppRow.astro';
+import MoreLink from '../../../components/MoreLink.astro';
+import { SITE } from '../../../config';
+import { APPS, otherApps, type AppEntry } from '../../../data/apps';
+import { getGuides, updatedOf, jaDate, isoDate } from '../../../lib/guide';
+
+export function getStaticPaths() {
+  return APPS.map((app) => ({ params: { app: app.slug }, props: { app } }));
+}
+
+interface Props {
+  app: AppEntry;
+}
+const { app } = Astro.props;
+const items = (await getGuides()).filter((g) => g.data.app === app.slug);
+const path = `/guide/app/${app.slug}/`;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${app.name}の使い方・関連記事`,
+    url: `${SITE.url}${path}`,
+    inLanguage: 'ja',
+    about: { '@type': 'SoftwareApplication', name: app.name, operatingSystem: 'iOS', url: `${SITE.url}${app.lpPath}` },
+    hasPart: items.map((g) => ({ '@type': 'Article', headline: g.data.title, url: `${SITE.url}/guide/${g.id}/` })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: '使い方ガイド', item: `${SITE.url}/guide/` },
+      { '@type': 'ListItem', position: 3, name: app.name, item: `${SITE.url}${path}` },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title={`${app.name}の使い方・関連記事`}
+  description={`iPhoneアプリ「${app.name}」の使い方と、関連する記事の一覧。${app.tagline}`}
+  path={path}
+  appleAppId={app.appId}
+  jsonLd={jsonLd}
+  noindex={items.length === 0}
+>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li><a href="/guide/">使い方ガイド</a></li>
+        <li aria-current="page">{app.name}</li>
+      </ol>
+    </nav>
+
+    <div class="guide-wrap">
+      <div class="tool-hero">
+        <h1>{app.name}の使い方・関連記事</h1>
+        <p class="lead">{app.tagline}</p>
+      </div>
+
+      {items.length === 0 ? (
+        <div class="guide-empty">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z" /><path d="M8 7h7" /><path d="M8 11h5" /></svg>
+          <b>記事を準備しています</b>
+          <p>できることは、アプリの紹介ページにまとめています。</p>
+          <MoreLink href={app.lpPath}>{app.name}の紹介を見る</MoreLink>
+        </div>
+      ) : (
+        <ul class="guide-list">
+          {items.map((g) => (
+            <li class="guide-item">
+              <a href={`/guide/${g.id}/`}>
+                <span class="guide-item-title">{g.data.title}</span>
+                <span class="guide-item-desc">{g.data.description}</span>
+                <span class="guide-item-meta"><time datetime={isoDate(updatedOf(g))}>{jaDate(updatedOf(g))}更新</time></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <AppCta app={app} variant="end" kicker="iPhoneアプリ" />
+    </div>
+
+    <section class="mt-8" aria-labelledby="others-heading">
+      <div class="section-heading">
+        <h2 id="others-heading">ほかのiPhoneアプリ</h2>
+        <MoreLink href="/apps/">アプリ一覧</MoreLink>
+      </div>
+      <AppRow apps={otherApps(app.slug, 3)} />
+    </section>
+  </div>
+</BaseLayout>
