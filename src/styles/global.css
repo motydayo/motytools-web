@@ -275,7 +275,7 @@ main {
 }
 .site-footer .cols {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--sp-5);
   margin-bottom: var(--sp-6);
 }
@@ -1419,7 +1419,9 @@ main {
 .guide-body h2 { scroll-margin-top: var(--sp-4); }
 .guide-body h3 { scroll-margin-top: var(--sp-4); }
 .guide-body a { word-break: break-word; }
-.guide-body img {
+/* 本文に貼った画像だけ（誘導ブロックのアイコン・バッジには効かせない） */
+.guide-body p > img,
+.guide-body figure img {
   width: 100%;
   height: auto;
   border-radius: var(--r-md);

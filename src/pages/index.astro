@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../config';
 import { TOOLS, CATEGORIES } from '../data/tools';
+import { APPS, getApp } from '../data/apps';
 
 const jsonLd = [
   {
@@ -54,6 +55,8 @@ interface Product {
   /** スクショ上部の見出し帯を切り落とす */
   crop?: boolean;
   icon?: string;
+  /** 実物のアプリアイコン（public/app-icons/） */
+  img?: string;
 }
 const showcase: Product[] = [
   {
@@ -96,43 +99,18 @@ const showcase: Product[] = [
     visual: 'shot',
     shot: '/arumono-recipe/shots/01-v2.png',
   },
-  {
-    href: '/pitto-hosho/',
-    name: 'ピッと保証',
-    desc: '保証書を撮るだけで、家電の保証期限を管理。',
-    visual: 'shot',
-    shot: '/pitto-hosho/shots/01-mock.webp',
-  },
 ];
+// 下段の小さなカード。アプリは台帳（src/data/apps.ts）の実物アイコンを使う
+const appMini = (slug: string, desc: string): Product => {
+  const a = getApp(slug);
+  return { href: a.lpPath, name: a.name, desc, visual: 'memo', img: a.icon };
+};
 const compact: Product[] = [
-  {
-    href: '/ooya-note/',
-    name: '大家ノート',
-    desc: '不動産の収支・管理をシンプルに。',
-    visual: 'memo',
-    icon: '<path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-8h6v8"/>',
-  },
-  {
-    href: '/apps/lesson-techo/',
-    name: 'レッスン手帳',
-    desc: '習いごとの生徒・月謝・振替を管理。',
-    visual: 'memo',
-    icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
-  },
-  {
-    href: '/souba-watch/',
-    name: 'うちの相場ウォッチ',
-    desc: '自宅の不動産価格の目安を毎月お知らせ。',
-    visual: 'memo',
-    icon: '<path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/>',
-  },
-  {
-    href: '/apps/tsukulog/',
-    name: 'つくログ',
-    desc: 'つくる過程を、ログとして残す。',
-    visual: 'memo',
-    icon: '<rect x="8" y="2" width="13" height="16" rx="2"/><path d="M4 6v14a2 2 0 0 0 2 2h11"/>',
-  },
+  appMini('ooya-note', '家賃の入金・更新日・年間収支を管理。'),
+  appMini('lesson-techo', '習いごとの生徒・月謝・振替を管理。'),
+  appMini('tsukulog', 'ハンドメイドの材料・原価・手取りを管理。'),
+  appMini('reptile-sns', '爬虫類・両生類の飼育記録SNS。'),
+  appMini('machi-anzen-map', '事故・不審者情報を地図で数える。'),
   {
     href: '/buzzmeter/',
     name: '真相メモ',
@@ -141,25 +119,18 @@ const compact: Product[] = [
     icon: '<circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>',
   },
   {
-    href: '/apps/sodachi/',
-    name: 'そだち',
-    desc: '子どもの身長体重と「はじめて」を記録。',
+    href: '/apps/',
+    name: `すべてのアプリ（${APPS.length}本）`,
+    desc: 'カテゴリ別に全アプリを見る。',
     visual: 'memo',
-    icon: '<path d="M12 22V8"/><path d="M12 8c0-3.5 2.5-6 7-6-1 3.5-2.5 6-7 6z"/><path d="M12 13c0-3.5-2.5-6-7-6 1 3.5 2.5 6 7 6z"/>',
+    icon: '<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/>',
   },
   {
-    href: '/machi-anzen-map/',
-    name: 'まちの安全マップ',
-    desc: '交通事故・不審者情報・行政処分・食中毒を地図で数える。',
+    href: '/guide/',
+    name: '使い方ガイド',
+    desc: '困りごとの解決方法とアプリの使い方。',
     visual: 'memo',
-    icon: '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
-  },
-  {
-    href: '/reptile-sns/',
-    name: 'うちの爬虫類',
-    desc: '爬虫類・両生類の個体主役の飼育記録SNS。',
-    visual: 'memo',
-    icon: '<path d="M12 2c-1.5 2-2 3.5-2 5 0 1.5.8 2.5 2 2.5s2-1 2-2.5c0-1.5-.5-3-2-5Z"/><path d="M7 9c-2 .5-4 2-4 4.5 0 3 2.5 5 5.5 5"/><path d="M17 9c2 .5 4 2 4 4.5 0 3-2.5 5-5.5 5"/><path d="M8.5 18.5c1 1.5 2.2 2.5 3.5 2.5s2.5-1 3.5-2.5"/>',
+    icon: '<path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M8 7h7"/><path d="M8 11h5"/>',
   },
 ];
 ---
@@ -167,7 +138,7 @@ const compact: Product[] = [
 <BaseLayout
   title="motytools — 無料Webツールとアプリのスタジオ"
   absoluteTitle={true}
-  description="手取り計算・和暦変換・文字数カウント・画像圧縮など、登録不要ですぐ使える無料Webツールを公開中。データと技術で「便利」を届けるプロダクトスタジオ motytools。"
+  description="手取り計算・和暦変換・文字数カウント・画像圧縮など登録不要ですぐ使える無料Webツールと、レシピ保存・賞味期限管理・家賃管理などのiPhoneアプリを公開しているプロダクトスタジオ motytools。"
   path="/"
   appearance="light"
   chrome="home"
@@ -187,7 +158,7 @@ const compact: Product[] = [
             無料ツールを使う
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
-          <a class="hm-textlink" href="#products">プロダクトを見る <span aria-hidden="true">→</span></a>
+          <a class="hm-textlink" href="/apps/">iPhoneアプリを見る <span aria-hidden="true">→</span></a>
         </div>
       </div>
 
@@ -402,7 +373,11 @@ const compact: Product[] = [
         {compact.map((p) => (
           <a href={p.href} class="hm-mini">
             <span class="hm-mini-ic" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.icon} />
+              {p.img ? (
+                <img src={p.img} width="40" height="40" alt="" loading="lazy" decoding="async" />
+              ) : (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.icon} />
+              )}
             </span>
             <span class="hm-mini-body">
               <span class="hm-mini-name">{p.name}</span>
@@ -436,7 +411,7 @@ const compact: Product[] = [
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg>
         <div>
           <b>iPhoneアプリも作っています</b>
-          <p>ご意見・ご要望は各アプリの「ご意見・要望」からお寄せください。</p>
+          <p><a href="/apps/">アプリ一覧</a>と<a href="/guide/">使い方ガイド</a>をご覧ください。ご意見・ご要望は各アプリの「ご意見・要望」からお寄せください。</p>
         </div>
       </div>
     </div>
@@ -1175,6 +1150,7 @@ const compact: Product[] = [
     transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
   }
   .hm-mini-ic { flex: 0 0 auto; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: var(--text); }
+  .hm-mini-ic img { width: 40px; height: auto; aspect-ratio: 1 / 1; border-radius: 9px; border: 1px solid var(--border); }
   .hm-mini-body { display: grid; gap: 2px; min-width: 0; }
   .hm-mini-name { font-size: 15px; font-weight: 700; }
   .hm-mini-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.5; }
@@ -1215,6 +1191,7 @@ const compact: Product[] = [
   .hm-about-item svg { flex: 0 0 auto; color: var(--accent); margin-top: 2px; }
   .hm-about-item b { display: block; font-size: 15px; font-weight: 700; margin-bottom: 4px; }
   .hm-about-item p { font-size: 13.5px; color: var(--text-2); line-height: 1.7; }
+  .hm-about-item p a { color: var(--accent); }
   @media (max-width: 860px) {
     .hm-about-inner { grid-template-columns: 1fr; gap: var(--sp-5); }
   }
