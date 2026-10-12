@@ -310,7 +310,7 @@ export const APPS: AppEntry[] = [
       '音声入力で話すだけでメモになる',
       '送ったメモをObsidianにも自動で保存',
     ],
-    pricing: '無料（1日3通・宛先1件まで）。Proは月額300円',
+    pricing: '無料（1日3通まで）。Proは月額500円・年額4,800円（1日30通まで）',
     appId: '6784932051',
     storeUrl: store('6784932051'),
     lpPath: '/memomail/',
@@ -323,7 +323,7 @@ export const APPS: AppEntry[] = [
     relatedTools: ['moji-count'],
     lpTitle: '自分にメールを送るメモアプリ「メモびゅん」｜3タップで自分宛てに送信',
     lpDescription:
-      '思いついたことを3タップで自分宛てにメールできるiPhoneのメモアプリ「メモびゅん」。Captioの代わりを探している方に。複数の宛先、音声入力、Obsidianへの自動保存に対応。無料から使えます。',
+      '思いついたことを3タップで自分宛てにメールできるiPhoneのメモアプリ「メモびゅん」。自分宛てメールのメモアプリを探している方に。複数の宛先、音声入力、Obsidianへの自動保存に対応。無料から使えます。',
   },
 
   // ── 趣味 ──
