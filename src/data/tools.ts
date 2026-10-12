@@ -1,7 +1,7 @@
 // ツール台帳。/tools/ ハブ・関連ツール・sitemap.xml・OG画像生成はすべてこのファイルから駆動される。
 // 1ツール = 1エントリ。ページ本体は src/pages/<slug>/index.astro。
 
-export type CategoryId = 'money' | 'date' | 'text';
+export type CategoryId = 'money' | 'date' | 'text' | 'body';
 
 export interface Category {
   id: CategoryId;
@@ -34,6 +34,13 @@ export const CATEGORIES: Category[] = [
     description: '文字数カウント・QRコード作成・画像圧縮・HEIC変換。すべてブラウザ内で完結。',
     color: '#6d28d9',
     colorDark: '#a78bfa',
+  },
+  {
+    id: 'body',
+    name: '筋トレ・運動',
+    description: '1RM・プレート・ウォームアップなど、筋トレの重さ決めに使える計算ツール。',
+    color: '#c2410c',
+    colorDark: '#fb923c',
   },
 ];
 
@@ -218,6 +225,18 @@ export const TOOLS: Tool[] = [
     category: 'text',
     keywords: ['HEIC JPG 変換', 'HEIC 変換', 'heic jpeg 変換 無料', 'iPhone 写真 jpg'],
     icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 15h7"/><path d="M12.5 12l3 3-3 3"/>',
+  },
+  // ── 筋トレ・運動 ──
+  {
+    slug: '1rm',
+    name: '1RM計算',
+    title: '1RM計算（最大挙上重量の目安）｜ベンチプレス・スクワット・デッドリフト',
+    description:
+      '重さと回数を入れるだけで推定1RM（最大挙上重量）を計算。95%〜70%の重さと回数の目安表、バーベルのプレート計算、ウォームアップの重さの組み方つき。ベンチプレス・スクワット・デッドリフトの重量決めに。',
+    short: '重さと回数から推定1RMと、割合別の重さの目安を計算。プレート計算つき。',
+    category: 'body',
+    keywords: ['1RM 計算', '最大挙上重量 計算', 'ベンチプレス 1RM', 'プレート 計算', 'ウォームアップ 重量'],
+    icon: '<path d="M6.5 6.5v11"/><path d="M17.5 6.5v11"/><path d="M3 9v6"/><path d="M21 9v6"/><path d="M6.5 12h11"/>',
   },
 ];
 

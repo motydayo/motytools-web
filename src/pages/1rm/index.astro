@@ -1,0 +1,361 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import type { Faq } from '../../layouts/ToolLayout.astro';
+import { PERCENT_ROWS } from '../../lib/rm';
+
+const faqs: Faq[] = [
+  {
+    q: '1RMとは何ですか？',
+    a: '1RM（ワンレップマックス）は、1回だけ挙げられる最大の重さのことです。ベンチプレス・スクワット・デッドリフトなどで、トレーニングの重さを「1RMの◯%」と決めるときの基準になります。',
+  },
+  {
+    q: '推定1RMはどのくらい正確ですか？',
+    a: '計算式による目安です。同じ記録でも、使う式・種目・その日の体調で数kg前後ずれることがあります。回数が少ない記録ほど誤差が小さくなりやすく、10回を超える記録では精度が下がります。実際に挙げられる重さを保証するものではありません。',
+  },
+  {
+    q: '何回の記録から計算するのがよいですか？',
+    a: '3〜8回程度の記録がめやすです。1回の記録は、そのまま1RMです。回数が多すぎると、疲れ方の個人差が大きくなり、推定との差が広がります。',
+  },
+  {
+    q: 'バーベルの重さは含めて入力しますか？',
+    a: '含めます。バーと、両側のプレートを合わせた合計の重さを入力してください。例えば20kgのバーに片側40kgのプレートなら、100kgです。',
+  },
+  {
+    q: '入力した数値はサーバーに送信されますか？',
+    a: '送信されません。計算はすべてお使いのブラウザの中だけで行われ、入力内容が保存・送信されることはありません。',
+  },
+];
+---
+
+<ToolLayout
+  slug="1rm"
+  lead="ベンチプレス・スクワット・デッドリフトで挙げた重さと回数を入れると、推定1RM（1回だけ挙げられる重さ）と、95%〜70%の重さと回数の目安が出ます。プレート計算とウォームアップ計算も同じページで使えます。"
+  faqs={faqs}
+>
+  <nav class="rm-jump" aria-label="このページの計算">
+    <a href="#rm">1RM計算</a>
+    <a href="#plate">プレート計算</a>
+    <a href="#warmup">ウォームアップ計算</a>
+  </nav>
+
+  <!-- ① 1RM -->
+  <section class="panel" id="rm" aria-labelledby="rm-h">
+    <h2 class="panel-title" id="rm-h">1RM計算</h2>
+    <div class="field-grid cols-2">
+      <div class="field">
+        <label for="rm-weight">挙げた重さ</label>
+        <div class="input-group">
+          <input id="rm-weight" class="input" type="text" inputmode="decimal" placeholder="例: 80" autocomplete="off" />
+          <span class="suffix">kg</span>
+        </div>
+        <span class="hint">バーとプレートを合わせた合計の重さ</span>
+      </div>
+      <div class="field">
+        <label for="rm-reps">回数</label>
+        <div class="input-group">
+          <input id="rm-reps" class="input" type="text" inputmode="numeric" placeholder="例: 6" autocomplete="off" />
+          <span class="suffix">回</span>
+        </div>
+        <span class="hint">1〜30の整数。少ないほど精度が高くなります</span>
+      </div>
+    </div>
+    <p class="rm-error" id="rm-error" role="alert" hidden></p>
+    <div class="result" aria-live="polite">
+      <p class="result-label">推定1RM（1回だけ挙げられる重さの目安）</p>
+      <p class="result-value"><span id="rm-result">—</span></p>
+      <p class="result-sub" id="rm-formula">重さと回数を入力してください</p>
+      <div class="result-actions">
+        <button type="button" class="btn btn-secondary btn-sm btn-copy" id="rm-copy" disabled>
+          <span class="label-default">結果をコピー</span>
+          <span class="label-done">コピーしました</span>
+        </button>
+      </div>
+    </div>
+
+    <h3 class="rm-sub">重さと回数の目安</h3>
+    <div class="table-wrap">
+      <table class="table" style="min-width:0">
+        <thead>
+          <tr><th scope="col">1RMの割合</th><th scope="col" class="num">重さの目安</th><th scope="col" class="num">回数の目安</th></tr>
+        </thead>
+        <tbody id="rm-table">
+          {PERCENT_ROWS.map((r) => (
+            <tr data-pct={r.pct}><td>{r.pct}%</td><td class="num" data-w>—</td><td class="num">{r.reps}回</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="rm-note">計算式による目安です。実際に挙げられる重さを保証するものではありません。</p>
+  </section>
+
+  <!-- ② プレート -->
+  <section class="panel" id="plate" aria-labelledby="plate-h">
+    <h2 class="panel-title" id="plate-h">プレート計算（片側につけるプレート）</h2>
+    <div class="field-grid cols-2">
+      <div class="field">
+        <label for="pl-target">つけたい合計の重さ</label>
+        <div class="input-group">
+          <input id="pl-target" class="input" type="text" inputmode="decimal" placeholder="例: 100" autocomplete="off" />
+          <span class="suffix">kg</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="pl-bar">バーの重さ</label>
+        <div class="input-group">
+          <input id="pl-bar" class="input" type="text" inputmode="decimal" value="20" autocomplete="off" />
+          <span class="suffix">kg</span>
+        </div>
+        <span class="hint">一般的なオリンピックバーは20kgです</span>
+      </div>
+    </div>
+    <div class="field mt-4">
+      <span class="field-label" id="pl-plates-label">使えるプレート（片側・kg）</span>
+      <div class="choice-row" role="group" aria-labelledby="pl-plates-label" id="pl-plates">
+        {[25, 20, 15, 10, 5, 2.5, 1.25].map((p) => (
+          <label class="choice"><input type="checkbox" value={p} checked={p !== 25} />{p}</label>
+        ))}
+      </div>
+    </div>
+    <div class="result" aria-live="polite">
+      <p class="result-label">片側につけるプレート</p>
+      <p class="result-value rm-plate-value"><span id="pl-result">—</span></p>
+      <p class="result-sub" id="pl-sub">つけたい重さを入力してください</p>
+    </div>
+  </section>
+
+  <!-- ③ ウォームアップ -->
+  <section class="panel" id="warmup" aria-labelledby="warmup-h">
+    <h2 class="panel-title" id="warmup-h">ウォームアップ計算</h2>
+    <div class="field-grid cols-2">
+      <div class="field">
+        <label for="wu-work">本番の重さ</label>
+        <div class="input-group">
+          <input id="wu-work" class="input" type="text" inputmode="decimal" placeholder="例: 100" autocomplete="off" />
+          <span class="suffix">kg</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="wu-bar">バーの重さ</label>
+        <div class="input-group">
+          <input id="wu-bar" class="input" type="text" inputmode="decimal" value="20" autocomplete="off" />
+          <span class="suffix">kg</span>
+        </div>
+      </div>
+    </div>
+    <div class="table-wrap mt-4">
+      <table class="table" style="min-width:0">
+        <thead>
+          <tr><th scope="col">段階</th><th scope="col" class="num">重さ</th><th scope="col" class="num">回数</th></tr>
+        </thead>
+        <tbody id="wu-table">
+          <tr><td colspan="3" class="rm-empty">本番の重さを入力してください</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="rm-note">重さは2.5kg刻みに丸めています。バーより軽くなる段階はバーだけの重さにしています。</p>
+  </section>
+
+  <Fragment slot="article">
+    <h2 id="how-to">使い方</h2>
+    <ol class="steps">
+      <li>直近のトレーニングで挙げた「重さ」と「回数」を入力します（バーとプレートの合計の重さ）。</li>
+      <li>推定1RMと、95%〜70%の重さと回数の目安が表示されます。ボタンを押す必要はありません。</li>
+      <li>プレート計算では、つけたい重さを入れると片側につけるプレートの枚数が出ます。ウォームアップ計算では、本番の重さまでの段階が出ます。</li>
+    </ol>
+
+    <h2 id="formula">1RMの計算式（Epley式）</h2>
+    <p>このページでは、広く使われている<strong>Epley（エプリー）式</strong>で推定1RMを出しています。</p>
+    <p><code>推定1RM = 重さ × (1 + 回数 ÷ 30)</code>（回数が1回のときは、挙げた重さがそのまま1RM）</p>
+    <p>例：80kgを6回挙げたなら、<strong>80 × (1 + 6 ÷ 30) = 96kg</strong>。表示は0.5kg単位に丸めています。1RMの推定式にはほかにも種類があり、同じ記録でも結果が数kg違うことがあります。</p>
+
+    <h2 id="percent">1RMの割合と回数の目安</h2>
+    <p>1RMに対する割合ごとの、続けられる回数のめやすです。重さの欄は、1RMが100kgの場合の例です。</p>
+    <div class="table-wrap">
+      <table class="table" style="min-width:0">
+        <thead>
+          <tr><th scope="col">1RMの割合</th><th scope="col" class="num">重さ（1RM100kgの例）</th><th scope="col" class="num">回数の目安</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>100%</td><td class="num">100kg</td><td class="num">1回</td></tr>
+          {PERCENT_ROWS.map((r) => (
+            <tr><td>{r.pct}%</td><td class="num">{r.pct}kg</td><td class="num">{r.reps}回</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>回数は個人差や種目による差が大きい目安です。同じ割合でも、脚の種目（スクワット）と上半身の種目で続けられる回数は変わります。</p>
+
+    <h2 id="big3">ベンチプレス・スクワット・デッドリフトでの使い方</h2>
+    <ul>
+      <li><strong>重さを決める</strong> — 「8回を狙う日は1RMの80%」のように、割合から重さを決めると、毎回の迷いが減ります。</li>
+      <li><strong>伸びを確かめる</strong> — 重さも回数も違う記録を、推定1RMにそろえると、成長が比べやすくなります。</li>
+      <li><strong>測るときは無理をしない</strong> — 本当に1回だけ挙がる重さを試すのは負担が大きく危険です。3〜8回の記録から推定する方法がおすすめです。重い重量を扱うときは、補助者やセーフティを使ってください。</li>
+    </ul>
+
+    <h2 id="plate-howto">プレート計算の考え方</h2>
+    <p>つけたい合計の重さからバーの重さを引き、2で割ると、片側につける重さが出ます。その重さを、重いプレートから順に使って作ります。例：合計100kg・バー20kgなら、片側は<strong>(100 − 20) ÷ 2 = 40kg</strong>で、20kgのプレートを2枚です。手持ちのプレートで作れない端数があるときは、足りない重さを表示します。</p>
+
+    <h2 id="warmup-howto">ウォームアップの組み立て方</h2>
+    <p>本番の重さに向けて、軽い重さから段階的に上げます。このページの目安は、バーだけで10回、本番の40%で8回、60%で5回、75%で3回、90%で1回です。段階を上げるほど回数を減らし、疲れを残さないようにします。種目や体調に合わせて、段階は増やしても減らしても構いません。</p>
+  </Fragment>
+
+  <div slot="promo" class="mt-8">
+    <h2 class="rm-promo-h">筋トレ記録アプリ</h2>
+    <div class="tool-app">
+      <img class="app-icon-img" src="/atoichi/img/icon-256.webp" width="64" height="64" alt="" loading="lazy" decoding="async" />
+      <div class="tool-app-body">
+        <a class="tool-app-name" href="/atoichi/">アトイチ</a>
+        <p class="tool-app-pitch">前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できるiPhoneアプリ。1RM・プレート・ウォームアップの計算も内蔵しています。記録機能はずっと無料です。</p>
+        <!-- 【差し替え】App Store公開後、下の「詳しく見る」の隣に App Store のボタン（<a href="App Store URL">）を追加し、「近日公開」の文言を消す -->
+        <p class="tool-app-pitch"><a href="/atoichi/">詳しく見る</a>（App Storeで近日公開）</p>
+      </div>
+    </div>
+  </div>
+</ToolLayout>
+
+<style>
+  .rm-jump { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-5); }
+  .rm-jump a {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--sp-4);
+    border: 1px solid var(--border); border-radius: var(--r-full); font-size: var(--fs-sm); font-weight: 600;
+    color: var(--text); text-decoration: none; background: var(--surface);
+  }
+  .rm-jump a:hover { border-color: var(--accent); color: var(--accent); }
+  .rm-sub { font-size: var(--fs-md); font-weight: 700; margin: var(--sp-6) 0 var(--sp-3); }
+  .rm-note { margin-top: var(--sp-3); font-size: var(--fs-xs); color: var(--text-3); line-height: 1.7; }
+  .rm-error { margin-top: var(--sp-3); font-size: var(--fs-sm); color: var(--danger, #b91c1c); font-weight: 600; }
+  .rm-empty { color: var(--text-3); text-align: center; white-space: normal; }
+  .rm-plate-value { font-size: var(--fs-lg); }
+  .rm-promo-h { font-size: var(--fs-md); font-weight: 700; margin-bottom: var(--sp-3); }
+  .rm-hl td { background: var(--surface-2); }
+  #pl-plates .choice { min-height: 44px; }
+</style>
+
+<script>
+  import { parseNum, fmtNum, bindCopy } from '../../lib/format';
+  import { estimate1RM, percentTable, plateBreakdown, warmupSteps } from '../../lib/rm';
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+  const kg = (n: number) => `${fmtNum(n, 2)}kg`;
+
+  // ── 1RM ──
+  const rmResult = document.getElementById('rm-result')!;
+  const rmFormula = document.getElementById('rm-formula')!;
+  const rmCopy = document.getElementById('rm-copy') as HTMLButtonElement;
+  const rmError = document.getElementById('rm-error')!;
+  const rmEmpty = rmFormula.textContent || '';
+  let rmText = '';
+
+  function updateRm() {
+    const w = parseNum($('rm-weight').value);
+    const r = parseNum($('rm-reps').value);
+    const cells = document.querySelectorAll<HTMLElement>('#rm-table [data-w]');
+    const clear = () => {
+      rmResult.textContent = '—';
+      rmFormula.textContent = rmEmpty;
+      rmCopy.disabled = true;
+      rmText = '';
+      cells.forEach((c) => (c.textContent = '—'));
+    };
+    rmError.hidden = true;
+    const touched = $('rm-weight').value.trim() !== '' && $('rm-reps').value.trim() !== '';
+    if (!Number.isFinite(w) || !Number.isFinite(r)) {
+      clear();
+      return;
+    }
+    if (!(w > 0) || w > 1000) {
+      clear();
+      if (touched) { rmError.textContent = '重さは0より大きく、1000kg以下で入力してください。'; rmError.hidden = false; }
+      return;
+    }
+    if (!Number.isInteger(r) || r < 1 || r > 30) {
+      clear();
+      if (touched) { rmError.textContent = '回数は1〜30の整数で入力してください。'; rmError.hidden = false; }
+      return;
+    }
+    const rm = estimate1RM(w, r);
+    rmResult.textContent = kg(rm);
+    rmFormula.textContent = r === 1
+      ? `1回なので、挙げた重さ ${kg(w)} がそのまま1RMです`
+      : `${kg(w)} × (1 + ${r} ÷ 30) = ${kg(rm)}（0.5kg単位に丸め）`;
+    rmCopy.disabled = false;
+    rmText = kg(rm);
+    const rows = percentTable(rm);
+    cells.forEach((c, i) => (c.textContent = kg(rows[i].weight)));
+  }
+  ['rm-weight', 'rm-reps'].forEach((id) => $(id).addEventListener('input', updateRm));
+  bindCopy(rmCopy, () => rmText);
+
+  // ── プレート ──
+  const plResult = document.getElementById('pl-result')!;
+  const plSub = document.getElementById('pl-sub')!;
+  const plEmpty = plSub.textContent || '';
+  function updatePlate() {
+    const target = parseNum($('pl-target').value);
+    const bar = parseNum($('pl-bar').value);
+    const plates = Array.from(document.querySelectorAll<HTMLInputElement>('#pl-plates input:checked')).map((el) => Number(el.value));
+    if (!Number.isFinite(target) || !Number.isFinite(bar) || bar < 0) {
+      plResult.textContent = '—';
+      plSub.textContent = plEmpty;
+      return;
+    }
+    if (plates.length === 0) {
+      plResult.textContent = '—';
+      plSub.textContent = '使えるプレートを1つ以上選んでください';
+      return;
+    }
+    const res = plateBreakdown(target, bar, plates);
+    if (!res) {
+      plResult.textContent = '—';
+      plSub.textContent = `バーの重さ（${kg(bar)}）より軽い重さは作れません`;
+      return;
+    }
+    plResult.textContent = res.perSide.length === 0
+      ? 'プレートなし（バーだけ）'
+      : res.perSide.map((p) => `${fmtNum(p.plate, 2)}kg × ${p.count}枚`).join('　');
+    plSub.textContent = res.shortage > 0
+      ? `あと${kg(res.shortage)}ぶん作れません（作れる最も近い重さ: ${kg(res.made)}）`
+      : `左右に同じプレートをつけて、合計${kg(res.made)}（バー${kg(bar)}を含む）`;
+  }
+  ['pl-target', 'pl-bar'].forEach((id) => $(id).addEventListener('input', updatePlate));
+  document.querySelectorAll<HTMLInputElement>('#pl-plates input').forEach((el) => el.addEventListener('change', updatePlate));
+
+  // ── ウォームアップ ──
+  const wuTable = document.getElementById('wu-table')!;
+  function updateWarmup() {
+    const work = parseNum($('wu-work').value);
+    const bar = parseNum($('wu-bar').value);
+    wuTable.replaceChildren();
+    const addRow = (cells: string[], cls?: string) => {
+      const tr = document.createElement('tr');
+      cells.forEach((text, i) => {
+        const td = document.createElement('td');
+        td.textContent = text;
+        if (i > 0) td.className = 'num';
+        tr.appendChild(td);
+      });
+      if (cls) tr.className = cls;
+      wuTable.appendChild(tr);
+    };
+    const message = (text: string) => {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 3;
+      td.className = 'rm-empty';
+      td.textContent = text;
+      tr.appendChild(td);
+      wuTable.appendChild(tr);
+    };
+    if (!Number.isFinite(work) || !Number.isFinite(bar) || bar < 0) {
+      message('本番の重さを入力してください');
+      return;
+    }
+    if (work <= bar) {
+      message('本番の重さがバー以下なので、ウォームアップの段階は出しません');
+      return;
+    }
+    warmupSteps(work, bar).forEach((r) => addRow([r.pct === null ? 'バーだけ' : `本番の${r.pct}%`, kg(r.weight), `${r.reps}回`]));
+    addRow(['本番', kg(work), '目標の回数'], 'rm-hl');
+  }
+  ['wu-work', 'wu-bar'].forEach((id) => $(id).addEventListener('input', updateWarmup));
+</script>

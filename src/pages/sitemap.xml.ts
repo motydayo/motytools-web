@@ -55,6 +55,9 @@ const LEGACY_PATHS = [
   '/apps/sodachi/terms/',
   '/souba-watch/',
   '/souba-watch/privacy/',
+  '/atoichi/',
+  '/atoichi/privacy/',
+  '/atoichi/terms/',
 ];
 
 /** public/ 配下のファイルの最終コミット日（取れなければ fallback） */

@@ -1041,9 +1041,11 @@ main {
 .cat-money { --chip-color: #047857; --chip-bg: #ecfdf5; }
 .cat-date { --chip-color: #0369a1; --chip-bg: #f0f9ff; }
 .cat-text { --chip-color: #6d28d9; --chip-bg: #f5f3ff; }
+.cat-body { --chip-color: #c2410c; --chip-bg: #fff7ed; }
 [data-theme='dark'] .cat-money { --chip-color: #34d399; --chip-bg: rgba(52, 211, 153, 0.12); }
 [data-theme='dark'] .cat-date { --chip-color: #38bdf8; --chip-bg: rgba(56, 189, 248, 0.12); }
 [data-theme='dark'] .cat-text { --chip-color: #a78bfa; --chip-bg: rgba(167, 139, 250, 0.12); }
+[data-theme='dark'] .cat-body { --chip-color: #fb923c; --chip-bg: rgba(251, 146, 60, 0.12); }
 
 /* ── Utilities ── */
 .mt-0 { margin-top: 0; }

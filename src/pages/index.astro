@@ -41,6 +41,7 @@ const shortLine: Record<string, string> = {
   qr: 'テキストやURLからQRコードを作成。',
   'image-compress': '画像を圧縮・リサイズして軽く。',
   'heic-jpg': 'HEIC形式の画像をJPGに変換。',
+  '1rm': '重さと回数から1RMを計算。',
 };
 
 // つくったもの。visual = カード上部に出す見た目の種類
@@ -112,6 +113,8 @@ const compact: Product[] = [
   appMini('lesson-techo', '習いごとの生徒・月謝・振替を管理。'),
   appMini('tsukulog', 'ハンドメイドの材料・原価・手取りを管理。'),
   appMini('reptile-sns', '爬虫類・両生類の飼育記録SNS。'),
+  // 未配信のため台帳（apps.ts）には載せず、ここだけに置く。公開後は apps.ts に移して appMini に差し替える
+  { href: '/atoichi/', name: 'アトイチ', desc: '筋トレ記録アプリ。App Storeで近日公開。', visual: 'memo', img: '/atoichi/img/icon-256.webp' },
   {
     ...appMini('machi-anzen-map', '事故・不審者情報を地図で数える。'),
     links: [

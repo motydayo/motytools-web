@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>アトイチ｜前回の記録から今日の目標が出る筋トレ記録アプリ（iPhone）</title>
+  <meta name="description" content="筋トレ記録アプリ「アトイチ」は、前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録。休憩タイマー、自己ベスト、1RM計算つき。記録機能はずっと無料、有料は広告の削除のみ。" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://motytools.com/atoichi/" />
+  <link rel="icon" href="/atoichi/favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="アトイチ" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:title" content="アトイチ｜前回の記録から今日の目標が出る筋トレ記録アプリ（iPhone）" />
+  <meta property="og:description" content="前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できる筋トレ記録アプリ。記録・タイマー・グラフはずっと無料。" />
+  <meta property="og:url" content="https://motytools.com/atoichi/" />
+  <meta property="og:image" content="https://motytools.com/atoichi/og-atoichi-v1.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="アトイチ｜前回の記録から今日の目標が出る筋トレ記録アプリ" />
+  <meta name="twitter:description" content="前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できる筋トレ記録アプリ。" />
+  <meta name="twitter:image" content="https://motytools.com/atoichi/og-atoichi-v1.png" />
+  <!--
+    【App Store公開後の差し替え手順】
+    1. このファイル内の「【差し替え 1/4】〜【差し替え 4/4】」を、それぞれ指示どおりに直す
+    2. 1RM計算ページ（src/pages/1rm/index.astro）の「【差し替え】」コメント1箇所も同様に直す
+    3. スクリーンショットは public/atoichi/img/shot-1.webp 〜 shot-5.webp を「ファイル名を変えて」差し替え、
+       このファイルの参照名も変える（例: shot-1.webp → shot-1-v2.webp。同名で上書きすると古い画像が配信キャッシュに残る）
+  -->
+  <!-- 【差し替え 1/4】App Storeの公開後、次の1行のコメントを外し、app-id を実際のIDに置き換える（iPhoneのSafariにダウンロード帯が出る）
+  <meta name="apple-itunes-app" content="app-id=0000000000" />
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/atoichi/atoichi.v1.css" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"アトイチ","alternateName":"アトイチ - 筋トレ記録","description":"前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できる筋トレ記録アプリ。休憩タイマー、自己ベスト、成長グラフ、1RM・プレート・ウォームアップ計算つき。広告の削除は480円の買い切り。","operatingSystem":"iOS","applicationCategory":"HealthApplication","image":"https://motytools.com/atoichi/img/icon-512.png","url":"https://motytools.com/atoichi/","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"publisher":{"@type":"Organization","name":"motytools","url":"https://motytools.com"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"今日の目標はどう決まりますか？","acceptedAnswer":{"@type":"Answer","text":"前回その種目で完了した本番セット（ウォームアップは除く）から決まります。前回の最も重い重さのセットがすべて回数の上限に届いていれば、重さを刻み分（例: 2.5kg）上げて回数は下限から。1セットでも届いていなければ、重さはそのままで各セットの回数を前回より1回増やします。これは「ダブルプログレッション」と呼ばれる方法です。初めて行う種目は目標を出さず、自由に入力できます。"}},{"@type":"Question","name":"無料でどこまで使えますか？","acceptedAnswer":{"@type":"Answer","text":"記録・休憩タイマー・自己ベスト・成長グラフ・メニュー保存・1RM計算などの機能はすべて無料で、これからもずっと無料です。有料なのは広告の削除（480円の買い切り）だけです。広告はトレ・記録・成長タブの下部にバナーで表示され、トレーニング中の画面には出ません。"}},{"@type":"Question","name":"機種変更したらデータはどうなりますか？","acceptedAnswer":{"@type":"Answer","text":"設定の「バックアップを書き出す」でファイルを保存し、新しいiPhoneのアトイチで「バックアップから戻す」を選ぶと、記録がそのまま戻ります。データはiPhoneのバックアップにも含まれます。"}},{"@type":"Question","name":"Apple Watchには対応していますか？","acceptedAnswer":{"@type":"Answer","text":"現在は未対応です。休憩タイマーはiPhoneのロック画面とダイナミックアイランドに残り時間を表示します。"}},{"@type":"Question","name":"記録したデータはどこに保存されますか？","acceptedAnswer":{"@type":"Answer","text":"お使いのiPhoneの中だけに保存されます。アカウント登録は不要で、記録をサーバーに送ることもありません。"}},{"@type":"Question","name":"対応している端末と単位は？","acceptedAnswer":{"@type":"Answer","text":"iPhone向けのアプリです。重さの単位は現在kgのみに対応しています。"}}]}</script>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="wrap">
+      <a href="/" class="logo">moty<span>tools</span></a>
+      <span class="here">アトイチ</span>
+    </div>
+  </nav>
+
+  <main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <div class="hero-brand">
+          <img src="/atoichi/img/icon-256.webp" width="64" height="64" alt="アトイチのアイコン" />
+          <div>
+            <p class="name">アトイチ</p>
+            <p class="sub">iPhone向け 筋トレ記録アプリ</p>
+          </div>
+        </div>
+        <h1 class="sr-only">アトイチ（筋トレ記録アプリ）</h1>
+        <p class="lead">前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できる筋トレ記録アプリです。</p>
+        <ul class="points">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>記録・タイマー・グラフは、これからもずっと無料</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>トレーニング中は広告を表示しません</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>アカウント登録なし。データはiPhoneの中だけ</li>
+        </ul>
+        <!-- 【差し替え 2/4】App Store公開後、この <span class="store-soon">…</span> 全体を次の1つに置き換える（URLは実際のApp Store URL）
+             <a class="store-live" href="https://apps.apple.com/jp/app/idXXXXXXXXXX" rel="noopener">App Storeでダウンロード</a>
+             ※ 「cta-note」の段落は「無料でダウンロード・広告の削除は480円の買い切り」に直す -->
+        <span class="store-soon" role="img" aria-label="App Storeで近日公開">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          <span><span class="t1">App Store</span><span class="t2">近日公開</span></span>
+        </span>
+        <p class="cta-note">公開までしばらくお待ちください。</p>
+      </div>
+      <div class="shot">
+        <img src="/atoichi/img/shot-1.webp" width="900" height="1950" alt="ワークアウト画面。ベンチプレスの今日の目標「62.5kg × 8回」が出ていて、チェックを押すだけで記録できる" fetchpriority="high" decoding="async" />
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="features" aria-labelledby="features-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">機能</p>
+        <h2 id="features-h">考える時間を減らして、挙げる時間を増やす</h2>
+        <p>ジムで迷いがちな「今日は何キロで何回やるか」を、前回の記録から先に決めておきます。</p>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="0.6"/></svg></div>
+          <h3>今日の目標が先に出る</h3>
+          <p>前回の記録から、今日の重さと回数を自動で計算します。「重さを上げる日」「回数を+1」など理由も表示するので、納得して始められます。</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9 2h6"/></svg></div>
+          <h3>1タップ記録と休憩タイマー</h3>
+          <p>目標どおりなら、チェックを押すだけで記録できます。同時に休憩タイマーが始まり、残り時間と次のセットの目標をロック画面に表示。終わりは通知でも知らせます。</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></div>
+          <h3>自己ベストと成長グラフ</h3>
+          <p>自己ベストを更新するとその場でお知らせ。種目ごとの成長グラフと、胸・背中・脚などの部位バランスも見られます。継続は「週の目標回数を何週連続で達成したか」で数えるので、休養日で途切れません。</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
+          <h3>メニューを保存して、次へ回す</h3>
+          <p>「胸の日」「背中の日」のような分割メニューを保存できます。ホームには次に行うメニューが出て、保存した順に巡回。種目の追加は無料で、数の制限もありません。</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M16 15h0"/></svg></div>
+          <h3>1RM・プレート・ウォームアップの計算</h3>
+          <p>重さと回数から推定1RMを出し、片側につけるプレートの組み合わせや、本番までのウォームアップの段階も計算します。ワークアウト中の画面からも開けます。</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>データは端末の中。バックアップもできる</h3>
+          <p>記録はiPhoneの中だけに保存し、アカウント登録は要りません。バックアップの書き出しと読み込みで機種変更にも対応し、週1回の自動バックアップも端末内に残します。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="target" aria-labelledby="target-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">今日の目標の決まり方</p>
+        <h2 id="target-h">前回を、少しだけ超える目標を出します</h2>
+        <p>「ダブルプログレッション」と呼ばれる方法です。前回の本番セット（ウォームアップは除く）を見て、次のように決めます。</p>
+      </div>
+      <div class="rules">
+        <div class="rule">
+          <p class="cond">前回の最も重い重さのセットが、すべて回数の上限に届いた（例: 前回 60kg × 12・12・12、上限12回・下限8回）</p>
+          <p class="res">今日の目標</p>
+          <p class="num">62.5<small>kg</small> × 8<small>回</small></p>
+          <span class="why">重さを上げる日（+2.5kg）</span>
+        </div>
+        <div class="rule">
+          <p class="cond">1セットでも上限に届かなかった（例: 前回 60kg × 12・11・10）</p>
+          <p class="res">今日の目標</p>
+          <p class="num">60<small>kg</small> × 12・12・11<small>回</small></p>
+          <span class="why">回数を+1</span>
+        </div>
+        <div class="rule">
+          <p class="cond">初めて行う種目</p>
+          <p class="res">今日の目標</p>
+          <p class="num">自由に入力</p>
+          <span class="why">初回は自由に</span>
+        </div>
+      </div>
+      <p class="rule-note">重さの刻みと目標回数の幅は、種目ごとに変えられます。数字は例です。</p>
+    </div>
+  </section>
+
+  <section class="sec" id="screens" aria-labelledby="screens-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">画面</p>
+        <h2 id="screens-h">記録して、振り返って、また次へ</h2>
+      </div>
+      <!--
+        スクリーンショットの差し替え:
+        ・各画像は幅900×高さ1950（9:19.5）のWebP。枠（.shot）は縦横比を固定しているので、同じ比率なら差し替えてもずれない
+        ・差し替えるときは shot-N-v2.webp のようにファイル名を変え、下の src を合わせて直す
+        ・表示順: shot-1=ワークアウト（上のヒーロー） shot-2=成長 shot-3=種目の成長 shot-4=完了 shot-5=1RM計算
+      -->
+      <div class="gallery">
+        <figure>
+          <div class="shot"><img src="/atoichi/img/shot-2.webp" width="900" height="1950" alt="成長画面。今月のトレ回数・総挙上量・自己ベスト件数と、部位ごとのセット数、種目ごとの成長グラフ" loading="lazy" decoding="async" /></div>
+          <figcaption>成長<span>部位バランスと種目ごとの伸び</span></figcaption>
+        </figure>
+        <figure>
+          <div class="shot"><img src="/atoichi/img/shot-3.webp" width="900" height="1950" alt="種目ごとの成長画面。ベンチプレスの推定1RMの推移グラフと自己ベスト、履歴" loading="lazy" decoding="async" /></div>
+          <figcaption>種目ごとの成長<span>推定1RMの推移と自己ベスト</span></figcaption>
+        </figure>
+        <figure>
+          <div class="shot"><img src="/atoichi/img/shot-4.webp" width="900" height="1950" alt="トレーニング完了画面。時間・総挙上量・セット数と、前回の同じメニューとの比較、自己ベスト一覧" loading="lazy" decoding="async" /></div>
+          <figcaption>完了画面<span>前回との比較と自己ベスト</span></figcaption>
+        </figure>
+        <figure>
+          <div class="shot"><img src="/atoichi/img/shot-5.webp" width="900" height="1950" alt="1RM計算画面。80kg×6回から推定1RM 96kgと、割合ごとの重さと回数の目安表" loading="lazy" decoding="async" /></div>
+          <figcaption>1RM計算<span>重さと回数の目安表つき</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="free" aria-labelledby="free-h">
+    <div class="wrap">
+      <div class="promise">
+        <div>
+          <h2 id="free-h">記録・タイマー・グラフなどの機能は、これからもずっと無料です。</h2>
+          <p>有料なのは広告の削除だけ。あとから機能を有料にすることはありません。</p>
+          <div class="price-line"><span class="yen">480円</span><span class="unit">広告の削除（買い切り）</span></div>
+        </div>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>トレーニング中の画面に広告は出ません</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>全画面の広告は使いません。バナーのみ</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>アカウント登録なし。データは端末の中だけ</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="tools" aria-labelledby="tools-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">ブラウザで使える無料ツール</p>
+        <h2 id="tools-h">アプリの計算機能は、ブラウザでも試せます</h2>
+      </div>
+      <a class="tool-link" href="/1rm/">
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11"/></svg></span>
+        <span>
+          <span class="t" style="display:block">1RM計算（最大挙上重量の目安）</span>
+          <span class="d" style="display:block">重さと回数から推定1RMと、95%〜70%の重さの目安表を出します。プレート計算・ウォームアップ計算つき。</span>
+        </span>
+        <svg class="go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <section class="sec alt" id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">よくある質問</p>
+        <h2 id="faq-h">はじめる前に気になること</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>今日の目標はどう決まりますか？</summary>
+          <p class="a">前回その種目で完了した本番セット（ウォームアップは除く）から決まります。前回の最も重い重さのセットがすべて回数の上限に届いていれば、重さを刻み分（例: 2.5kg）上げて回数は下限から。1セットでも届いていなければ、重さはそのままで各セットの回数を前回より1回増やします。初めて行う種目は目標を出さず、自由に入力できます。</p>
+        </details>
+        <details>
+          <summary>無料でどこまで使えますか？</summary>
+          <p class="a">記録・休憩タイマー・自己ベスト・成長グラフ・メニュー保存・1RM計算などの機能はすべて無料で、これからもずっと無料です。有料なのは広告の削除（480円の買い切り）だけです。広告はトレ・記録・成長タブの下部にバナーで表示され、トレーニング中の画面には出ません。</p>
+        </details>
+        <details>
+          <summary>機種変更したらデータはどうなりますか？</summary>
+          <p class="a">設定の「バックアップを書き出す」でファイルを保存し、新しいiPhoneのアトイチで「バックアップから戻す」を選ぶと、記録がそのまま戻ります。データはiPhoneのバックアップにも含まれます。</p>
+        </details>
+        <details>
+          <summary>Apple Watchには対応していますか？</summary>
+          <p class="a">現在は未対応です。休憩タイマーはiPhoneのロック画面とダイナミックアイランドに残り時間を表示します。</p>
+        </details>
+        <details>
+          <summary>記録したデータはどこに保存されますか？</summary>
+          <p class="a">お使いのiPhoneの中だけに保存されます。アカウント登録は不要で、記録をサーバーに送ることもありません。くわしくは<a href="/atoichi/privacy/">プライバシーポリシー</a>をご覧ください。</p>
+        </details>
+        <details>
+          <summary>対応している端末と単位は？</summary>
+          <p class="a">iPhone向けのアプリです。重さの単位は現在kgのみに対応しています。</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <h2>次のトレから、目標を決める時間をなくす</h2>
+      <p>記録・タイマー・グラフは無料。アカウント登録も要りません。</p>
+      <!-- 【差し替え 3/4】App Store公開後、この <span class="store-soon">…</span> 全体を、上の【差し替え 2/4】と同じ <a class="store-live"> に置き換える -->
+      <span class="store-soon" role="img" aria-label="App Storeで近日公開">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span><span class="t1">App Store</span><span class="t2">近日公開</span></span>
+      </span>
+    </div>
+  </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p>© 2026 motytools</p>
+      <div class="links">
+        <a href="/atoichi/privacy/">プライバシーポリシー</a>
+        <a href="/atoichi/terms/">利用規約</a>
+        <a href="/1rm/">1RM計算</a>
+        <a href="/">motytools.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 【差し替え 4/4】構造化データ（SoftwareApplication）に、公開後は "downloadUrl" と "installUrl"（App Store URL）を追加する -->
+</body>
+</html>

@@ -12,8 +12,8 @@ const outDir = path.join(root, 'public', 'og');
 import { readFile } from 'node:fs/promises';
 const src = await readFile(path.join(root, 'src', 'data', 'tools.ts'), 'utf8');
 
-const CAT_COLORS = { money: '#34d399', date: '#38bdf8', text: '#a78bfa' };
-const CAT_NAMES = { money: 'お金の計算', date: '日付・年齢', text: '文字・画像' };
+const CAT_COLORS = { money: '#34d399', date: '#38bdf8', text: '#a78bfa', body: '#fb923c' };
+const CAT_NAMES = { money: 'お金の計算', date: '日付・年齢', text: '文字・画像', body: '筋トレ・運動' };
 
 const tools = [];
 const re = /slug:\s*'([^']+)',\s*\n\s*name:\s*'([^']+)',[\s\S]*?short:\s*'([^']+)',\s*\n\s*category:\s*'([^']+)'/g;
