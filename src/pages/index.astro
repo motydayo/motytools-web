@@ -57,6 +57,8 @@ interface Product {
   icon?: string;
   /** 実物のアプリアイコン（public/app-icons/） */
   img?: string;
+  /** カード下に並べる文字リンク（本体の主要な入口など） */
+  links?: { href: string; label: string; primary?: boolean }[];
 }
 const showcase: Product[] = [
   {
@@ -110,7 +112,15 @@ const compact: Product[] = [
   appMini('lesson-techo', '習いごとの生徒・月謝・振替を管理。'),
   appMini('tsukulog', 'ハンドメイドの材料・原価・手取りを管理。'),
   appMini('reptile-sns', '爬虫類・両生類の飼育記録SNS。'),
-  appMini('machi-anzen-map', '事故・不審者情報を地図で数える。'),
+  {
+    ...appMini('machi-anzen-map', '事故・不審者情報を地図で数える。'),
+    links: [
+      { href: '/anzen/', label: '地図を開く', primary: true },
+      { href: '/anzen/jiko/', label: '交通事故' },
+      { href: '/anzen/fushinsha/', label: '不審者' },
+      { href: '/anzen/chiiki/', label: '地域別の件数' },
+    ],
+  },
   {
     href: '/buzzmeter/',
     name: '真相メモ',
@@ -370,21 +380,42 @@ const compact: Product[] = [
       </nav>
 
       <div class="hm-compact">
-        {compact.map((p) => (
-          <a href={p.href} class="hm-mini">
-            <span class="hm-mini-ic" aria-hidden="true">
-              {p.img ? (
-                <img src={p.img} width="40" height="40" alt="" loading="lazy" decoding="async" />
-              ) : (
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.icon} />
-              )}
-            </span>
-            <span class="hm-mini-body">
-              <span class="hm-mini-name">{p.name}</span>
-              <span class="hm-mini-desc">{p.desc}</span>
-            </span>
-          </a>
-        ))}
+        {compact.map((p) => {
+          const main = (
+            <a href={p.href} class="hm-mini">
+              <span class="hm-mini-ic" aria-hidden="true">
+                {p.img ? (
+                  <img src={p.img} width="40" height="40" alt="" loading="lazy" decoding="async" />
+                ) : (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.icon} />
+                )}
+              </span>
+              <span class="hm-mini-body">
+                <span class="hm-mini-name">{p.name}</span>
+                <span class="hm-mini-desc">{p.desc}</span>
+              </span>
+            </a>
+          );
+          if (!p.links) return main;
+          // リンクの入れ子は不可なので、カード本体とは別の行に文字リンクを並べる
+          return (
+            <div class="hm-mini-group">
+              {main}
+              <ul class="hm-mini-links" aria-label={`${p.name}の入口`}>
+                {p.links.map((l) => (
+                  <li>
+                    <a href={l.href} class:list={['hm-mini-link', { 'is-primary': l.primary }]}>
+                      {l.label}
+                      {l.primary && (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                      )}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
       </div>
     </div>
   </section>
@@ -1154,6 +1185,45 @@ const compact: Product[] = [
   .hm-mini-body { display: grid; gap: 2px; min-width: 0; }
   .hm-mini-name { font-size: 15px; font-weight: 700; }
   .hm-mini-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.5; }
+  .hm-mini-group {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+  }
+  .hm-mini-group .hm-mini { border: 0; background: transparent; flex: 1 1 auto; }
+  .hm-mini-group .hm-mini:hover { box-shadow: none; transform: none; }
+  .hm-mini-group:hover { border-color: var(--border-strong); }
+  .hm-mini-group .hm-mini:hover .hm-mini-name { text-decoration: underline; text-underline-offset: 3px; }
+  .hm-mini-links {
+    list-style: none;
+    margin: 0;
+    padding: 0 8px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 640px) {
+    .hm-mini-links { display: flex; flex-wrap: wrap; }
+  }
+  .hm-mini-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    min-height: 44px;
+    padding: 0 6px;
+    font-size: 13px;
+    color: var(--text-2);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+    border-radius: var(--r-sm);
+  }
+  .hm-mini-link.is-primary { color: var(--accent); font-weight: 700; text-decoration: none; }
+  .hm-mini-link:hover { color: var(--text); text-decoration-color: currentColor; }
+  .hm-mini-link.is-primary:hover { color: var(--accent); text-decoration: underline; }
+  .hm-mini-link:active { opacity: 0.6; }
 
   @media (max-width: 960px) {
     .hm-showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 220px; }
