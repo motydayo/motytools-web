@@ -24,3 +24,10 @@
 - `src/pages/index.astro` の「つくったもの」下段で、まちの安全マップのカードだけ `links` を持たせ、カード下に文字リンク「地図を開く」(/anzen/)・「交通事故」(/anzen/jiko/)・「不審者」(/anzen/fushinsha/)・「地域別の件数」(/anzen/chiiki/) を並べた。リンクの入れ子を避けるため、`links` があるカードは `div.hm-mini-group` で包む。各リンクは高さ44px。
 - web-release で検品済み（ヘッダー5種は200/404とも有り、機微パス404、秘密情報の混入なし、npm audit の指摘は静的書き出しのため非該当）。本番反映と4リンク先の200を確認済み。
 - Search Console でトップ（https://motytools.com/）のインデックス登録リクエストを10/12に1回送信。次の一手: 1〜2週間後に /anzen/ 系4ページと /machi-anzen-map/ の登録状況を再計測。
+
+## 2026-10-12 アトイチ（筋トレ記録アプリ）のLP・規約・1RM計算ツール
+
+- 公開: `/atoichi/`（LP）・`/atoichi/privacy/`・`/atoichi/terms/`（すべて `public/atoichi/` の静的HTML、共通CSSは `atoichi.v1.css`）、`/1rm/`（Astro。ツール台帳 `src/data/tools.ts` に新カテゴリ `body`＝筋トレ・運動、計算は `src/lib/rm.ts`）。本番200・ヘッダー5種確認済み。
+- アトイチは未配信のため `src/data/apps.ts` には載せていない（台帳は配信済みだけ）。トップの小カード（`src/pages/index.astro` の compact）とサイトマップ（LEGACY_PATHS）にだけ手で追加。
+- App Store公開後の差し替え: `public/atoichi/index.html` 内の「【差し替え 1/4〜4/4】」コメント4箇所、`src/pages/1rm/index.astro` の「【差し替え】」1箇所。公開後は apps.ts に移し、トップは appMini に切り替え、`node scripts/sync-lp.ts` の対象になるか確認する。
+- スクショ差し替え: `public/atoichi/img/shot-1.webp`〜`shot-5.webp`（900x1950）。ファイル名を変えて（例 shot-1-v2.webp）index.html の参照も直す。
