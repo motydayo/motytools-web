@@ -17,3 +17,10 @@
 - ツール→アプリ導線は `src/data/tools.ts` の APP_PROMOS（loan・genka-shokyaku→大家ノート、days・denkidai→ピッと期限、percent→ピッと最安）。
 - トップの「つくったもの」からピッと保証・そだち・相場ウォッチを外し、10本すべてを掲載。ヘッダー/フッターに /apps/・/guide/。
 - vercel.json・data/app-seo/ は触っていない。デプロイ未実施。
+
+## 2026-10-12 トップから安全マップ本体への直接リンク
+
+- 背景: Search Console で /anzen/ 系4ページが「クロール済み - インデックス未登録」、紹介ページ /machi-anzen-map/ は未認識。トップからは紹介ページへのリンクしか無かった。
+- `src/pages/index.astro` の「つくったもの」下段で、まちの安全マップのカードだけ `links` を持たせ、カード下に文字リンク「地図を開く」(/anzen/)・「交通事故」(/anzen/jiko/)・「不審者」(/anzen/fushinsha/)・「地域別の件数」(/anzen/chiiki/) を並べた。リンクの入れ子を避けるため、`links` があるカードは `div.hm-mini-group` で包む。各リンクは高さ44px。
+- web-release で検品済み（ヘッダー5種は200/404とも有り、機微パス404、秘密情報の混入なし、npm audit の指摘は静的書き出しのため非該当）。本番反映と4リンク先の200を確認済み。
+- Search Console でトップ（https://motytools.com/）のインデックス登録リクエストを10/12に1回送信。次の一手: 1〜2週間後に /anzen/ 系4ページと /machi-anzen-map/ の登録状況を再計測。
