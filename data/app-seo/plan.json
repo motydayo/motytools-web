@@ -1,0 +1,1082 @@
+[
+  {
+    "app": "recipescrap",
+    "slug": "tiktok-recipe-hozon",
+    "title": "TikTokのレシピを保存する方法｜材料と手順を文字で残すコツ",
+    "primary": "tiktok レシピ 保存",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/recipescrap/tiktok-recipe-hozon.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "youtube-recipe-hozon",
+    "title": "YouTubeのレシピ動画を保存する方法｜再生リストと材料メモ",
+    "primary": "youtube レシピ 保存",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/recipescrap/youtube-recipe-hozon.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "recipe-hozon-app-hikaku",
+    "title": "レシピ保存アプリおすすめ比較｜無料の上限と取り込み元で選ぶ",
+    "primary": "レシピ 保存 アプリ おすすめ",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/recipescrap/recipe-hozon-app-hikaku.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "recipe-screenshot-seiri",
+    "title": "レシピのスクショを整理する方法｜iPhoneの写真で探せる管理術",
+    "primary": "レシピ スクショ 管理",
+    "type": "problem",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/recipescrap/recipe-screenshot-seiri.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "recipe-note-app",
+    "title": "自分だけのレシピノートをスマホで作る方法｜アプリで続ける",
+    "primary": "レシピ ノート アプリ",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/recipescrap/recipe-note-app.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "recipe-seiri-houhou",
+    "title": "レシピの整理の仕方｜バラバラに溜まったレシピをまとめる手順",
+    "primary": "レシピ 整理 の仕方",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/recipescrap/recipe-seiri-houhou.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "instagram-hozon-seiri",
+    "title": "インスタの保存済みを整理する方法｜コレクションの作り方と分け方",
+    "primary": "インスタ 保存 整理",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/recipescrap/instagram-hozon-seiri.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "instagram-recipe-comment",
+    "title": "インスタの「レシピはコメント欄」とは？見方と残し方を解説",
+    "primary": "インスタ レシピ コメント欄",
+    "type": "qa",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/recipescrap/instagram-recipe-comment.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "instagram-recipe-kensaku",
+    "title": "インスタでレシピを検索する方法｜食材名で見つける探し方",
+    "primary": "インスタ レシピ 検索",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/recipescrap/instagram-recipe-kensaku.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "recipe-bookmark",
+    "title": "レシピのブックマーク管理術｜サイトごとに散らばらない方法",
+    "primary": "レシピ ブックマーク",
+    "type": "howto",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/recipescrap/recipe-bookmark.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "instagram-recipe-insatsu",
+    "title": "インスタのレシピを印刷する方法｜説明文と画像をきれいに残す",
+    "primary": "インスタ レシピ 印刷",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/recipescrap/instagram-recipe-insatsu.md"
+  },
+  {
+    "app": "recipescrap",
+    "slug": "recipe-hozon-jougen",
+    "title": "クラシルとクックパッドの保存上限は何件？無料で残す方法",
+    "primary": "クラシル 保存 上限",
+    "type": "qa",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/recipescrap/recipe-hozon-jougen.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "reizoko-amarimono-app",
+    "title": "冷蔵庫の余り物でレシピがわかるアプリ比較｜無料で使える5選",
+    "primary": "冷蔵庫 余り物 レシピ アプリ",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/reizoko-amarimono-app.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "zairyo-kara-recipe-kensaku",
+    "title": "材料からレシピを検索する方法｜複数の食材で探すコツと0件対策",
+    "primary": "材料 から レシピ 検索",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/zairyo-kara-recipe-kensaku.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "reizoko-recipe-ai",
+    "title": "冷蔵庫にあるものでAIにレシピを聞く方法｜注意点とアプリとの違い",
+    "primary": "冷蔵庫 に ある もの レシピ ai",
+    "type": "compare",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/reizoko-recipe-ai.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "arumono-ryori-kotsu",
+    "title": "あるもので料理するコツ｜できない人が最初に覚える5つの型",
+    "primary": "あるもので料理 コツ",
+    "type": "problem",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/arumono-ryori-kotsu.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "amarimono-recipe-kantan",
+    "title": "冷蔵庫の余り物で作る簡単レシピ｜組み合わせ早見表つき",
+    "primary": "余り物 レシピ 簡単",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/amarimono-recipe-kantan.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "amari-yasai-recipe",
+    "title": "余り野菜を使い切るレシピ｜スープ・味噌汁・炒め物の基本",
+    "primary": "余り 野菜 レシピ",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/amari-yasai-recipe.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "reizoko-amarigachi-shokuzai",
+    "title": "冷蔵庫で余りがちな食材と使い道｜余らせない買い方も解説",
+    "primary": "冷蔵庫 余りがち 食材",
+    "type": "problem",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/reizoko-amarigachi-shokuzai.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "kondate-reizoko",
+    "title": "冷蔵庫にあるもので献立を決める手順｜毎日迷わない考え方",
+    "primary": "献立 冷蔵庫 に ある もの",
+    "type": "problem",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/kondate-reizoko.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "amarimono-gohan-recipe",
+    "title": "余り物とご飯で作るレシピ｜チャーハン・丼・雑炊の基本",
+    "primary": "余り物 ご飯 レシピ",
+    "type": "howto",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/amarimono-gohan-recipe.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "amarimono-pasta",
+    "title": "冷蔵庫の余り物で作るパスタ｜味の4系統と具の組み合わせ",
+    "primary": "余り物 パスタ",
+    "type": "howto",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/amarimono-pasta.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "nokorimono-remake",
+    "title": "残り物リメイクレシピ｜カレー・鍋・煮物を別の料理に変える",
+    "primary": "残り物 リメイク レシピ",
+    "type": "howto",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/nokorimono-remake.md"
+  },
+  {
+    "app": "arumono-recipe",
+    "slug": "kondate-app-hikaku",
+    "title": "献立アプリおすすめ比較｜1週間型・冷蔵庫型・AI型の違い",
+    "primary": "献立 アプリ おすすめ",
+    "type": "compare",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/arumono-recipe/kondate-app-hikaku.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "shomikigen-barcode",
+    "title": "賞味期限はバーコードでわかる？仕組みと家庭での管理方法",
+    "primary": "賞味期限 バーコード",
+    "type": "qa",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/shomikigen-barcode.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "shomikigen-kanri-app",
+    "title": "賞味期限管理アプリおすすめ比較｜入力の手間と家族共有で選ぶ",
+    "primary": "賞味期限 管理 アプリ おすすめ",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/shomikigen-kanri-app.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "reizoko-zaiko-kanri",
+    "title": "冷蔵庫の在庫管理のやり方｜ホワイトボード・ノート・アプリ比較",
+    "primary": "冷蔵庫 在庫 管理",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/reizoko-zaiko-kanri.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "shomikigen-kanrihyo",
+    "title": "家庭用の賞味期限管理表の作り方｜エクセルの項目と関数",
+    "primary": "賞味期限 管理表 エクセル",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/shomikigen-kanrihyo.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "rolling-stock-kanri",
+    "title": "ローリングストックの管理方法｜期限切れを出さない回し方",
+    "primary": "ローリングストック 管理",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/rolling-stock-kanri.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "hijoushoku-kigen-kanri",
+    "title": "非常食の賞味期限管理｜長期保存品を期限切れにしない方法",
+    "primary": "非常食 賞味期限 管理",
+    "type": "problem",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/hijoushoku-kigen-kanri.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "reizoko-kazoku-kyoyu",
+    "title": "冷蔵庫の中身を家族と共有できるアプリ｜二重買いを防ぐ使い方",
+    "primary": "冷蔵庫 アプリ 家族 共有",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/reizoko-kazoku-kyoyu.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "shomi-shohi-chigai",
+    "title": "消費期限と賞味期限の違い｜家庭での管理と使い切りの目安",
+    "primary": "消費期限 賞味期限 違い",
+    "type": "qa",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/shomi-shohi-chigai.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "chomiryo-kaifugo-kigen",
+    "title": "調味料の開封後の賞味期限一覧｜メーカーの目安と保存場所",
+    "primary": "調味料 開封後 賞味期限 一覧",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/chomiryo-kaifugo-kigen.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "reitou-hozon-kigen",
+    "title": "冷凍保存の期限の目安｜肉・魚・ご飯・野菜の一覧と管理",
+    "primary": "冷凍 保存 期限 目安",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/reitou-hozon-kigen.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "kaisugi-boushi",
+    "title": "食品の買いすぎを防ぐ方法｜二重買いをなくす5つの習慣",
+    "primary": "食品 買いすぎ 防止",
+    "type": "problem",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/kaisugi-boushi.md"
+  },
+  {
+    "app": "pitto-kigen",
+    "slug": "shokuhin-loss-katei",
+    "title": "食品ロスを家庭で減らすためにできること｜今日からの7つ",
+    "primary": "食品ロス 家庭 でできること",
+    "type": "problem",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/pitto-kigen/shokuhin-loss-katei.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "yachin-kanri-app-hikaku",
+    "title": "個人大家向け家賃管理アプリ比較｜無料範囲とできること",
+    "primary": "家賃 管理 アプリ 個人",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/ooya-note/yachin-kanri-app-hikaku.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "yachin-kanrihyo-template",
+    "title": "家賃管理表のテンプレートと作り方｜入金チェックの関数つき",
+    "primary": "家賃 管理表 テンプレート",
+    "type": "template",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/ooya-note/yachin-kanrihyo-template.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "ooya-kakuteishinkoku",
+    "title": "個人大家の確定申告のやり方｜1年分の集計手順と必要書類",
+    "primary": "大家 確定申告 やり方",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/ooya-note/ooya-kakuteishinkoku.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "fudousan-shotoku-keihi",
+    "title": "不動産所得の経費になるもの一覧｜大家が見落としやすい項目",
+    "primary": "不動産所得 経費 になるもの",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/ooya-note/fudousan-shotoku-keihi.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "yachin-tainou-taiou",
+    "title": "家賃滞納への大家の対応｜最初の1か月にやることと注意点",
+    "primary": "家賃滞納 大家 対応",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/ooya-note/yachin-tainou-taiou.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "jishu-kanri-ooya",
+    "title": "自主管理の大家がやること一覧｜毎月・毎年・突発の仕事",
+    "primary": "自主管理 大家 やること",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/ooya-note/jishu-kanri-ooya.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "keiyaku-koushin-kanri",
+    "title": "賃貸契約の更新で大家がやること｜時期・更新料・家賃改定",
+    "primary": "賃貸 契約 更新 大家 手続き",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/ooya-note/keiyaku-koushin-kanri.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "yachin-nyukin-kakunin",
+    "title": "家賃の入金確認の方法｜毎月の確認を5分で終わらせる手順",
+    "primary": "家賃 入金 確認 方法",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/ooya-note/yachin-nyukin-kakunin.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "chintai-shushi-keisan",
+    "title": "賃貸の収支計算のしかた｜手残りとキャッシュフローの出し方",
+    "primary": "賃貸 収支 計算",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/ooya-note/chintai-shushi-keisan.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "rimawari-keisan",
+    "title": "表面利回りと実質利回りの計算方法｜式と計算例でわかる",
+    "primary": "表面利回り 実質利回り 計算",
+    "type": "template",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/ooya-note/rimawari-keisan.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "genka-shokyaku-fudousan",
+    "title": "不動産の減価償却の計算方法｜中古の耐用年数と定額法の計算例",
+    "primary": "不動産 減価償却 計算",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/ooya-note/genka-shokyaku-fudousan.md"
+  },
+  {
+    "app": "ooya-note",
+    "slug": "fudousan-shotoku-chobo",
+    "title": "不動産所得の帳簿の付け方｜簡易帳簿の項目とエクセル例",
+    "primary": "不動産所得 帳簿 付け方",
+    "type": "howto",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/ooya-note/fudousan-shotoku-chobo.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "gessha-kanri-app",
+    "title": "月謝管理アプリ比較｜個人教室の講師が無料で始められる5選",
+    "primary": "月謝 管理 アプリ",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/lesson-techo/gessha-kanri-app.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "gessha-kanrihyo-excel",
+    "title": "月謝管理表のエクセルテンプレート｜未納が一目でわかる作り方",
+    "primary": "月謝 管理 エクセル テンプレート",
+    "type": "template",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/lesson-techo/gessha-kanrihyo-excel.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "furikae-lesson-rule",
+    "title": "振替レッスンのルールの決め方｜期限・回数・当日欠席の扱い",
+    "primary": "振替レッスン ルール",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/lesson-techo/furikae-lesson-rule.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "gessha-mibarai-saisoku",
+    "title": "月謝の未払いを催促する文例｜角が立たない伝え方と段階",
+    "primary": "月謝 未払い 催促",
+    "type": "template",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/lesson-techo/gessha-mibarai-saisoku.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "gessha-shukin-houhou",
+    "title": "月謝の集金方法を比較｜手渡し・振込・口座振替・キャッシュレス",
+    "primary": "月謝 集金 方法",
+    "type": "compare",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/lesson-techo/gessha-shukin-houhou.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "piano-gessha-souba",
+    "title": "ピアノ教室の月謝の相場｜個人教室と大手の違いと決め方",
+    "primary": "ピアノ教室 月謝 相場",
+    "type": "qa",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/lesson-techo/piano-gessha-souba.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "seito-kanri-kojin",
+    "title": "個人教室の生徒管理表の作り方｜エクセルの項目と注意点",
+    "primary": "生徒 管理 エクセル",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/lesson-techo/seito-kanri-kojin.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "lesson-kiroku-karte",
+    "title": "講師のレッスン記録の書き方｜生徒カルテに毎回残す5項目",
+    "primary": "レッスン 記録 書き方",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/lesson-techo/lesson-kiroku-karte.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "gessha-kakuteishinkoku",
+    "title": "個人レッスン講師の確定申告｜手渡しの月謝の記録と経費の基本",
+    "primary": "月謝 確定申告 個人 講師",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/lesson-techo/gessha-kakuteishinkoku.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "gessha-neage-oshirase",
+    "title": "月謝値上げのお知らせ文例｜時期・理由の伝え方と注意点",
+    "primary": "月謝 値上げ お知らせ 文例",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/lesson-techo/gessha-neage-oshirase.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "gessha-hiwari-keisan",
+    "title": "月謝の日割り計算のしかた｜月途中の入会・退会の決め方",
+    "primary": "月謝 日割り 計算",
+    "type": "template",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/lesson-techo/gessha-hiwari-keisan.md"
+  },
+  {
+    "app": "lesson-techo",
+    "slug": "furikae-mail-bunrei",
+    "title": "レッスン振替の連絡メール文例｜欠席連絡への返信と日程調整",
+    "primary": "レッスン 振替 メール",
+    "type": "template",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/lesson-techo/furikae-mail-bunrei.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "handmade-nedan-kimekata",
+    "title": "ハンドメイドの値段の決め方｜手取りから逆算する計算式",
+    "primary": "ハンドメイド 値段 決め方",
+    "type": "template",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/tsukulog/handmade-nedan-kimekata.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "handmade-genka-keisan",
+    "title": "ハンドメイドの原価計算のやり方｜1個あたりの材料費の出し方",
+    "primary": "ハンドメイド 原価計算",
+    "type": "template",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/tsukulog/handmade-genka-keisan.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "minne-tesuryo-keisan",
+    "title": "minneの手数料の計算方法｜送料込みの計算例と手取り早見表",
+    "primary": "minne 手数料 計算",
+    "type": "template",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/tsukulog/minne-tesuryo-keisan.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "creema-tesuryo-keisan",
+    "title": "Creemaの手数料の計算方法｜改定後の計算例と手取り早見表",
+    "primary": "クリーマ 手数料 計算",
+    "type": "template",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/tsukulog/creema-tesuryo-keisan.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "handmade-hanbai-site-hikaku",
+    "title": "ハンドメイド販売サイトの手数料比較｜手取りで見る選び方",
+    "primary": "ハンドメイド 販売サイト 手数料 比較",
+    "type": "compare",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/tsukulog/handmade-hanbai-site-hikaku.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "handmade-kakuteishinkoku-ikurakara",
+    "title": "ハンドメイドの確定申告はいくらから？立場別の早見表つき",
+    "primary": "ハンドメイド 確定申告 いくらから",
+    "type": "qa",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/tsukulog/handmade-kakuteishinkoku-ikurakara.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "handmade-keihi",
+    "title": "ハンドメイドの経費になるもの一覧｜材料費・送料・道具の扱い",
+    "primary": "ハンドメイド 経費 になるもの",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/tsukulog/handmade-keihi.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "handmade-zaiko-kanri",
+    "title": "ハンドメイドの在庫管理のやり方｜材料と作品を管理する方法比較",
+    "primary": "ハンドメイド 在庫管理",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/tsukulog/handmade-zaiko-kanri.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "handmade-uriage-kanri",
+    "title": "ハンドメイドの売上管理表の作り方｜販路別の手取りまで",
+    "primary": "ハンドメイド 売上 管理",
+    "type": "template",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/tsukulog/handmade-uriage-kanri.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "handmade-tanaoroshi",
+    "title": "ハンドメイドの棚卸しのやり方｜確定申告前の数え方と計算",
+    "primary": "ハンドメイド 確定申告 棚卸し",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/tsukulog/handmade-tanaoroshi.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "handmade-rieki-ritsu",
+    "title": "ハンドメイドの利益率の計算と目安｜原価率と時給から見直す",
+    "primary": "ハンドメイド 利益率",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/tsukulog/handmade-rieki-ritsu.md"
+  },
+  {
+    "app": "tsukulog",
+    "slug": "accessory-genka-keisan",
+    "title": "ハンドメイドアクセサリーの原価計算｜ピアスの値段の付け方",
+    "primary": "アクセサリー 原価 計算",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/tsukulog/accessory-genka-keisan.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "barcode-saiyasune-app",
+    "title": "バーコードで最安値がわかるアプリ比較｜店頭で使える5選",
+    "primary": "バーコード 最安値 アプリ",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/price-scan/barcode-saiyasune-app.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "jan-code-kensaku",
+    "title": "バーコードから商品を検索する方法｜JANコードの調べ方",
+    "primary": "バーコード 検索 商品",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/price-scan/jan-code-kensaku.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "net-tento-kakaku",
+    "title": "ネットと店頭の価格が違う理由｜家電量販店で損しない買い方",
+    "primary": "ネット 店頭 価格 違い",
+    "type": "qa",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/price-scan/net-tento-kakaku.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "rakuten-yahoo-hikaku",
+    "title": "楽天とYahoo!ショッピングはどっちが安い？比べ方のコツ",
+    "primary": "楽天 yahoo 比較",
+    "type": "compare",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/price-scan/rakuten-yahoo-hikaku.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "kakaku-hikaku-site",
+    "title": "価格比較サイトとアプリのおすすめ｜家電・日用品・本の使い分け",
+    "primary": "価格 比較 サイト おすすめ",
+    "type": "compare",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/price-scan/kakaku-hikaku-site.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "nichiyouhin-matomegai",
+    "title": "日用品のまとめ買いはどこが安い？ドラッグストアとネットの比べ方",
+    "primary": "日用品 まとめ買い どこが安い",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/price-scan/nichiyouhin-matomegai.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "drugstore-kakaku-hikaku",
+    "title": "ドラッグストアの価格を比べる方法｜店頭でネットと比較",
+    "primary": "ドラッグストア 価格 比較",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/price-scan/drugstore-kakaku-hikaku.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "super-kakaku-hikaku",
+    "title": "スーパーの価格を比べるアプリ｜チラシ型とバーコード型の違い",
+    "primary": "スーパー 価格 比較 アプリ",
+    "type": "compare",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/price-scan/super-kakaku-hikaku.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "rakuten-saiyasune",
+    "title": "楽天市場で最安値を調べる方法｜送料込み・ポイント込みで比べる",
+    "primary": "楽天 最安値 調べ方",
+    "type": "howto",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/price-scan/rakuten-saiyasune.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "net-yasuku-kau",
+    "title": "ネットで安く買う方法｜最安値の探し方と損しない注意点",
+    "primary": "ネット で 安く 買う 方法",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/price-scan/net-yasuku-kau.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "tanka-hikaku-keisan",
+    "title": "グラム単価の計算で値段を比べる方法｜大容量は本当に得？",
+    "primary": "価格 比較 グラム 計算",
+    "type": "template",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/price-scan/tanka-hikaku-keisan.md"
+  },
+  {
+    "app": "price-scan",
+    "slug": "yahoo-saiyasune-hyouji",
+    "title": "Yahoo!ショッピングで最安値を探す方法｜表示されないときは",
+    "primary": "yahoo ショッピング 最安値",
+    "type": "qa",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/price-scan/yahoo-saiyasune-hyouji.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "hikkoshi-chian-shirabekata",
+    "title": "引っ越し先の治安の調べ方｜公的データで確かめる6つの方法",
+    "primary": "引っ越し 治安 調べ方",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/hikkoshi-chian-shirabekata.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "fushinsha-joho-map",
+    "title": "不審者情報をマップで見る方法｜県警の地図と見るときの注意",
+    "primary": "不審者情報 マップ",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/fushinsha-joho-map.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "fushinsha-joho-mail",
+    "title": "不審者情報メールの登録方法｜都道府県警の配信サービス一覧",
+    "primary": "不審者情報 メール 登録",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/fushinsha-joho-mail.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "koutsujiko-tashuu",
+    "title": "交通事故が多い場所の調べ方｜警察庁のデータを地図で見る",
+    "primary": "交通事故 多い 場所 調べ方",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/koutsujiko-tashuu.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "tsugakuro-anzen-tenken",
+    "title": "通学路の安全点検チェックリスト｜保護者が歩いて見る15項目",
+    "primary": "通学路 安全 点検 チェックリスト",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/tsugakuro-anzen-tenken.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "hanzai-hassei-map",
+    "title": "犯罪発生マップの見方｜都道府県警が公開するマップの一覧と注意点",
+    "primary": "犯罪 発生 マップ",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/hanzai-hassei-map.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "shokuchudoku-joho",
+    "title": "食中毒の速報はどこで見る？自治体の公表と過去の記録の調べ方",
+    "primary": "食中毒 速報",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/shokuchudoku-joho.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "tochi-mukashi-shirabekata",
+    "title": "土地の昔を調べる方法｜田んぼや川だったかを地図で確かめる",
+    "primary": "土地 昔 調べ方",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/tochi-mukashi-shirabekata.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "koegake-jian",
+    "title": "声かけ事案とは？警察が公表する理由と不審者情報の読み方",
+    "primary": "声かけ事案 とは",
+    "type": "qa",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/koegake-jian.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "kodomo-bouhan-tsugakuro",
+    "title": "通学路の不審者対策｜家庭で教えることと地域の情報の使い方",
+    "primary": "通学路 不審者 対策",
+    "type": "problem",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/kodomo-bouhan-tsugakuro.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "gyosei-shobun-shirabekata",
+    "title": "業者の行政処分の調べ方｜頼む前に確かめる公的な検索先",
+    "primary": "行政処分 業者 調べ方",
+    "type": "howto",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/gyosei-shobun-shirabekata.md"
+  },
+  {
+    "app": "machi-anzen-map",
+    "slug": "bouhan-app-hikaku",
+    "title": "防犯アプリおすすめ比較｜警察公式と地図で調べるアプリ",
+    "primary": "防犯 アプリ おすすめ",
+    "type": "compare",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/machi-anzen-map/bouhan-app-hikaku.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "jibun-ni-mail-iphone",
+    "title": "iPhoneで自分にメールを送る方法｜メモ代わりに速く送るコツ",
+    "primary": "自分 に メール 送る iphone",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/memomail/jibun-ni-mail-iphone.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "captio-kawari",
+    "title": "Captioの代わりになるアプリ比較｜自分宛てメールを速く送る",
+    "primary": "captio 代わり",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/memomail/captio-kawari.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "memo-mail-okuru-iphone",
+    "title": "iPhoneのメモをメールで送る方法｜送れないときの対処も",
+    "primary": "メモ を メール で 送る iphone",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/memomail/memo-mail-okuru-iphone.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "iphone-memo-pc-kyoyu",
+    "title": "iPhoneのメモをパソコンと共有する方法｜Windowsでも見る",
+    "primary": "iphone メモ パソコン 共有",
+    "type": "howto",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/memomail/iphone-memo-pc-kyoyu.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "jibun-line-memo-hikaku",
+    "title": "LINEのKeepメモで自分にメモを送る方法｜メールとの違い",
+    "primary": "自分 に LINE メモ",
+    "type": "compare",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/memomail/jibun-line-memo-hikaku.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "idea-memo-app",
+    "title": "アイデアメモアプリおすすめ｜思いついた瞬間に書ける5選",
+    "primary": "アイデア メモ アプリ",
+    "type": "compare",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/memomail/idea-memo-app.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "memo-wasure-boushi",
+    "title": "メモしたのに忘れる人へ｜見返す仕組みを作る5つの方法",
+    "primary": "メモ 忘れ 防止",
+    "type": "problem",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/memomail/memo-wasure-boushi.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "jibun-ate-mail-todokanai",
+    "title": "自分に送ったメールが届かないときの確認点｜Gmail・Outlook",
+    "primary": "自分 に メール を 送る 届か ない",
+    "type": "qa",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/memomail/jibun-ate-mail-todokanai.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "jibun-ate-mail-furiwake",
+    "title": "自分宛てメールを自動で振り分ける方法｜Gmailのフィルタ",
+    "primary": "自分宛て メール 振り分け",
+    "type": "howto",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/memomail/jibun-ate-mail-furiwake.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "obsidian-iphone-memo",
+    "title": "iPhoneからObsidianに素早くメモする方法｜起動待ちを減らす",
+    "primary": "obsidian iphone メモ 素早く",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/memomail/obsidian-iphone-memo.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "iphone-onsei-memo",
+    "title": "iPhoneの音声入力でメモする方法｜句読点と精度を上げるコツ",
+    "primary": "iphone 音声入力 メモ",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/memomail/iphone-onsei-memo.md"
+  },
+  {
+    "app": "memomail",
+    "slug": "memo-shukan",
+    "title": "メモを取る習慣のつけ方｜続く人がやっている小さな仕組み",
+    "primary": "メモ 習慣",
+    "type": "problem",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/memomail/memo-shukan.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "hachurui-shiiku-kiroku-app",
+    "title": "爬虫類の飼育記録アプリ比較｜給餌・体重・脱皮を残す5選",
+    "primary": "爬虫類 飼育 記録 アプリ",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/reptile-sns/hachurui-shiiku-kiroku-app.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "leopa-esa-hindo",
+    "title": "レオパの餌の頻度と量｜ベビーから成体まで月齢別の目安",
+    "primary": "レオパ 餌 頻度",
+    "type": "template",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/reptile-sns/leopa-esa-hindo.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "leopa-taiju-meyasu",
+    "title": "レオパの体重の目安｜月齢ごとの目安と測り方・増えないとき",
+    "primary": "レオパ 体重 目安",
+    "type": "template",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/reptile-sns/leopa-taiju-meyasu.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "leopa-dappi",
+    "title": "レオパの脱皮の頻度とサイン｜脱皮不全の原因と受診の目安",
+    "primary": "レオパ 脱皮 頻度",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/reptile-sns/leopa-dappi.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "leopa-esa-tabenai",
+    "title": "レオパが餌を食べないときに確かめること｜原因と受診の目安",
+    "primary": "レオパ 餌 食べない",
+    "type": "problem",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/reptile-sns/leopa-esa-tabenai.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "ballpython-esa-hindo",
+    "title": "ボールパイソンの餌の頻度とサイズ｜拒食のときに確かめること",
+    "primary": "ボールパイソン 餌 頻度",
+    "type": "template",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/reptile-sns/ballpython-esa-hindo.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "hachurui-taiju-sokutei",
+    "title": "爬虫類の体重計の選び方｜0.1g単位が要る子と測り方のコツ",
+    "primary": "爬虫類 体重計 おすすめ",
+    "type": "compare",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/reptile-sns/hachurui-taiju-sokutei.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "hachurui-shiiku-note",
+    "title": "爬虫類の飼育記録のつけ方｜残す項目と三日坊主にならないコツ",
+    "primary": "爬虫類 飼育 記録 つけ方",
+    "type": "howto",
+    "priority": 2,
+    "briefPath": "data/app-seo/briefs/reptile-sns/hachurui-shiiku-note.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "leopa-sanran",
+    "title": "レオパの産卵の準備｜産卵床の作り方と無精卵・産卵後のケア",
+    "primary": "レオパ 産卵",
+    "type": "howto",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/reptile-sns/leopa-sanran.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "hachurui-sns",
+    "title": "爬虫類の飼い主がつながるSNS｜X・インスタ・専用アプリの違い",
+    "primary": "爬虫類 sns",
+    "type": "compare",
+    "priority": 1,
+    "briefPath": "data/app-seo/briefs/reptile-sns/hachurui-sns.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "leopa-jumyou",
+    "title": "ヒョウモントカゲモドキの寿命｜長生きのコツと一生の記録",
+    "primary": "ヒョウモントカゲモドキ 寿命",
+    "type": "qa",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/reptile-sns/leopa-jumyou.md"
+  },
+  {
+    "app": "reptile-sns",
+    "slug": "hachurui-joto-hikitsugi",
+    "title": "爬虫類を譲渡するときの引き継ぎ｜渡す飼育情報と相談先",
+    "primary": "爬虫類 譲渡 引き継ぎ",
+    "type": "howto",
+    "priority": 3,
+    "briefPath": "data/app-seo/briefs/reptile-sns/hachurui-joto-hikitsugi.md"
+  }
+]

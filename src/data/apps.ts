@@ -142,7 +142,7 @@ export const APPS: AppEntry[] = [
       '期限が近づくと通知でお知らせ',
       '招待コードで家族と冷蔵庫の中身を共有',
     ],
-    pricing: '無料（すべての機能）',
+    pricing: '無料（すべての機能・広告あり）',
     appId: '6786486488',
     storeUrl: store('6786486488'),
     lpPath: '/pitto-kigen/',
