@@ -310,7 +310,7 @@ export const APPS: AppEntry[] = [
       '音声入力で話すだけでメモになる',
       '送ったメモをObsidianにも自動で保存',
     ],
-    pricing: '無料',
+    pricing: '無料（1日3通・宛先1件まで）。Proは月額300円',
     appId: '6784932051',
     storeUrl: store('6784932051'),
     lpPath: '/memomail/',

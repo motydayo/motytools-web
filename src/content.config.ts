@@ -4,7 +4,7 @@ import { APP_SLUGS } from './data/apps';
 
 // 使い方ガイドの記事。書式は src/content/guide/README.md を参照。
 const guide = defineCollection({
-  loader: glob({ pattern: ['**/*.md', '!**/README.md', '!**/_*.md'], base: './src/content/guide' }),
+  loader: glob({ pattern: ['**/*.md', '!**/README.md', '!**/WRITING.md', '!**/_*.md'], base: './src/content/guide' }),
   schema: z.object({
     /** 記事タイトル（h1・titleタグ。32〜40字目安、検索語を前に） */
     title: z.string().min(8).max(60),
