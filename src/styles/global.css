@@ -1307,7 +1307,7 @@ main {
 .jump-chips a {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 var(--sp-4);
   font-size: var(--fs-sm);
   font-weight: 500;
