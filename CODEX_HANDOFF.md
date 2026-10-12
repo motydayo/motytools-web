@@ -31,3 +31,8 @@
 - アトイチは未配信のため `src/data/apps.ts` には載せていない（台帳は配信済みだけ）。トップの小カード（`src/pages/index.astro` の compact）とサイトマップ（LEGACY_PATHS）にだけ手で追加。
 - App Store公開後の差し替え: `public/atoichi/index.html` 内の「【差し替え 1/4〜4/4】」コメント4箇所、`src/pages/1rm/index.astro` の「【差し替え】」1箇所。公開後は apps.ts に移し、トップは appMini に切り替え、`node scripts/sync-lp.ts` の対象になるか確認する。
 - スクショ差し替え: `public/atoichi/img/shot-1.webp`〜`shot-5.webp`（900x1950）。ファイル名を変えて（例 shot-1-v2.webp）index.html の参照も直す。
+
+## 2026-10-12 アプリ誘導記事122本を公開
+- /guide/ 配下に記事122本（10アプリ×12本＋見本2本）。検品記録は data/app-seo/qa-batch1.md・qa-batch2.md。全記事 A/B 判定、C 0本。
+- 本番反映は `npx vercel deploy --prod --yes`（git push の自動デプロイは失敗中・原因未調査）。
+- 既知の残り: /memomail/ が参照する /favicon.ico・/apple-touch-icon.png が404（以前から）。
