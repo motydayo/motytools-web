@@ -100,7 +100,7 @@
     <!-- 日本語 -->
     <div class="section-ja visible" id="lang-ja">
       <h1>プライバシーポリシー</h1>
-      <p class="date">最終更新日: 2026年7月25日</p>
+      <p class="date">最終更新日: 2026年10月12日</p>
 
       <div class="card">
         <h2>1. はじめに</h2>
@@ -112,7 +112,7 @@
         <ul>
           <li><strong>カメラ映像</strong>: バーコードの読み取りおよび賞味期限のOCR読み取りのためにカメラを使用します。カメラ映像はサーバーに送信・保存されません。</li>
           <li><strong>フォトライブラリ</strong>: 商品画像を手動で登録する際に使用します。選択した画像は端末内にのみ保存されます。</li>
-          <li><strong>食品データ</strong>: 登録した食品名・賞味期限・画像は、原則として端末内にのみ保存されます。ただし「家族と共有」機能を使った場合は、共有した品目のみクラウド（後述）に保存されます（詳しくは3.をご覧ください）。</li>
+          <li><strong>食品データ</strong>: 登録した食品名・賞味期限・画像は、原則として端末内にのみ保存されます。ただし「家族と共有」機能で世帯を作成または世帯に参加している間は、在庫のすべての品目がクラウド（後述）に保存されます（詳しくは3.をご覧ください）。</li>
           <li><strong>商品検索クエリ</strong>: バーコードから取得したJANコードや食品名を、楽天市場API・Yahoo!ショッピングAPIに送信して商品名・画像を取得します。これらのクエリには個人を特定できる情報は含まれません。</li>
         </ul>
       </div>
@@ -122,9 +122,12 @@
         <p>本アプリには「家族と共有」という任意の機能があります。この機能を使わない限り、すべてのデータは端末内にのみ保存されます。</p>
         <ul>
           <li>この機能を有効にすると、氏名やメールアドレスなどの登録を必要としない匿名の識別子（デバイスごとに自動生成されるID）を使って、Google社のクラウドサービス（Firebase）に接続します。</li>
-          <li>共有をオンにした食品データ（商品名・賞味期限・画像）のみが、招待コードで参加した家族間で共有するためにクラウドに保存されます。</li>
-          <li>共有をオンにしていない品目や、共有機能自体を使わない場合のデータは、これまでどおり端末内のみに保存され、外部には送信されません。</li>
-          <li>共有をやめる（世帯から抜ける）と、クラウド上の該当データへのアクセス権は失われます。</li>
+          <li>世帯を作成または世帯に参加している間は、在庫のすべての品目（商品名・賞味期限・個数・グループ名・バーコード番号・商品画像のアドレス・登録日時・使った日時）が、招待コードで参加した家族間で共有するためにクラウドに保存されます。品目ごとに共有する・しないを選ぶことはできません。あわせて、世帯の名前と各メンバーが入力した呼び名も保存されます。</li>
+          <li>世帯を作成・参加するときに、それまで端末内にあった在庫を世帯に追加するかどうかを選べます。追加した品目はクラウドに保存され、追加しなかった品目は端末から削除されます。</li>
+          <li>端末で選んだ写真そのものはクラウドにアップロードされません。</li>
+          <li>共有機能を使わない場合のデータは、これまでどおり端末内のみに保存され、外部には送信されません。</li>
+          <li>参加者が共有をやめる（世帯から抜ける）と、その時点の在庫のコピーが端末に残り、クラウド上の世帯データへのアクセス権は失われます。世帯の在庫はほかの家族のために残ります。</li>
+          <li>世帯の作成者が共有をやめると、世帯とその共有在庫・メンバー情報はクラウドから削除され、家族の端末からもこの世帯の在庫は見られなくなります。作成者の端末には、その時点の在庫のコピーが残ります。</li>
         </ul>
       </div>
 
@@ -138,7 +141,7 @@
         <ul>
           <li><strong><a href="https://webservice.rakuten.co.jp/privacypolicy/" target="_blank">楽天市場API</a></strong>: バーコードから商品名・画像を取得するために使用します。</li>
           <li><strong><a href="https://about.yahoo.co.jp/privacy/" target="_blank">Yahoo!ショッピングAPI</a></strong>: バーコードから商品名・画像を取得するために使用します。</li>
-          <li><strong><a href="https://firebase.google.com/support/privacy" target="_blank">Google Firebase</a></strong>: 「家族と共有」機能をオンにした場合のみ、共有データの保存・同期のために使用します。</li>
+          <li><strong><a href="https://firebase.google.com/support/privacy" target="_blank">Google Firebase</a></strong>: 「家族と共有」機能で世帯を作成または世帯に参加した場合のみ、共有データの保存・同期のために使用します。</li>
         </ul>
         <p>いずれのサービスにも氏名・メールアドレス等の個人情報は送信されません。</p>
       </div>
@@ -150,7 +153,7 @@
 
       <div class="card">
         <h2>7. データの保存と削除</h2>
-        <p>「家族と共有」を使っていない場合、すべてのデータは端末内にのみ保存され、アプリをアンインストールすることで削除されます。「家族と共有」を使った場合、共有した品目はクラウド上にも保存されますが、アプリ内の設定画面からいつでも共有をやめる（脱退する）ことができ、脱退時に共有データへのアクセス権は失われます。</p>
+        <p>「家族と共有」を使っていない場合、すべてのデータは端末内にのみ保存され、アプリをアンインストールすることで削除されます。「家族と共有」を使っている間は、在庫のすべての品目がクラウド上にも保存されます。アプリ内の設定画面からいつでも共有をやめる（脱退する）ことができ、脱退時に共有データへのアクセス権は失われます。世帯の作成者が共有をやめた場合は、世帯の共有データはクラウドから削除されます。</p>
       </div>
 
       <div class="card">
@@ -167,7 +170,7 @@
     <!-- English -->
     <div class="section-en" id="lang-en">
       <h1>Privacy Policy</h1>
-      <p class="date">Last updated: July 25, 2026</p>
+      <p class="date">Last updated: October 12, 2026</p>
 
       <div class="card">
         <h2>1. Introduction</h2>
@@ -179,7 +182,7 @@
         <ul>
           <li><strong>Camera</strong>: Used to scan barcodes and read expiration dates via OCR. Camera data is never sent to or stored on external servers.</li>
           <li><strong>Photo Library</strong>: Used when you manually add a product image. Selected images are stored only on your device.</li>
-          <li><strong>Food item data</strong>: By default, all registered food items, expiration dates, and images are stored exclusively on your device. If you use the "Family Sharing" feature, only the items you choose to share are stored in the cloud (see Section 3).</li>
+          <li><strong>Food item data</strong>: By default, all registered food items, expiration dates, and images are stored exclusively on your device. While you have created or joined a household through the "Family Sharing" feature, every item in your inventory is stored in the cloud (see Section 3).</li>
           <li><strong>Product search queries</strong>: JAN barcodes and food names are sent to Rakuten Ichiba API and Yahoo Shopping API to retrieve product names and images. These queries contain no personally identifiable information.</li>
         </ul>
       </div>
@@ -189,9 +192,12 @@
         <p>The App includes an optional "Family Sharing" feature. Unless you turn it on, all data remains on your device only.</p>
         <ul>
           <li>Enabling this feature connects to Google's cloud service (Firebase) using an anonymous identifier automatically generated for your device — no name, email address, or other account registration is required.</li>
-          <li>Only the food data (name, expiration date, image) you choose to share is stored in the cloud, so it can be shared with family members who join using an invite code.</li>
-          <li>Items you don't share, or all data if you never use this feature, remain stored only on your device and are never sent externally.</li>
-          <li>Leaving a shared household revokes your access to that household's cloud data.</li>
+          <li>While you have created or joined a household, every item in your inventory (product name, expiration date, quantity, group name, barcode number, product image address, date added, and date used) is stored in the cloud so it can be shared with family members who join using an invite code. Sharing cannot be turned on or off for individual items. The household name and the nickname each member enters are also stored.</li>
+          <li>When creating or joining a household, you can choose whether to add the items already on your device. Added items are stored in the cloud; items you choose not to add are deleted from the device.</li>
+          <li>Photos you select on your device are not uploaded to the cloud.</li>
+          <li>If you never use this feature, all data remains stored only on your device and is never sent externally.</li>
+          <li>When a member leaves a household, a copy of the current inventory is kept on their device and their access to the household's cloud data is revoked. The household's inventory remains for the other members.</li>
+          <li>When the household creator stops sharing, the household and its shared inventory and member information are deleted from the cloud, and the inventory is no longer available on other members' devices. A copy of the current inventory is kept on the creator's device.</li>
         </ul>
       </div>
 
@@ -205,7 +211,7 @@
         <ul>
           <li><strong><a href="https://webservice.rakuten.co.jp/privacypolicy/" target="_blank">Rakuten Ichiba API</a></strong>: Used to retrieve product names and images from barcodes.</li>
           <li><strong><a href="https://about.yahoo.co.jp/privacy/" target="_blank">Yahoo Shopping API</a></strong>: Used to retrieve product names and images from barcodes.</li>
-          <li><strong><a href="https://firebase.google.com/support/privacy" target="_blank">Google Firebase</a></strong>: Used only if you enable the Family Sharing feature, to store and sync shared data.</li>
+          <li><strong><a href="https://firebase.google.com/support/privacy" target="_blank">Google Firebase</a></strong>: Used only while you have created or joined a household through the Family Sharing feature, to store and sync shared data.</li>
         </ul>
         <p>No personal information such as your name or email address is sent to any of these services.</p>
       </div>
@@ -217,7 +223,7 @@
 
       <div class="card">
         <h2>7. Data Storage and Deletion</h2>
-        <p>If you don't use Family Sharing, all data is stored only on your device and removed when you uninstall the App. If you use Family Sharing, shared items are also stored in the cloud, but you can leave a shared household at any time from the Settings screen, which revokes your access to that shared data.</p>
+        <p>If you don't use Family Sharing, all data is stored only on your device and removed when you uninstall the App. While you use Family Sharing, every item in your inventory is also stored in the cloud. You can leave a shared household at any time from the Settings screen, which revokes your access to that shared data. If the household creator stops sharing, the household's shared data is deleted from the cloud.</p>
       </div>
 
       <div class="card">
