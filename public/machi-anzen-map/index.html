@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>まちの安全マップ — 交通事故・不審者情報・行政処分・食中毒・土地の昔を地図で見るiPhoneアプリ</title>
-  <meta name="description" content="まちの安全マップは、警察庁の交通事故統計、各都道府県警察の不審者情報、国・自治体の行政処分と食中毒の公表、国土地理院の地図を、ひとつの地図で見られるiPhoneアプリです。住所や駅名を入れると、半径500m・1kmの件数を出典つきで数えます。" />
+  <title>交通事故・不審者情報を地図で見るアプリ「まちの安全マップ」｜行政処分・食中毒も</title>
+  <meta name="description" content="交通事故・不審者情報・行政処分・食中毒の記録を、住所や駅名の周りで地図にして数えるiPhoneアプリ「まちの安全マップ」。警察庁の交通事故統計や各都道府県警察の公開情報を出典つきで表示。引っ越し先や通学路の確認に。" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://motytools.com/machi-anzen-map/" />
-  <meta property="og:title" content="まちの安全マップ（iPhoneアプリ）" />
-  <meta property="og:description" content="交通事故・不審者情報・行政処分・食中毒・土地の昔を、公的な記録のまま地図で数えるiPhoneアプリ。" />
+  <meta property="og:title" content="交通事故・不審者情報を地図で見るアプリ「まちの安全マップ」｜行政処分・食中毒も" />
+  <meta property="og:description" content="交通事故・不審者情報・行政処分・食中毒の記録を、住所や駅名の周りで地図にして数えるiPhoneアプリ「まちの安全マップ」。警察庁の交通事故統計や各都道府県警察の公開情報を出典つきで表示。引っ越し先や通学路の確認に。" />
   <meta property="og:url" content="https://motytools.com/machi-anzen-map/" />
   <meta property="og:image" content="https://motytools.com/machi-anzen-map/shots/og-v1.png" />
   <meta property="og:site_name" content="motytools" />
@@ -70,6 +70,23 @@
     footer nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 12px; }
     footer a { display: inline-block; min-height: 44px; line-height: 44px; }
   </style>
+  <!-- motytools:app-meta:start -->
+  <meta name="apple-itunes-app" content="app-id=6817028245" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"まちの安全マップ","alternateName":"まちの安全マップ 事故・不審者を地図で","description":"交通事故・不審者情報・行政処分・食中毒の記録を、地図で数える。","operatingSystem":"iOS 16.4 以降","applicationCategory":"LifestyleApplication","image":"https://motytools.com/app-icons/machi-anzen-map-512.png","url":"https://motytools.com/machi-anzen-map/","downloadUrl":"https://apps.apple.com/jp/app/id6817028245","installUrl":"https://apps.apple.com/jp/app/id6817028245","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"publisher":{"@type":"Organization","name":"motytools","url":"https://motytools.com"}}</script>
+  <style>
+    section.mt-more { margin: 0; padding: 48px 0 40px; border-top: 1px solid var(--border, var(--line, #e5e5e5)); background: var(--bg-2, #fafaf9); text-align: left; }
+    .mt-more .mt-more-in { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .mt-more .mt-more-h { margin: 0 0 16px; font-size: 20px; font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--text, #1d1d1f); text-align: left; }
+    .mt-more .mt-more-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .mt-more .mt-more-card { position: relative; display: grid; gap: 4px; min-height: 64px; padding: 16px 48px 16px 16px; background: #fff; border: 1px solid var(--border, var(--line, #e5e5e5)); border-radius: 12px; color: var(--text, #1d1d1f); text-decoration: none; transition: border-color .15s, transform .15s; }
+    .mt-more .mt-more-card:hover { border-color: var(--accent, #555); transform: translateY(-1px); }
+    .mt-more .mt-more-card:active { transform: translateY(0); }
+    .mt-more .mt-more-t { font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text, #1d1d1f); }
+    .mt-more .mt-more-d { font-size: 13px; line-height: 1.6; color: var(--text-2, var(--sub, #55555c)); }
+    .mt-more .mt-more-card svg { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-3, #8e8e93); }
+    @media (max-width: 640px) { .mt-more .mt-more-grid { grid-template-columns: 1fr; } .mt-more .mt-more-in { padding: 0 16px; } }
+  </style>
+  <!-- motytools:app-meta:end -->
 </head>
 <body>
   <header class="top"><div class="wrap"><a class="home" href="/">motytools</a><a class="home" href="/machi-anzen-map/privacy/">プライバシーポリシー</a></div></header>
@@ -171,7 +188,25 @@
         <p class="note">ご意見・ご要望は、アプリの設定画面にある「ご意見・要望」からお送りください。</p>
       </div>
     </section>
-  </main>
+  </main><!-- motytools:more:start -->
+  <section class="mt-more" aria-labelledby="mt-more-h">
+    <div class="mt-more-in">
+      <h2 class="mt-more-h" id="mt-more-h">もっと知る</h2>
+      <div class="mt-more-grid">
+        <a class="mt-more-card" href="/guide/app/machi-anzen-map/">
+          <span class="mt-more-t">関連する記事</span>
+          <span class="mt-more-d">まちの安全マップの使い方と、役立つ記事</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+        <a class="mt-more-card" href="/apps/">
+          <span class="mt-more-t">他のアプリ</span>
+          <span class="mt-more-d">motytoolsのiPhoneアプリ一覧（10本）</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+  <!-- motytools:more:end -->
 
   <footer>
     <div class="wrap">

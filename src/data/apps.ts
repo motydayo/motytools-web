@@ -64,6 +64,10 @@ export interface AppEntry {
   rating?: { value: number; count: number };
   /** 関係が本当に近い無料ツールの slug（src/data/tools.ts） */
   relatedTools: string[];
+  /** LP（public/ の静的ページ）の titleタグ。検索語を前に置く。scripts/sync-lp.ts が書き込む */
+  lpTitle: string;
+  /** LPの meta description / og:description（90〜120字） */
+  lpDescription: string;
 }
 
 const store = (id: string) => `https://apps.apple.com/jp/app/id${id}`;
@@ -95,6 +99,9 @@ export const APPS: AppEntry[] = [
     genre: 'フード／ドリンク',
     minIos: '15.1',
     relatedTools: [],
+    lpTitle: 'インスタ・TikTokのレシピ保存アプリ「レシピスクラップ」｜材料と手順だけを残す',
+    lpDescription:
+      'インスタやTikTok、レシピサイトのレシピを、共有ボタンから材料と手順だけにして保存できるiPhoneアプリ「レシピスクラップ」。料理名・材料名で検索でき、調理中は手順を大きな文字で表示。端末内保存・会員登録不要。',
   },
   {
     slug: 'arumono-recipe',
@@ -119,6 +126,9 @@ export const APPS: AppEntry[] = [
     genre: 'フード／ドリンク',
     minIos: '16.4',
     relatedTools: [],
+    lpTitle: '冷蔵庫の余り物で作れるレシピがわかるアプリ「あるものレシピ」｜残り物の使い切りに',
+    lpDescription:
+      '冷蔵庫の余り物・残り物から、いま作れる料理がわかるiPhoneアプリ「あるものレシピ」。食材をタップで選ぶだけで作れる料理が並び、「あと1つで作れる」料理と足りない食材もわかります。家庭料理477品・通信不要。',
   },
   {
     slug: 'pitto-kigen',
@@ -144,6 +154,9 @@ export const APPS: AppEntry[] = [
     minIos: '15.1',
     rating: { value: 5, count: 1 },
     relatedTools: ['days'],
+    lpTitle: '賞味期限管理アプリ「ピッと期限」｜バーコードで食品在庫を管理・家族と共有',
+    lpDescription:
+      '賞味期限と食品在庫をバーコードで管理できる無料のiPhoneアプリ「ピッと期限」。バーコードで商品名を自動取得し、賞味期限はカメラで読み取り。期限前に通知し、家族と冷蔵庫の中身を共有できます。会員登録不要。',
   },
 
   // ── お金・仕事 ──
@@ -171,6 +184,9 @@ export const APPS: AppEntry[] = [
     genre: 'ファイナンス',
     minIos: '16.4',
     relatedTools: ['genka-shokyaku', 'loan'],
+    lpTitle: '家賃管理アプリ「大家ノート」｜個人大家の物件管理・賃貸経営をiPhoneで',
+    lpDescription:
+      '家賃の入金チェック・契約の更新日・火災保険の期日・年間収支を管理できる、個人大家向けの家賃管理アプリ「大家ノート」。期日を通知し、申告前の集計をCSV・PDFで書き出せます。データは端末内保存・会員登録不要。',
   },
   {
     slug: 'lesson-techo',
@@ -195,6 +211,9 @@ export const APPS: AppEntry[] = [
     genre: '仕事効率化',
     minIos: '16.4',
     relatedTools: [],
+    lpTitle: '月謝管理・振替管理アプリ「レッスン手帳」｜個人レッスン講師の生徒管理',
+    lpDescription:
+      '月謝の未納と振替を見落とさない、個人レッスン講師向けのiPhoneアプリ「レッスン手帳」。生徒・出欠・振替の期限・月謝をまとめて管理し、CSV・PDFで書き出せます。ピアノ・英会話・習字などの教室に。データは端末内保存。',
   },
   {
     slug: 'tsukulog',
@@ -219,6 +238,9 @@ export const APPS: AppEntry[] = [
     genre: '仕事効率化',
     minIos: '16.4',
     relatedTools: ['percent'],
+    lpTitle: 'ハンドメイドの原価計算・値付けアプリ「つくログ」｜材料在庫と販路別の手取り',
+    lpDescription:
+      'ハンドメイド作家向けの原価計算・材料在庫管理アプリ「つくログ」。欲しい手取りから売値を逆算する値付けシミュレータ、minne・Creema・メルカリなど販路別の手取り計算、確定申告用CSVの書き出しに対応したiPhoneアプリです。',
   },
 
   // ── 暮らし ──
@@ -245,6 +267,9 @@ export const APPS: AppEntry[] = [
     genre: 'ショッピング',
     minIos: '15.1',
     relatedTools: ['percent'],
+    lpTitle: 'バーコードで価格比較・最安値がわかるアプリ「ピッと最安」｜楽天・Yahoo!を横断',
+    lpDescription:
+      '店頭で商品のバーコードを読むだけで、楽天市場・Yahoo!ショッピングのネット最安値がわかる価格比較アプリ「ピッと最安」。Amazon・価格.comの検索にもワンタップ。会員登録不要・無料のiPhoneアプリです。',
   },
   {
     slug: 'machi-anzen-map',
@@ -269,6 +294,9 @@ export const APPS: AppEntry[] = [
     genre: 'ナビゲーション',
     minIos: '16.4',
     relatedTools: [],
+    lpTitle: '交通事故・不審者情報を地図で見るアプリ「まちの安全マップ」｜行政処分・食中毒も',
+    lpDescription:
+      '交通事故・不審者情報・行政処分・食中毒の記録を、住所や駅名の周りで地図にして数えるiPhoneアプリ「まちの安全マップ」。警察庁の交通事故統計や各都道府県警察の公開情報を出典つきで表示。引っ越し先や通学路の確認に。',
   },
   {
     slug: 'memomail',
@@ -293,6 +321,9 @@ export const APPS: AppEntry[] = [
     genre: '仕事効率化',
     minIos: '15.1',
     relatedTools: ['moji-count'],
+    lpTitle: '自分にメールを送るメモアプリ「メモびゅん」｜3タップで自分宛てに送信',
+    lpDescription:
+      '思いついたことを3タップで自分宛てにメールできるiPhoneのメモアプリ「メモびゅん」。Captioの代わりを探している方に。複数の宛先、音声入力、Obsidianへの自動保存に対応。無料で使えます。',
   },
 
   // ── 趣味 ──
@@ -319,6 +350,9 @@ export const APPS: AppEntry[] = [
     genre: 'ソーシャルネットワーキング',
     minIos: '16.4',
     relatedTools: [],
+    lpTitle: '爬虫類の飼育記録アプリ・SNS「うちの爬虫類」｜給餌・体重・脱皮を3タップで記録',
+    lpDescription:
+      'レオパ・フトアゴ・ボールパイソンなど爬虫類・両生類の飼育記録アプリ「うちの爬虫類」。給餌・体重・脱皮を3タップで記録でき、記録がそのまま投稿に。同じ種類の飼い主が集まる「部屋」で相談もできるiPhoneアプリです。',
   },
 ];
 
