@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>サポート・お問い合わせ — つくログ</title>
+  <meta name="description" content="つくログ（ハンドメイド作家向けの原価計算・在庫管理アプリ）のサポートページ。お問い合わせフォーム、アプリ内「ご意見・要望」からの送り方、よくある質問をまとめています。" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://motytools.com/apps/tsukulog/support/" />
+  <meta property="og:title" content="サポート・お問い合わせ — つくログ" />
+  <meta property="og:description" content="つくログへの質問・不具合の報告・ご要望はこのページから送れます。" />
+  <meta property="og:url" content="https://motytools.com/apps/tsukulog/support/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ja_JP" />
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card: #ffffff;
+      --text: #1d1d1f;
+      --text-2: #3a3a3c;
+      --text-3: #6e6e73;
+      --border: #d9d4d1;
+      --accent: #B54A36;
+      --accent-press: #9E3D2C;
+      --ok-bg: #E8F4EF;
+      --ok-text: #2B6E57;
+      --err-bg: #FDECEA;
+      --err-text: #B3261E;
+      --focus: #B54A36;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161618;
+        --card: #232326;
+        --text: #f2f2f4;
+        --text-2: #d0d0d5;
+        --text-3: #a1a1a8;
+        --border: #3d3d42;
+        --accent: #E8846F;
+        --accent-press: #F09A87;
+        --ok-bg: #1D3A30;
+        --ok-text: #8FD5B8;
+        --err-bg: #3D1F1C;
+        --err-text: #F2A49B;
+        --focus: #E8846F;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 720px; margin: 0 auto; padding: 48px 16px 80px; }
+    @media (min-width: 640px) { .container { padding: 48px 24px 80px; } }
+    .app-header { text-align: center; margin-bottom: 32px; }
+    .app-name { font-size: 28px; font-weight: 700; color: var(--accent); }
+    .app-name a { color: inherit; text-decoration: none; }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+    .lead { font-size: 16px; color: var(--text-2); margin-bottom: 32px; }
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    h2 { font-size: 20px; font-weight: 700; margin-bottom: 12px; line-height: 1.4; }
+    h3 { font-size: 16px; font-weight: 700; margin: 24px 0 8px; line-height: 1.4; }
+    h3:first-of-type { margin-top: 8px; }
+    p, li { font-size: 16px; color: var(--text-2); margin-bottom: 8px; }
+    ol, ul { padding-left: 24px; margin-bottom: 8px; }
+    a { color: var(--accent); }
+    .note { font-size: 14px; color: var(--text-3); }
+    nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    nav.toc a {
+      display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px;
+      border-radius: 22px; background: var(--card); color: var(--text);
+      text-decoration: none; font-size: 14px; font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    nav.toc a:active { opacity: 0.7; }
+
+    /* フォーム */
+    .field { margin-bottom: 16px; }
+    label { display: block; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    label .opt { font-weight: 400; color: var(--text-3); font-size: 13px; margin-left: 4px; }
+    select, textarea, input[type="email"] {
+      width: 100%; font: inherit; font-size: 16px; color: var(--text);
+      background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 12px; min-height: 48px;
+    }
+    textarea { min-height: 160px; resize: vertical; }
+    select:focus, textarea:focus, input:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3px rgba(181,74,54,0.2); }
+    .hint { font-size: 13px; color: var(--text-3); margin-top: 4px; }
+    .field-error { display: none; align-items: center; gap: 4px; font-size: 14px; color: var(--err-text); margin-top: 8px; }
+    .field-error.show { display: flex; }
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    button.primary {
+      width: 100%; min-height: 52px; border: none; border-radius: 12px;
+      background: var(--accent); color: #fff; font: inherit; font-size: 16px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+      transition: transform 150ms ease-out, background 150ms ease-out;
+    }
+    @media (prefers-color-scheme: dark) { button.primary { color: #1d1d1f; } }
+    button.primary:hover { background: var(--accent-press); }
+    button.primary:active { transform: scale(0.98); }
+    button.primary:disabled { opacity: 0.6; cursor: default; transform: none; }
+    button.primary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .spinner { width: 18px; height: 18px; border: 2.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+    button.busy .spinner { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } button.primary { transition: none; } }
+    .status { display: none; gap: 8px; align-items: flex-start; border-radius: 12px; padding: 12px 16px; margin-top: 16px; font-size: 15px; }
+    .status.show { display: flex; }
+    .status svg { flex: none; margin-top: 3px; }
+    .status.ok { background: var(--ok-bg); color: var(--ok-text); }
+    .status.err { background: var(--err-bg); color: var(--err-text); }
+    footer { text-align: center; margin-top: 48px; font-size: 13px; color: var(--text-3); }
+    footer a { margin: 0 8px; display: inline-block; padding: 8px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="app-header">
+      <div class="app-name"><a href="/apps/tsukulog/">つくログ</a></div>
+    </div>
+
+    <h1>サポート・お問い合わせ</h1>
+    <p class="lead">つくログについての質問・不具合の報告・ご要望は、このページのフォームか、アプリ内の「ご意見・要望」から送れます。どちらも同じ窓口に届き、すべて目を通しています。</p>
+
+    <nav class="toc" aria-label="このページの目次">
+      <a href="#contact">お問い合わせフォーム</a>
+      <a href="#in-app">アプリから送る</a>
+      <a href="#faq">よくある質問</a>
+      <a href="#scope">対応範囲</a>
+    </nav>
+
+    <section class="card" id="contact" aria-labelledby="contact-h">
+      <h2 id="contact-h">お問い合わせフォーム</h2>
+      <p>返信が必要な場合は、返信先のメールアドレスを入れてください。原則3営業日以内にお返事します。</p>
+      <form id="support-form" novalidate>
+        <div class="field">
+          <label for="kind">お問い合わせの種類</label>
+          <select id="kind" name="kind">
+            <option value="質問">使い方の質問</option>
+            <option value="不具合">不具合の報告</option>
+            <option value="課金">課金・購入の復元について</option>
+            <option value="要望">機能のご要望</option>
+            <option value="その他">その他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">内容</label>
+          <textarea id="message" name="message" maxlength="3500" aria-describedby="message-hint message-error" placeholder="例: 仕入を登録したのに材料の在庫が増えません。iPhone 15、iOS 26.3 で使っています。"></textarea>
+          <p class="hint" id="message-hint">不具合の場合は、お使いのiPhoneの機種・iOSの版・どの画面で何をしたかを書いていただくと早く直せます。</p>
+          <p class="field-error" id="message-error" role="alert">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            <span>内容を入力してください。</span>
+          </p>
+        </div>
+        <div class="field">
+          <label for="reply">返信先メールアドレス<span class="opt">任意</span></label>
+          <input type="email" id="reply" name="reply" inputmode="email" autocomplete="email" aria-describedby="reply-hint reply-error" placeholder="例: name@example.com" />
+          <p class="hint" id="reply-hint">返信にだけ使います。空欄なら返信はしませんが、内容は確認します。</p>
+          <p class="field-error" id="reply-error" role="alert">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            <span>メールアドレスの形が正しくありません。「@」の前後を確かめてください。</span>
+          </p>
+        </div>
+        <div class="hp" aria-hidden="true">
+          <label for="website">ウェブサイト</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+        <button type="submit" class="primary" id="submit-btn">
+          <span class="spinner" aria-hidden="true"></span>
+          <span id="submit-label">送信する</span>
+        </button>
+        <p class="note" style="margin-top:12px">送信内容の扱いは<a href="/apps/tsukulog/privacy/">プライバシーポリシー</a>のとおりです。</p>
+        <div class="status ok" id="status-ok" role="status">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>送信しました。お問い合わせありがとうございます。</span>
+        </div>
+        <div class="status err" id="status-err" role="alert">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span>送信できませんでした。通信状態を確かめて、もう一度「送信する」を押してください。入力した内容はそのまま残っています。</span>
+        </div>
+      </form>
+    </section>
+
+    <section class="card" id="in-app" aria-labelledby="in-app-h">
+      <h2 id="in-app-h">アプリから送る（ご意見・要望）</h2>
+      <ol>
+        <li>つくログを開き、下のタブの「設定」を押す</li>
+        <li>「サポート」の「ご意見・要望」を押す</li>
+        <li>内容を書いて「送信する」を押す</li>
+      </ol>
+      <p class="note">アプリから送ると、アプリの版とiOSの版が自動で添えられるので、不具合の調査が早くなります。返信が必要なときは、本文に返信先のメールアドレスを書いてください。</p>
+    </section>
+
+    <section class="card" id="faq" aria-labelledby="faq-h">
+      <h2 id="faq-h">よくある質問</h2>
+
+      <h3>データはどこに保存されますか？</h3>
+      <p>材料・作品・売上などの記録は、すべてお使いのiPhoneの中だけに保存されます。こちらのサーバーには送られません。</p>
+
+      <h3>機種変更でデータを引き継ぎたい</h3>
+      <p>古いiPhoneで「設定」→「バックアップを書き出す」を押し、ファイルアプリやAirDropで保存します。新しいiPhoneで「設定」→「バックアップから戻す」でそのファイルを選ぶと元に戻ります。</p>
+
+      <h3>無料でどこまで使えますか？</h3>
+      <p>材料30件・作品10件・販路2件まで無料です。仕入・制作の記録、値付けシミュレータ、通知も無料で使えます。プレミアムにすると件数が無制限になり、確定申告用のCSV出力と棚卸レポートが使えます。</p>
+
+      <h3>プレミアムを買ったのに反映されない／機種変更した</h3>
+      <p>「設定」→「つくログ プレミアム」の画面下にある「購入を復元」を押してください。購入したときと同じApple アカウントでサインインしている必要があります。</p>
+
+      <h3>サブスクリプションを解約したい</h3>
+      <p>iPhoneの「設定」→ 一番上の自分の名前 →「サブスクリプション」→「つくログ」から解約できます。期間終了の24時間前までに解約すれば、次の更新は行われません。アプリを削除しただけでは解約になりません。</p>
+
+      <h3>通知が届きません</h3>
+      <p>iPhoneの「設定」→「通知」→「つくログ」で通知が許可されているか確かめてください。アプリ内の「設定」で「低在庫のお知らせ」「月次レポートのお知らせ」がオンになっているかも確認してください。</p>
+
+      <h3>手数料の値が実際と違います</h3>
+      <p>minne・Creemaなどの手数料は初期値として入っています。各サービスの料金が変わった場合は「設定」→「販路と手数料の管理」から自分で直せます。</p>
+    </section>
+
+    <section class="card" id="scope" aria-labelledby="scope-h">
+      <h2 id="scope-h">対応範囲</h2>
+      <ul>
+        <li>つくログの使い方の質問、不具合の報告、機能のご要望、課金・購入の復元についてのご相談にお答えします。</li>
+        <li>返信はこのページのフォームに返信先を書いていただいた場合、またはアプリからの送信本文に返信先が書かれている場合に、原則3営業日以内に行います。</li>
+        <li>App Storeでの返金はAppleが受け付けています。<a href="https://reportaproblem.apple.com/" target="_blank" rel="noopener">Appleの「問題を報告する」</a>からお申し込みください。</li>
+        <li>確定申告の書き方そのものなど、税金の個別のご相談にはお答えできません。税務署や税理士にご相談ください。</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>
+        <a href="/apps/tsukulog/">つくログについて</a>
+        <a href="/apps/tsukulog/privacy/">プライバシーポリシー</a>
+        <a href="/apps/tsukulog/terms/">利用規約</a>
+      </p>
+      <p>© 2026 motytools · <a href="https://motytools.com">motytools.com</a></p>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      // motytools全アプリ共通の「ご意見・要望」窓口。項目名は固定(appName/appVersion/platform/sentAt/message)
+      var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxQueI2JXeJREgbHlt8ZG03rov7mwZ_E5KrcgvZBVWSA3krw2OTCjbhWZt2gPBQREQu/exec';
+      var form = document.getElementById('support-form');
+      var msg = document.getElementById('message');
+      var reply = document.getElementById('reply');
+      var kind = document.getElementById('kind');
+      var hp = document.getElementById('website');
+      var btn = document.getElementById('submit-btn');
+      var label = document.getElementById('submit-label');
+      var ok = document.getElementById('status-ok');
+      var err = document.getElementById('status-err');
+      var msgErr = document.getElementById('message-error');
+      var replyErr = document.getElementById('reply-error');
+      var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      var lastSentAt = 0;
+
+      function validReply() {
+        var v = reply.value.trim();
+        return v === '' || EMAIL_RE.test(v);
+      }
+      reply.addEventListener('blur', function () { replyErr.classList.toggle('show', !validReply()); });
+      msg.addEventListener('blur', function () { if (msg.value.trim()) msgErr.classList.remove('show'); });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        ok.classList.remove('show');
+        err.classList.remove('show');
+        var text = msg.value.trim();
+        var good = true;
+        if (!text) { msgErr.classList.add('show'); good = false; }
+        if (!validReply()) { replyErr.classList.add('show'); good = false; }
+        if (!good) { (text ? reply : msg).focus(); return; }
+        if (hp.value) { ok.classList.add('show'); return; } // 機械的な送信は捨てる
+        if (Date.now() - lastSentAt < 30000) { ok.classList.add('show'); return; } // 連打防止
+
+        btn.disabled = true; btn.classList.add('busy'); label.textContent = '送信しています…';
+        var body = '[Webサポート/' + kind.value + ']\n' + text;
+        if (reply.value.trim()) body += '\n\n返信先: ' + reply.value.trim();
+        fetch(ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // GAS側のCORS制約を避けるため text/plain で送る
+          body: JSON.stringify({
+            appName: 'つくログ',
+            appVersion: 'web-support',
+            platform: 'web ' + navigator.userAgent.slice(0, 200),
+            sentAt: new Date().toISOString(),
+            message: body.slice(0, 4000)
+          })
+        }).then(function () {
+          lastSentAt = Date.now();
+          ok.classList.add('show');
+          msg.value = '';
+        }).catch(function () {
+          err.classList.add('show');
+        }).finally(function () {
+          btn.disabled = false; btn.classList.remove('busy'); label.textContent = '送信する';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
