@@ -51,6 +51,41 @@
       "source": "/memomail/lp/",
       "destination": "/memomail/",
       "permanent": false
+    },
+    {
+      "source": "/uchino-hachu",
+      "destination": "/reptile-sns/",
+      "permanent": false
+    },
+    {
+      "source": "/uchino-hachu/",
+      "destination": "/reptile-sns/",
+      "permanent": false
+    },
+    {
+      "source": "/uchino-hachu/privacy",
+      "destination": "/reptile-sns/privacy/",
+      "permanent": false
+    },
+    {
+      "source": "/uchino-hachu/privacy/",
+      "destination": "/reptile-sns/privacy/",
+      "permanent": false
+    },
+    {
+      "source": "/uchino-hachu/terms",
+      "destination": "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
+      "permanent": false
+    },
+    {
+      "source": "/uchino-hachu/terms/",
+      "destination": "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
+      "permanent": false
+    },
+    {
+      "source": "/uchino-hachu/a/:id",
+      "destination": "/reptile-sns/",
+      "permanent": false
     }
   ],
   "rewrites": [
@@ -73,6 +108,14 @@
     {
       "source": "/reptile-sns/p/:id",
       "destination": "/api/reptile-post?id=:id"
+    },
+    {
+      "source": "/uchino-hachu/guidelines",
+      "destination": "/reptile-sns/guidelines/index.html"
+    },
+    {
+      "source": "/uchino-hachu/guidelines/",
+      "destination": "/reptile-sns/guidelines/index.html"
     }
   ]
 }

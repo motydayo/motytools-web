@@ -40,3 +40,9 @@
 ## 2026-10-14 Googleへの登録依頼
 - サイトマップ201本（全200・noindexなし・robots案内あり）を検品。メモびゅんの規約・プライバシー・サポートの canonical が紹介ページを指していたのを自分自身に修正、/privacy 系3ページに canonical を追加（コミット bd91119、本番反映済み）。
 - Search Console で sitemap.xml を再送信、主要12本の登録をリクエスト。残り148本の日付つき予定は /Users/moty/deskclaude/projects/app-findability/2026-10-14/google-index.md（10/15〜10/29、1日10本）。API認証は読み取り専用なので登録リクエストは画面操作。
+
+## 2026-10-14 うちの爬虫類のコミュニティガイドライン公開・旧URLの救済
+- 新規 `public/reptile-sns/guidelines/index.html`（プライバシーと同じ見た目）。中身はアプリ・Supabase に実在する仕組み（通報6理由・24時間以内の確認・ミュート・ブロック・生餌写真のぼかし・削除/ぼかし/アカウント停止・異議は「ご意見・要望」）だけ。
+- アプリの GUIDELINE_URL `https://motytools.com/uchino-hachu/guidelines/` は vercel.json の rewrite で同ページを200で返す（canonical は /reptile-sns/guidelines/）。
+- 配信中の旧版アプリ（1.0・1.1.0）が持つ旧URLを vercel.json の redirect で救済: /uchino-hachu/ と /uchino-hachu/a/:id → /reptile-sns/、/uchino-hachu/privacy/ → /reptile-sns/privacy/、/uchino-hachu/terms/ → Apple 標準EULA（1.1.1 と同じ規約）。
+- LP・プライバシーのフッターとサイトマップに /reptile-sns/guidelines/ を追加。本番で全URL 200・ヘッダー5種・機微パス404を確認済み。

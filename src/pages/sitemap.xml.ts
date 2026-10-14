@@ -43,6 +43,7 @@ const LEGACY_PATHS = [
   '/machi-anzen-map/privacy/',
   '/reptile-sns/',
   '/reptile-sns/privacy/',
+  '/reptile-sns/guidelines/',
   '/arumono-recipe/',
   '/arumono-recipe/privacy/',
   '/recipescrap/',
