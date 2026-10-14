@@ -36,3 +36,7 @@
 - /guide/ 配下に記事122本（10アプリ×12本＋見本2本）。検品記録は data/app-seo/qa-batch1.md・qa-batch2.md。全記事 A/B 判定、C 0本。
 - 本番反映は `npx vercel deploy --prod --yes`（git push の自動デプロイは失敗中・原因未調査）。
 - 既知の残り: /memomail/ が参照する /favicon.ico・/apple-touch-icon.png が404（以前から）。
+
+## 2026-10-14 Googleへの登録依頼
+- サイトマップ201本（全200・noindexなし・robots案内あり）を検品。メモびゅんの規約・プライバシー・サポートの canonical が紹介ページを指していたのを自分自身に修正、/privacy 系3ページに canonical を追加（コミット bd91119、本番反映済み）。
+- Search Console で sitemap.xml を再送信、主要12本の登録をリクエスト。残り148本の日付つき予定は /Users/moty/deskclaude/projects/app-findability/2026-10-14/google-index.md（10/15〜10/29、1日10本）。API認証は読み取り専用なので登録リクエストは画面操作。
