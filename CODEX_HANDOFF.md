@@ -46,3 +46,12 @@
 - アプリの GUIDELINE_URL `https://motytools.com/uchino-hachu/guidelines/` は vercel.json の rewrite で同ページを200で返す（canonical は /reptile-sns/guidelines/）。
 - 配信中の旧版アプリ（1.0・1.1.0）が持つ旧URLを vercel.json の redirect で救済: /uchino-hachu/ と /uchino-hachu/a/:id → /reptile-sns/、/uchino-hachu/privacy/ → /reptile-sns/privacy/、/uchino-hachu/terms/ → Apple 標準EULA（1.1.1 と同じ規約）。
 - LP・プライバシーのフッターとサイトマップに /reptile-sns/guidelines/ を追加。本番で全URL 200・ヘッダー5種・機微パス404を確認済み。
+
+## 2026-10-15 Webの動きの図鑑（/ugoki/）
+- LP・Webサイトの動きの演出32種（X上の「演出の名前」まとめ24種＋カウントアップ・タイプライター・スケルトン・アコーディオン・スクロールスパイ・トースト・上に戻る・タブ下線）を、動く見本・使いどころ・作り方のコード・AIへの頼み方つきで1演出1ページに。一覧 /ugoki/ は検索・種類の絞り込みつき。
+- 正本: 記事 `src/data/ugoki/entries/<slug>.ts`、見本 `src/components/ugoki/demos/<slug>.astro`（ファイルを置くだけで一覧・サイトマップに載る）。書き方の決まりは `src/data/ugoki/WRITING.md`。
+- 見本の自動再生は `src/lib/ugoki/runtime.ts`（scroll / pointer / loop / script の4型。見えている間だけ動く・触ると止まり4秒後に再開・動きを減らす設定では止める）。枠と共通部品は `src/components/ugoki/UgFrame.astro`、「見どころ」の点線は `data-ug-focus`。
+- 検査: `node scripts/check-ugoki.mjs`（見本がサイト共通の global.css のクラス名とぶつかっていないか）。OG画像は `node scripts/gen-og-ugoki.mjs` で public/og/ugoki/ に再生成。
+- 導線: トップの小カード・トップのメニュー・フッター・サイトマップ（33件）。
+- 本番反映済み（vercel CLI。サンドボックス内だとアップロードが途中で切れることがあり、外で実行して通った）。本番で33ページ200・ヘッダー5種・機微パス404を確認。
+- 次の一手: Search Console でサイトマップ再送信と /ugoki/ の登録リクエスト。2週間後に表示回数と検索語を見て、題名の言い回しを調整。
