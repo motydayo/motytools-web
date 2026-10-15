@@ -54,4 +54,5 @@
 - 検査: `node scripts/check-ugoki.mjs`（見本がサイト共通の global.css のクラス名とぶつかっていないか）。OG画像は `node scripts/gen-og-ugoki.mjs` で public/og/ugoki/ に再生成。
 - 導線: トップの小カード・トップのメニュー・フッター・サイトマップ（33件）。
 - 本番反映済み（vercel CLI。サンドボックス内だとアップロードが途中で切れることがあり、外で実行して通った）。本番で33ページ200・ヘッダー5種・機微パス404を確認。
-- 次の一手: Search Console でサイトマップ再送信と /ugoki/ の登録リクエスト。2週間後に表示回数と検索語を見て、題名の言い回しを調整。
+- 10/15 Search Console: sitemap.xml を再送信（読み込み235件・成功）。登録リクエストは /ugoki/・/ugoki/parallax/・/ugoki/sticky-header/・/ugoki/fade-in/ の4本（残り29本はサイトマップ経由で待つ）。
+- 次の一手: 10/29ごろに表示回数と検索語を見て、題名の言い回しを調整。
