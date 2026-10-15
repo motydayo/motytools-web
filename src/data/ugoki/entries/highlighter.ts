@@ -28,9 +28,9 @@ export default {
     '濃い色の背景の上（黄色い帯が文字を読みにくくする）',
   ],
   prompt:
-    '見出しと本文の大事な言葉に「マーカーアニメーション（highlighter animation）」を付けてください。対象は <mark class="marker"> で囲み、文字の下45%に黄色（#ffdf6b）の帯を linear-gradient で描いてください。最初は background-size を 0% にしておき、要素がすべて画面に入ったら0.5秒で 100% まで伸ばして、左から蛍光ペンを引いたように見せてください。判定は IntersectionObserver（threshold: 1）で行い、一度引いたら監視をやめてください。2行にまたがっても切れずに続くようにしてください。prefers-reduced-motion: reduce の人には最初から線を引いた状態で見せてください。',
+    '見出しと本文の大事な言葉に「マーカーアニメーション（highlighter animation）」を付けてください。対象は <mark class="marker"> で囲み、文字の下{{thick:t}}に {{color}} の帯を linear-gradient で描いてください。最初は background-size を 0% にしておき、要素がすべて画面に入ったら{{dur:t}}で 100% まで伸ばして、左から蛍光ペンを引いたように見せてください。判定は IntersectionObserver（threshold: 1）で行い、一度引いたら監視をやめてください。2行にまたがっても切れずに続くようにしてください。prefers-reduced-motion: reduce の人には最初から線を引いた状態で見せてください。',
   howTo: [
-    '線の正体は背景のグラデーションです。linear-gradient(transparent 55%, 黄色 55%) と書くと、上55%が透明・下45%が黄色の帯になります。この背景の幅（background-size）を 0% から 100% へ transition で伸ばすと、左から線を引いているように見えます。画像もSVGも要りません。',
+    '線の正体は背景のグラデーションです。linear-gradient(transparent 55%, 黄色 55%) と書くと、上55%が透明・下45%が黄色の帯になります。下のコードでは境目を calc(100% - 帯の太さ) と書き、太さの数値だけで調整できるようにしています。この背景の幅（background-size）を 0% から 100% へ transition で伸ばすと、左から線を引いているように見えます。画像もSVGも要りません。',
     'いつ引くかは IntersectionObserver（要素が画面に入ったかを教えてくれるブラウザの仕組み）で判断して、クラスを付けます。画像を読み込まず、文字はそのまま残るので、表示速度や検索エンジンへの影響はほとんどありません。見本では何度でも見られるよう画面から出ると消し直していますが、実際のサイトでは一度引いたら終わりにするのが一般的です。',
   ],
   code: [
@@ -46,12 +46,12 @@ export default {
       code: `.marker {
   color: inherit;
   background-color: transparent; /* mark の黄色い背景を消す */
-  /* 上55%は透明、下45%を蛍光ペンの色に */
-  background-image: linear-gradient(transparent 55%, #ffdf6b 55%);
+  /* 下から{{thick}}を蛍光ペンの色に（上は透明） */
+  background-image: linear-gradient(transparent calc(100% - {{thick}}), {{color}} 0);
   background-repeat: no-repeat;
   background-position: left bottom;
   background-size: 0% 100%; /* 最初は幅0 */
-  transition: background-size 0.5s ease-out;
+  transition: background-size {{dur}} ease-out;
   padding: 0 2px;
 }
 .marker.is-on {
@@ -76,6 +76,11 @@ export default {
 
 document.querySelectorAll('.marker').forEach((el) => io.observe(el));`,
     },
+  ],
+  tune: [
+    { key: 'dur', label: '線を引く速さ', min: 0.2, max: 1.5, step: 0.05, value: 0.5, unit: 's' },
+    { key: 'thick', label: '帯の太さ（文字の高さに対して）', min: 20, max: 100, step: 5, value: 45, unit: '%' },
+    { key: 'color', type: 'color', label: 'マーカーの色', value: '#ffdf6b' },
   ],
   cautions: [
     '1ページに引く数は、大事な所だけ2〜4か所までにしてください。あちこちに引くと、どれも目立たなくなります。',

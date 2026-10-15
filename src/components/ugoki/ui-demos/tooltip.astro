@@ -1,0 +1,250 @@
+---
+// UI部品の見本: ツールチップ
+// マウスを乗せる・キーボードで焦点を当てると、少し待ってから短い説明が出る。Escで消せる。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: 'ツールチップ',
+    nav: ['宿をさがす', '特集'],
+    tools: ['お気に入りに追加', '共有する', '地図で見る'],
+    title: '海の宿 ひかり',
+    area: '静岡県・伊豆 ／ 夕朝食つき',
+    price: '1泊 15,000円',
+    tax: '（税込）',
+    info: '料金について',
+    infoTip: '入湯税150円は別途、現地でお支払いください',
+    book: '空室を見る',
+  },
+  en: {
+    name: 'Tooltip',
+    nav: ['Stays', 'Guides'],
+    tools: ['Save to favorites', 'Share', 'View on map'],
+    title: 'Hikari Seaside Inn',
+    area: 'Izu, Shizuoka · Dinner & breakfast',
+    price: '$110 / night',
+    tax: ' + taxes',
+    info: 'About the price',
+    infoTip: 'A $1 hot-spring tax is paid at the property.',
+    book: 'Check availability',
+  },
+}[lang as 'ja' | 'en'];
+const icons = [
+  'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z',
+  'M12 15V4M8 8l4-4 4 4M5 13v6h14v-6',
+  'M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
+];
+---
+
+<UgFrame mode="pointer" size={size} label={L.name} lang={lang}>
+  <div class="ug-site tt-site" data-demo="tooltip">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec tt-body">
+      <div class="tt-hero">
+        <Scene tone="sunset" wide />
+        <!-- これが部品の本体: アイコンだけのボタンに、名前を短く添える -->
+        <div class="tt-tools" data-ug-focus={L.name} data-ug-focus-at="below">
+          {L.tools.map((t, i) => (
+            <span class="tt-wrap" data-tt-wrap>
+              <Btn class="tt-icon" {...btn} data-tt-trigger="label" data-tt-fav={i === 0 ? '' : undefined} aria-pressed={i === 0 && !mini ? 'false' : undefined} data-ug-target>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons[i]} /></svg>
+              </Btn>
+              <span class="tt-tip" role="tooltip">{t}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+      <h3 class="ug-h tt-title">{L.title}</h3>
+      <p class="tt-area">{L.area}</p>
+      <div class="tt-row">
+        <p class="tt-price">{L.price}<small>{L.tax}</small></p>
+        <span class="tt-wrap" data-tt-wrap>
+          <Btn class="tt-info" {...btn} aria-label={L.info} data-tt-trigger="desc" data-ug-target>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.5" /></svg>
+          </Btn>
+          <span class="tt-tip tt-tip--wide" role="tooltip">{L.infoTip}</span>
+        </span>
+        <Btn class="ug-btn-site tt-book" {...btn}>{L.book}</Btn>
+      </div>
+      <div class="ug-lines tt-lines"><i></i><i></i><i></i></div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .tt-site { position: relative; height: 100%; overflow: hidden; }
+  .tt-body { display: grid; gap: 2px; }
+  .tt-hero { position: relative; margin-bottom: 10px; }
+  .tt-hero :global(.ug-scene) { height: 200px; aspect-ratio: auto; border-radius: 12px; }
+  .tt-lines { margin-top: 12px; }
+  .tt-tools { position: absolute; right: 8px; bottom: 8px; display: flex; gap: 8px; }
+  .tt-title { margin-top: 4px; }
+  .tt-area { font-size: 12px; color: var(--ug-ink-2); }
+  .tt-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+  .tt-price { font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .tt-price small { font-size: 11px; font-weight: 400; color: var(--ug-ink-2); }
+  .tt-book { margin-left: auto; }
+
+  .tt-icon, .tt-info {
+    display: grid;
+    place-items: center;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+  }
+  .tt-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ug-ink);
+    box-shadow: 0 2px 8px -2px rgba(20, 24, 40, 0.35);
+  }
+  .tt-icon:hover, .tt-icon.is-hover { background: #fff; color: #b5461b; }
+  .tt-icon[aria-pressed='true'] { color: #d9452b; }
+  .tt-icon[aria-pressed='true'] svg { fill: currentColor; }
+  .tt-info { width: 44px; height: 44px; margin: -10px -8px; border-radius: 50%; background: transparent; color: var(--ug-ink-2); }
+  .tt-info:hover, .tt-info.is-hover { color: var(--ug-ink); }
+  .tt-icon:focus-visible, .tt-info:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+
+  /* これが部品の本体: 普段は隠しておき、乗せた・焦点が来たら、少し待ってから出す。
+     待ち時間・距離・速さはつまみ（--t-delay・--t-gap・--t-dur）から */
+  .tt-wrap { position: relative; display: inline-flex; }
+  .tt-tip {
+    position: absolute;
+    bottom: calc(100% + var(--t-gap));
+    left: 50%;
+    z-index: 10;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #1f2433;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.5;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    translate: -50% 4px;
+    transition: opacity var(--t-dur) ease-in, translate var(--t-dur) ease-in, visibility 0s linear var(--t-dur);
+  }
+  /* 吹き出しの三角 */
+  .tt-tip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border: 5px solid transparent;
+    border-top-color: #1f2433;
+  }
+  /* ボタンと吹き出しのすき間を埋める見えない橋（マウスで吹き出しへ移っても消えない） */
+  .tt-tip::before { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: var(--t-gap); }
+  .tt-tip--wide { width: 200px; white-space: normal; font-weight: 400; }
+  @media (hover: hover) {
+    .tt-wrap:hover .tt-tip { opacity: 1; visibility: visible; pointer-events: auto; translate: -50% 0; transition: opacity var(--t-dur) ease-out var(--t-delay), translate var(--t-dur) ease-out var(--t-delay), visibility 0s linear var(--t-delay); }
+  }
+  .tt-wrap:has(.is-hover) .tt-tip,
+  .tt-wrap:has(:focus-visible) .tt-tip,
+  .tt-wrap.is-open .tt-tip {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    translate: -50% 0;
+    transition: opacity var(--t-dur) ease-out var(--t-delay), translate var(--t-dur) ease-out var(--t-delay), visibility 0s linear var(--t-delay);
+  }
+  /* Esc で消したら、離れるまで出さない */
+  .tt-wrap.is-dismissed .tt-tip { opacity: 0 !important; visibility: hidden !important; transition: none !important; }
+
+  @container (max-width: 340px) {
+    .tt-book, .tt-area { display: none; }
+    .tt-hero { margin-bottom: 4px; }
+    .tt-hero :global(.ug-scene) { height: 120px; }
+    .tt-tools { gap: 6px; right: 6px; bottom: 6px; }
+    .tt-icon { width: 34px; height: 34px; }
+  }
+  @container (max-width: 400px) {
+    .tt-tip--wide { width: 170px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tt-tip { translate: -50% 0 !important; }
+  }
+</style>
+
+<script>
+  import { onTour, tuneNum } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="tooltip"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const wraps = [...root.querySelectorAll<HTMLElement>('[data-tt-wrap]')];
+    const triggers = [...root.querySelectorAll<HTMLElement>('[data-tt-trigger]')];
+
+    // ボタンと吹き出しを結びつける。アイコンだけのボタンは吹き出しが「名前」、
+    // 説明のボタンは吹き出しが「補足説明」になる
+    wraps.forEach((w) => {
+      const b = w.querySelector<HTMLElement>('[data-tt-trigger]')!;
+      const tip = w.querySelector<HTMLElement>('[role="tooltip"]')!;
+      tip.id = `tt-${Math.random().toString(36).slice(2, 8)}`;
+      b.setAttribute(b.dataset.ttTrigger === 'label' ? 'aria-labelledby' : 'aria-describedby', tip.id);
+      // 離れたら Esc で消した状態を解く
+      w.addEventListener('pointerleave', () => w.classList.remove('is-dismissed'));
+      w.addEventListener('focusout', () => {
+        w.classList.remove('is-dismissed');
+        w.classList.remove('is-open');
+      });
+    });
+
+    // Esc で今出ている吹き出しを消す
+    view.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      wraps.forEach((w) => {
+        if (w.matches(':hover') || w.matches(':has(:focus-visible)') || w.classList.contains('is-open')) {
+          w.classList.add('is-dismissed');
+          w.classList.remove('is-open');
+        }
+      });
+    });
+
+    // 触れない端末（タップ）では、押すたびに出す・しまう（説明のボタンだけ）
+    root.querySelectorAll<HTMLElement>('[data-tt-trigger="desc"]').forEach((b) => {
+      b.addEventListener('click', () => {
+        const w = b.closest<HTMLElement>('[data-tt-wrap]')!;
+        w.classList.remove('is-dismissed');
+        w.classList.toggle('is-open');
+      });
+    });
+    root.addEventListener('pointerdown', (e) => {
+      wraps.forEach((w) => !w.contains(e.target as Node) && w.classList.remove('is-open'));
+    });
+    // お気に入りは押すと切り替わる
+    root.querySelectorAll<HTMLElement>('[data-tt-fav]').forEach((b) => {
+      b.addEventListener('click', () => b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')));
+    });
+
+    view.addEventListener('ug:reset', () => wraps.forEach((w) => w.classList.remove('is-open', 'is-dismissed')));
+
+    // 自動再生: 1つずつ乗せて、つまみの待ち時間ぶん待ってから出る様子を見せる
+    onTour(root, async (t) => {
+      wraps.forEach((w) => w.classList.remove('is-open', 'is-dismissed'));
+      await t.move({ x: t.view.clientWidth * 0.45, y: t.view.clientHeight * 0.85 }, 10);
+      await t.sleep(500);
+      // 枠の中に見えているボタンだけを回る（一覧の小さな見本では下の説明ボタンは見えない）
+      const vr = t.view.getBoundingClientRect();
+      const shown = triggers.filter((el) => el.getBoundingClientRect().bottom < vr.bottom - 4);
+      for (const el of shown) {
+        await t.move(el, 750);
+        t.hover(el);
+        await t.sleep(tuneNum(root, 'delay', 300) + 1300);
+        t.hover(null);
+        await t.sleep(350);
+      }
+      await t.move({ x: t.view.clientWidth * 0.45, y: t.view.clientHeight * 0.85 }, 700);
+      await t.sleep(600);
+    });
+  });
+</script>

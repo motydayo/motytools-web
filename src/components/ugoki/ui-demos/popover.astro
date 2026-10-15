@@ -1,0 +1,362 @@
+---
+// UI部品の見本: ポップオーバー
+// 押すとボタンのすぐ下に小窓が開く。中で操作でき、外を押す・Escで閉じる。後ろは暗くしない。
+// 記事のコードは HTML の popover 属性と popovertarget を使う。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: 'ポップオーバー',
+    nav: ['宿をさがす', '特集'],
+    h: '宿をさがす',
+    dateK: '日付',
+    dateV: '11月3日〜4日',
+    guestK: '人数',
+    title: '人数',
+    rows: [['大人', '13歳以上'], ['子ども', '12歳以下']],
+    minus: (k: string) => `${k}を減らす`,
+    plus: (k: string) => `${k}を増やす`,
+    done: '決定',
+    go: '検索する',
+    results: ['海の宿 ひかり', '山の宿 こだま', '星の宿 しずく'],
+  },
+  en: {
+    name: 'Popover',
+    nav: ['Stays', 'Guides'],
+    h: 'Find a stay',
+    dateK: 'Dates',
+    dateV: 'Nov 3 – 4',
+    guestK: 'Guests',
+    title: 'Guests',
+    rows: [['Adults', 'Ages 13+'], ['Children', 'Ages 2–12']],
+    minus: (k: string) => `Fewer ${k.toLowerCase()}`,
+    plus: (k: string) => `More ${k.toLowerCase()}`,
+    done: 'Done',
+    go: 'Search',
+    results: ['Hikari Seaside Inn', 'Kodama Lodge', 'Shizuku Cabin'],
+  },
+}[lang as 'ja' | 'en'];
+const keys = ['adults', 'children'];
+const init = [2, 0];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site pv-site" data-demo="popover" data-lang={lang}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec pv-body">
+      <h3 class="ug-h pv-h">{L.h}</h3>
+      <div class="pv-search">
+        <div class="pv-field">
+          <span class="pv-k">{L.dateK}</span>
+          <span class="pv-v">{L.dateV}</span>
+        </div>
+        <div class="pv-anchor" data-pv-anchor>
+          <Btn class="pv-field pv-btn" {...btn} aria-expanded="false" data-pv-open>
+            <span class="pv-k">{L.guestK}</span>
+            <span class="pv-v" data-pv-sum></span>
+            <svg class="pv-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+          </Btn>
+          <!-- これが部品の本体: ボタンのすぐ下に開く小窓。中で操作できる。後ろは暗くしない -->
+          <div class="pv-pop" role="dialog" aria-labelledby="" data-pv-pop data-ug-focus={L.name} data-ug-focus-at="below">
+            <h4 class="pv-pop-h" data-pv-title>{L.title}</h4>
+            {L.rows.map(([k, s], i) => (
+              <div class="pv-row">
+                <span class="pv-row-k"><b>{k}</b><small>{s}</small></span>
+                <span class="pv-step">
+                  <Btn class="pv-round" {...btn} aria-label={L.minus(k)} data-pv-step="-1" data-pv-key={keys[i]}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14" /></svg>
+                  </Btn>
+                  <span class="pv-num" aria-live="polite" data-pv-num={keys[i]}>{init[i]}</span>
+                  <Btn class="pv-round" {...btn} aria-label={L.plus(k)} data-pv-step="1" data-pv-key={keys[i]}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                  </Btn>
+                </span>
+              </div>
+            ))}
+            <div class="pv-foot"><Btn class="pv-done" {...btn} data-pv-done>{L.done}</Btn></div>
+          </div>
+        </div>
+        <Btn class="ug-btn-site pv-go" {...btn}>{L.go}</Btn>
+      </div>
+      <div class="ug-grid pv-results" data-pv-outside>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">{L.results[0]}</div></div>
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.results[1]}</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.results[2]}</div></div>
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .pv-site { position: relative; height: 100%; overflow: hidden; }
+  .pv-body { display: grid; gap: 12px; align-content: start; }
+  .pv-h { margin: 0; }
+  .pv-search { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; }
+  .pv-field {
+    display: grid;
+    align-content: center;
+    min-height: 48px;
+    padding: 4px 12px;
+    border: 1px solid var(--ug-line);
+    border-radius: 12px;
+    background: #fff;
+    text-align: left;
+  }
+  .pv-k { font-size: 10px; font-weight: 700; color: var(--ug-ink-2); }
+  .pv-v { overflow: hidden; font-size: 13px; font-weight: 700; white-space: nowrap; text-overflow: ellipsis; }
+  .pv-anchor { position: relative; min-width: 0; }
+  .pv-btn {
+    position: relative;
+    width: 100%;
+    padding-right: 32px;
+    font: inherit;
+    color: var(--ug-ink);
+    cursor: pointer;
+  }
+  .pv-btn:hover, .pv-btn.is-hover { border-color: #c9c5bb; }
+  .pv-btn[aria-expanded='true'] { border-color: var(--ug-ink); box-shadow: 0 0 0 1px var(--ug-ink); }
+  .pv-chev { position: absolute; right: 10px; top: 50%; margin-top: -8px; color: var(--ug-ink-2); transition: transform 0.2s ease-out; }
+  .pv-btn[aria-expanded='true'] .pv-chev { transform: rotate(180deg); }
+  .pv-go { min-height: 48px; border-radius: 12px; }
+  .pv-results { margin-top: 4px; }
+
+  /* 小窓。ボタンとの距離・出る速さ・角の丸みはつまみ（--t-gap・--t-dur・--t-radius）から */
+  .pv-pop {
+    position: absolute;
+    top: calc(100% + var(--t-gap));
+    left: 0;
+    z-index: 20;
+    display: grid;
+    gap: 4px;
+    width: 264px;
+    padding: 14px 16px 10px;
+    border: 1px solid var(--ug-line);
+    border-radius: var(--t-radius);
+    background: #fff;
+    box-shadow: 0 16px 40px -12px rgba(20, 24, 40, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px) scale(0.98);
+    transform-origin: 24px 0;
+    transition: opacity calc(var(--t-dur) * 0.7) ease-in, transform calc(var(--t-dur) * 0.7) ease-in, visibility 0s linear calc(var(--t-dur) * 0.7);
+  }
+  /* ボタンを指す小さな三角 */
+  .pv-pop::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 22px;
+    width: 10px;
+    height: 10px;
+    border-top: 1px solid var(--ug-line);
+    border-left: 1px solid var(--ug-line);
+    background: #fff;
+    transform: rotate(45deg);
+  }
+  .pv-pop.is-end { left: auto; right: 0; transform-origin: calc(100% - 24px) 0; }
+  .pv-pop.is-end::before { left: auto; right: 22px; }
+  .pv-site.is-open .pv-pop {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity var(--t-dur) ease-out, transform var(--t-dur) ease-out, visibility 0s;
+  }
+  .pv-pop-h { font-size: 14px; font-weight: 800; }
+  .pv-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; }
+  .pv-row + .pv-row { border-top: 1px solid var(--ug-line); }
+  .pv-row-k { display: grid; line-height: 1.4; }
+  .pv-row-k small { font-size: 11px; color: var(--ug-ink-2); }
+  .pv-step { display: inline-flex; align-items: center; }
+  .pv-round {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--ug-ink);
+    cursor: pointer;
+  }
+  /* 見た目は32pxの丸、押せる範囲は44px */
+  .pv-round::before { content: ''; position: absolute; width: 32px; height: 32px; border: 1px solid #c9c5bb; border-radius: 50%; }
+  .pv-round { position: relative; }
+  .pv-round:hover::before, .pv-round.is-hover::before { border-color: var(--ug-ink); }
+  .pv-round[aria-disabled='true'] { color: #c9c5bb; cursor: default; }
+  .pv-round[aria-disabled='true']::before { border-color: var(--ug-line); }
+  .pv-num { min-width: 20px; font-size: 14px; font-weight: 700; text-align: center; font-variant-numeric: tabular-nums; }
+  .pv-foot { display: flex; justify-content: flex-end; }
+  .pv-done {
+    min-height: 40px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #b5461b;
+    font: inherit;
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .pv-done:hover, .pv-done.is-hover { background: #fdeee7; }
+  .pv-btn:focus-visible, .pv-round:focus-visible, .pv-done:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+
+  @container (max-width: 480px) {
+    .pv-search { grid-template-columns: 1fr 1fr; }
+    .pv-go { grid-column: 1 / -1; min-height: 40px; }
+  }
+  @container (max-width: 340px) {
+    .pv-h { display: none; }
+    .pv-body { padding-top: 12px; }
+    .pv-field { min-height: 44px; padding: 2px 10px; }
+    .pv-pop { width: 240px; padding: 10px 12px 6px; }
+    .pv-round { width: 36px; height: 36px; }
+    .pv-round::before { width: 28px; height: 28px; }
+    .pv-row-k small { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pv-pop, .pv-site.is-open .pv-pop { transform: none; transition-duration: 0.01s; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="popover"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const frame = root.closest<HTMLElement>('[data-ug-frame]')!;
+    const mini = frame.dataset.size === 'mini';
+    const ja = root.dataset.lang !== 'en';
+    const openBtn = root.querySelector<HTMLElement>('[data-pv-open]')!;
+    const pop = root.querySelector<HTMLElement>('[data-pv-pop]')!;
+    const sum = root.querySelector<HTMLElement>('[data-pv-sum]')!;
+    const done = root.querySelector<HTMLElement>('[data-pv-done]')!;
+    const outside = root.querySelector<HTMLElement>('[data-pv-outside]')!;
+    const steps = [...root.querySelectorAll<HTMLElement>('[data-pv-step]')];
+    const count: Record<string, number> = { adults: 2, children: 0 };
+    const min: Record<string, number> = { adults: 1, children: 0 };
+    const isOpen = () => root.classList.contains('is-open');
+
+    const tid = `pv-t-${Math.random().toString(36).slice(2, 8)}`;
+    root.querySelector('[data-pv-title]')!.id = tid;
+    pop.setAttribute('aria-labelledby', tid);
+    pop.id = `${tid}-pop`;
+    openBtn.setAttribute('aria-controls', pop.id);
+
+    const render = () => {
+      const a = count.adults;
+      const c = count.children;
+      sum.textContent = ja
+        ? `大人${a}名${c ? `・子ども${c}名` : ''}`
+        : `${a} adult${a > 1 ? 's' : ''}${c ? `, ${c} child${c > 1 ? 'ren' : ''}` : ''}`;
+      root.querySelectorAll<HTMLElement>('[data-pv-num]').forEach((n) => (n.textContent = String(count[n.dataset.pvNum!])));
+      steps.forEach((b) => {
+        const k = b.dataset.pvKey!;
+        const dis = b.dataset.pvStep === '-1' ? count[k] <= min[k] : count[k] >= 8;
+        b.setAttribute('aria-disabled', String(dis));
+      });
+    };
+    // 右にはみ出すなら、右端をそろえて出す
+    const place = () => {
+      pop.classList.remove('is-end');
+      const a = openBtn.getBoundingClientRect();
+      const s = root.getBoundingClientRect();
+      if (a.left + pop.offsetWidth > s.right - 8) pop.classList.add('is-end');
+    };
+    const open = () => {
+      if (isOpen()) return;
+      place();
+      root.classList.add('is-open');
+      openBtn.setAttribute('aria-expanded', 'true');
+    };
+    const close = (refocus = false) => {
+      if (!isOpen()) return;
+      root.classList.remove('is-open');
+      openBtn.setAttribute('aria-expanded', 'false');
+      if (refocus && !mini) openBtn.focus({ preventScroll: true });
+    };
+    const toggle = () => (isOpen() ? close() : open());
+    const step = (b: HTMLElement) => {
+      const k = b.dataset.pvKey!;
+      count[k] = Math.min(8, Math.max(min[k], count[k] + Number(b.dataset.pvStep)));
+      render();
+    };
+
+    openBtn.addEventListener('click', toggle);
+    openBtn.addEventListener('ug:click', toggle);
+    steps.forEach((b) => {
+      b.addEventListener('click', () => step(b));
+      b.addEventListener('ug:click', () => step(b));
+    });
+    done.addEventListener('click', () => close(true));
+    done.addEventListener('ug:click', () => close());
+    // 外を押したら閉じる（後ろのページはそのまま使える）
+    root.addEventListener('pointerdown', (e) => {
+      const n = e.target as Node;
+      if (isOpen() && !pop.contains(n) && !openBtn.contains(n)) close();
+    });
+    outside.addEventListener('ug:click', () => close());
+    // Esc で閉じて、焦点を開いたボタンへ戻す
+    view.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) {
+        e.preventDefault();
+        close(pop.contains(document.activeElement));
+      }
+    });
+    // 焦点が小窓とボタンの外へ出たら閉じる（Tab で先へ進んだとき）
+    root.addEventListener('focusout', (e) => {
+      const to = (e as FocusEvent).relatedTarget as Node | null;
+      if (isOpen() && to && !pop.contains(to) && !openBtn.contains(to)) close();
+    });
+
+    const reset = () => {
+      root.classList.remove('is-open');
+      openBtn.setAttribute('aria-expanded', 'false');
+      count.adults = 2;
+      count.children = 0;
+      render();
+    };
+    view.addEventListener('ug:reset', reset);
+    reset();
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.3, y: t.view.clientHeight * 0.8 }, 10);
+      await t.sleep(600);
+      await t.move(openBtn, 800);
+      t.hover(openBtn);
+      await t.sleep(250);
+      await t.click(openBtn);
+      t.hover(null);
+      await t.sleep(800);
+      const plusKid = steps.find((b) => b.dataset.pvKey === 'children' && b.dataset.pvStep === '1')!;
+      await t.move(plusKid, 700);
+      t.hover(plusKid);
+      await t.sleep(250);
+      await t.click(plusKid);
+      await t.sleep(500);
+      await t.click(plusKid);
+      t.hover(null);
+      await t.sleep(700);
+      await t.move(done, 600);
+      t.hover(done);
+      await t.sleep(250);
+      await t.click(done);
+      t.hover(null);
+      await t.sleep(1400);
+      // もう一度開いて、外を押して閉じる
+      await t.move(openBtn, 600);
+      await t.click(openBtn);
+      await t.sleep(1100);
+      const r = outside.getBoundingClientRect();
+      const v = t.view.getBoundingClientRect();
+      await t.move({ x: r.right - v.left - 30, y: Math.min(r.bottom, v.bottom - 20) - v.top - 20 }, 700);
+      await t.click(outside);
+      await t.sleep(1400);
+    });
+  });
+</script>

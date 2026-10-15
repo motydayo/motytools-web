@@ -1,0 +1,379 @@
+---
+// UI部品の見本: ボトムシート
+// 枠の中に収めるため、見本は div[role=dialog] を absolute で出す。記事のコードは <dialog> と showModal() を使う。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: 'ボトムシート',
+    nav: ['新着', '特集'],
+    count: '24件の宿',
+    sortBy: '並び替え',
+    title: '並び替え',
+    close: '閉じる',
+    opts: ['おすすめ順', '新着順', '料金が安い順', '料金が高い順'],
+    stays: [
+      ['海の宿 ひかり', '1泊 15,000円', 15000, 2],
+      ['山の宿 こだま', '1泊 12,000円', 12000, 1],
+      ['星の宿 しずく', '1泊 9,800円', 9800, 3],
+    ] as [string, string, number, number][],
+  },
+  en: {
+    name: 'Bottom sheet',
+    nav: ['New', 'Guides'],
+    count: '24 stays',
+    sortBy: 'Sort',
+    title: 'Sort by',
+    close: 'Close',
+    opts: ['Recommended', 'Newest', 'Price: low to high', 'Price: high to low'],
+    stays: [
+      ['Hikari Seaside Inn', '$110 / night', 110, 2],
+      ['Kodama Lodge', '$89 / night', 89, 1],
+      ['Shizuku Cabin', '$72 / night', 72, 3],
+    ] as [string, string, number, number][],
+  },
+}[lang as 'ja' | 'en'];
+const tones = ['sunset', 'day', 'night'] as const;
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site bs-site" data-demo="bottom-sheet">
+    <div class="bs-page" data-bs-page>
+      <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+      <div class="bs-bar">
+        <span class="bs-count">{L.count}</span>
+        <Btn class="bs-open" {...btn} aria-haspopup="dialog" data-bs-open>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4" /></svg>
+          <span>{L.sortBy}: <b data-bs-current>{L.opts[0]}</b></span>
+        </Btn>
+      </div>
+      <div class="bs-list" data-bs-list>
+        {L.stays.map(([n, p, price, rank], i) => (
+          <div class="bs-item" data-price={price} data-rank={rank} data-i={i}>
+            <Scene tone={tones[i]} />
+            <span class="bs-item-text"><b>{n}</b><span>{p}</span></span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="bs-scrim" data-bs-scrim aria-hidden="true"></div>
+
+    <!-- これが部品の本体: 画面の下からせり上がる板 -->
+    <div class="bs-sheet" role="dialog" aria-modal="true" aria-labelledby="" data-bs-sheet data-ug-focus={L.name} data-ug-focus-at="left">
+      <div class="bs-grab" data-bs-grab>
+        <span class="bs-handle" aria-hidden="true"></span>
+        <div class="bs-head">
+          <h4 class="bs-title" data-bs-title>{L.title}</h4>
+          <Btn class="bs-x" {...btn} aria-label={L.close} data-bs-close>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </Btn>
+        </div>
+      </div>
+      <div class="bs-opts">
+        {L.opts.map((o, i) => (
+          <Btn class="bs-opt" {...btn} aria-pressed={i === 0 ? 'true' : 'false'} data-bs-opt={i}>
+            <span>{o}</span>
+            <svg class="bs-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+          </Btn>
+        ))}
+      </div>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .bs-site { position: relative; height: 100%; overflow: hidden; background: var(--ug-bg); }
+  .bs-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 16px; background: #fff; border-bottom: 1px solid var(--ug-line); }
+  .bs-count { font-size: 12px; color: var(--ug-ink-2); white-space: nowrap; }
+  .bs-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--ug-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ug-ink);
+    font: inherit;
+    font-size: 12px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .bs-open:hover, .bs-open.is-hover { background: var(--ug-bg); }
+  .bs-list { display: grid; gap: 8px; padding: 12px 16px; }
+  .bs-item { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 12px; background: #fff; border: 1px solid var(--ug-line); }
+  .bs-item :global(.ug-scene) { flex: none; width: 96px; border-radius: 8px; }
+  .bs-item-text { display: grid; gap: 2px; font-size: 12px; }
+  .bs-item-text span { color: var(--ug-ink-2); font-variant-numeric: tabular-nums; }
+
+  /* 暗幕 */
+  .bs-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    background: rgba(20, 24, 40, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--t-dur) ease-in;
+  }
+  .bs-site.is-open .bs-scrim { opacity: 1; pointer-events: auto; transition-timing-function: ease-out; }
+
+  /* 板は下の外に隠しておき、開いたらせり上げる。角の丸み・速さはつまみ（--t-radius・--t-dur）から */
+  .bs-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 21;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 480px;
+    max-height: calc(100% - 24px);
+    margin: 0 auto;
+    padding-bottom: 8px;
+    border-radius: var(--t-radius) var(--t-radius) 0 0;
+    background: #fff;
+    box-shadow: 0 -12px 32px -12px rgba(20, 24, 40, 0.4);
+    transform: translateY(100%);
+    visibility: hidden;
+    transition: transform calc(var(--t-dur) * 0.8) ease-in, visibility 0s linear calc(var(--t-dur) * 0.8);
+  }
+  .bs-site.is-open .bs-sheet {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform var(--t-dur) ease-out, visibility 0s;
+  }
+  .bs-sheet.is-dragging { transition: none !important; }
+  /* つまみ（取っ手）と見出しの帯は、指で下へ引ける */
+  .bs-grab { flex: none; touch-action: none; cursor: grab; }
+  .bs-handle { display: block; width: 36px; height: 4px; margin: 8px auto 6px; border-radius: 2px; background: #cfccc4; }
+  .bs-head { display: flex; align-items: center; justify-content: space-between; padding: 0 4px 0 16px; }
+  .bs-title { font-size: 15px; font-weight: 800; }
+  .bs-x {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ug-ink-2);
+    cursor: pointer;
+  }
+  .bs-x:hover, .bs-x.is-hover { background: var(--ug-bg); }
+  .bs-opts { display: grid; padding: 0 8px; overflow: auto; }
+  .bs-opt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ug-ink);
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease-out;
+  }
+  .bs-opt:hover, .bs-opt.is-hover { background: var(--ug-bg); }
+  .bs-check { visibility: hidden; color: #c4521f; }
+  .bs-opt[aria-pressed='true'] { font-weight: 800; color: #b5461b; }
+  .bs-opt[aria-pressed='true'] .bs-check { visibility: visible; }
+  .bs-open:focus-visible, .bs-opt:focus-visible, .bs-x:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+
+  @container (max-width: 340px) {
+    .bs-count { display: none; }
+    .bs-bar { justify-content: flex-end; }
+    .bs-item :global(.ug-scene) { width: 64px; }
+    .bs-opt { min-height: 34px; }
+    .bs-handle { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bs-sheet, .bs-site.is-open .bs-sheet, .bs-scrim, .bs-site.is-open .bs-scrim { transition-duration: 0.01s; }
+  }
+</style>
+
+<script>
+  import { onTour, tuneNum, type Point } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="bottom-sheet"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const frame = root.closest<HTMLElement>('[data-ug-frame]')!;
+    const mini = frame.dataset.size === 'mini';
+    const page = root.querySelector<HTMLElement>('[data-bs-page]')!;
+    const sheet = root.querySelector<HTMLElement>('[data-bs-sheet]')!;
+    const scrim = root.querySelector<HTMLElement>('[data-bs-scrim]')!;
+    const grab = root.querySelector<HTMLElement>('[data-bs-grab]')!;
+    const openBtn = root.querySelector<HTMLElement>('[data-bs-open]')!;
+    const current = root.querySelector<HTMLElement>('[data-bs-current]')!;
+    const opts = [...root.querySelectorAll<HTMLElement>('[data-bs-opt]')];
+    const items = [...root.querySelectorAll<HTMLElement>('.bs-item')];
+    const isOpen = () => root.classList.contains('is-open');
+
+    const tid = `bs-t-${Math.random().toString(36).slice(2, 8)}`;
+    root.querySelector('[data-bs-title]')!.id = tid;
+    sheet.setAttribute('aria-labelledby', tid);
+
+    // real: 本物の操作のときだけ焦点を動かす（自動再生では動かさない）
+    const open = (real = false) => {
+      if (isOpen()) return;
+      root.classList.add('is-open');
+      page.setAttribute('inert', '');
+      // 焦点は今選ばれている選択肢へ
+      if (real && !mini) window.setTimeout(() => (opts.find((o) => o.getAttribute('aria-pressed') === 'true') ?? opts[0]).focus({ preventScroll: true }), 30);
+    };
+    const close = () => {
+      if (!isOpen()) return;
+      root.classList.remove('is-open');
+      page.removeAttribute('inert');
+      sheet.style.transform = '';
+      if (!mini && view.contains(document.activeElement)) openBtn.focus({ preventScroll: true });
+    };
+    // 並び順を変える（見本の一覧も実際に並べ替える）
+    const choose = (n: number) => {
+      opts.forEach((o, i) => o.setAttribute('aria-pressed', String(i === n)));
+      current.textContent = opts[n].querySelector('span')!.textContent;
+      const key = (el: HTMLElement) => {
+        const p = Number(el.dataset.price);
+        return [Number(el.dataset.i), Number(el.dataset.rank), p, -p][n];
+      };
+      [...items].sort((a, b) => key(a) - key(b)).forEach((el, i) => (el.style.order = String(i)));
+    };
+
+    openBtn.addEventListener('click', () => open(true));
+    openBtn.addEventListener('ug:click', () => open());
+    root.querySelectorAll<HTMLElement>('[data-bs-close]').forEach((b) => {
+      b.addEventListener('click', close);
+      b.addEventListener('ug:click', close);
+    });
+    opts.forEach((o, i) => {
+      const pick = () => {
+        choose(i);
+        close();
+      };
+      o.addEventListener('click', pick);
+      o.addEventListener('ug:click', pick);
+    });
+    scrim.addEventListener('click', close);
+    scrim.addEventListener('ug:click', close);
+    view.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) {
+        e.preventDefault();
+        close();
+      }
+    });
+    sheet.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const f = [...sheet.querySelectorAll<HTMLElement>('button')];
+      if (e.shiftKey && document.activeElement === f[0]) {
+        e.preventDefault();
+        f[f.length - 1].focus();
+      } else if (!e.shiftKey && document.activeElement === f[f.length - 1]) {
+        e.preventDefault();
+        f[0].focus();
+      }
+    });
+
+    // 下へ引いて閉じる。高さの何%引いたら閉じるかはつまみ（--t-threshold）から
+    let startY = 0;
+    let dy = 0;
+    let dragging = false;
+    const dragTo = (y: number) => {
+      dy = Math.max(0, y - startY);
+      sheet.classList.add('is-dragging');
+      sheet.style.transform = `translateY(${dy}px)`;
+    };
+    const release = () => {
+      dragging = false;
+      sheet.classList.remove('is-dragging');
+      sheet.style.transform = '';
+      const closeIt = dy > sheet.offsetHeight * (tuneNum(root, 'threshold', 30) / 100);
+      dy = 0;
+      if (closeIt) close();
+      return closeIt;
+    };
+    grab.addEventListener('pointerdown', (e) => {
+      if (!isOpen() || (e.target as HTMLElement).closest('[data-bs-close]')) return;
+      dragging = true;
+      startY = e.clientY;
+      grab.setPointerCapture(e.pointerId);
+    });
+    grab.addEventListener('pointermove', (e) => dragging && dragTo(e.clientY));
+    grab.addEventListener('pointerup', () => dragging && release());
+    grab.addEventListener('pointercancel', () => dragging && release());
+
+    // 自動再生の矢印でも「引く」動きを見せる
+    let tourDrag = false;
+    view.addEventListener('ug:move', (e) => {
+      if (tourDrag) dragTo((e as CustomEvent<Point>).detail.y);
+    });
+
+    const reset = () => {
+      root.classList.remove('is-open');
+      page.removeAttribute('inert');
+      sheet.classList.remove('is-dragging');
+      sheet.style.transform = '';
+      tourDrag = false;
+      choose(0);
+    };
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.7 }, 10);
+      await t.sleep(600);
+      await t.move(openBtn, 800);
+      t.hover(openBtn);
+      await t.sleep(250);
+      await t.click(openBtn);
+      t.hover(null);
+      await t.sleep(900);
+      await t.move(opts[2], 700);
+      t.hover(opts[2]);
+      await t.sleep(300);
+      await t.click(opts[2]);
+      t.hover(null);
+      await t.sleep(1500);
+      // もう一度開いて、取っ手を下へ引いて閉じる
+      await t.move(openBtn, 700);
+      await t.click(openBtn);
+      await t.sleep(900);
+      const handle = root.querySelector<HTMLElement>('.bs-handle')!;
+      await t.move(handle, 600);
+      await t.sleep(200);
+      const r = handle.getBoundingClientRect();
+      const v = t.view.getBoundingClientRect();
+      startY = r.top - v.top + r.height / 2 + t.view.scrollTop;
+      tourDrag = true;
+      try {
+        await t.move({ x: r.left - v.left + r.width / 2, y: startY + Math.min(150, sheet.offsetHeight * 0.55) }, 700);
+      } finally {
+        tourDrag = false;
+        // 途中で利用者が触ったら、引きかけの板を元の位置へ戻す
+        if (t.signal.aborted) {
+          sheet.classList.remove('is-dragging');
+          sheet.style.transform = '';
+        }
+      }
+      const closed = release();
+      await t.sleep(900);
+      // 引き方が足りずに戻ったときは、暗幕を押して閉じる
+      if (!closed) {
+        await t.move({ x: t.view.clientWidth * 0.5, y: 30 }, 600);
+        await t.click(scrim);
+        await t.sleep(900);
+      }
+      await t.sleep(600);
+    });
+  });
+</script>

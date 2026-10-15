@@ -6,11 +6,11 @@ export default {
   category: 'scroll',
   name: 'Sticky header',
   en: '追従ヘッダー',
-  aka: ['Fixed header', 'Sticky navigation', 'Sticky navbar', 'Persistent header'],
+  aka: ['Fixed header', 'Sticky navbar', 'Sticky navigation', 'Sticky nav bar', 'Persistent header'],
   mode: 'scroll',
-  title: 'Sticky Header in CSS: position: sticky, Shadow on Scroll (Live Demo)',
+  title: 'Sticky Header CSS: position: sticky Plus a Shadow on Scroll',
   description:
-    'Build a sticky header with two lines of CSS. Live demo with adjustable height and shadow, the small script that adds a shadow on scroll, how to keep anchor links from hiding under it, and a ready-to-paste AI prompt.',
+    'Make a sticky header with two lines of CSS, fade in a shadow once the page scrolls, and keep anchor links from hiding under it. Tunable demo and code.',
   oneLine: 'The navigation bar stays pinned to the top as you scroll.',
   what: [
     'The bar with your logo, menu and main call-to-action stays at the top of the screen no matter how far down the page someone reads. Navigation and the sign-up button are always one tap away.',

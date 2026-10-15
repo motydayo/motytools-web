@@ -29,10 +29,11 @@ export default {
     '何度閉じても出てくる作り',
   ],
   prompt:
-    'LPに「離脱防止ポップアップ（exit-intent popup）」を付けてください。パソコンでは、マウスが画面の上端から外へ出たとき（document の mouseout で relatedTarget が無く clientY が0以下）に、dialog 要素を showModal() で開きます。スマホでは、半分以上読んだあとに素早く上へスクロールして戻したときを合図にします。ページを開いて10秒たつまでは出さず、1回出したら sessionStorage に記録して同じ訪問中は二度と出さないでください。×ボタン（44px四方・aria-label="閉じる"）、「今はいらない」、Escキー、背景のクリックで閉じられるようにし、出るときは0.3秒の ease-out で小さく浮かび上がらせます。prefers-reduced-motion: reduce のときは動きなしで表示してください。ライブラリは使わないでください。',
+    'LPに「離脱防止ポップアップ（exit-intent popup）」を付けてください。パソコンでは、マウスが画面の上端から外へ出たとき（document の mouseout で relatedTarget が無く clientY が0以下）に、dialog 要素を showModal() で開きます。スマホでは、半分以上読んだあとに素早く上へスクロールして戻したときを合図にします。ページを開いて10秒たつまでは出さず、1回出したら sessionStorage に記録して同じ訪問中は二度と出さないでください。×ボタン（44px四方・aria-label="閉じる"）、「今はいらない」、Escキー、背景のクリックで閉じられるようにし（dialog 自体は padding: 0 にして余白は内側の form に付け、小窓の内側の余白を押しても閉じないようにする）、背景の暗幕は濃さ {{dim:t}} にし、出るときは{{dur:t}}の ease-out で、{{rise:t}}下から少し縮んだ状態で浮かび上がらせます。prefers-reduced-motion: reduce のときは動きなしで表示してください。ライブラリは使わないでください。',
   howTo: [
     'パソコンでは、マウスがページの外へ出たことを mouseout（マウスが要素から出たときの合図）で受け取ります。行き先が無く（relatedTarget が null）、高さが画面の上端より上（clientY が0以下）なら、タブやアドレスバーへ向かった、つまり帰ろうとしていると判断します。',
     'スマホにはマウスがないので、代わりに「下まで読んだあと、勢いよく上へ戻した」ことを合図にします。小窓は dialog 要素の showModal() で開くと、背景の暗幕・Escキーで閉じる・小窓の外にTabで出ない、がブラウザの標準で手に入ります。1回出したら sessionStorage（そのタブを閉じるまで残る保存場所）に印を付け、二度と出しません。見本は枠の中に収めるため open 属性で出していますが、実際のサイトでは下のコードのとおり showModal() を使ってください。',
+    '出方は控えめが正解です。0.25〜0.35秒で8pxほど下から浮かび上がらせると、「急に飛び出してきた」ではなく「そっと差し出された」印象になります。暗幕は0.4〜0.5くらいの濃さにすると小窓に目が向きつつ、後ろのページも透けて見え、閉じ込められた感じがしません。',
   ],
   code: [
     {
@@ -54,15 +55,16 @@ export default {
       label: 'CSS',
       code: `.exit-pop {
   width: min(92vw, 360px);
-  padding: 28px 20px 12px;
+  padding: 0; /* 余白は form 側へ。小窓そのものを押したら必ず「暗幕を押した」ことになる */
   border: 0;
   border-radius: 16px;
   text-align: center;
 }
-.exit-pop::backdrop { background: rgba(29, 37, 65, 0.45); }
-.exit-pop[open] { animation: exit-in 0.3s ease-out; }
+.exit-pop form { padding: 28px 20px 12px; }
+.exit-pop::backdrop { background: rgba(29, 37, 65, {{dim:n}}); } /* 暗幕の濃さ */
+.exit-pop[open] { animation: exit-in {{dur}} ease-out; }
 @keyframes exit-in {
-  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  from { opacity: 0; transform: translateY({{rise}}) scale(0.96); }
 }
 .exit-x {
   position: absolute;
@@ -132,11 +134,17 @@ window.addEventListener('scroll', () => {
   lastT = now;
 }, { passive: true });
 
-// 暗幕（小窓の外）を押しても閉じる。Escキーと×はブラウザが閉じてくれる
+// 暗幕（小窓の外）を押しても閉じる。Escキーと form 内のボタンはブラウザが閉じてくれる
+// dialog の padding を 0 にしてあるので、小窓の内側の余白を押しても閉じない
 pop?.addEventListener('click', (e) => {
   if (e.target === pop) pop.close();
 });`,
     },
+  ],
+  tune: [
+    { key: 'dur', label: '出る速さ', min: 0.1, max: 0.8, step: 0.05, value: 0.3, unit: 's' },
+    { key: 'rise', label: '浮かび上がる距離', min: 0, max: 40, step: 2, value: 8, unit: 'px' },
+    { key: 'dim', label: '暗幕の濃さ', min: 0, max: 0.8, step: 0.05, value: 0.45, unit: '' },
   ],
   cautions: [
     'スマホにはマウスがないので、「上端から出ていく」という合図そのものがありません。上へ素早く戻した・戻るボタンの手前・一定時間たった、などで代わりにしますが、どれも推測なので外れることがあります。スマホで出すかどうかは慎重に決めてください。',

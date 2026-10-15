@@ -1,0 +1,354 @@
+---
+// UI部品の見本: ドロップダウンメニュー（メニューボタン）
+// ボタンを押すと操作の一覧が開く。矢印キーで移動・Enterで実行・Escで閉じる（WAI-ARIA の menu button の決まり）。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const item = mini ? {} : { type: 'button', tabindex: '-1' };
+const L = {
+  ja: {
+    name: 'ドロップダウンメニュー',
+    nav: ['宿をさがす', 'マイページ'],
+    label: 'MY TRIPS',
+    h: 'ご予約の一覧',
+    manage: '予約の操作',
+    bookings: [
+      ['海の宿 ひかり', '11月3日（月）から1泊・大人2名', '予約確定'],
+      ['山の宿 こだま', '12月20日（土）から2泊・大人1名', '予約確定'],
+      ['星の宿 しずく', '1月10日（土）から1泊・大人2名', '予約確定'],
+    ],
+    items: ['予約内容を変更', '領収書を表示', 'カレンダーに追加', '予約をキャンセル'],
+    done: ['変更の画面を開きます', '領収書を開きました', 'カレンダーに追加しました', 'キャンセルの確認画面を開きます'],
+  },
+  en: {
+    name: 'Dropdown menu',
+    nav: ['Stays', 'My trips'],
+    label: 'MY TRIPS',
+    h: 'Upcoming bookings',
+    manage: 'Manage',
+    bookings: [
+      ['Hikari Seaside Inn', 'Nov 3, 1 night · 2 adults', 'Confirmed'],
+      ['Kodama Mountain Lodge', 'Dec 20, 2 nights · 1 adult', 'Confirmed'],
+      ['Shizuku Star Cabin', 'Jan 10, 1 night · 2 adults', 'Confirmed'],
+    ],
+    items: ['Change dates', 'View receipt', 'Add to calendar', 'Cancel booking'],
+    done: ['Opening the change form', 'Receipt opened', 'Added to your calendar', 'Opening cancellation'],
+  },
+}[lang as 'ja' | 'en'];
+const icons = [
+  'M4 20h4L19 9l-4-4L4 16zM13 7l4 4',
+  'M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6',
+  'M4 6h16v14H4zM4 10h16M9 3v5M15 3v5',
+  'M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18zM9 9l6 6M15 9l-6 6',
+];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site dm-site" data-demo="dropdown-menu">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec dm-body">
+      <div class="dm-head">
+        <p class="ug-label">{L.label}</p>
+        <h3 class="ug-h">{L.h}</h3>
+      </div>
+      {L.bookings.map(([t, d, s], bi) => (
+        <div class="dm-card">
+          <Scene tone={(['sunset', 'day', 'night'] as const)[bi]} />
+          <div class="dm-info">
+            <b>{t}</b>
+            <span>{d}</span>
+            <span class="dm-status">{s}</span>
+          </div>
+          {bi === 0 ? (
+            <div class="dm-anchor" data-dm-anchor>
+              <Btn class="dm-btn" {...btn} aria-haspopup="menu" aria-expanded="false" data-dm-open>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="19" cy="12" r="1.8" /></svg>
+                <span class="dm-btn-text">{L.manage}</span>
+              </Btn>
+              <!-- これが部品の本体: ボタンの下に開く操作の一覧 -->
+              <ul class="dm-menu" role="menu" aria-label={L.manage} data-dm-menu data-ug-focus={L.name} data-ug-focus-at="below">
+                {L.items.map((it, i) => (
+                  <>
+                    {i === 3 && <li class="dm-sep" role="separator"></li>}
+                    <li role="none">
+                      <Btn class:list={['dm-item', { 'is-danger': i === 3 }]} {...item} role="menuitem" data-dm-item={i} data-dm-done={L.done[i]}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons[i]} /></svg>
+                        {it}
+                      </Btn>
+                    </li>
+                  </>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <span class="dm-anchor dm-btn dm-btn--static" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="19" cy="12" r="1.8" /></svg>
+              <span class="dm-btn-text">{L.manage}</span>
+            </span>
+          )}
+        </div>
+      ))}
+      <p class="dm-msg" role="status" data-dm-msg></p>
+      <span class="dm-key" data-dm-key aria-hidden="true"></span>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .dm-site { position: relative; height: 100%; overflow: hidden; background: var(--ug-bg); }
+  .dm-body { position: relative; display: grid; gap: 10px; align-content: start; }
+  .dm-head .ug-h { margin-bottom: 0; }
+  .dm-card {
+    display: grid;
+    grid-template-columns: 96px 1fr auto;
+    align-items: start;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid var(--ug-line);
+    border-radius: 12px;
+    background: #fff;
+  }
+  .dm-card :global(.ug-scene) { border-radius: 8px; }
+  .dm-info { display: grid; gap: 2px; min-width: 0; font-size: 12px; line-height: 1.5; }
+  .dm-info b { font-size: 13px; }
+  .dm-info span { color: var(--ug-ink-2); }
+  .dm-info .dm-status { justify-self: start; margin-top: 2px; padding: 0 8px; border-radius: 999px; background: #e3f3ea; color: #1f7a4d; font-size: 11px; font-weight: 700; }
+  .dm-anchor { position: relative; }
+  .dm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--ug-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ug-ink);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .dm-btn:hover, .dm-btn.is-hover { background: var(--ug-bg); }
+  .dm-btn[aria-expanded='true'] { background: var(--ug-bg); border-color: var(--ug-ink-2); }
+  .dm-btn--static { cursor: default; }
+  .dm-msg { min-height: 20px; font-size: 12px; font-weight: 700; color: #1f7a4d; }
+
+  /* 操作の一覧。開く速さ・1行の高さ・角の丸みはつまみ（--t-dur・--t-itemh・--t-radius）から */
+  .dm-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 20;
+    min-width: 210px;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    border: 1px solid var(--ug-line);
+    border-radius: var(--t-radius);
+    background: #fff;
+    box-shadow: 0 16px 40px -12px rgba(20, 24, 40, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.96) translateY(-4px);
+    transform-origin: top right;
+    transition: opacity calc(var(--t-dur) * 0.7) ease-in, transform calc(var(--t-dur) * 0.7) ease-in, visibility 0s linear calc(var(--t-dur) * 0.7);
+  }
+  .dm-site.is-open .dm-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity var(--t-dur) ease-out, transform var(--t-dur) ease-out, visibility 0s;
+  }
+  .dm-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: var(--t-itemh);
+    padding: 0 10px;
+    border: 0;
+    border-radius: calc(var(--t-radius) * 0.6);
+    background: transparent;
+    color: var(--ug-ink);
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .dm-item svg { flex: none; color: var(--ug-ink-2); }
+  .dm-item:hover, .dm-item.is-hover, .dm-item.is-active, .dm-item:focus-visible { background: var(--ug-bg); outline: none; }
+  .dm-item:focus-visible, .dm-item.is-active { box-shadow: inset 0 0 0 2px var(--ug-blue); }
+  .dm-item.is-danger, .dm-item.is-danger svg { color: #c4321f; }
+  .dm-sep { height: 1px; margin: 4px 6px; background: var(--ug-line); }
+  .dm-btn:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+
+  /* 自動再生でキーボード操作を見せるときの、押したキーの札 */
+  .dm-key {
+    position: absolute;
+    left: 16px;
+    bottom: 8px;
+    padding: 2px 10px;
+    border: 1px solid #c9c5bb;
+    border-bottom-width: 3px;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+  }
+  .dm-key.is-shown { opacity: 1; }
+
+  @container (max-width: 420px) {
+    .dm-head { display: none; }
+    .dm-card { grid-template-columns: 56px 1fr auto; gap: 10px; }
+    .dm-btn { width: 40px; padding: 0; justify-content: center; }
+    .dm-btn-text { display: none; }
+  }
+  @container (max-width: 340px) {
+    .dm-body { padding-top: 12px; }
+    .dm-info span:not(.dm-status) { display: none; }
+    .dm-menu { min-width: 190px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dm-menu, .dm-site.is-open .dm-menu { transform: none; transition-duration: 0.01s; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="dropdown-menu"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const frame = root.closest<HTMLElement>('[data-ug-frame]')!;
+    const mini = frame.dataset.size === 'mini';
+    const btn = root.querySelector<HTMLElement>('[data-dm-open]')!;
+    const menu = root.querySelector<HTMLElement>('[data-dm-menu]')!;
+    const items = [...root.querySelectorAll<HTMLElement>('[data-dm-item]')];
+    const msg = root.querySelector<HTMLElement>('[data-dm-msg]')!;
+    const key = root.querySelector<HTMLElement>('[data-dm-key]')!;
+    const isOpen = () => root.classList.contains('is-open');
+
+    const mid = `dm-m-${Math.random().toString(36).slice(2, 8)}`;
+    menu.id = mid;
+    btn.setAttribute('aria-controls', mid);
+
+    const focusItem = (i: number) => {
+      const n = (i + items.length) % items.length;
+      if (!mini) items[n].focus({ preventScroll: true });
+    };
+    const open = (at: number | null = null) => {
+      root.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+      msg.textContent = '';
+      if (at !== null) window.setTimeout(() => focusItem(at), 20);
+    };
+    const close = (refocus = true) => {
+      if (!isOpen()) return;
+      root.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+      items.forEach((x) => x.classList.remove('is-active'));
+      if (refocus && !mini && menu.contains(document.activeElement)) btn.focus({ preventScroll: true });
+    };
+    const run = (i: number) => {
+      close(true);
+      if (!mini && document.activeElement !== btn) btn.focus({ preventScroll: true });
+      msg.textContent = items[i].dataset.dmDone ?? '';
+    };
+
+    // ボタン: クリック・Enter・Space で開いて最初の項目へ、↓で最初・↑で最後の項目へ
+    btn.addEventListener('click', () => (isOpen() ? close() : open(0)));
+    btn.addEventListener('ug:click', () => (isOpen() ? close(false) : open()));
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        open(e.key === 'ArrowDown' ? 0 : items.length - 1);
+      }
+    });
+    // 一覧の中: ↑↓で移動（端で折り返す）・Home/End・Enterで実行・Escで閉じる・Tabで閉じる
+    menu.addEventListener('keydown', (e) => {
+      const i = items.indexOf(document.activeElement as HTMLElement);
+      if (e.key === 'ArrowDown') focusItem(i + 1);
+      else if (e.key === 'ArrowUp') focusItem(i - 1);
+      else if (e.key === 'Home') focusItem(0);
+      else if (e.key === 'End') focusItem(items.length - 1);
+      else if (e.key === 'Escape') close();
+      else if (e.key === 'Tab') return close(false);
+      else return;
+      e.preventDefault();
+      e.stopPropagation();
+    });
+    items.forEach((it, i) => {
+      it.addEventListener('click', () => run(i));
+      it.addEventListener('ug:click', () => run(i));
+      // マウスを乗せた項目に焦点も合わせる（キーボードと混ぜて使っても位置がずれない）
+      it.addEventListener('pointerenter', () => isOpen() && !mini && it.focus({ preventScroll: true }));
+    });
+    // 外を押したら閉じる
+    root.addEventListener('pointerdown', (e) => {
+      const n = e.target as Node;
+      if (isOpen() && !menu.contains(n) && !btn.contains(n)) close(false);
+    });
+
+    const reset = () => {
+      root.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+      items.forEach((x) => x.classList.remove('is-active'));
+      key.classList.remove('is-shown');
+      msg.textContent = '';
+    };
+    view.addEventListener('ug:reset', reset);
+
+    // 自動再生では、キーボード操作も札で見せる（本物の焦点は動かさない）
+    const press = async (t: { sleep(ms: number): Promise<void> }, label: string, act: () => void) => {
+      key.textContent = label;
+      key.classList.add('is-shown');
+      await t.sleep(250);
+      act();
+      await t.sleep(450);
+      key.classList.remove('is-shown');
+      await t.sleep(150);
+    };
+    const active = (i: number) => items.forEach((x, k) => x.classList.toggle('is-active', k === i));
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.8 }, 10);
+      await t.sleep(600);
+      await t.move(btn, 800);
+      t.hover(btn);
+      await t.sleep(250);
+      await t.click(btn);
+      t.hover(null);
+      await t.sleep(500);
+      for (const el of items.slice(0, 2)) {
+        await t.move(el, 450);
+        t.hover(el);
+        await t.sleep(400);
+      }
+      await t.click(items[1]);
+      t.hover(null);
+      await t.sleep(1500);
+      if (mini) return;
+      // キーボードだけで: Enter で開く → ↓↓ → Esc で閉じる
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.85 }, 600);
+      t.showCursor(false);
+      msg.textContent = '';
+      let at = 0;
+      await press(t, 'Enter', () => {
+        open();
+        active(0);
+      });
+      await press(t, '↓', () => active(++at));
+      await press(t, '↓', () => active(++at));
+      await press(t, 'Esc', () => close(false));
+      await t.sleep(1200);
+    });
+  });
+</script>

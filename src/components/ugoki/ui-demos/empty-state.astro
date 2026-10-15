@@ -1,0 +1,293 @@
+---
+// UI部品の見本: 空状態（エンプティステート）
+// 「保存した宿」がまだ0件の画面。絵＋一言＋理由＋次の行動ボタンで、最初の1件へ案内する。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: '空状態',
+    tabs: ['探す', '保存済み'],
+    savedH: '保存した宿',
+    searchH: '箱根の宿',
+    emptyH: 'まだ保存した宿はありません',
+    emptyP: '気になる宿のハートを押すと、ここに集まります。あとで料金を比べるときに便利です。',
+    cta: '宿を探す',
+    stays: [
+      { tone: 'day', t: '山の宿 ひかり', p: '1泊2食 15,000円〜' },
+      { tone: 'sunset', t: '湯元 こもれび', p: '1泊2食 19,000円〜' },
+      { tone: 'night', t: '星見の宿 しずく', p: '1泊2食 22,000円〜' },
+    ],
+    save: (n: string) => `${n}を保存`,
+    remove: (n: string) => `${n}を保存から外す`,
+  },
+  en: {
+    name: 'Empty state',
+    tabs: ['Explore', 'Saved'],
+    savedH: 'Saved stays',
+    searchH: 'Stays in Lake Tahoe',
+    emptyH: 'No saved stays yet',
+    emptyP: 'Tap the heart on any stay to keep it here, so you can compare prices later.',
+    cta: 'Explore stays',
+    stays: [
+      { tone: 'day', t: 'Pine Ridge Lodge', p: 'From $140 / night' },
+      { tone: 'sunset', t: 'Lakeside Cabins', p: 'From $185 / night' },
+      { tone: 'night', t: 'Stargazer Inn', p: 'From $210 / night' },
+    ],
+    save: (n: string) => `Save ${n}`,
+    remove: (n: string) => `Remove ${n} from saved`,
+  },
+}[lang as 'ja' | 'en'];
+const heart = 'M12 20.5s-7.5-4.6-7.5-10.1A4.4 4.4 0 0 1 12 7.6a4.4 4.4 0 0 1 7.5 2.8c0 5.5-7.5 10.1-7.5 10.1z';
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site es-site" data-demo="empty-state">
+    <header class="ug-nav es-nav">
+      <span class="ug-logo">SAMPLE</span>
+      <Btn class="es-tab" {...btn} data-es-tab="search">{L.tabs[0]}</Btn>
+      <Btn class="es-tab" {...btn} data-es-tab="saved" aria-current="page">{L.tabs[1]}</Btn>
+    </header>
+
+    <!-- 保存済みの画面 -->
+    <section class="es-screen" data-es-screen="saved">
+      <h3 class="es-h">{L.savedH}</h3>
+      <!-- これが部品の本体: 0件のときだけ出す。絵・一言・理由・次の行動ボタンの4点 -->
+      <div class="es-empty" data-es-empty data-ug-focus={L.name}>
+        <span class="es-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d={heart} /></svg>
+        </span>
+        <p class="es-empty-h">{L.emptyH}</p>
+        <p class="es-empty-p">{L.emptyP}</p>
+        <Btn class="ug-btn-site es-cta" {...btn} data-es-cta>{L.cta}</Btn>
+      </div>
+      <ul class="es-list" data-es-saved hidden>
+        {L.stays.map((s, i) => (
+          <li class="es-row" data-es-saved-row={i} hidden>
+            <span class="es-thumb"><Scene tone={s.tone as 'day' | 'sunset' | 'night'} /></span>
+            <span class="es-txt"><b>{s.t}</b><small>{s.p}</small></span>
+            <Btn class="es-heart is-on" {...btn} aria-label={L.remove(s.t)} data-es-remove={i}>
+              <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d={heart} /></svg>
+            </Btn>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- 探す画面 -->
+    <section class="es-screen" data-es-screen="search" hidden>
+      <h3 class="es-h">{L.searchH}</h3>
+      <ul class="es-list">
+        {L.stays.map((s, i) => (
+          <li class="es-row">
+            <span class="es-thumb"><Scene tone={s.tone as 'day' | 'sunset' | 'night'} /></span>
+            <span class="es-txt"><b>{s.t}</b><small>{s.p}</small></span>
+            <Btn class="es-heart" {...btn} aria-label={L.save(s.t)} aria-pressed={mini ? undefined : 'false'} data-es-save={i}>
+              <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d={heart} /></svg>
+            </Btn>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .es-site { display: flex; flex-direction: column; min-height: 100%; }
+  .es-nav { gap: 4px; flex: none; }
+  .es-tab {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ug-ink-2);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .es-tab[aria-current='page'] { background: var(--ug-bg); color: var(--ug-ink); }
+  .es-tab:hover, .es-tab.is-hover { color: var(--ug-ink); }
+  .es-screen { display: flex; flex-direction: column; flex: 1; padding: 16px; }
+  .es-screen[hidden] { display: none; }
+  .es-h { font-size: 15px; font-weight: 800; }
+
+  /* 空状態: 真ん中に寄せて、絵・一言・理由・ボタンを縦に。大きさと間隔はつまみ（--t-icon・--t-gap）から */
+  .es-empty {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--t-gap);
+    padding: 16px 8px;
+    text-align: center;
+    animation: es-in 0.3s ease-out;
+  }
+  .es-empty[hidden] { display: none; }
+  @keyframes es-in { from { opacity: 0; transform: translateY(6px); } }
+  .es-icon {
+    display: grid;
+    place-items: center;
+    width: var(--t-icon);
+    height: var(--t-icon);
+    border-radius: 50%;
+    background: #fde9e1;
+    color: var(--ug-orange);
+  }
+  .es-icon svg { width: 50%; height: 50%; }
+  .es-empty-h { font-size: 15px; font-weight: 800; line-height: 1.4; }
+  .es-empty-p { word-break: auto-phrase; text-wrap: pretty; max-width: 300px; margin-top: calc(var(--t-gap) * -0.5); font-size: 12px; color: var(--ug-ink-2); }
+  .es-cta:hover, .es-cta.is-hover { filter: brightness(0.94); }
+  .es-cta:focus-visible, .es-heart:focus-visible, .es-tab:focus-visible { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+
+  .es-list { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+  .es-list[hidden], .es-row[hidden] { display: none; }
+  .es-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border: 1px solid var(--ug-line);
+    border-radius: 12px;
+    background: #fff;
+    animation: es-in 0.25s ease-out;
+  }
+  .es-thumb { flex: none; width: 72px; border-radius: 8px; overflow: hidden; }
+  .es-txt { display: grid; flex: 1; min-width: 0; }
+  .es-txt b { font-size: 13px; }
+  .es-txt small { font-size: 11px; color: var(--ug-ink-2); }
+  .es-heart {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ug-ink-2);
+    fill: none;
+    cursor: pointer;
+  }
+  .es-heart:hover, .es-heart.is-hover { background: var(--ug-bg); }
+  .es-heart.is-on { color: var(--ug-orange); fill: var(--ug-orange); }
+
+  :global(.is-mini) .es-nav { display: none; }
+  :global(.is-mini) .es-screen { padding: 8px 12px; }
+  :global(.is-mini) .es-h { display: none; }
+  :global(.is-mini) .es-empty { padding: 4px; gap: calc(var(--t-gap) * 0.5); }
+  :global(.is-mini) .es-icon { width: calc(var(--t-icon) * 0.75); height: calc(var(--t-icon) * 0.75); }
+  :global(.is-mini) .es-empty-h { font-size: 13px; }
+  :global(.is-mini) .es-empty-p { margin-top: 0; font-size: 10px; max-width: 220px; }
+  :global(.is-mini) .es-cta { min-height: 30px; padding: 0 14px; font-size: 11px; }
+  :global(.is-mini) .es-list { margin-top: 0; gap: 6px; }
+  :global(.is-mini) .es-row { padding: 4px 6px; gap: 8px; }
+  :global(.is-mini) .es-thumb { width: 48px; }
+  :global(.is-mini) .es-heart { width: 30px; height: 30px; }
+  @media (prefers-reduced-motion: reduce) {
+    .es-empty, .es-row { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="empty-state"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const mini = root.closest<HTMLElement>('[data-ug-frame]')?.dataset.size === 'mini';
+    const tabs = [...root.querySelectorAll<HTMLElement>('[data-es-tab]')];
+    const screens = [...root.querySelectorAll<HTMLElement>('[data-es-screen]')];
+    const empty = root.querySelector<HTMLElement>('[data-es-empty]')!;
+    const savedList = root.querySelector<HTMLElement>('[data-es-saved]')!;
+    const savedRows = [...root.querySelectorAll<HTMLElement>('[data-es-saved-row]')];
+    const saveBtns = [...root.querySelectorAll<HTMLElement>('[data-es-save]')];
+    const removeBtns = [...root.querySelectorAll<HTMLElement>('[data-es-remove]')];
+    const cta = root.querySelector<HTMLElement>('[data-es-cta]')!;
+    const saved = new Set<number>();
+
+    const show = (name: string) => {
+      screens.forEach((s) => (s.hidden = s.dataset.esScreen !== name));
+      tabs.forEach((t) => (t.dataset.esTab === name ? t.setAttribute('aria-current', 'page') : t.removeAttribute('aria-current')));
+    };
+    // 0件なら空状態、1件以上なら一覧。どちらか一方だけを出す
+    const paint = () => {
+      const has = saved.size > 0;
+      empty.hidden = has;
+      savedList.hidden = !has;
+      savedRows.forEach((r, i) => (r.hidden = !saved.has(i)));
+      saveBtns.forEach((b, i) => {
+        b.classList.toggle('is-on', saved.has(i));
+        if (!mini) b.setAttribute('aria-pressed', String(saved.has(i)));
+      });
+    };
+    const toggle = (i: number) => {
+      saved.has(i) ? saved.delete(i) : saved.add(i);
+      paint();
+    };
+    const on = (el: HTMLElement, fn: () => void) => {
+      el.addEventListener('click', fn);
+      el.addEventListener('ug:click', fn);
+    };
+    tabs.forEach((t) => on(t, () => show(t.dataset.esTab!)));
+    on(cta, () => show('search'));
+    saveBtns.forEach((b, i) => on(b, () => toggle(i)));
+    removeBtns.forEach((b, i) => on(b, () => {
+      saved.delete(i);
+      paint();
+      // 最後の1件を外したら、焦点を空状態のボタンへ（行き場を失わないように）
+      if (!mini && saved.size === 0) cta.focus({ preventScroll: true });
+    }));
+
+    const reset = () => {
+      saved.clear();
+      show('saved');
+      paint();
+    };
+    view.addEventListener('ug:reset', reset);
+    reset();
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.95 }, 10);
+      await t.sleep(1800);
+      await t.move(cta, 800);
+      t.hover(cta);
+      await t.sleep(300);
+      await t.click(cta);
+      t.hover(null);
+      await t.sleep(1000);
+      await t.move(saveBtns[1], 800);
+      t.hover(saveBtns[1]);
+      await t.sleep(250);
+      await t.click(saveBtns[1]);
+      t.hover(null);
+      await t.sleep(900);
+      const savedTab = tabs.find((x) => x.dataset.esTab === 'saved')!;
+      if (savedTab.offsetParent) {
+        await t.move(savedTab, 800);
+        t.hover(savedTab);
+        await t.sleep(250);
+        await t.click(savedTab);
+        t.hover(null);
+      } else {
+        show('saved');
+      }
+      await t.sleep(1600);
+      await t.move(removeBtns[1], 800);
+      t.hover(removeBtns[1]);
+      await t.sleep(250);
+      await t.click(removeBtns[1]);
+      t.hover(null);
+      await t.sleep(1800);
+    });
+  });
+</script>

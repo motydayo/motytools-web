@@ -1,0 +1,406 @@
+---
+// UI部品の見本: デートピッカー（カレンダーから日付を選ぶ）
+// 空き状況と料金を日ごとに見せたいので、カレンダーは自作（記事のコードは <input type="date"> が土台）。
+// 決まりごと: 入力欄のボタンで開く／矢印キーで日を移動／PageUp・PageDown で月を移動／Enter で決定／Esc で閉じて元のボタンへ戻る。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: 'デートピッカー',
+    nav: ['お部屋', '料金'],
+    title: '山の宿 こもれび',
+    meta: '1泊2食つき・大人2名',
+    field: 'チェックイン',
+    empty: '日付を選ぶ',
+    dlg: 'チェックイン日を選ぶ',
+    prev: '前の月',
+    next: '次の月',
+    close: '閉じる',
+    legend: '満室の日は選べません',
+    book: '空室を確認する',
+  },
+  en: {
+    name: 'Date picker',
+    nav: ['Rooms', 'Rates'],
+    title: 'Aspen Ridge Lodge',
+    meta: 'Breakfast included · 2 adults',
+    field: 'Check-in',
+    empty: 'Select a date',
+    dlg: 'Choose a check-in date',
+    prev: 'Previous month',
+    next: 'Next month',
+    close: 'Close',
+    legend: 'Sold-out dates can’t be selected',
+    book: 'Check availability',
+  },
+}[lang as 'ja' | 'en'];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site dp-site" data-demo="date-picker" data-lang={lang} data-field={L.field}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec dp-sec">
+      <h3 class="ug-h">{L.title}</h3>
+      <p class="dp-meta">{L.meta}</p>
+
+      <div class="dp-wrap">
+        <p class="dp-name">{L.field}</p>
+        <Btn class="dp-field" {...btn} aria-haspopup={mini ? undefined : 'dialog'} aria-expanded={mini ? undefined : 'false'} data-dp-field>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
+          <span class="dp-value is-empty" data-dp-value>{L.empty}</span>
+        </Btn>
+
+        <!-- これが部品の本体: 入力欄の下にカレンダーが開き、日を押して選ぶ -->
+        <div class="dp-pop" role={mini ? undefined : 'dialog'} aria-label={mini ? undefined : L.dlg} hidden={!mini} data-dp-pop data-ug-focus={L.name} data-ug-focus-at="below">
+          <div class="dp-head">
+            <Btn class="dp-nav" {...btn} aria-label={L.prev} data-dp-prev>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+            </Btn>
+            <p class="dp-month" aria-live="polite" data-dp-month></p>
+            <Btn class="dp-nav" {...btn} aria-label={L.next} data-dp-next>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            </Btn>
+          </div>
+          <table class="dp-table" role={mini ? 'presentation' : 'grid'} data-dp-table>
+            <thead><tr data-dp-dow></tr></thead>
+            <tbody data-dp-body></tbody>
+          </table>
+          <p class="dp-legend"><i aria-hidden="true"></i>{L.legend}</p>
+        </div>
+      </div>
+
+      <p class="dp-status" role="status" data-dp-status></p>
+      <Btn class="ug-btn-site dp-book" {...btn}>{L.book}</Btn>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .dp-site { min-height: 100%; }
+  .dp-meta { font-size: 12px; color: var(--ug-ink-2); }
+  .dp-wrap { position: relative; margin-top: 12px; max-width: 360px; }
+  .dp-name { margin-bottom: 4px; font-size: 12px; font-weight: 700; color: var(--ug-ink-2); }
+  .dp-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1.5px solid #c9c7c0;
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 15px;
+    color: var(--ug-ink);
+    text-align: left;
+    cursor: pointer;
+  }
+  .dp-field[aria-expanded='true'], .dp-field.is-open { border-color: var(--ug-blue); box-shadow: 0 0 0 3px rgba(79, 115, 217, 0.2); }
+  .dp-field:focus-visible { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+  .dp-field svg { flex: none; color: var(--ug-ink-2); }
+  .dp-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .dp-value.is-empty { font-weight: 400; color: #9a978f; }
+
+  /* カレンダーの小窓。1マスの大きさ・選んだ色はつまみ（--t-cell・--t-color）から */
+  .dp-pop {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 10;
+    box-sizing: border-box;
+    width: max-content;
+    max-width: 100%;
+    padding: 8px;
+    border: 1px solid var(--ug-line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 16px 32px -16px rgba(20, 24, 40, 0.45);
+    animation: dp-in 0.2s ease-out;
+  }
+  .dp-pop[hidden] { display: none; }
+  @keyframes dp-in { from { opacity: 0; transform: translateY(-6px); } }
+  .dp-head { display: flex; align-items: center; justify-content: space-between; }
+  .dp-month { font-size: 14px; font-weight: 800; }
+  .dp-nav {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ug-ink);
+    cursor: pointer;
+  }
+  .dp-nav:hover, .dp-nav.is-hover { background: var(--ug-bg); }
+  .dp-nav:disabled { color: #c9c7c0; cursor: default; background: transparent; }
+  .dp-table { border-collapse: collapse; table-layout: fixed; }
+  .dp-table :global(th) { height: 24px; font-size: 10px; font-weight: 700; color: var(--ug-ink-2); }
+  .dp-table :global(th.is-sun) { color: #c0392b; }
+  .dp-table :global(th.is-sat) { color: #2f5bd0; }
+  .dp-table :global(td) { width: var(--t-cell); padding: 1px; }
+  .dp-table :global(.dp-day) {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    width: 100%;
+    height: var(--t-cell);
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ug-ink);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: background-color 0.15s ease-out;
+  }
+  /* 料金（自作カレンダーにする理由。標準の日付入力では出せない） */
+  .dp-table :global(.dp-day small) { font-size: 9px; font-weight: 500; color: var(--ug-ink-2); }
+  .dp-table :global(.dp-day:hover), .dp-table :global(.dp-day.is-hover) { background: var(--ug-bg); }
+  .dp-table :global(.dp-day.is-sel) { background: var(--t-color); color: #fff; }
+  .dp-table :global(.dp-day.is-sel small) { color: #fff; }
+  .dp-table :global(.dp-day:focus-visible) { outline: 3px solid var(--ug-blue); outline-offset: -1px; }
+  /* 満室・過去の日: 選べない */
+  .dp-table :global(.dp-day:disabled), .dp-table :global(.dp-day.is-off) { color: #b9b6ae; text-decoration: line-through; cursor: default; background: transparent; }
+  .dp-legend { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 10px; color: var(--ug-ink-2); }
+  .dp-legend i { width: 14px; height: 1px; background: #b9b6ae; }
+  .dp-status { min-height: 20px; margin-top: 12px; font-size: 12px; font-weight: 700; color: #1f7a4d; }
+  .dp-book { margin-top: 4px; }
+
+  /* 一覧の小さな見本: カレンダーを開いたまま、小さく見せる */
+  :global(.ug-frame.is-mini) .dp-site .ug-nav,
+  :global(.ug-frame.is-mini) .dp-sec > .ug-h,
+  :global(.ug-frame.is-mini) .dp-meta,
+  :global(.ug-frame.is-mini) .dp-name,
+  :global(.ug-frame.is-mini) .dp-field,
+  :global(.ug-frame.is-mini) .dp-legend { display: none; }
+  :global(.ug-frame.is-mini) .dp-sec { padding: 8px 12px; }
+  :global(.ug-frame.is-mini) .dp-wrap { margin: 0 auto; }
+  :global(.ug-frame.is-mini) .dp-pop { position: relative; top: 0; margin: 0 auto; padding: 4px 8px; animation: none; }
+  :global(.ug-frame.is-mini) .dp-nav { width: 28px; height: 28px; }
+  :global(.ug-frame.is-mini) .dp-table :global(th) { height: 16px; }
+  :global(.ug-frame.is-mini) .dp-table :global(td) { width: 32px; }
+  :global(.ug-frame.is-mini) .dp-table :global(.dp-day) { height: 22px; font-size: 11px; }
+  :global(.ug-frame.is-mini) .dp-table :global(.dp-day small) { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dp-pop { animation: none; }
+    .dp-table :global(.dp-day) { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour, onTune, tuneStr } from '../../../lib/ugoki/runtime';
+
+  // 宿の空き状況と料金（見本用の決まった値）
+  const SOLD = new Set(['2026-11-07', '2026-11-14', '2026-11-21', '2026-11-22', '2026-12-24', '2026-12-31']);
+  const HOLIDAY = new Set(['2026-11-03', '2026-11-23']);
+  const TODAY = new Date(2026, 9, 15);
+  const FIRST = new Date(2026, 9, 1);
+  const LAST = new Date(2026, 11, 1);
+  const key = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const price = (d: Date) => 12000 + (d.getDay() === 5 ? 3000 : 0) + (d.getDay() === 6 ? 6000 : 0) + (HOLIDAY.has(key(d)) ? 4000 : 0);
+
+  document.querySelectorAll<HTMLElement>('[data-demo="date-picker"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const mini = root.closest<HTMLElement>('[data-ug-frame]')?.dataset.size === 'mini';
+    const en = root.dataset.lang === 'en';
+    const field = root.querySelector<HTMLElement>('[data-dp-field]')!;
+    const value = root.querySelector<HTMLElement>('[data-dp-value]')!;
+    const pop = root.querySelector<HTMLElement>('[data-dp-pop]')!;
+    const monthEl = root.querySelector<HTMLElement>('[data-dp-month]')!;
+    const dow = root.querySelector<HTMLElement>('[data-dp-dow]')!;
+    const body = root.querySelector<HTMLElement>('[data-dp-body]')!;
+    const prev = root.querySelector<HTMLElement>('[data-dp-prev]')!;
+    const next = root.querySelector<HTMLElement>('[data-dp-next]')!;
+    const status = root.querySelector<HTMLElement>('[data-dp-status]')!;
+    const emptyText = value.textContent ?? '';
+
+    const fmtLong = (d: Date) =>
+      en
+        ? d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+        : `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日（${'日月火水木金土'[d.getDay()]}）`;
+    const fmtPrice = (n: number, short = false) =>
+      en ? `$${Math.round(n / 100)}` : short ? `${(n / 10000).toFixed(1)}万` : `${n.toLocaleString('ja-JP')}円`;
+    const fmtMonth = (d: Date) => (en ? d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : `${d.getFullYear()}年${d.getMonth() + 1}月`);
+
+    let month = new Date(2026, 10, 1);
+    let selected: Date | null = null;
+    let focusDay = new Date(2026, 10, 1);
+
+    const weekStart = () => (tuneStr(root, 'week', 'sun') === 'mon' ? 1 : 0);
+    const isOff = (d: Date) => d < TODAY || SOLD.has(key(d));
+    const same = (a: Date | null, b: Date) => !!a && key(a) === key(b);
+
+    const render = (moveFocus = false) => {
+      const ws = weekStart();
+      const names = en ? ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] : ['日', '月', '火', '水', '木', '金', '土'];
+      const full = en ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] : names.map((n) => `${n}曜日`);
+      dow.innerHTML = Array.from({ length: 7 }, (_, i) => {
+        const w = (i + ws) % 7;
+        return `<th scope="col" class="${w === 0 ? 'is-sun' : w === 6 ? 'is-sat' : ''}"><abbr title="${full[w]}" style="text-decoration:none">${names[w]}</abbr></th>`;
+      }).join('');
+      monthEl.textContent = fmtMonth(month);
+      const first = new Date(month.getFullYear(), month.getMonth(), 1);
+      const days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
+      const lead = (first.getDay() - ws + 7) % 7;
+      const cells: string[] = [];
+      for (let i = 0; i < lead; i++) cells.push('<td></td>');
+      for (let n = 1; n <= days; n++) {
+        const d = new Date(month.getFullYear(), month.getMonth(), n);
+        const off = isOff(d);
+        const sold = SOLD.has(key(d));
+        const sel = same(selected, d);
+        const p = sold ? (en ? 'Full' : '満') : d < TODAY ? '' : fmtPrice(price(d), true);
+        const label = `${fmtLong(d)} ${sold ? (en ? 'sold out' : '満室') : d < TODAY ? '' : fmtPrice(price(d))}`.trim();
+        const tab = same(focusDay, d) ? '0' : '-1';
+        cells.push(
+          mini
+            ? `<td><span class="dp-day${off ? ' is-off' : ''}${sel ? ' is-sel' : ''}" data-d="${key(d)}">${n}<small>${p}</small></span></td>`
+            : `<td><button type="button" class="dp-day${sel ? ' is-sel' : ''}" data-d="${key(d)}" tabindex="${tab}" aria-label="${label}" aria-pressed="${sel}"${off ? ' disabled' : ''}>${n}<small aria-hidden="true">${p}</small></button></td>`
+        );
+      }
+      while (cells.length % 7) cells.push('<td></td>');
+      const rows: string[] = [];
+      for (let i = 0; i < cells.length; i += 7) rows.push(`<tr>${cells.slice(i, i + 7).join('')}</tr>`);
+      body.innerHTML = rows.join('');
+      const atFirst = month <= FIRST;
+      const atLast = month >= LAST;
+      if (prev instanceof HTMLButtonElement) prev.disabled = atFirst;
+      if (next instanceof HTMLButtonElement) next.disabled = atLast;
+      if (moveFocus) body.querySelector<HTMLElement>(`[data-d="${key(focusDay)}"]`)?.focus({ preventScroll: true });
+    };
+
+    const open = () => {
+      pop.hidden = false;
+      field.setAttribute('aria-expanded', 'true');
+      field.classList.add('is-open');
+      focusDay = selected ?? new Date(2026, 10, 2);
+      month = new Date(focusDay.getFullYear(), focusDay.getMonth(), 1);
+      render(!mini && document.activeElement === field);
+      // カレンダーが枠の下にはみ出すなら、見えるところまで送る
+      if (!mini) {
+        const over = pop.getBoundingClientRect().bottom - view.getBoundingClientRect().bottom + 8;
+        if (over > 0) view.scrollTo({ top: view.scrollTop + over, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      }
+    };
+    const close = (returnFocus = false) => {
+      if (mini) return;
+      pop.hidden = true;
+      field.setAttribute('aria-expanded', 'false');
+      field.classList.remove('is-open');
+      if (returnFocus) field.focus({ preventScroll: true });
+    };
+    const choose = (d: Date, real = true) => {
+      if (isOff(d)) return;
+      selected = d;
+      focusDay = d;
+      value.textContent = fmtLong(d);
+      value.classList.remove('is-empty');
+      status.textContent = en ? `${fmtLong(d)}: ${fmtPrice(price(d))} per night` : `${fmtLong(d)}・1泊 ${fmtPrice(price(d))}`;
+      render();
+      close(real);
+    };
+    const moveMonth = (n: number) => {
+      const m = new Date(month.getFullYear(), month.getMonth() + n, 1);
+      if (m < FIRST || m > LAST) return;
+      month = m;
+      focusDay = new Date(m.getFullYear(), m.getMonth(), Math.min(focusDay.getDate(), new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate()));
+      render();
+    };
+
+    field.addEventListener('click', () => (pop.hidden ? open() : close()));
+    field.addEventListener('ug:click', () => (pop.hidden ? open() : undefined));
+    prev.addEventListener('click', () => moveMonth(-1));
+    next.addEventListener('click', () => moveMonth(1));
+    next.addEventListener('ug:click', () => moveMonth(1));
+    prev.addEventListener('ug:click', () => moveMonth(-1));
+    body.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('[data-d]');
+      if (b) choose(new Date(`${b.dataset.d}T00:00`));
+    });
+    body.addEventListener('ug:click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('[data-d]');
+      if (b) choose(new Date(`${b.dataset.d}T00:00`), false);
+    });
+    // キーボード: 矢印で1日・1週、PageUp/PageDown で月、Home/End で週の端、Esc で閉じる
+    pop.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close(true);
+        return;
+      }
+      const delta: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
+      let d: Date | null = null;
+      if (e.key in delta) d = new Date(focusDay.getFullYear(), focusDay.getMonth(), focusDay.getDate() + delta[e.key]);
+      else if (e.key === 'PageUp' || e.key === 'PageDown') d = new Date(focusDay.getFullYear(), focusDay.getMonth() + (e.key === 'PageUp' ? -1 : 1), focusDay.getDate());
+      else if (e.key === 'Home') d = new Date(focusDay.getFullYear(), focusDay.getMonth(), focusDay.getDate() - ((focusDay.getDay() - weekStart() + 7) % 7));
+      else if (e.key === 'End') d = new Date(focusDay.getFullYear(), focusDay.getMonth(), focusDay.getDate() + 6 - ((focusDay.getDay() - weekStart() + 7) % 7));
+      if (!d || !(e.target as HTMLElement).closest('[data-d]')) return;
+      e.preventDefault();
+      const m = new Date(d.getFullYear(), d.getMonth(), 1);
+      if (m < FIRST || m > LAST) return;
+      focusDay = d;
+      month = m;
+      render(true);
+    });
+    // 外を押したら閉じる
+    root.addEventListener('pointerdown', (e) => {
+      if (!pop.hidden && !pop.contains(e.target as Node) && !field.contains(e.target as Node)) close();
+    });
+    onTune(view, () => render());
+
+    const reset = () => {
+      selected = null;
+      value.textContent = emptyText;
+      value.classList.add('is-empty');
+      status.textContent = '';
+      month = new Date(2026, 10, 1);
+      focusDay = new Date(2026, 10, 2);
+      if (mini) render();
+      else {
+        close();
+        view.scrollTop = 0;
+      }
+    };
+    view.addEventListener('ug:reset', reset);
+    reset();
+    if (mini) render();
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.75, y: t.view.clientHeight * 0.85 }, 10);
+      await t.sleep(500);
+      if (!mini) {
+        await t.move(field, 700);
+        t.hover(field);
+        await t.sleep(200);
+        await t.click(field);
+        t.hover(null);
+        await t.sleep(900);
+      }
+      // 満室の日に乗せてから、空いている日を選ぶ
+      const soldEl = body.querySelector<HTMLElement>('[data-d="2026-11-07"]');
+      if (soldEl) {
+        await t.move(soldEl, 700);
+        await t.sleep(700);
+      }
+      const day = body.querySelector<HTMLElement>('[data-d="2026-11-03"]')!;
+      await t.move(day, 700);
+      t.hover(day);
+      await t.sleep(300);
+      await t.click(day);
+      t.hover(null);
+      await t.sleep(2200);
+    });
+  });
+</script>

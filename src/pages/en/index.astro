@@ -1,0 +1,76 @@
+---
+// 英語版の入口。2冊の図鑑への案内だけを置く
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../config';
+import { BOOKS } from '../../data/zukan';
+
+const motion = BOOKS.ugoki.en;
+const ui = BOOKS.ui.en;
+const title = 'Web Motion & UI Component Libraries: Names, Live Demos, Code';
+const description = `Live, tweakable demos of ${motion.entries.length} web animation effects and ${ui.entries.length} UI components — each with its proper name, when to use it, copy-ready code and a prompt you can paste into an AI.`;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: title,
+    description,
+    url: `${SITE.url}/en/`,
+    inLanguage: 'en',
+    hasPart: [
+      { '@type': 'CollectionPage', name: motion.name, url: `${SITE.url}${motion.base}` },
+      { '@type': 'CollectionPage', name: ui.name, url: `${SITE.url}${ui.base}` },
+    ],
+  },
+];
+const books = [
+  { b: motion, sub: 'Sticky headers, parallax, marquees, scroll snap, hover effects and more.', examples: motion.entries.slice(0, 6) },
+  { b: ui, sub: 'Modals, drawers, bottom sheets, toggles, breadcrumbs, carousels and more.', examples: ui.entries.slice(0, 6) },
+];
+---
+
+<BaseLayout title={title} absoluteTitle description={description} path="/en/" ogImage="/og/ugoki-en/index.png" jsonLd={jsonLd} lang="en">
+  <div class="container en-home">
+    <header class="en-head">
+      <h1>Web Motion &amp; UI Component Libraries</h1>
+      <p>“Make it look nice” gets you random animations and half-right components. Every pattern on the web has a name. Look it up here, play with a live demo, copy the code, or paste a precise prompt into Claude or ChatGPT.</p>
+    </header>
+    <div class="en-books">
+      {books.map(({ b, sub, examples }) => (
+        <a class="en-book" href={b.base}>
+          <span class="en-book-name">{b.name}</span>
+          <span class="en-book-count">{b.entries.length} patterns</span>
+          <span class="en-book-sub">{sub}</span>
+          <span class="en-book-ex">{examples.map((e) => e.name).join(' · ')}</span>
+          <span class="en-book-go">Browse the library<span aria-hidden="true">&nbsp;→</span></span>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .en-home { padding: var(--sp-6) var(--sp-4) var(--sp-8); }
+  .en-head { max-width: var(--article); }
+  .en-head h1 { font-size: clamp(30px, 5vw, 40px); font-weight: 800; line-height: 1.2; }
+  .en-head p { margin-top: var(--sp-3); font-size: var(--fs-md); color: var(--text-2); line-height: 1.7; }
+  .en-books { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-top: var(--sp-6); }
+  @media (max-width: 640px) { .en-books { grid-template-columns: 1fr; } }
+  .en-book {
+    display: grid;
+    gap: var(--sp-2);
+    padding: var(--sp-5);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.15s, transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+  .en-book:hover { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: 0 12px 28px -14px rgba(24, 24, 27, 0.35); }
+  .en-book:active { transform: translateY(0); }
+  .en-book-name { font-size: var(--fs-xl); font-weight: 800; }
+  .en-book-count { font-size: var(--fs-sm); font-weight: 700; color: var(--accent); }
+  .en-book-sub { color: var(--text-2); line-height: 1.6; }
+  .en-book-ex { font-size: var(--fs-sm); color: var(--text-3); line-height: 1.6; }
+  .en-book-go { margin-top: var(--sp-2); font-weight: 700; color: var(--accent); }
+</style>

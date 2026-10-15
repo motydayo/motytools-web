@@ -1,23 +1,43 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const mini = size === 'mini';
 // 一覧の小さな見本は外側がリンクなので、中に押せる要素を置かない（span で代用）
 const Link = mini ? 'span' : 'a';
-const toc = [
-  { key: 'feature', name: '特長' },
-  { key: 'price', name: '料金' },
-  { key: 'access', name: 'アクセス' },
-  { key: 'faq', name: 'FAQ' },
-];
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'スムーススクロール',
+    url: 'kohan-no-yado.jp',
+    logo: '湖畔の宿',
+    toc: '目次',
+    links: { feature: '特長', price: '料金', access: 'アクセス', faq: 'FAQ' },
+    heads: { feature: '特長', price: '料金', access: 'アクセス', faq: 'よくある質問' },
+    hero: '湖まで徒歩1分の、小さな宿。',
+    cards: ['湖が見える客室', '夕食は地元の魚', '星空のデッキ'],
+    prices: [['素泊まり', '1泊 8,800円〜'], ['朝食付き', '1泊 10,500円〜'], ['1泊2食付き', '1泊 14,000円〜']],
+  },
+  en: {
+    name: 'Smooth scroll',
+    url: 'lakesideinn.com',
+    logo: 'Lakeside Inn',
+    toc: 'On this page',
+    links: { feature: 'Rooms', price: 'Rates', access: 'Directions', faq: 'FAQ' },
+    heads: { feature: 'Rooms', price: 'Rates', access: 'Getting here', faq: 'FAQ' },
+    hero: 'A small inn, one minute from the lake.',
+    cards: ['Lake-view rooms', 'Local fish for dinner', 'Stargazing deck'],
+    prices: [['Room only', 'From $65 / night'], ['With breakfast', 'From $78 / night'], ['Dinner & breakfast', 'From $105 / night']],
+  },
+}[lang as 'ja' | 'en'];
+const toc = (['feature', 'price', 'access', 'faq'] as const).map((key) => ({ key, name: L.links[key] }));
 ---
 
-<UgFrame mode="script" size={size} label="スムーススクロール" url="kohan-no-yado.jp">
+<UgFrame mode="script" size={size} label={L.name} url={L.url} lang={lang}>
   <div class="ug-site ss-site" data-demo="smooth-scroll">
     <!-- 目次リンク。押すと、枠の中がなめらかに該当の見出しまで移動する -->
-    <nav class="ss-nav" data-ug-focus="スムーススクロール" data-ug-focus-at="below" aria-label="ページ内の目次">
-      <Link class="ss-logo" href={mini ? undefined : '#top'} data-ss-link="top">湖畔の宿</Link>
+    <nav class="ss-nav" data-ug-focus={L.name} data-ug-focus-at="below" aria-label={L.toc}>
+      <Link class="ss-logo" href={mini ? undefined : '#top'} data-ss-link="top">{L.logo}</Link>
       {toc.map((x) => (
         <Link class="ss-link" href={mini ? undefined : `#${x.key}`} data-ss-link={x.key}>{x.name}</Link>
       ))}
@@ -27,56 +47,46 @@ const toc = [
       <Scene tone="day" wide />
       <div class="ss-hero-copy">
         <p class="ug-label">LAKESIDE STAY</p>
-        <h3 class="ug-h">湖まで徒歩1分の、小さな宿。</h3>
+        <h3 class="ug-h">{L.hero}</h3>
         <div class="ug-lines"><i></i><i></i></div>
       </div>
     </section>
 
     <section class="ug-sec ss-sec">
-      <h3 class="ss-h" data-ss-target="feature"><span>特長</span></h3>
+      <h3 class="ss-h" data-ss-target="feature"><span>{L.heads.feature}</span></h3>
       <div class="ug-grid">
-        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">湖が見える客室</div></div>
-        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">夕食は地元の魚</div></div>
-        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">星空のデッキ</div></div>
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.cards[0]}</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">{L.cards[1]}</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.cards[2]}</div></div>
       </div>
       <div class="ug-lines"><i></i><i></i><i></i></div>
     </section>
 
     <section class="ug-sec ss-sec">
-      <h3 class="ss-h" data-ss-target="price"><span>料金</span></h3>
+      <h3 class="ss-h" data-ss-target="price"><span>{L.heads.price}</span></h3>
       <dl class="ss-price">
-        <div><dt>素泊まり</dt><dd>1泊 8,800円〜</dd></div>
-        <div><dt>朝食付き</dt><dd>1泊 10,500円〜</dd></div>
-        <div><dt>1泊2食付き</dt><dd>1泊 14,000円〜</dd></div>
+        {L.prices.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
       </dl>
       <div class="ug-lines"><i></i><i></i></div>
     </section>
 
     <section class="ug-sec ss-sec">
-      <h3 class="ss-h" data-ss-target="access"><span>アクセス</span></h3>
+      <h3 class="ss-h" data-ss-target="access"><span>{L.heads.access}</span></h3>
       <div class="ss-map"><Scene tone="sunset" wide /></div>
       <div class="ug-lines"><i></i><i></i><i></i></div>
     </section>
 
     <section class="ug-sec ss-sec">
-      <h3 class="ss-h" data-ss-target="faq"><span>よくある質問</span></h3>
+      <h3 class="ss-h" data-ss-target="faq"><span>{L.heads.faq}</span></h3>
       <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </section>
-
-    {!mini && (
-      <button type="button" class="ss-toggle" data-ss-toggle aria-pressed="true">
-        <span class="ss-switch" aria-hidden="true"></span>
-        なめらかに動かす
-      </button>
-    )}
   </div>
 </UgFrame>
 
 <style>
   /* これが演出の本体: スクロールする箱に scroll-behavior: smooth を指定するだけ。
-     見本ではスクロールする箱が枠（.ug-view）なので、そこに指定する */
-  :global(.ug-view:has(> [data-demo='smooth-scroll'])) { scroll-behavior: smooth; }
-  :global(.ug-view.ss-off:has(> [data-demo='smooth-scroll'])) { scroll-behavior: auto; }
+     見本ではスクロールする箱が枠（.ug-view）なので、そこに指定する。smooth / auto はつまみ（--t-behavior）から */
+  :global(.ug-view:has(> [data-demo='smooth-scroll'])) { scroll-behavior: var(--t-behavior); }
   @media (prefers-reduced-motion: reduce) {
     :global(.ug-view:has(> [data-demo='smooth-scroll'])) { scroll-behavior: auto; }
   }
@@ -88,7 +98,7 @@ const toc = [
     display: flex;
     align-items: center;
     gap: 4px;
-    height: 48px;
+    height: 56px;
     padding: 0 12px 0 16px;
     background: #fff;
     border-bottom: 1px solid var(--ug-line);
@@ -115,8 +125,8 @@ const toc = [
   .ss-hero :global(.ug-scene) { height: 150px; aspect-ratio: auto; }
   .ss-hero-copy { padding: 16px; }
   .ss-sec { min-height: 260px; }
-  /* 追従ヘッダーの下に見出しが隠れないよう、止まる位置を48px下げる */
-  .ss-h { scroll-margin-top: 56px; margin-bottom: 12px !important; font-size: 17px; font-weight: 800; }
+  /* 追従ヘッダー（高さ56px）の下に見出しが隠れないよう、止まる位置を下げる。量はつまみ（--t-margin）から */
+  .ss-h { scroll-margin-top: var(--t-margin); margin-bottom: 12px !important; font-size: 17px; font-weight: 800; }
   .ss-h span { padding: 0 2px; }
   /* 着いた見出しに、少しの間だけ印を付ける */
   .ss-h.is-arrived span { background: linear-gradient(transparent 58%, var(--ug-orange-2) 58%); }
@@ -125,31 +135,6 @@ const toc = [
   .ss-price dt { font-weight: 700; }
   .ss-price dd { margin: 0; font-weight: 700; color: var(--ug-orange); font-variant-numeric: tabular-nums; }
   .ss-map { border-radius: 10px; overflow: hidden; }
-
-  .ss-toggle {
-    position: sticky;
-    bottom: 12px;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 36px;
-    margin: 0 12px 12px auto;
-    padding: 0 14px 0 8px;
-    border: 1px solid var(--ug-line);
-    border-radius: 999px;
-    background: #fff;
-    color: var(--ug-ink);
-    font: inherit;
-    font-size: 11px;
-    font-weight: 700;
-    box-shadow: 0 6px 16px -8px rgba(29, 37, 65, 0.35);
-    cursor: pointer;
-  }
-  .ss-switch { position: relative; width: 28px; height: 16px; border-radius: 999px; background: #c9c6be; transition: background-color 0.15s ease-out; }
-  .ss-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; transition: transform 0.15s ease-out; }
-  .ss-toggle[aria-pressed='true'] .ss-switch { background: var(--ug-blue); }
-  .ss-toggle[aria-pressed='true'] .ss-switch::after { transform: translateX(12px); }
 
   @container (max-width: 340px) {
     .ss-nav { padding: 0 8px 0 12px; gap: 0; }
@@ -167,7 +152,6 @@ const toc = [
     if (!view) return;
     const links = [...root.querySelectorAll<HTMLElement>('[data-ss-link]')];
     const targetOf = (key: string) => root.querySelector<HTMLElement>(`[data-ss-target="${key}"]`);
-    const toggle = root.querySelector<HTMLElement>('[data-ss-toggle]');
     let markTimer = 0;
 
     const mark = (key: string) => {
@@ -204,12 +188,6 @@ const toc = [
         jump(key);
       });
       l.addEventListener('ug:click', () => jump(key));
-    });
-
-    toggle?.addEventListener('click', () => {
-      const on = toggle.getAttribute('aria-pressed') !== 'true';
-      toggle.setAttribute('aria-pressed', String(on));
-      view.classList.toggle('ss-off', !on);
     });
 
     const reset = () => {

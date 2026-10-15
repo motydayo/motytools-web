@@ -28,7 +28,7 @@ export default {
     'ネットショップの商品ページなど、最後まで読むことが目的ではないページ',
   ],
   prompt:
-    '記事ページに「スクロールプログレスバー（reading progress bar、読了バー）」を付けてください。画面の上端（追従ヘッダーの真下）に高さ4pxのオレンジ色の線を position: sticky で固定し、読み進めた割合（スクロール量÷スクロールできる最大量）だけ左から伸ばしてください。伸ばすのは width ではなく transform: scaleX で、scroll イベントは requestAnimationFrame で間引いてください。線には role="progressbar" と aria-valuenow を付けて、読み上げにも割合が伝わるようにしてください。ライブラリは使わないでください。線には transition を付けず、スクロールにそのまま合わせてください（動きを減らす設定 prefers-reduced-motion の人にも負担が小さいため）。',
+    '記事ページに「スクロールプログレスバー（reading progress bar、読了バー）」を付けてください。画面の上端（追従ヘッダーの真下）に太さ{{thick:t}}・色 {{color}} の線を position: sticky で固定し、読み進めた割合（スクロール量÷スクロールできる最大量）だけ左から伸ばしてください。伸ばすのは width ではなく transform: scaleX で、scroll イベントは requestAnimationFrame で間引いてください。線には role="progressbar" と aria-valuenow を付けて、読み上げにも割合が伝わるようにしてください。ライブラリは使わないでください。線が追いつくまでの時間（transform の transition）は{{lag:t}}にしてください。0なら transition を付けず、スクロールにそのまま合わせます（動きを減らす設定 prefers-reduced-motion の人にも負担が小さいため、これがおすすめです）。',
   howTo: [
     '割合の計算は「いまのスクロール量 ÷ スクロールできる最大量（ページの高さ − 画面の高さ）」の1行です。0なら先頭、1なら最後まで読んだことになります。この値を線の横の伸び縮み（transform: scaleX）にそのまま入れ、左端を起点に伸ばします。',
     'width を書き換えるより transform の方がブラウザの負担が小さく、スクロール中もなめらかです。scroll イベントは requestAnimationFrame（画面の描き替えに合わせて1回だけ実行する仕組み）でまとめて処理します。なお、新しいブラウザではCSSの animation-timeline: scroll() でJavaScriptなしでも作れますが、まだ対応していないブラウザがあるため、ここではJavaScriptで作っています。',
@@ -54,15 +54,16 @@ export default {
   position: sticky; /* ヘッダーがあるなら、その中か真下に置く */
   top: 0;
   z-index: 10;
-  height: 4px;
+  height: {{thick}};
   background: #e4e2dc;
 }
 .progress-bar {
   display: block;
   height: 100%;
-  background: #f06a35;
+  background: {{color}};
   transform: scaleX(var(--p, 0)); /* 0〜1 で伸び縮み */
   transform-origin: left center;  /* 左端を起点にする */
+  transition: transform {{lag}} ease-out; /* 0s（付けない）がおすすめ */
 }`,
     },
     {
@@ -88,6 +89,11 @@ window.addEventListener('scroll', () => {
 window.addEventListener('resize', update);
 update();`,
     },
+  ],
+  tune: [
+    { key: 'thick', label: '線の太さ', min: 2, max: 10, step: 1, value: 4, unit: 'px' },
+    { key: 'color', type: 'color', label: '線の色', value: '#f06a35' },
+    { key: 'lag', label: '線が追いつくまでの時間', min: 0, max: 0.6, step: 0.05, value: 0, unit: 's' },
   ],
   cautions: [
     'フッターや関連記事の一覧まで含めて計算すると、本文を読み終えても線が右端まで届きません。本文（article）の範囲だけで割合を出すと、より正確になります。',

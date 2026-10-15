@@ -28,7 +28,7 @@ export default {
     '移動のたびに画面全体を大きく回したり拡大したりする作り（動きが苦手な人には負担が大きい）',
   ],
   prompt:
-    'サイト内のページ移動に「ページ遷移アニメーション（page transition）」を付けてください。View Transitions API を使い、すべてのページのCSSに @view-transition { navigation: auto; } を書いて、古い画面は0.2秒で ease-in のフェードアウト、新しい画面は右から24px・0.3秒の ease-out でフェードインさせてください。対応していないブラウザでは何もしない（ふつうに切り替わる）ままで構いません。prefers-reduced-motion が reduce の人にはアニメーションを付けないでください。JavaScriptやライブラリは使わないでください。',
+    'サイト内のページ移動に「ページ遷移アニメーション（page transition）」を付けてください。View Transitions API を使い、すべてのページのCSSに @view-transition { navigation: auto; } を書いて、古い画面は{{exit:t}}で ease-in のフェードアウト、新しい画面は右から{{shift:t}}・{{enter:t}}の ease-out でフェードインさせてください。対応していないブラウザでは何もしない（ふつうに切り替わる）ままで構いません。prefers-reduced-motion が reduce の人にはアニメーションを付けないでください。JavaScriptやライブラリは使わないでください。',
   howTo: [
     '別々のHTMLページ同士なら、両方のページのCSSに @view-transition { navigation: auto; } と書くだけで、移動のたびに画面がふわっと入れ替わります（同じサイト内の移動だけが対象です）。動きを変えたいときは、::view-transition-old(root)（古い画面の写し）と ::view-transition-new(root)（新しい画面の写し）にアニメーションを指定します。対応していないブラウザでは、ふつうに切り替わるだけで壊れることはありません。',
     '見本のように1ページの中で画面を入れ替える場合は、JavaScript の document.startViewTransition() に「画面を入れ替える処理」を渡します。使えないブラウザ向けには、animate()（JavaScriptから動きを付けるブラウザ標準の仕組み）で同じ動きを代わりに付けておけば、どの環境でもほぼ同じ見た目になります。',
@@ -44,16 +44,16 @@ export default {
 
 /* 古い画面はすっと消え、新しい画面は右から少し入る */
 ::view-transition-old(root) {
-  animation: page-out 0.2s ease-in both;
+  animation: page-out {{exit}} ease-in both;
 }
 ::view-transition-new(root) {
-  animation: page-in 0.3s ease-out both;
+  animation: page-in {{enter}} ease-out both;
 }
 @keyframes page-out {
   to { opacity: 0; }
 }
 @keyframes page-in {
-  from { opacity: 0; transform: translateX(24px); }
+  from { opacity: 0; transform: translateX({{shift}}); }
 }
 
 /* 動きを減らす設定なら、アニメーションしない */
@@ -96,8 +96,8 @@ const show = (toDetail) => {
   if (reduce.matches) return;
   const next = toDetail ? detail : list;
   next.animate(
-    [{ opacity: 0, transform: 'translateX(24px)' }, { opacity: 1, transform: 'none' }],
-    { duration: 300, easing: 'ease-out' }
+    [{ opacity: 0, transform: 'translateX({{shift}})' }, { opacity: 1, transform: 'none' }],
+    { duration: {{enter:n}} * 1000, easing: 'ease-out' }
   );
 };
 
@@ -108,10 +108,15 @@ document.querySelector('.go-detail').addEventListener('click', (e) => {
 document.querySelector('.go-back').addEventListener('click', () => show(false));`,
     },
   ],
+  tune: [
+    { key: 'exit', label: '古い画面が消える速さ', min: 0.05, max: 0.6, step: 0.05, value: 0.2, unit: 's' },
+    { key: 'enter', label: '新しい画面が入る速さ', min: 0.1, max: 0.8, step: 0.05, value: 0.3, unit: 's' },
+    { key: 'shift', label: '入ってくる距離', min: 0, max: 80, step: 4, value: 24, unit: 'px' },
+  ],
   cautions: [
-    '別ページ間の @view-transition は Chrome・Edge・Safari（18.2以降）で動きます。Firefox など対応が追いついていないブラウザもあるので、使う前に「Can I use」などの対応表で最新の状況を確かめてください。対応していないブラウザではふつうに切り替わるだけなので、それを前提に設計してください。',
+    '別ページ間の @view-transition は、Chrome・Edge は126以降、Safari は18.2以降で動きます。Firefox は対応の途中なので、使う前に「Can I use」などの対応表で最新の状況を確かめてください。対応していないブラウザではふつうに切り替わるだけなので、それを前提に設計してください。',
     '移動先のページの表示が遅いと、アニメーションも始まらずに待たされます。演出で遅さはごまかせないので、まずページ自体を軽くしてください。',
-    '演出の時間は0.2〜0.35秒に収めてください。長くすると、移動のたびに待たされている感覚になります。',
+    '演出の時間は0.2〜0.35秒に収めてください。長くすると、移動のたびに待たされている感覚になります。見本のつまみで0.6秒以上にしてみると、その重さがよく分かります。',
     '画面全体が横に大きく動く演出は、動きが苦手な人には酔いの原因になります。prefers-reduced-motion への配慮は必ず入れてください。',
     '1ページの中で画面を入れ替える場合、入れ替えたあとの見出しにキーボードの焦点（フォーカス）を移すと、読み上げソフトを使う人にも画面が変わったことが伝わります。',
   ],
@@ -128,7 +133,7 @@ document.querySelector('.go-back').addEventListener('click', () => show(false));
   faq: [
     {
       q: 'View Transitions API とは何ですか？',
-      a: '画面の切り替わりの前後をブラウザが自動で写し取り、その間をなめらかにつないでくれる仕組みです。以前は JavaScript のライブラリで1ページのアプリにしないと難しかった演出が、ふつうのWebサイトでもCSSだけで作れるようになりました。',
+      a: '画面の切り替わりの前後をブラウザが自動で写し取り、その間をなめらかにつないでくれる仕組みです。以前は JavaScript のライブラリで1ページのアプリにしないと難しかった演出が、ふつうのWebサイトでもCSSを数行書くだけで作れるようになりました。',
     },
     {
       q: 'ページ遷移アニメーションはSEOに影響しますか？',
@@ -136,7 +141,7 @@ document.querySelector('.go-back').addEventListener('click', () => show(false));
     },
     {
       q: 'Safari や Firefox でアニメーションしません。',
-      a: '別ページ間の @view-transition は、Safari では18.2以降で動きます。それより古い Safari や、対応していない版の Firefox では、ふつうに切り替わるだけです。壊れているわけではないので、そのままで問題ありません。',
+      a: '別ページ間の @view-transition が動くのは、Chrome・Edge の126以降と Safari の18.2以降です。それより古い版や、まだ対応の途中の Firefox では、ふつうに切り替わるだけです。壊れているわけではないので、そのままで問題ありません。',
     },
   ],
   publishedAt: '2026-10-15',

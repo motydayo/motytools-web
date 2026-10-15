@@ -1,0 +1,234 @@
+---
+// UI部品の見本: ハンバーガーメニュー
+// 三本線のボタンを押すと × に変わり、ヘッダーの下からメニューが出る。
+// 枠の中に収めるため、メニューは枠内の absolute で出す（記事のコードは本番向けに position: fixed）。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const A = mini ? 'span' : 'a';
+const L = {
+  ja: {
+    name: 'ハンバーガーメニュー',
+    open: 'メニューを開く',
+    close: 'メニューを閉じる',
+    menu: 'メインメニュー',
+    links: ['メニュー', 'お店の場所', '営業時間', 'オンラインショップ'],
+    cta: '席を予約する',
+    label: 'COFFEE',
+    h: '朝7時から、焼きたてのパンと',
+  },
+  en: {
+    name: 'Hamburger menu',
+    open: 'Open menu',
+    close: 'Close menu',
+    menu: 'Main menu',
+    links: ['Menu', 'Locations', 'Hours', 'Shop online'],
+    cta: 'Reserve a table',
+    label: 'COFFEE',
+    h: 'Fresh bread from 7 a.m.',
+  },
+}[lang as 'ja' | 'en'];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site hb-site" data-demo="hamburger-menu" data-open={L.open} data-close={L.close}>
+    <header class="ug-nav hb-head">
+      <span class="ug-logo">SORA</span>
+      <!-- これが部品の本体: 三本線のボタン。押すと × に変わり、aria-expanded で開閉を伝える -->
+      <Btn class="hb-btn" {...btn} aria-expanded="false" aria-label={L.open} data-hb-btn data-ug-focus={L.name}>
+        <span class="hb-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+      </Btn>
+    </header>
+
+    <nav class="hb-menu" aria-label={L.menu} data-hb-menu>
+      <ul class="hb-list">
+        {L.links.map((l) => (
+          <li>
+            <A class="hb-link" href={mini ? undefined : '#'} data-hb-link>
+              {l}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            </A>
+          </li>
+        ))}
+      </ul>
+      <A class="ug-btn-site hb-cta" href={mini ? undefined : '#'} data-hb-link>{L.cta}</A>
+    </nav>
+
+    <div class="hb-page" data-hb-page>
+      <section class="ug-sec">
+        <p class="ug-label">{L.label}</p>
+        <h3 class="ug-h">{L.h}</h3>
+        <div class="ug-lines"><i></i><i></i></div>
+      </section>
+      <div class="hb-hero"><Scene tone="day" wide /></div>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .hb-site { position: relative; height: 100%; overflow: hidden; }
+  .hb-head { position: relative; z-index: 12; }
+
+  /* 三本線のボタン。見た目は22pxでも、押せる範囲は44px四方 */
+  .hb-btn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ug-ink) !important;
+    cursor: pointer;
+  }
+  /* 見どころの名札はボタンの左に出す（開いたメニューに被らないように） */
+  :global(.show-focus) .hb-btn[data-ug-focus]::after { top: 13px; right: calc(100% + 6px); }
+  .hb-btn:hover, .hb-btn.is-hover { background: var(--ug-bg); }
+  .hb-btn:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+  .hb-bars { position: relative; display: block; width: 22px; height: 22px; }
+  /* 線の太さ・間隔・変形の速さはつまみ（--t-line・--t-gap・--t-dur）から */
+  .hb-bars i {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: var(--t-line);
+    margin-top: calc(var(--t-line) / -2);
+    border-radius: 99px;
+    background: currentColor;
+    transition: transform var(--t-dur) ease-out, opacity var(--t-dur) ease-out;
+  }
+  .hb-bars i:nth-child(1) { transform: translateY(calc(-1 * (var(--t-gap) + var(--t-line)))); }
+  .hb-bars i:nth-child(3) { transform: translateY(calc(var(--t-gap) + var(--t-line))); }
+  /* 開いたら: 上下の線を中央に寄せて斜めにし、× にする。真ん中の線は消す */
+  .is-open .hb-bars i:nth-child(1) { transform: rotate(45deg); }
+  .is-open .hb-bars i:nth-child(2) { opacity: 0; transform: scaleX(0.2); }
+  .is-open .hb-bars i:nth-child(3) { transform: rotate(-45deg); }
+
+  /* 開くメニュー。閉じている間は visibility: hidden で、読み上げ・Tab の対象からも外す */
+  .hb-menu {
+    position: absolute;
+    top: 48px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 11;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 8px 16px 16px;
+    background: #fff;
+    opacity: 0;
+    transform: translateY(-8px);
+    visibility: hidden;
+    transition: opacity var(--t-dur) ease-in, transform var(--t-dur) ease-in, visibility 0s linear var(--t-dur);
+  }
+  .is-open .hb-menu {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    transition: opacity var(--t-dur) ease-out, transform var(--t-dur) ease-out, visibility 0s;
+  }
+  .hb-list { list-style: none; }
+  .hb-list li + li { border-top: 1px solid var(--ug-line); }
+  .hb-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 0 4px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ug-ink) !important;
+    text-decoration: none;
+    border-radius: 8px;
+  }
+  .hb-link svg { color: var(--ug-ink-2); }
+  .hb-link:hover, .hb-link.is-hover { background: var(--ug-bg); }
+  .hb-cta { align-self: stretch; min-height: 44px; text-decoration: none; color: #fff !important; }
+
+  .hb-page :global(.ug-scene) { border-radius: 0; }
+  .hb-hero { padding: 0 16px; }
+  .hb-hero :global(.ug-scene) { border-radius: 12px; }
+
+  @container (max-width: 340px) {
+    .hb-menu { gap: 8px; padding: 4px 12px 12px; }
+    .hb-link { min-height: 44px; font-size: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hb-bars i, .hb-menu, .is-open .hb-menu { transition-duration: 0.01s; transition-delay: 0s; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="hamburger-menu"]').forEach((root) => {
+    const frame = root.closest<HTMLElement>('[data-ug-frame]')!;
+    const mini = frame.dataset.size === 'mini';
+    const btn = root.querySelector<HTMLElement>('[data-hb-btn]')!;
+    const menu = root.querySelector<HTMLElement>('[data-hb-menu]')!;
+    const page = root.querySelector<HTMLElement>('[data-hb-page]')!;
+    const links = [...root.querySelectorAll<HTMLElement>('[data-hb-link]')];
+
+    // ボタンとメニューを aria-controls で結ぶ（同じ見本が1ページに複数あるので id は作る）
+    const mid = `hb-menu-${Math.random().toString(36).slice(2, 8)}`;
+    menu.id = mid;
+    btn.setAttribute('aria-controls', mid);
+
+    const isOpen = () => root.classList.contains('is-open');
+    const set = (open: boolean, returnFocus = false) => {
+      root.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? root.dataset.close! : root.dataset.open!);
+      // 開いている間は後ろのページを操作・読み上げの対象から外す
+      page.toggleAttribute('inert', open);
+      if (returnFocus && !mini) btn.focus({ preventScroll: true });
+    };
+
+    btn.addEventListener('click', () => set(!isOpen()));
+    btn.addEventListener('ug:click', () => set(!isOpen()));
+    // メニューの項目を押したら閉じる（本番ではここでページを移動する）
+    links.forEach((a) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        set(false, true);
+      });
+    });
+    // Esc で閉じ、焦点をボタンへ戻す
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) {
+        e.preventDefault();
+        set(false, true);
+      }
+    });
+    root.closest<HTMLElement>('[data-ug-view]')!.addEventListener('ug:reset', () => set(false));
+
+    onTour(root, async (t) => {
+      set(false);
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.7 }, 10);
+      await t.sleep(700);
+      await t.move(btn, 800);
+      t.hover(btn);
+      await t.sleep(300);
+      await t.click(btn);
+      t.hover(null);
+      await t.sleep(900);
+      await t.move(links[1], 700);
+      t.hover(links[1]);
+      await t.sleep(900);
+      t.hover(null);
+      await t.move(btn, 700);
+      t.hover(btn);
+      await t.sleep(250);
+      await t.click(btn);
+      t.hover(null);
+      await t.sleep(1500);
+    });
+  });
+</script>

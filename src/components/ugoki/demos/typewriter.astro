@@ -1,24 +1,49 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const Btn = size === 'mini' ? 'span' : 'button';
-const words = ['もっと手軽に。', 'スマホひとつで。', '24時間いつでも。'];
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'タイプライター',
+    nav: ['宿をさがす', '特集'],
+    cta: 'ログイン',
+    kicker: 'ONSEN BOOKING',
+    lead: '旅の予約を、',
+    full: '旅の予約を、もっと手軽に。スマホひとつで。24時間いつでも。',
+    words: ['もっと手軽に。', 'スマホひとつで。', '24時間いつでも。'],
+    sub: '全国1,200軒の温泉宿から、空いている部屋をすぐに探せます。',
+    btn: '空室をさがす',
+  },
+  en: {
+    name: 'Typewriter effect',
+    nav: ['Find a stay', 'Guides'],
+    cta: 'Sign in',
+    kicker: 'HOT SPRING STAYS',
+    lead: 'Book your trip',
+    full: 'Book your trip in seconds, from your phone, any time.',
+    words: ['in seconds.', 'from your phone.', 'any time, 24/7.'],
+    sub: 'Search open rooms at 1,200 hot spring inns and boutique stays nationwide.',
+    btn: 'Find a room',
+  },
+}[lang as 'ja' | 'en'];
+const words = L.words;
 ---
 
-<UgFrame mode="script" size={size} label="タイプライター">
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
   <div class="ug-site tw" data-demo="typewriter" data-words={JSON.stringify(words)}>
-    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>宿をさがす</span><span>特集</span><span class="ug-cta">ログイン</span></header>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="hero">
       <div class="bg" aria-hidden="true"><Scene tone="night" wide /></div>
       <div class="copy">
-        <p class="ug-label kicker">ONSEN BOOKING</p>
-        <h2 class="ttl" data-ug-focus="タイプライター" data-ug-focus-at="below">
-          <span class="sr-only">旅の予約を、{words.join('')}</span>
-          <span aria-hidden="true">旅の予約を、<br /><span class="typed">{words[0]}</span></span>
+        <p class="ug-label kicker">{L.kicker}</p>
+        <h2 class="ttl" data-ug-focus={L.name} data-ug-focus-at="below">
+          <span class="sr-only">{L.full}</span>
+          <span aria-hidden="true">{L.lead}<br /><span class="typed">{words[0]}</span></span>
         </h2>
-        <p class="sub">全国1,200軒の温泉宿から、空いている部屋をすぐに探せます。</p>
-        <Btn class="ug-btn-site" type={size === 'mini' ? undefined : 'button'}>空室をさがす</Btn>
+        <p class="sub">{L.sub}</p>
+        <Btn class="ug-btn-site" type={size === 'mini' ? undefined : 'button'}>{L.btn}</Btn>
       </div>
     </section>
   </div>
@@ -66,7 +91,7 @@ const words = ['もっと手軽に。', 'スマホひとつで。', '24時間い
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, tuneNum } from '../../../lib/ugoki/runtime';
 
   document.querySelectorAll<HTMLElement>('[data-demo="typewriter"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
@@ -89,20 +114,20 @@ const words = ['もっと手軽に。', 'スマホひとつで。', '24時間い
       await t.sleep(400);
       try {
         for (const w of words) {
-          // 打つ（1文字 0.11秒）
+          // 打つ。間隔はつまみ（--t-type・--t-erase・--t-hold）から、毎回読み直す
           typed.classList.add('is-typing');
           const cs = chars(w);
           for (let i = 1; i <= cs.length; i++) {
             typed.textContent = cs.slice(0, i).join('');
-            await t.sleep(110);
+            await t.sleep(tuneNum(root, 'type', 0.11) * 1000);
           }
           typed.classList.remove('is-typing');
-          await t.sleep(1700);
-          // 消す（1文字 0.045秒）
+          await t.sleep(tuneNum(root, 'hold', 1.7) * 1000);
+          // 消す
           typed.classList.add('is-typing');
           for (let i = cs.length - 1; i >= 0; i--) {
             typed.textContent = cs.slice(0, i).join('');
-            await t.sleep(45);
+            await t.sleep(tuneNum(root, 'erase', 0.045) * 1000);
           }
           typed.classList.remove('is-typing');
           await t.sleep(300);

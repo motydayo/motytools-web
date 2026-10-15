@@ -28,7 +28,7 @@ export default {
     '1画面目の見出しやボタン（いちばん大事な所が一瞬見えず、表示が遅く感じる）',
   ],
   prompt:
-    'セクションの見出しとカードに「スクロールでフェードイン（fade-in on scroll）」を付けてください。最初は opacity: 0 で16px下にずらしておき、画面の下から10%入ったら0.5秒の ease-out で元の位置に表示してください。横に並ぶカードは0.1秒ずつ遅らせて順番に出してください。判定は IntersectionObserver で行い、一度表示したら監視をやめてください。ライブラリは使わないでください。prefers-reduced-motion: reduce の人には最初から表示し、JavaScriptが動かない環境でも内容が見えるようにしてください。',
+    'セクションの見出しとカードに「スクロールでフェードイン（fade-in on scroll）」を付けてください。最初は opacity: 0 で{{dist:t}}下にずらしておき、画面の下から10%入ったら{{dur:t}}の ease-out で元の位置に表示してください。横に並ぶカードは{{stagger:t}}ずつ遅らせて順番に出してください。判定は IntersectionObserver で行い、一度表示したら監視をやめてください。ライブラリは使わないでください。prefers-reduced-motion: reduce の人には最初から表示し、JavaScriptが動かない環境でも内容が見えるようにしてください。',
   howTo: [
     'CSSで「透明で少し下にある状態」と「表示された状態（.is-in）」の2つを用意し、transition で間をつなぎます。どちらの状態にするかは、IntersectionObserver（要素が画面に入ったかを教えてくれるブラウザの仕組み）で判断してクラスを付けるだけです。scroll イベントで位置を計算し続けるより軽く、書く量も少なくて済みます。',
     '隠す指定は、JavaScriptが動いたとき（html に .js が付いたとき）だけ効くようにしておくと、読み込みに失敗しても中身が消えたままになりません。見本では何度でも見られるよう、画面の下へ戻ると隠し直していますが、実際のサイトでは一度出したら終わりにするのが一般的です。',
@@ -54,16 +54,16 @@ export default {
       code: `/* JavaScriptが動いたときだけ隠す（失敗しても中身は見える） */
 .js .reveal {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  transform: translateY({{dist}});
+  transition: opacity {{dur}} ease-out, transform {{dur}} ease-out;
 }
 .js .reveal.is-in {
   opacity: 1;
   transform: none;
 }
 /* 横に並ぶカードは少しずつ遅らせる */
-.cards .reveal:nth-child(2) { transition-delay: 0.1s; }
-.cards .reveal:nth-child(3) { transition-delay: 0.2s; }
+.cards .reveal:nth-child(2) { transition-delay: {{stagger}}; }
+.cards .reveal:nth-child(3) { transition-delay: calc({{stagger}} * 2); }
 
 /* 「動きを減らす」設定の人には最初から表示する */
 @media (prefers-reduced-motion: reduce) {
@@ -83,6 +83,11 @@ export default {
 
 document.querySelectorAll('.reveal').forEach((el) => io.observe(el));`,
     },
+  ],
+  tune: [
+    { key: 'dur', label: '出てくる速さ', min: 0.1, max: 1.2, step: 0.05, value: 0.5, unit: 's' },
+    { key: 'dist', label: '下からずらす距離', min: 0, max: 60, step: 2, value: 16, unit: 'px' },
+    { key: 'stagger', label: 'カードごとのずれ', min: 0, max: 0.4, step: 0.02, value: 0.1, unit: 's' },
   ],
   cautions: [
     '1画面目に見えている要素まで隠すと、ページを開いた瞬間に一瞬空っぽに見え、表示が遅いと感じさせます。1画面目は最初から表示しておくのが無難です。',

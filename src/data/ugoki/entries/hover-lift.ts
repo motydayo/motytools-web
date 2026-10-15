@@ -28,7 +28,7 @@ export default {
     'カードが密に詰まった一覧（浮いた影が隣のカードに重なって見にくい）',
   ],
   prompt:
-    'カード一覧に「ホバーで浮き上がる（hover lift）」演出を付けてください。マウスを乗せたら transform: translateY(-6px) で6pxだけ上へ動かし、box-shadow で下に柔らかい影を付けます。時間は0.2秒、緩急は ease-out。CSSだけで作り、JavaScriptは使わないでください。:hover は @media (hover: hover) の中に書き、スマホでは浮かせずに押した瞬間（:active）だけ少し沈めてください。キーボード操作のため :focus-visible でも同じ見た目にし、prefers-reduced-motion: reduce のときは動かさず影だけ変えてください。',
+    'カード一覧に「ホバーで浮き上がる（hover lift）」演出を付けてください。マウスを乗せたら transform: translateY で{{lift:t}}だけ上へ動かし、box-shadow で下に柔らかい影（濃さ {{shadow:t}}、浮いた距離に合わせて下へずらし広くぼかす）を付けます。時間は{{dur:t}}、緩急は ease-out。CSSだけで作り、JavaScriptは使わないでください。:hover は @media (hover: hover) の中に書き、スマホでは浮かせずに押した瞬間（:active）だけ scale(0.98) で少し縮めて沈んだように見せてください。キーボード操作のため :focus-visible でも同じ見た目にし、prefers-reduced-motion: reduce のときは動かさず影だけ変えてください。',
   howTo: [
     '作り方はCSSだけです。カードに transition を指定しておき、乗せたとき（:hover）に transform で少し上へ動かし、box-shadow で影を付けます。top や margin で動かすと周りの並びまで動いてしまうので、見た目だけを動かせる transform を使います。',
     'スマホにはマウスがないため、:hover を @media (hover: hover)（マウスなど乗せる操作ができる端末だけ）の中に入れます。こうするとスマホでタップしたあとカードが浮いたまま残る、というよくある不具合を防げます。',
@@ -60,32 +60,38 @@ export default {
   background: #fff;
   color: inherit;
   text-decoration: none;
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  transition: transform {{dur}} ease-out, box-shadow {{dur}} ease-out;
 }
 .card img { display: block; width: 100%; height: auto; }
 
 /* マウスのある端末だけ、乗せたら浮かせる */
 @media (hover: hover) {
   .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 14px 24px -12px rgba(0, 0, 0, 0.35);
+    transform: translateY(-{{lift}});
+    /* 影は浮いた距離の2倍下へ、4倍ぼかす */
+    box-shadow: 0 calc({{lift}} * 2) calc({{lift}} * 4) -12px rgba(0, 0, 0, {{shadow:n}});
   }
 }
 /* キーボードで選んだときも同じ見た目に */
 .card:focus-visible {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 24px -12px rgba(0, 0, 0, 0.35);
+  transform: translateY(-{{lift}});
+  box-shadow: 0 calc({{lift}} * 2) calc({{lift}} * 4) -12px rgba(0, 0, 0, {{shadow:n}});
   outline: 2px solid #4f73d9;
   outline-offset: 2px;
 }
-/* 押した瞬間は少し沈める（スマホのタップにも反応が出る） */
-.card:active { transform: translateY(-2px); transition-duration: 0.1s; }
+/* 押した瞬間は少し縮めて沈んだように見せる（スマホのタップにも反応が出る） */
+.card:active { transform: scale(0.98); transition-duration: 0.1s; }
 
 /* 動きを減らす設定なら、動かさず影だけ */
 @media (prefers-reduced-motion: reduce) {
   .card, .card:hover, .card:focus-visible, .card:active { transform: none; }
 }`,
     },
+  ],
+  tune: [
+    { key: 'lift', label: '浮き上がる距離', min: 0, max: 20, step: 1, value: 6, unit: 'px' },
+    { key: 'dur', label: '動く速さ', min: 0.05, max: 0.8, step: 0.05, value: 0.2, unit: 's' },
+    { key: 'shadow', label: '影の濃さ', min: 0, max: 0.8, step: 0.05, value: 0.35, unit: '' },
   ],
   cautions: [
     'スマホにはマウスがないので「乗せる」操作がありません。スマホのブラウザはタップした要素に :hover を付けたまま残すことがあり、浮いたカードが戻らなく見えます。:hover は @media (hover: hover) の中に書いてください。',

@@ -1,26 +1,53 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const mini = size === 'mini';
 const Tab = mini ? 'span' : 'button';
 // 同じページに見本が複数あるので、id は見本ごとに変える
 const uid = Math.random().toString(36).slice(2, 8);
-const tabs = [
-  { label: '宿泊', tone: 'day', title: '1泊2食つきプラン', price: '1泊 12,000円〜', note: '夕食は地元の野菜を使った会席。朝食は和食か洋食を選べます。' },
-  { label: '日帰り', tone: 'sunset', title: '日帰り入浴とランチ', price: '2,800円', note: '11時〜16時。露天風呂と、そばのランチがセットです。' },
-  { label: '貸切風呂', tone: 'night', title: '貸切露天風呂 50分', price: '3,300円', note: '家族や友人だけで入れます。前日までに予約してください。' },
-  { label: '体験', tone: 'day', title: 'そば打ち体験', price: '2,200円', note: '打ったそばはその場でゆでて食べられます。所要約90分。' },
-] as const;
+const tones = ['day', 'sunset', 'night', 'day'] as const;
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'タブの下線スライド',
+    focus: '下線スライド',
+    nav: ['お部屋', 'アクセス'],
+    cta: '予約する',
+    h: 'プランを選ぶ',
+    listLabel: 'プランの種類',
+    tabs: [
+      { label: '宿泊', title: '1泊2食つきプラン', price: '1泊 12,000円〜', note: '夕食は地元の野菜を使った会席。朝食は和食か洋食を選べます。' },
+      { label: '日帰り', title: '日帰り入浴とランチ', price: '2,800円', note: '11時〜16時。露天風呂と、そばのランチがセットです。' },
+      { label: '貸切風呂', title: '貸切露天風呂 50分', price: '3,300円', note: '家族や友人だけで入れます。前日までに予約してください。' },
+      { label: '体験', title: 'そば打ち体験', price: '2,200円', note: '打ったそばはその場でゆでて食べられます。所要約90分。' },
+    ],
+  },
+  en: {
+    name: 'Sliding tab indicator',
+    focus: 'Tab indicator',
+    nav: ['Rooms', 'Getting here'],
+    cta: 'Book now',
+    h: 'Choose a package',
+    listLabel: 'Package type',
+    tabs: [
+      { label: 'Stays', title: 'Dinner, bed & breakfast', price: 'From $129 / night', note: 'Seasonal dinner made with local produce, plus your choice of breakfast.' },
+      { label: 'Day pass', title: 'Hot springs + lunch', price: '$39', note: '11 AM to 4 PM. Open-air baths and a soba lunch.' },
+      { label: 'Spa', title: 'Private outdoor bath', price: '$45 / 50 min', note: 'Just you and your group. Book by the day before.' },
+      { label: 'Classes', title: 'Soba-making class', price: '$29', note: 'Make noodles by hand, then eat them fresh. About 90 minutes.' },
+    ],
+  },
+}[lang as 'ja' | 'en'];
+const tabs = L.tabs.map((t, i) => ({ ...t, tone: tones[i] }));
 ---
 
-<UgFrame mode="script" size={size} label="タブの下線スライド">
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
   <div class="ug-site ti" data-demo="tab-indicator">
-    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>お部屋</span><span>アクセス</span><span class="ug-cta">予約する</span></header>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="body">
       <p class="ug-label">PLAN</p>
-      <h3 class="ug-h">プランを選ぶ</h3>
-      <div class="tabs" role={mini ? undefined : 'tablist'} aria-label={mini ? undefined : 'プランの種類'} data-ug-focus="下線スライド" data-ug-focus-at="below">
+      <h3 class="ug-h">{L.h}</h3>
+      <div class="tabs" role={mini ? undefined : 'tablist'} aria-label={mini ? undefined : L.listLabel} data-ug-focus={L.focus} data-ug-focus-at="below">
         {tabs.map((t, i) => (
           <Tab
             class:list={['tab', { 'is-sel': i === 0 }]}
@@ -84,12 +111,12 @@ const tabs = [
     left: 0;
     bottom: -1px;
     width: 0;
-    height: 3px;
-    border-radius: 3px 3px 0 0;
+    height: var(--t-thick); /* 太さはつまみ（--t-thick）から */
+    border-radius: var(--t-thick) var(--t-thick) 0 0;
     background: var(--ug-orange);
   }
-  /* これが演出の本体: 位置（transform）と幅を0.25秒でなめらかに変える */
-  .tabs.is-ready .bar { transition: transform 0.25s ease-out, width 0.25s ease-out; }
+  /* これが演出の本体: 位置（transform）と幅をなめらかに変える。速さと緩急はつまみ（--t-dur・--t-ease）から */
+  .tabs.is-ready .bar { transition: transform var(--t-dur) var(--t-ease), width var(--t-dur) var(--t-ease); }
 
   .tpanel { display: grid; grid-template-columns: 44% 1fr; gap: 16px; padding-top: 16px; animation: ti-in 0.25s ease-out; }
   .tpanel[hidden] { display: none; }

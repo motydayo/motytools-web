@@ -1,43 +1,94 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const mini = size === 'mini';
 const Btn = mini ? 'span' : 'button';
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: '上に戻るボタン',
+    focus: '上に戻る',
+    nav: ['お部屋', '料金'],
+    cta: '予約する',
+    news: 'お知らせ',
+    rooms: 'お部屋',
+    roomNames: ['和室', '洋室', '離れ'],
+    price: '料金',
+    access: 'アクセス',
+    voice: 'お客さまの声',
+    faq: 'よくある質問',
+    label: 'ページの先頭へ戻る',
+    guide: 'この線が上に消えたらボタンが出る',
+  },
+  en: {
+    name: 'Back to top button',
+    focus: 'Back to top',
+    nav: ['Rooms', 'Rates'],
+    cta: 'Book now',
+    news: 'News',
+    rooms: 'Rooms',
+    roomNames: ['Garden room', 'King suite', 'Private cottage'],
+    price: 'Rates',
+    access: 'Getting here',
+    voice: 'Guest reviews',
+    faq: 'FAQ',
+    label: 'Back to top',
+    guide: 'Button appears once this line scrolls out of view',
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="script" size={size} label="上に戻るボタン">
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
   <div class="ug-site bt" data-demo="back-to-top">
-    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>お部屋</span><span>料金</span><span class="ug-cta">予約する</span></header>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
+    <!-- ボタンが出る位置（つまみ --t-show）の目印。詳細ページの見本だけに出す -->
+    {!mini && <div class="bt-guide" aria-hidden="true"><span>{L.guide}</span></div>}
     <div class="hero"><Scene tone="day" wide /></div>
     <section class="ug-sec">
       <p class="ug-label">NEWS</p>
-      <h3 class="ug-h">お知らせ</h3>
+      <h3 class="ug-h">{L.news}</h3>
       <div class="ug-lines"><i></i><i></i><i></i></div>
     </section>
     <section class="ug-sec">
       <p class="ug-label">ROOM</p>
-      <h3 class="ug-h">お部屋</h3>
+      <h3 class="ug-h">{L.rooms}</h3>
       <div class="ug-grid">
-        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">和室</div></div>
-        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">洋室</div></div>
-        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">離れ</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">{L.roomNames[0]}</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.roomNames[1]}</div></div>
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.roomNames[2]}</div></div>
       </div>
     </section>
     <section class="ug-sec">
       <p class="ug-label">PRICE</p>
-      <h3 class="ug-h">料金</h3>
+      <h3 class="ug-h">{L.price}</h3>
       <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i></div>
     </section>
     <section class="ug-sec">
       <p class="ug-label">ACCESS</p>
-      <h3 class="ug-h">アクセス</h3>
+      <h3 class="ug-h">{L.access}</h3>
       <div class="map"><Scene tone="sunset" wide /></div>
       <div class="ug-lines"><i></i><i></i><i></i><i></i></div>
     </section>
+    <!-- スマホ幅でも「画面の高さの200%」まで届くよう、ページを長めにしておく -->
+    <section class="ug-sec">
+      <p class="ug-label">VOICE</p>
+      <h3 class="ug-h">{L.voice}</h3>
+      <div class="ug-grid">
+        <div class="ug-card"><Scene tone="night" /></div>
+        <div class="ug-card"><Scene tone="day" /></div>
+        <div class="ug-card"><Scene tone="sunset" /></div>
+      </div>
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">FAQ</p>
+      <h3 class="ug-h">{L.faq}</h3>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </section>
     <!-- 枠の右下にくっつける台。本物のサイトでは position: fixed で画面の右下に置く -->
     <div class="dock">
-      <Btn class="btt" type={mini ? undefined : 'button'} aria-label={mini ? undefined : 'ページの先頭へ戻る'} data-ug-focus="上に戻る">
+      <Btn class="btt" type={mini ? undefined : 'button'} aria-label={mini ? undefined : L.label} data-ug-focus={L.focus}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
       </Btn>
     </div>
@@ -45,7 +96,29 @@ const Btn = mini ? 'span' : 'button';
 </UgFrame>
 
 <style>
-  .bt { padding-bottom: 16px; }
+  .bt { position: relative; padding-bottom: 16px; }
+  /* ボタンが出る位置の目印（JSで top を入れる） */
+  .bt-guide {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 3;
+    height: 0;
+    border-top: 2px dashed rgba(240, 106, 53, 0.85);
+    pointer-events: none;
+  }
+  .bt-guide span {
+    position: absolute;
+    left: 8px;
+    bottom: 2px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ug-orange);
+    font-size: 10px;
+    font-weight: 700;
+  }
   .map { margin: 8px 0; border-radius: 10px; overflow: hidden; }
   /* sticky + bottom で、枠の下端から16pxの位置に居続ける（高さ0の台） */
   .dock { position: sticky; bottom: 16px; height: 0; z-index: 20; }
@@ -55,8 +128,9 @@ const Btn = mini ? 'span' : 'button';
     bottom: 0;
     display: grid;
     place-items: center;
-    width: 48px;
-    height: 48px;
+    /* 大きさはつまみ（--t-size）から */
+    width: var(--t-size);
+    height: var(--t-size);
     border: 0;
     border-radius: 50%;
     background: var(--ug-navy);
@@ -67,13 +141,14 @@ const Btn = mini ? 'span' : 'button';
     opacity: 0;
     visibility: hidden;
     transform: translateY(12px);
-    transition: opacity 0.2s ease-in, transform 0.2s ease-in, visibility 0s linear 0.2s, background-color 0.15s;
+    transition: opacity calc(var(--t-dur) * 0.8) ease-in, transform calc(var(--t-dur) * 0.8) ease-in, visibility 0s linear calc(var(--t-dur) * 0.8), background-color 0.15s;
   }
   .btt.is-shown {
     opacity: 1;
     visibility: visible;
     transform: none;
-    transition: opacity 0.25s ease-out, transform 0.25s ease-out, visibility 0s, background-color 0.15s;
+    /* 出る速さはつまみ（--t-dur）から */
+    transition: opacity var(--t-dur) ease-out, transform var(--t-dur) ease-out, visibility 0s, background-color 0.15s;
   }
   .btt:hover, .btt.is-hover { background: var(--ug-blue); }
   .btt:active { transform: scale(0.94); }
@@ -89,7 +164,7 @@ const Btn = mini ? 'span' : 'button';
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, onTune, tuneNum } from '../../../lib/ugoki/runtime';
 
   const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -98,10 +173,19 @@ const Btn = mini ? 'span' : 'button';
     const btn = root.querySelector<HTMLElement>('.btt');
     if (!view || !btn) return;
 
-    // 枠の高さの6割ほどスクロールしたら出す
-    const sync = () => btn.classList.toggle('is-shown', view.scrollTop > view.clientHeight * 0.6);
+    // 枠の高さの --t-show（初期値60%）以上スクロールしたら出す
+    const at = () => (view.clientHeight * tuneNum(root, 'show', 60)) / 100;
+    const sync = () => btn.classList.toggle('is-shown', view.scrollTop > at());
     view.addEventListener('scroll', sync, { passive: true });
-    sync();
+    // 目印は「この線が枠の上端を過ぎたら出る」位置に置く
+    const guide = root.querySelector<HTMLElement>('.bt-guide');
+    const place = () => {
+      if (guide) guide.style.top = `${at()}px`;
+      sync();
+    };
+    new ResizeObserver(place).observe(view);
+    onTune(view, place);
+    place();
 
     const goTop = (real: boolean) => {
       view.scrollTo({ top: 0, behavior: reduce() ? 'auto' : 'smooth' });
@@ -121,10 +205,11 @@ const Btn = mini ? 'span' : 'button';
       sync();
       await t.sleep(mini ? 900 : 500);
       if (!mini) {
-        await t.scrollTo(h * 0.9, 1000);
-        await t.sleep(450);
+        // まずは出る位置の手前まで → 次に出る位置を越える
+        await t.scrollTo(Math.max(0, at() - h * 0.35), 1000);
+        await t.sleep(600);
       }
-      await t.scrollTo(h * 1.9, 1000);
+      await t.scrollTo(Math.max(h * 1.9, at() + h * 0.4), 1000);
       await t.sleep(600);
       await t.move(btn, 650);
       t.hover(btn);

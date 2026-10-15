@@ -76,12 +76,16 @@ const t = T[lang];
       raf = requestAnimationFrame(apply);
     };
     inputs.forEach((el) => el.addEventListener('input', schedule));
+    // 動かし終えた（指を離した）ときだけの合図
+    const end = () => demo?.querySelectorAll<HTMLElement>('[data-ug-view]').forEach((v) => v.dispatchEvent(new CustomEvent('ug:tune-end')));
+    inputs.forEach((el) => el.addEventListener('change', () => requestAnimationFrame(end)));
     tuner.querySelector('[data-zk-reset]')?.addEventListener('click', () => {
       for (const el of inputs) {
         const p = params.find((x) => x.key === el.dataset.key)!;
         el.value = String(p.value);
       }
       apply();
+      requestAnimationFrame(end);
     });
   });
 </script>
@@ -119,7 +123,7 @@ const t = T[lang];
   .zk-knob-val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
   .zk-knob input[type='range'] { width: 100%; min-height: 32px; accent-color: var(--accent); cursor: pointer; }
   .zk-knob input[type='color'] { width: 100%; height: 40px; padding: 2px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); cursor: pointer; }
-  .zk-knob select { min-height: 44px; padding: 0 var(--sp-3); font: inherit; font-size: 16px; color: var(--text); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--r-sm); }
+  .zk-knob select { width: 100%; min-width: 0; min-height: 44px; padding: 0 var(--sp-3); font: inherit; font-size: 16px; color: var(--text); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--r-sm); }
 </style>
 
 <style is:global>

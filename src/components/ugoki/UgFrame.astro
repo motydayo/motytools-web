@@ -216,6 +216,8 @@ const hint = L.hint[mode];
   /* 名札が中身に被るときは data-ug-focus-at="below" で枠の下にぶら下げる */
   .ug-frame.show-focus [data-ug-focus-at='below']::after { top: calc(100% + 4px); }
   .ug-frame.show-focus [data-ug-focus-at='left']::after { right: auto; left: 4px; }
+  /* 縦いっぱいの板（ドロワー等）は内側の下の隅に */
+  .ug-frame.show-focus [data-ug-focus-at='bottom']::after { top: auto; bottom: 4px; }
   .ug-frame.is-mini.show-focus [data-ug-focus]::after { font-size: 9px; line-height: 16px; padding: 0 6px; }
   .ug-btn[aria-pressed='false'] .i-play { display: block; }
   .ug-btn[aria-pressed='false'] .i-pause { display: none; }

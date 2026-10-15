@@ -1,0 +1,300 @@
+---
+// UI部品の見本: 料金表（プラン比較）
+// 3つのプランを同じ並びで横に並べ、おすすめを1つだけ目立たせる。月払い・年払いの切り替えつき。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: '料金表',
+    focus: 'おすすめプラン',
+    nav: ['機能', '料金'],
+    label: 'PRICING',
+    heading: '教室の予約管理 料金プラン',
+    billing: '支払い方法',
+    monthly: '月払い',
+    yearly: '年払い',
+    save: '2か月分お得',
+    per: '/月',
+    popular: 'いちばん人気',
+    plans: [
+      { name: 'フリー', desc: 'まず試したい教室に', m: '0円', y: '0円', mNote: 'ずっと無料', yNote: 'ずっと無料', cta: '無料ではじめる' },
+      { name: 'スタンダード', desc: '生徒30人までの教室に', m: '1,500円', y: '1,250円', mNote: '税込・いつでも解約可', yNote: '年15,000円を一括払い', cta: '14日間無料で試す', rec: true },
+      { name: 'プロ', desc: '講師が複数いる教室に', m: '3,000円', y: '2,500円', mNote: '税込・いつでも解約可', yNote: '年30,000円を一括払い', cta: 'プロを申し込む' },
+    ],
+    rows: [
+      { t: ['予約の受付 月30件', '予約の受付 無制限', '予約の受付 無制限'], on: [1, 1, 1] },
+      { t: ['講師 1人', '講師 3人まで', '講師 無制限'], on: [1, 1, 1] },
+      { t: ['リマインドメール'], on: [0, 1, 1] },
+      { t: ['売上レポート'], on: [0, 1, 1] },
+      { t: ['優先サポート'], on: [0, 0, 1] },
+    ],
+    no: '（含まれません）',
+  },
+  en: {
+    name: 'Pricing table',
+    focus: 'Recommended plan',
+    nav: ['Features', 'Pricing'],
+    label: 'PRICING',
+    heading: 'Simple pricing for your studio',
+    billing: 'Billing period',
+    monthly: 'Monthly',
+    yearly: 'Yearly',
+    save: '2 months free',
+    per: '/mo',
+    popular: 'Most popular',
+    plans: [
+      { name: 'Free', desc: 'Try it with your studio', m: '$0', y: '$0', mNote: 'Free forever', yNote: 'Free forever', cta: 'Start for free' },
+      { name: 'Standard', desc: 'For studios up to 30 students', m: '$12', y: '$10', mNote: 'Cancel anytime', yNote: 'Billed $120 yearly', cta: 'Start 14-day free trial', rec: true },
+      { name: 'Pro', desc: 'For studios with several teachers', m: '$24', y: '$20', mNote: 'Cancel anytime', yNote: 'Billed $240 yearly', cta: 'Get Pro' },
+    ],
+    rows: [
+      { t: ['30 bookings / month', 'Unlimited bookings', 'Unlimited bookings'], on: [1, 1, 1] },
+      { t: ['1 teacher', 'Up to 3 teachers', 'Unlimited teachers'], on: [1, 1, 1] },
+      { t: ['Reminder emails'], on: [0, 1, 1] },
+      { t: ['Sales reports'], on: [0, 1, 1] },
+      { t: ['Priority support'], on: [0, 0, 1] },
+    ],
+    no: ' (not included)',
+  },
+}[lang as 'ja' | 'en'];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site pt-site" data-demo="pricing-table">
+    <header class="ug-nav pt-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((x) => <span>{x}</span>)}</header>
+    <section class="ug-sec pt-sec">
+      <p class="ug-label pt-kicker">{L.label}</p>
+      <h3 class="ug-h pt-h">{L.heading}</h3>
+
+      <div class="pt-bill" role="group" aria-label={L.billing}>
+        <Btn class="pt-bill-btn" {...btn} aria-pressed={mini ? undefined : 'true'} data-pt-bill="m">{L.monthly}</Btn>
+        <Btn class="pt-bill-btn" {...btn} aria-pressed={mini ? undefined : 'false'} data-pt-bill="y">{L.yearly}<span class="pt-save">{L.save}</span></Btn>
+      </div>
+
+      <!-- これが部品の本体: 同じ並び・同じ行でプランを比べられる表。おすすめは1つだけ、色・ふち・札・大きさで目立たせる -->
+      <div class="pt-grid" data-pt-grid>
+        {L.plans.map((p, i) => (
+          <div class:list={['pt-card', { 'is-rec': p.rec }]} data-pt-card={i} data-ug-focus={p.rec ? L.focus : undefined} data-ug-focus-at={p.rec ? 'below' : undefined}>
+            {p.rec && <p class="pt-pop">{L.popular}</p>}
+            <p class="pt-name">{p.name}</p>
+            <p class="pt-desc">{p.desc}</p>
+            <p class="pt-price">
+              <span class="pt-m"><b>{p.m}</b>{L.per}</span>
+              <span class="pt-y"><b>{p.y}</b>{L.per}</span>
+            </p>
+            <p class="pt-note"><span class="pt-m">{p.mNote}</span><span class="pt-y">{p.yNote}</span></p>
+            <Btn class:list={['pt-cta', { 'is-primary': p.rec }]} {...btn} data-pt-cta={i}>{p.cta}</Btn>
+            <ul class="pt-feats">
+              {L.rows.map((r) => {
+                const on = r.on[i] === 1;
+                return (
+                  <li class:list={{ 'is-off': !on }}>
+                    {on ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M7 12h10" /></svg>
+                    )}
+                    <span>{r.t[i] ?? r.t[0]}{!on && <span class="sr-only">{L.no}</span>}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .pt-site { min-height: 100%; }
+  .pt-sec { padding: 16px 16px 24px; }
+  .pt-h { margin-bottom: 12px; }
+
+  /* 月払い・年払いの切り替え */
+  .pt-bill { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--ug-bg); border: 1px solid var(--ug-line); }
+  .pt-bill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ug-ink-2);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out;
+  }
+  .pt-bill-btn[aria-pressed='true'], .pt-bill-btn.is-on { background: #fff; color: var(--ug-ink); box-shadow: 0 1px 3px rgba(29, 37, 65, 0.18); }
+  .pt-save { padding: 0 6px; border-radius: 999px; background: #e3f3ea; color: #1f6b45; font-size: 10px; line-height: 18px; }
+  .pt-bill-btn:focus-visible, .pt-cta:focus-visible { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+
+  /* 価格: 月払い・年払いの両方を置いておき、どちらかを見せる */
+  .pt-y { display: none; }
+  .pt-site.is-yearly .pt-y { display: inline; }
+  .pt-site.is-yearly .pt-m { display: none; }
+
+  .pt-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .pt-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 14px;
+    border: 1px solid var(--ug-line);
+    border-radius: 14px;
+    background: #fff;
+    transition: box-shadow 0.2s ease-out;
+  }
+  .pt-card:hover, .pt-card.is-hover { box-shadow: 0 10px 24px -14px rgba(29, 37, 65, 0.4); }
+  /* おすすめ: つまみの色でふちを付け、少しだけ大きく。目立たせるのはこの1枚だけ */
+  .pt-card.is-rec {
+    z-index: 1;
+    border: 2px solid var(--t-color);
+    transform: scale(var(--t-pop));
+    box-shadow: 0 16px 32px -18px rgba(29, 37, 65, 0.45);
+  }
+  .pt-pop {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--t-color);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+  .pt-name { font-size: 14px; font-weight: 800; }
+  .pt-desc { font-size: 11px; color: var(--ug-ink-2); line-height: 1.5; min-height: 2em; }
+  .pt-price { margin-top: 6px; font-size: 12px; color: var(--ug-ink-2); }
+  .pt-price b { margin-right: 2px; font-size: 24px; font-weight: 800; color: var(--ug-ink); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .pt-note { font-size: 10px; color: var(--ug-ink-2); min-height: 1.7em; }
+  .pt-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    margin-top: 8px;
+    padding: 0 8px;
+    border: 1px solid var(--ug-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ug-ink);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.3;
+    cursor: pointer;
+  }
+  .pt-cta:hover, .pt-cta.is-hover { background: var(--ug-bg); }
+  .pt-cta.is-primary { border-color: var(--t-color); background: var(--t-color); color: #fff; }
+  .pt-cta.is-primary:hover, .pt-cta.is-primary.is-hover { filter: brightness(0.92); }
+  .pt-feats { display: grid; gap: 6px; margin: 12px 0 0; padding: 12px 0 0; border-top: 1px solid var(--ug-line); list-style: none; }
+  .pt-feats li { display: flex; align-items: flex-start; gap: 6px; font-size: 11px; line-height: 1.45; }
+  .pt-feats svg { flex: none; margin-top: 1px; color: #1f7a4d; }
+  .pt-feats li.is-off { color: #9a9ca5; }
+  .pt-feats li.is-off svg { color: #b9bac0; }
+
+  /* 狭いとき（スマホ）は縦に積む */
+  @container (max-width: 560px) {
+    .pt-grid { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 0 8px; }
+    .pt-desc, .pt-note { min-height: 0; }
+  }
+  :global(.is-mini) .pt-nav, :global(.is-mini) .pt-kicker, :global(.is-mini) .pt-h { display: none; }
+  :global(.is-mini) .pt-sec { padding: 10px 10px; }
+  :global(.is-mini) .pt-bill { padding: 2px; }
+  :global(.is-mini) .pt-bill-btn { min-height: 24px; padding: 0 10px; font-size: 10px; }
+  :global(.is-mini) .pt-save { display: none; }
+  :global(.is-mini) .pt-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 18px; padding: 0; }
+  :global(.is-mini) .pt-card { padding: 10px 6px 8px; gap: 2px; border-radius: 10px; }
+  :global(.is-mini) .pt-pop { top: -9px; padding: 0 6px; font-size: 8px; line-height: 16px; }
+  :global(.is-mini) .pt-name { font-size: 11px; }
+  :global(.is-mini) .pt-desc, :global(.is-mini) .pt-note, :global(.is-mini) .pt-feats { display: none; }
+  :global(.is-mini) .pt-price { margin-top: 0; font-size: 9px; white-space: nowrap; }
+  :global(.is-mini) .pt-price b { font-size: 14px; margin-right: 1px; }
+  :global(.is-mini) .pt-cta { min-height: 26px; margin-top: 4px; font-size: 9px; padding: 0 4px; }
+  @media (prefers-reduced-motion: reduce) {
+    .pt-card, .pt-bill-btn { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour, type Tour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="pricing-table"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const mini = root.closest<HTMLElement>('[data-ug-frame]')?.dataset.size === 'mini';
+    const bills = [...root.querySelectorAll<HTMLElement>('[data-pt-bill]')];
+    const cards = [...root.querySelectorAll<HTMLElement>('[data-pt-card]')];
+    const ctas = [...root.querySelectorAll<HTMLElement>('[data-pt-cta]')];
+
+    const setBill = (yearly: boolean) => {
+      root.classList.toggle('is-yearly', yearly);
+      bills.forEach((b) => {
+        const on = (b.dataset.ptBill === 'y') === yearly;
+        b.classList.toggle('is-on', on);
+        if (!mini) b.setAttribute('aria-pressed', String(on));
+      });
+    };
+    bills.forEach((b) => {
+      const fn = () => setBill(b.dataset.ptBill === 'y');
+      b.addEventListener('click', fn);
+      b.addEventListener('ug:click', fn);
+    });
+    view.addEventListener('ug:reset', () => setBill(false));
+    setBill(false);
+
+    // 縦に積まれているときは、見せたいカードまでスクロールしてから指す
+    const reveal = async (t: Tour, el: HTMLElement) => {
+      const vr = t.view.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      if (r.top < vr.top + 40 || r.bottom > vr.bottom - 20) await t.scrollTo(t.view.scrollTop + r.top - vr.top - 60, 700);
+    };
+
+    onTour(root, async (t) => {
+      setBill(false);
+      if (t.view.scrollTop > 0) await t.scrollTo(0, 500);
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.95 }, 10);
+      await t.sleep(900);
+      await t.move(bills[1], 800);
+      t.hover(bills[1]);
+      await t.sleep(250);
+      await t.click(bills[1]);
+      t.hover(null);
+      await t.sleep(1400);
+      for (const i of [1, 2]) {
+        await reveal(t, cards[i]);
+        await t.move(ctas[i], 800);
+        t.hover(cards[i]);
+        ctas[i].classList.add('is-hover');
+        await t.sleep(1300);
+        t.hover(null);
+      }
+      await t.scrollTo(0, 600);
+      await t.move(bills[0], 800);
+      t.hover(bills[0]);
+      await t.sleep(250);
+      await t.click(bills[0]);
+      t.hover(null);
+      await t.sleep(1400);
+    });
+  });
+</script>

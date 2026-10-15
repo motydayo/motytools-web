@@ -28,10 +28,10 @@ export default {
     '印刷して使うページ（印刷するまで読み込まれていない画像が抜けることがある）',
   ],
   prompt:
-    'ページ内の画像に「遅延読み込み（lazy loading）」を付けてください。最初の画面に見えるメイン画像以外の <img> に loading="lazy" と decoding="async" を付け、すべての <img> に実際の画像サイズの width と height を書いてレイアウトのずれを防いでください。CSSは width: 100%; height: auto; にします。画像を包む箱には灰色（#e9e7e1）の背景を敷いて場所取りにし、読み込みが終わった画像だけを0.4秒かけて ease-out でフェードインさせてください。prefers-reduced-motion が reduce の人にはフェードを付けないでください。',
+    'ページ内の画像に「遅延読み込み（lazy loading）」を付けてください。最初の画面に見えるメイン画像以外の <img> に loading="lazy" と decoding="async" を付け、すべての <img> に実際の画像サイズの width と height を書いてレイアウトのずれを防いでください。CSSは width: 100%; height: auto; にします。画像を包む箱には {{ph}} の背景を敷いて場所取りにし、読み込みが終わった画像だけを{{fade:t}}かけて ease-out でフェードインさせてください。そのとき画像を scale({{zoom:n}}) から等倍へ少しだけ縮めて、ピントが合うように見せてください。prefers-reduced-motion が reduce の人にはフェードを付けないでください。',
   howTo: [
     '基本はHTMLだけで済みます。<img> に loading="lazy" を書くと、ブラウザが「画面に近づくまで読み込まない」を自動でやってくれます。昔は JavaScript でスクロールを見張って画像を差し替えていましたが、今は主要なブラウザすべてがこの属性に対応しています。必ず一緒に width と height（画像の元の幅と高さ）も書いてください。読み込み前から正しい縦横比で場所が空き、表示のずれを防げます。',
-    '「灰色からふわっと出す」見た目を足したいときだけ、短い JavaScript を使います。まだ読み込みが終わっていない画像に印を付けて透明にしておき、load（読み込み完了）の合図で印を外して CSS の transition で浮かび上がらせます。なお見本は動きを見やすくするため、JavaScript で「枠の40px手前に来たら0.6秒後に表示」と再現しています。本物の loading="lazy" はもっと手前（数百〜千数百px先）から読み込み始めるので、普通にスクロールすると灰色はほとんど見えません。',
+    '「灰色からふわっと出す」見た目を足したいときだけ、短い JavaScript を使います。まだ読み込みが終わっていない画像に印を付けて透明にしておき、load（読み込み完了）の合図で印を外して CSS の transition で浮かび上がらせます。なお場所取りの色は、写真全体の平均に近い色にすると、出てきたときの差が小さく自然に見えます。見本は動きを見やすくするため、JavaScript で「枠の40px手前に来たら0.6秒後に表示」と再現しています。本物の loading="lazy" はもっと手前（数百〜千数百px先）から読み込み始めるので、普通にスクロールすると灰色はほとんど見えません。',
   ],
   code: [
     {
@@ -60,21 +60,23 @@ export default {
 /* 灰色の場所取り（読み込み前に見える） */
 .photo {
   margin: 0;
-  background: #e9e7e1;
+  background: {{ph}};
   border-radius: 8px;
   overflow: hidden;
 }
 
 /* まだ読み込み中の画像だけ透明にしておき、終わったらふわっと出す */
 .photo img {
-  transition: opacity 0.4s ease-out;
+  transition: opacity {{fade}} ease-out, transform {{fade}} ease-out;
 }
 .photo img.is-waiting {
   opacity: 0;
+  transform: scale({{zoom:n}});
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .photo img { transition: none; }
+  .photo img,
+  .photo img.is-waiting { transition: none; transform: none; }
 }`,
     },
     {
@@ -90,6 +92,11 @@ document.querySelectorAll('.photo img').forEach((img) => {
   img.addEventListener('error', show, { once: true });
 });`,
     },
+  ],
+  tune: [
+    { key: 'fade', label: 'ふわっと出る速さ', min: 0, max: 1.2, step: 0.05, value: 0.4, unit: 's' },
+    { key: 'zoom', label: '出る前の拡大', min: 1, max: 1.15, step: 0.01, value: 1.03, unit: '' },
+    { key: 'ph', type: 'color', label: '場所取りの色', value: '#e9e7e1' },
   ],
   cautions: [
     'ページを開いてすぐ見える画像に loading="lazy" を付けると、読み込みが遅れて表示速度の評価（LCP＝いちばん大きな要素が見えるまでの時間）が悪くなります。付けるのは「最初の画面より下」の画像だけにしてください。',

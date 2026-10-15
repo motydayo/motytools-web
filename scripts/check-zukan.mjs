@@ -27,7 +27,10 @@ const read = (file) => {
     return { key: g('key'), min: g('min'), max: g('max'), step: g('step'), value: g('value'), unit: g('unit'), type: g('type') };
   }).filter((t) => t.key);
   const tokens = [...src.matchAll(/\{\{(\w+)(?::(?:n|t))?\}\}/g)].map((m) => m[1]);
-  return { src, slug: pick('slug'), no: pick('no'), category: pick('category'), mode: pick('mode'), tune, tokens };
+  // 差し込み口を書いてよいのは code と prompt だけ（ほかの文章ではそのまま表示されてしまう）
+  const rest = src.replace(/\n  code: \[[\s\S]*?\n  \],/, '').replace(/\n  prompt:\s*\n?\s*'(?:[^'\\]|\\.)*',/, '');
+  const stray = [...rest.matchAll(/\{\{\w+(?::\w)?\}\}/g)].map((m) => m[0]);
+  return { src, stray, slug: pick('slug'), no: pick('no'), category: pick('category'), mode: pick('mode'), tune, tokens };
 };
 
 for (const b of BOOKS) {
@@ -40,6 +43,7 @@ for (const b of BOOKS) {
     const where = `${b.id}/${slug}`;
     const ja = read(`${b.ja}/${f}`);
     if (ja.slug !== slug) warn(where, `slug がファイル名と違う（${ja.slug}）`);
+    if (ja.stray.length) warn(where, `日本語版の code・prompt 以外に差し込み口がある: ${ja.stray.join(' ')}`);
     for (const k of new Set(ja.tokens)) if (!ja.tune.some((t) => t.key === k)) warn(where, `日本語版の差し込み口 {{${k}}} に対応するつまみが無い`);
     for (const t of ja.tune) if (!ja.tokens.includes(t.key)) warn(where, `つまみ ${t.key} がコードにも指示文にも使われていない`);
 
@@ -48,6 +52,7 @@ for (const b of BOOKS) {
       for (const k of ['slug', 'no', 'category', 'mode']) if (ja[k] !== en[k]) warn(where, `${k} が日英で違う（${ja[k]} / ${en[k]}）`);
       const sig = (t) => `${t.key}|${t.type ?? 'range'}|${t.min}|${t.max}|${t.step}|${t.value}|${t.unit}`;
       if (ja.tune.map(sig).join() !== en.tune.map(sig).join()) warn(where, 'つまみ（key・範囲・初期値・単位）が日英で違う');
+      if (en.stray.length) warn(where, `英語版の code・prompt 以外に差し込み口がある: ${en.stray.join(' ')}`);
       for (const k of new Set(en.tokens)) if (!en.tune.some((t) => t.key === k)) warn(where, `英語版の差し込み口 {{${k}}} に対応するつまみが無い`);
     } else if (enFiles.length) {
       warn(where, '英語版が無い');

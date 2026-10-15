@@ -28,7 +28,7 @@ export default {
     '一度に何件も続けて出る通知（重なって読めない。まとめて1件にする）',
   ],
   prompt:
-    '操作の結果を「トースト通知（toast notification）」で知らせてください。画面の下中央に紺色の角丸の帯を position: fixed で出し、下から16pxずれた位置から0.25秒の減速でせり上がり、5秒で0.2秒かけて消えるようにします。帯の中には結果の文と「元に戻す」ボタンを置き、押したら操作を取り消してください。帯は role="status" の箱の中に置き、文を書き換えて読み上げソフトに伝えます。マウスが乗っている間とキーボードの焦点がある間は、消えるまでの時間を止めてください。動きを減らす設定の人にはせり上がりをなくし、フェードだけにすること。ライブラリは使わず、大事なエラーはトーストではなく画面内に表示してください。',
+    '操作の結果を「トースト通知（toast notification）」で知らせてください。画面の下中央に紺色の角丸の帯を position: fixed で出し、下から{{rise:t}}ずれた位置から{{enter:t}}の減速でせり上がり、{{show:t}}たったら0.2秒かけて消えるようにします。帯の中には結果の文と「元に戻す」ボタンを置き、押したら操作を取り消してください。帯は role="status" の箱の中に置き、文を書き換えて読み上げソフトに伝えます。マウスが乗っている間とキーボードの焦点がある間は、消えるまでの時間を止めてください。動きを減らす設定の人にはせり上がりをなくし、フェードだけにすること。ライブラリは使わず、大事なエラーはトーストではなく画面内に表示してください。',
   howTo: [
     'トーストの箱は最初から role="status"（中の文が変わったら、読み上げソフトが手を止めずに読む場所）としてHTMLに置いておき、出すときに文を書き換えてクラスを付けます。箱を後からJavaScriptで作ると、読み上げソフトが変化に気付かないことがあるからです。',
     '消えるまでの5秒は、帯の下の細い線を縮めるCSSアニメーションで数えます。線が縮み切ったとき（animationend）に帯を消せば、:hover と :focus-within で animation-play-state: paused にするだけで「乗せている間は止まる」ができます。隠すときは visibility: hidden も付け、見えない「元に戻す」にキーボードの焦点が入らないようにします。',
@@ -66,14 +66,14 @@ export default {
   /* 隠れているとき（visibility で焦点も入らなくする） */
   opacity: 0;
   visibility: hidden;
-  transform: translate(-50%, 16px);
+  transform: translate(-50%, {{rise}});
   transition: opacity 0.2s ease-in, transform 0.2s ease-in, visibility 0s linear 0.2s;
 }
 .toast.is-shown {
   opacity: 1;
   visibility: visible;
   transform: translate(-50%, 0);
-  transition: opacity 0.25s ease-out, transform 0.25s ease-out, visibility 0s;
+  transition: opacity {{enter}} ease-out, transform {{enter}} ease-out, visibility 0s;
 }
 .toast-undo {
   min-height: 36px;
@@ -85,14 +85,14 @@ export default {
   font-weight: 700;
   cursor: pointer;
 }
-/* 残り時間の線。乗せている間・焦点がある間は止める */
+/* 残り時間の線（表示時間で縮み切る）。乗せている間・焦点がある間は止める */
 .toast-timer {
   position: absolute; left: 0; bottom: 0;
   width: 100%; height: 3px;
   background: #f06a35;
   transform-origin: left;
 }
-.toast.is-shown .toast-timer { animation: toast-timer 5s linear forwards; }
+.toast.is-shown .toast-timer { animation: toast-timer {{show}} linear forwards; }
 .toast:hover .toast-timer,
 .toast:focus-within .toast-timer { animation-play-state: paused; }
 @keyframes toast-timer { to { transform: scaleX(0); } }
@@ -137,6 +137,11 @@ document.querySelectorAll('.remove').forEach((btn) => {
   });
 });`,
     },
+  ],
+  tune: [
+    { key: 'show', label: '表示しておく時間', min: 2, max: 10, step: 0.5, value: 5, unit: 's' },
+    { key: 'enter', label: '出る速さ', min: 0.1, max: 0.6, step: 0.05, value: 0.25, unit: 's' },
+    { key: 'rise', label: 'せり上がる距離', min: 0, max: 40, step: 4, value: 16, unit: 'px' },
   ],
   cautions: [
     '大事なエラーをトーストだけで済ませないでください。数秒で消えるので、目を離していた人・読むのが遅い人・拡大して見ている人は気付けません。支払いの失敗や入力の誤りは、その場所の近くに消えない文で出します。',

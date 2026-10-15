@@ -1,59 +1,105 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const tones = ['day', 'sunset', 'night'] as const;
-const posts = [
-  '紅葉が見ごろの露天風呂 5選',
-  '日帰りで行ける高原の牧場',
-  '雨の日でも楽しめる港町の歩き方',
-  '星がよく見える山小屋の泊まり方',
-  '朝市で買いたい海の幸ガイド',
-  '子ども連れで行く渓谷キャンプ',
-  'ローカル線で巡る温泉街',
-  '冬の岬で見る日の出',
-  'ひとり旅に向いた湖畔の宿',
-  '地元の人に聞いた棚田の撮り方',
-  '吊り橋と滝をめぐる半日コース',
-  '夕日がきれいな海辺のカフェ',
-  '雪見風呂のある小さな宿',
-  '秋祭りに合わせて泊まる城下町',
-  '森の中のサウナ付きコテージ',
-  '灯台のある島へ船で渡る',
-  '週末に行ける山のパン屋さん',
-];
-const FIRST = 5; // 最初に表示する件数
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: '無限スクロール',
+    logo: '旅のよみもの',
+    nav: ['特集', '地域'],
+    cta: '会員登録',
+    title: '新着記事',
+    shown: ['表示中', '件'],
+    meta: (i: number) => `10月${15 - (i % 14)}日・${3 + (i % 4)}分で読めます`,
+    loading: '続きを読み込み中',
+    end: 'すべての記事を表示しました',
+    foot: ['運営会社', 'お問い合わせ', 'プライバシー'],
+    posts: [
+      '紅葉が見ごろの露天風呂 5選',
+      '日帰りで行ける高原の牧場',
+      '雨の日でも楽しめる港町の歩き方',
+      '星がよく見える山小屋の泊まり方',
+      '朝市で買いたい海の幸ガイド',
+      '子ども連れで行く渓谷キャンプ',
+      'ローカル線で巡る温泉街',
+      '冬の岬で見る日の出',
+      'ひとり旅に向いた湖畔の宿',
+      '地元の人に聞いた棚田の撮り方',
+      '吊り橋と滝をめぐる半日コース',
+      '夕日がきれいな海辺のカフェ',
+      '雪見風呂のある小さな宿',
+      '秋祭りに合わせて泊まる城下町',
+      '森の中のサウナ付きコテージ',
+      '灯台のある島へ船で渡る',
+      '週末に行ける山のパン屋さん',
+    ],
+  },
+  en: {
+    name: 'Infinite scroll',
+    logo: 'Wander Weekly',
+    nav: ['Features', 'Places'],
+    cta: 'Sign up',
+    title: 'Latest stories',
+    shown: ['Showing', ''],
+    meta: (i: number) => `Oct ${15 - (i % 14)} · ${3 + (i % 4)} min read`,
+    loading: 'Loading more stories',
+    end: 'You’re all caught up',
+    foot: ['About', 'Contact', 'Privacy'],
+    posts: [
+      '5 hot springs at peak fall color',
+      'A day trip to a highland ranch',
+      'Rainy-day walks in a harbor town',
+      'Stargazing from a mountain hut',
+      'What to buy at the morning fish market',
+      'Canyon camping with kids',
+      'Hot spring towns by local train',
+      'Winter sunrise from the cape',
+      'Lakeside inns for solo travelers',
+      'How locals photograph rice terraces',
+      'A half-day loop of bridges and falls',
+      'Seaside cafés with the best sunsets',
+      'Small inns with snow-view baths',
+      'Castle towns during the fall festival',
+      'Forest cabins with a private sauna',
+      'Taking the ferry to a lighthouse island',
+      'Mountain bakeries worth a weekend drive',
+    ],
+  },
+}[lang as 'ja' | 'en'];
+const FIRST = 6; // 最初に表示する件数
 ---
 
-<UgFrame mode="scroll" size={size} label="無限スクロール">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site" data-demo="infinite-scroll" data-first={FIRST} data-step="4">
-    <header class="ug-nav"><span class="ug-logo">旅のよみもの</span><span>特集</span><span>地域</span><span class="ug-cta">会員登録</span></header>
+    <header class="ug-nav"><span class="ug-logo">{L.logo}</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <div class="is-head">
-      <h3 class="is-title">新着記事</h3>
-      <span class="is-count">表示中 <b data-is-count>{FIRST}</b>件</span>
+      <h3 class="is-title">{L.title}</h3>
+      <span class="is-count">{L.shown[0]} <b data-is-count>{FIRST}</b>{L.shown[1]}</span>
     </div>
     <ul class="is-list">
-      {posts.map((title, i) => (
+      {L.posts.map((title, i) => (
         <li class="is-item" data-is-item hidden={i >= FIRST}>
           <Scene tone={tones[i % 3]} class="is-thumb" />
           <span class="is-text">
             <span class="is-name">{title}</span>
-            <span class="is-meta">10月{15 - (i % 14)}日・{3 + (i % 4)}分で読めます</span>
+            <span class="is-meta">{L.meta(i)}</span>
           </span>
         </li>
       ))}
     </ul>
     <!-- これが演出の本体: 下端の見張り役。見えたら続きを読み込んで足す -->
-    <div class="is-more" data-is-sentinel data-ug-focus="無限スクロール">
+    <div class="is-more" data-is-sentinel data-ug-focus={L.name}>
       <span class="is-loading" data-is-loading>
         <span class="is-spin" aria-hidden="true"></span>
-        続きを読み込み中
+        {L.loading}
       </span>
-      <span class="is-end" data-is-end>すべての記事を表示しました</span>
+      <span class="is-end" data-is-end>{L.end}</span>
     </div>
     <footer class="is-foot" data-is-foot>
-      <span class="ug-logo">旅のよみもの</span>
-      <span class="is-foot-links"><span>運営会社</span><span>お問い合わせ</span><span>プライバシー</span></span>
+      <span class="ug-logo">{L.logo}</span>
+      <span class="is-foot-links">{L.foot.map((f) => <span>{f}</span>)}</span>
     </footer>
   </div>
 </UgFrame>
@@ -80,9 +126,9 @@ const FIRST = 5; // 最初に表示する件数
   .is-text { display: grid; gap: 2px; min-width: 0; }
   .is-name { font-size: 13px; font-weight: 700; line-height: 1.45; }
   .is-meta { font-size: 10px; color: var(--ug-ink-2); }
-  /* 足された記事は、下から少し持ち上げて出す */
-  .is-item.is-new { animation: is-in 0.35s ease-out both; }
-  @keyframes is-in { from { opacity: 0; transform: translateY(12px); } }
+  /* 足された記事は、下から少し持ち上げて出す。速さと距離はつまみ（--t-dur・--t-rise）から */
+  .is-item.is-new { animation: is-in var(--t-dur) ease-out both; }
+  @keyframes is-in { from { opacity: 0; transform: translateY(var(--t-rise)); } }
 
   .is-more {
     position: relative;
@@ -129,7 +175,7 @@ const FIRST = 5; // 最初に表示する件数
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, onTune, tuneNum } from '../../../lib/ugoki/runtime';
 
   document.querySelectorAll<HTMLElement>('[data-demo="infinite-scroll"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
@@ -161,20 +207,39 @@ const FIRST = 5; // 最初に表示する件数
         busy = false;
         sentinel.classList.remove('is-busy');
         if (done()) {
-          io.disconnect();
+          io?.disconnect();
           sentinel.classList.add('is-done');
           foot.classList.add('is-shown');
         } else {
           // 足したあとも見張り役が見えたままなら、もう一度読み込む
-          io.unobserve(sentinel);
-          io.observe(sentinel);
+          io?.unobserve(sentinel);
+          io?.observe(sentinel);
         }
       }, 900);
     };
 
-    const io = new IntersectionObserver((entries) => entries[0].isIntersecting && loadMore(), {
-      root: view,
-      rootMargin: '0px 0px 40px 0px',
+    // 下端の何px手前で読み込み始めるか（つまみ --t-margin）。変わったら見張りを作り直す
+    let io: IntersectionObserver | null = null;
+    const watch = () => {
+      io?.disconnect();
+      io = new IntersectionObserver((entries) => entries[0].isIntersecting && loadMore(), {
+        root: view,
+        rootMargin: `0px 0px ${tuneNum(root, 'margin', 200)}px 0px`,
+      });
+      if (!done()) io.observe(sentinel);
+    };
+    watch();
+    // つまみが動いたら見張りを作り直し、最後に足した記事の出方をもう一度見せる
+    let replay = 0;
+    onTune(view, () => {
+      watch();
+      clearTimeout(replay);
+      replay = window.setTimeout(() => {
+        const last = items.slice(Math.max(first, shown - step), shown);
+        last.forEach((el) => el.classList.remove('is-new'));
+        void root.offsetWidth;
+        last.forEach((el) => el.classList.add('is-new'));
+      }, 450);
     });
 
     const reset = () => {
@@ -188,8 +253,7 @@ const FIRST = 5; // 最初に表示する件数
       count.textContent = String(first);
       sentinel.classList.remove('is-busy', 'is-done');
       foot.classList.remove('is-shown');
-      io.disconnect();
-      io.observe(sentinel);
+      watch();
     };
     reset();
     view.addEventListener('ug:reset', reset);

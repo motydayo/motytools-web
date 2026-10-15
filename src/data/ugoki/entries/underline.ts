@@ -28,10 +28,10 @@ export default {
     '何行にも折り返す長いリンク（疑似要素の線は1本しか作れず、行ごとの下線にならない）',
   ],
   prompt:
-    'メニューのリンクに「下線アニメーション（underline animation）」を付けてください。リンクに position: relative を付け、::after で高さ2pxの線を文字の下4pxに置きます。ふだんは transform: scaleX(0)、乗せたら scaleX(1) にして、0.25秒の ease-out で左からのびるようにします（乗せたときは transform-origin: left、離れたときは right にして右へ縮んで消える）。:hover は @media (hover: hover) の中に書き、:focus-visible でも線を出してください。いまいるページ（aria-current="page"）は別の色で線を出しっぱなしにし、prefers-reduced-motion: reduce のときはのびる動きをやめて表示を切り替えるだけにしてください。CSSだけで作ってください。',
+    'メニューのリンクに「下線アニメーション（underline animation）」を付けてください。リンクに position: relative を付け、::after で高さ{{thick:t}}の線を文字の下{{offset:t}}に置きます。ふだんは transform: scaleX(0)、乗せたら scaleX(1) にして、{{dur:t}}の ease-out で左からのびるようにします（乗せたときは transform-origin: left、離れたときは right にして右へ縮んで消える）。:hover は @media (hover: hover) の中に書き、:focus-visible でも線を出してください。いまいるページ（aria-current="page"）は別の色で線を出しっぱなしにし、prefers-reduced-motion: reduce のときはのびる動きをやめて表示を切り替えるだけにしてください。CSSだけで作ってください。',
   howTo: [
     'リンクの ::after（文字のあとに飾りを足すCSSの指定）で細い線を作り、ふだんは transform: scaleX(0) で横幅0に縮めておきます。乗せたら scaleX(1) に戻すだけで、線がのびます。width を0から100%に変えるより、transform の方がなめらかに動きます。',
-    'のびる向きは transform-origin（変形の基準点）で決まります。ふだんは right、乗せたときは left にしておくと、「左からのびて、右へ抜けていく」流れのある動きになります。',
+    'のびる向きは transform-origin（変形の基準点）で決まります。ふだんは right、乗せたときは left にしておくと、「左からのびて、右へ抜けていく」流れのある動きになります。速さは0.2〜0.3秒、線は2px前後が目安です。0.5秒を超えるとマウスを動かす速さに線が追いつかず、太すぎると下線ではなく飾りの帯に見えてきます。',
   ],
   code: [
     {
@@ -58,13 +58,13 @@ export default {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -4px;
-  height: 2px;
-  border-radius: 2px;
+  bottom: -{{offset}};        /* 文字との間 */
+  height: {{thick}};           /* 線の太さ */
+  border-radius: {{thick}};
   background: #f06a35;
   transform: scaleX(0);       /* ふだんは幅0 */
   transform-origin: right;    /* 離れるときは右へ縮む */
-  transition: transform 0.25s ease-out;
+  transition: transform {{dur}} ease-out;
 }
 
 /* マウスのある端末だけ、乗せたら左からのびる */
@@ -82,6 +82,11 @@ export default {
   .ul::after { transition: none; }
 }`,
     },
+  ],
+  tune: [
+    { key: 'dur', label: 'のびる速さ', min: 0.05, max: 0.8, step: 0.05, value: 0.25, unit: 's' },
+    { key: 'thick', label: '線の太さ', min: 1, max: 6, step: 1, value: 2, unit: 'px' },
+    { key: 'offset', label: '文字との間', min: 0, max: 10, step: 1, value: 4, unit: 'px' },
   ],
   cautions: [
     'スマホにはマウスがないので、乗せたときの下線は見えません。メニューの項目は文字の大きさと並びで押せると分かるようにし、いまいる項目の下線は最初から出しておきます。',

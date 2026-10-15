@@ -1,0 +1,330 @@
+---
+// UI部品の見本: Cookie同意バナー
+// 「すべて拒否」と「すべて許可」を同じ見た目・同じ手間で並べ、細かく選ぶ画面も用意する。あとから変えられる入口もページの下に置く。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: 'Cookie同意バナー',
+    nav: ['お部屋', '料金'],
+    title: '山の宿 ひかり',
+    sub: '露天風呂つき客室で、静かな週末を。',
+    region: 'Cookieの設定',
+    h: 'Cookieの使用について',
+    p: 'サイトの改善と広告の効果測定のためにCookieを使います。必須のもの以外は、使うかどうかを選べます。',
+    more: '詳しく',
+    reject: 'すべて拒否',
+    accept: 'すべて許可',
+    choose: '項目を選ぶ',
+    save: '選んだ内容で保存',
+    back: '戻る',
+    cats: [
+      { k: 'need', t: '必須', d: '予約やログインに必要です。オフにできません。' },
+      { k: 'stats', t: '分析', d: 'よく見られるページを調べ、サイトの改善に使います。' },
+      { k: 'ads', t: '広告', d: '広告の効果を測り、あなたに合う広告を出します。' },
+    ],
+    always: '常にオン',
+    footLink: 'Cookieの設定',
+    saved: { all: 'すべて許可しました', none: '必須以外をすべて拒否しました', some: '選んだ内容で保存しました' },
+  },
+  en: {
+    name: 'Cookie consent banner',
+    nav: ['Rooms', 'Rates'],
+    title: 'Hikari Mountain Lodge',
+    sub: 'A quiet weekend with your own hot-spring bath.',
+    region: 'Cookie preferences',
+    h: 'We use cookies',
+    p: 'We use cookies to improve our site and measure our ads. Apart from the essential ones, it is your choice.',
+    more: 'Learn more',
+    reject: 'Reject all',
+    accept: 'Accept all',
+    choose: 'Customize',
+    save: 'Save my choices',
+    back: 'Back',
+    cats: [
+      { k: 'need', t: 'Essential', d: 'Needed for bookings and sign-in. Always on.' },
+      { k: 'stats', t: 'Analytics', d: 'Helps us see which pages are useful so we can improve them.' },
+      { k: 'ads', t: 'Advertising', d: 'Measures our ads and shows ads that fit your interests.' },
+    ],
+    always: 'Always on',
+    footLink: 'Cookie settings',
+    saved: { all: 'All cookies accepted', none: 'Non-essential cookies rejected', some: 'Your choices were saved' },
+  },
+}[lang as 'ja' | 'en'];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site ck-site" data-demo="cookie-banner" data-ck-saved={JSON.stringify(L.saved)}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((x) => <span>{x}</span>)}</header>
+    <section class="ck-hero">
+      <Scene tone="day" wide />
+      <div class="ck-hero-body">
+        <h3 class="ug-h">{L.title}</h3>
+        <p class="ck-sub">{L.sub}</p>
+        <div class="ug-lines"><i></i><i></i></div>
+      </div>
+    </section>
+    <footer class="ck-foot">
+      <span>© SAMPLE</span>
+      <Btn class="ck-foot-link" {...btn} data-ck-reopen>{L.footLink}</Btn>
+      <span class="ck-msg" role="status" data-ck-msg></span>
+    </footer>
+
+    <!-- これが部品の本体: 画面の下に出る同意のお願い。後ろのページは普通に読める（閉じ込めない） -->
+    <section class="ck" role="region" aria-label={L.region} data-ck data-ug-focus={L.name}>
+      <div class="ck-main" data-ck-view="main">
+        <p class="ck-h">{L.h}</p>
+        <p class="ck-p">{L.p} <span class="ck-more">{L.more}</span></p>
+        <div class="ck-btns">
+          <!-- 拒否と許可は同じ見た目・同じ大きさ・同じ1回の操作で -->
+          <div class="ck-pair">
+            <Btn class="ck-btn" {...btn} data-ck-reject>{L.reject}</Btn>
+            <Btn class="ck-btn" {...btn} data-ck-accept>{L.accept}</Btn>
+          </div>
+          <Btn class="ck-text" {...btn} data-ck-choose>{L.choose}</Btn>
+        </div>
+      </div>
+      <div class="ck-detail" data-ck-view="detail" hidden>
+        <p class="ck-h">{L.region}</p>
+        <ul class="ck-cats">
+          {L.cats.map((c) => (
+            <li>
+              <span class="ck-cat-txt"><b>{c.t}</b><small>{c.d}</small></span>
+              {c.k === 'need' ? (
+                <span class="ck-always">{L.always}</span>
+              ) : mini ? (
+                <span class="ck-sw" data-ck-sw={c.k}><i></i></span>
+              ) : (
+                <label class="ck-sw" data-ck-sw={c.k}>
+                  <input type="checkbox" role="switch" class="sr-only" aria-label={c.t} data-ck-input={c.k} />
+                  <i aria-hidden="true"></i>
+                </label>
+              )}
+            </li>
+          ))}
+        </ul>
+        <div class="ck-btns">
+          <div class="ck-pair">
+            <Btn class="ck-btn" {...btn} data-ck-reject>{L.reject}</Btn>
+            <Btn class="ck-btn" {...btn} data-ck-save>{L.save}</Btn>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .ck-site { position: relative; display: flex; flex-direction: column; min-height: 100%; }
+  /* ページ全体が枠の高さに収まるようにして、バナーを枠の下端に出す */
+  .ck-hero :global(.ug-scene) { height: 150px; aspect-ratio: auto; }
+  .ck-hero-body { padding: 16px 16px 20px; }
+  .ck-sub { font-size: 12px; color: var(--ug-ink-2); }
+  .ck-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: auto; padding: 12px 16px 16px; border-top: 1px solid var(--ug-line); font-size: 11px; color: var(--ug-ink-2); }
+  .ck-foot-link { min-height: 32px; padding: 0 4px; border: 0; background: none; font: inherit; font-size: 11px; color: var(--ug-blue); text-decoration: underline; cursor: pointer; }
+  .ck-msg { font-weight: 700; color: #1f7a4d; }
+
+  /* バナー: 幅と出入りの速さはつまみ（--t-width・--t-dur）から。幅を狭めると左下の箱になる */
+  .ck {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    z-index: 20;
+    box-sizing: border-box;
+    width: min(calc(100% - 24px), var(--t-width));
+    max-height: calc(100% - 24px);
+    overflow: auto;
+    padding: 16px;
+    border: 1px solid var(--ug-line);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 16px 40px -16px rgba(29, 37, 65, 0.45);
+    transition: transform var(--t-dur) ease-out, opacity var(--t-dur) ease-out, visibility 0s;
+  }
+  /* 隠れるとき: 下へ抜けながら消える（加速） */
+  .ck.is-hidden {
+    transform: translateY(calc(100% + 16px));
+    opacity: 0;
+    visibility: hidden;
+    transition: transform var(--t-dur) ease-in, opacity var(--t-dur) ease-in, visibility 0s linear var(--t-dur);
+  }
+  .ck [hidden] { display: none; }
+  .ck-h { font-size: 14px; font-weight: 800; }
+  .ck-p { margin-top: 4px; font-size: 12px; color: var(--ug-ink-2); }
+  .ck-more { color: var(--ug-blue); text-decoration: underline; white-space: nowrap; }
+  .ck-btns { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+  /* 拒否と許可は同じ見た目・同じ幅（どちらかだけを目立たせない） */
+  .ck-pair { flex: 1 1 240px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ck-btn {
+    min-height: 44px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ug-navy);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ck-btn:hover, .ck-btn.is-hover { background: #2c3866; }
+  .ck-text {
+    min-height: 44px;
+    padding: 0 8px;
+    border: 0;
+    background: none;
+    color: var(--ug-ink);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+  }
+  .ck-text:hover, .ck-text.is-hover { color: var(--ug-blue); }
+  .ck-btn:focus-visible, .ck-text:focus-visible, .ck-foot-link:focus-visible, .ck-sw:focus-within { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+
+  .ck-cats { display: grid; gap: 0; margin: 8px 0 0; padding: 0; list-style: none; }
+  .ck-cats li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid var(--ug-line); }
+  .ck-cat-txt { display: grid; line-height: 1.4; }
+  .ck-cat-txt b { font-size: 12px; }
+  .ck-cat-txt small { font-size: 10px; color: var(--ug-ink-2); }
+  .ck-always { flex: none; font-size: 11px; font-weight: 700; color: var(--ug-ink-2); }
+  /* オン・オフのスイッチ（中身は checkbox） */
+  .ck-sw { position: relative; flex: none; display: inline-block; width: 44px; height: 26px; border-radius: 999px; cursor: pointer; }
+  .ck-sw i { position: absolute; inset: 0; border-radius: 999px; background: #c9c7c0; transition: background-color 0.15s ease-out; }
+  .ck-sw i::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); transition: transform 0.15s ease-out; }
+  .ck-sw.is-on i { background: #1f7a4d; }
+  .ck-sw.is-on i::after { transform: translateX(18px); }
+  .ck-sw.is-hover i { box-shadow: 0 0 0 3px rgba(79, 115, 217, 0.3); }
+
+  @container (max-width: 400px) {
+    .ck { padding: 12px 14px; }
+    .ck-btn { padding: 0 10px; font-size: 12px; }
+    .ck-text { width: 100%; justify-content: center; }
+  }
+  :global(.is-mini) .ck-hero-body .ug-lines { display: none; }
+  :global(.is-mini) .ck-hero :global(.ug-scene) { height: 80px; }
+  :global(.is-mini) .ck { bottom: 8px; left: 8px; width: calc(100% - 16px); padding: 10px 12px; }
+  :global(.is-mini) .ck-h { font-size: 12px; }
+  :global(.is-mini) .ck-p { font-size: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  :global(.is-mini) .ck-btns { margin-top: 6px; gap: 6px; flex-wrap: nowrap; }
+  :global(.is-mini) .ck-pair { flex: 1 1 0; gap: 6px; }
+  :global(.is-mini) .ck-btn { min-height: 28px; font-size: 10px; padding: 0 8px; }
+  :global(.is-mini) .ck-text { min-height: 28px; font-size: 10px; width: auto; flex: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .ck, .ck.is-hidden, .ck-sw i, .ck-sw i::after { transition-duration: 0.01s; }
+  }
+</style>
+
+<script>
+  import { onTour, type Tour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="cookie-banner"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const mini = root.closest<HTMLElement>('[data-ug-frame]')?.dataset.size === 'mini';
+    const banner = root.querySelector<HTMLElement>('[data-ck]')!;
+    const main = root.querySelector<HTMLElement>('[data-ck-view="main"]')!;
+    const detail = root.querySelector<HTMLElement>('[data-ck-view="detail"]')!;
+    const msg = root.querySelector<HTMLElement>('[data-ck-msg]')!;
+    const reopen = root.querySelector<HTMLElement>('[data-ck-reopen]')!;
+    const choose = root.querySelector<HTMLElement>('[data-ck-choose]')!;
+    const saveBtn = root.querySelector<HTMLElement>('[data-ck-save]')!;
+    const switches = [...root.querySelectorAll<HTMLElement>('[data-ck-sw]')];
+    const savedText: Record<string, string> = JSON.parse(root.dataset.ckSaved ?? '{}');
+    // 同意の中身（初期値は全部オフ。「オンにする」は利用者が選んだときだけ）
+    const consent: Record<string, boolean> = { stats: false, ads: false };
+
+    const paintSwitches = () => {
+      switches.forEach((sw) => {
+        const k = sw.dataset.ckSw!;
+        sw.classList.toggle('is-on', consent[k]);
+        const input = sw.querySelector<HTMLInputElement>('input');
+        if (input) input.checked = consent[k];
+      });
+    };
+    const setView = (name: 'main' | 'detail') => {
+      main.hidden = name !== 'main';
+      detail.hidden = name !== 'detail';
+    };
+    const open = () => {
+      setView('main');
+      paintSwitches();
+      banner.classList.remove('is-hidden');
+      msg.textContent = '';
+    };
+    const close = (kind: 'all' | 'none' | 'some') => {
+      banner.classList.add('is-hidden');
+      msg.textContent = savedText[kind] ?? '';
+      // 閉じたら焦点を「あとから変える」入口へ（行き場を失わないように）
+      if (!mini && view.contains(document.activeElement)) reopen.focus({ preventScroll: true });
+    };
+    const decide = (all: boolean) => {
+      consent.stats = all;
+      consent.ads = all;
+      close(all ? 'all' : 'none');
+    };
+
+    const on = (el: HTMLElement, fn: () => void) => {
+      el.addEventListener('click', fn);
+      el.addEventListener('ug:click', fn);
+    };
+    root.querySelectorAll<HTMLElement>('[data-ck-reject]').forEach((b) => on(b, () => decide(false)));
+    root.querySelectorAll<HTMLElement>('[data-ck-accept]').forEach((b) => on(b, () => decide(true)));
+    on(choose, () => {
+      paintSwitches();
+      setView('detail');
+      if (!mini) detail.querySelector<HTMLElement>('input')?.focus({ preventScroll: true });
+    });
+    on(saveBtn, () => close('some'));
+    on(reopen, open);
+    switches.forEach((sw) => {
+      const k = sw.dataset.ckSw!;
+      sw.querySelector('input')?.addEventListener('change', (e) => {
+        consent[k] = (e.target as HTMLInputElement).checked;
+        paintSwitches();
+      });
+      sw.addEventListener('ug:click', () => {
+        consent[k] = !consent[k];
+        paintSwitches();
+      });
+    });
+
+    const reset = () => {
+      consent.stats = false;
+      consent.ads = false;
+      open();
+    };
+    view.addEventListener('ug:reset', reset);
+    reset();
+
+    const press = async (t: Tour, el: HTMLElement, wait = 900) => {
+      await t.move(el, 750);
+      t.hover(el);
+      await t.sleep(250);
+      await t.click(el);
+      t.hover(null);
+      await t.sleep(wait);
+    };
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.6, y: t.view.clientHeight * 0.3 }, 10);
+      await t.sleep(1400);
+      await press(t, choose, 1000);
+      await press(t, switches[0], 800);
+      await press(t, saveBtn, 1600);
+      await press(t, reopen, 1200);
+      const rejectMain = main.querySelector<HTMLElement>('[data-ck-reject]')!;
+      await press(t, rejectMain, 1800);
+    });
+  });
+</script>

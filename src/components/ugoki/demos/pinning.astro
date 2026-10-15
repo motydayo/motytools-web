@@ -1,33 +1,51 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 // 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
 const Btn = size === 'mini' ? 'span' : 'button';
 const btnType = size === 'mini' ? undefined : 'button';
-const steps = [
-  { no: '01', title: '日にちを選ぶ', text: 'カレンダーから空いている日を選びます。', tone: 'day' as const },
-  { no: '02', title: 'お部屋を選ぶ', text: '人数に合うお部屋とプランを選びます。', tone: 'sunset' as const },
-  { no: '03', title: '予約を確定', text: '確認メールが届いたら完了です。', tone: 'night' as const },
-];
+const tones = ['day', 'sunset', 'night'] as const;
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'ピン留め', logo: '山の宿 ひかり', nav: ['お部屋', '料金'], cta: '予約する',
+    lead: 'ご予約は3ステップ', faq: 'よくある質問', more: '空室を見る',
+    steps: [
+      { title: '日にちを選ぶ', text: 'カレンダーから空いている日を選びます。' },
+      { title: 'お部屋を選ぶ', text: '人数に合うお部屋とプランを選びます。' },
+      { title: '予約を確定', text: '確認メールが届いたら完了です。' },
+    ],
+  },
+  en: {
+    name: 'Pinning', logo: 'Hikari Lodge', nav: ['Rooms', 'Rates'], cta: 'Book',
+    lead: 'Book in 3 easy steps', faq: 'Questions', more: 'Check dates',
+    steps: [
+      { title: 'Pick your dates', text: 'Choose any open night on the calendar.' },
+      { title: 'Choose a room', text: 'Find the room and rate that fit your group.' },
+      { title: 'Confirm', text: 'You are all set once the email arrives.' },
+    ],
+  },
+}[lang as 'ja' | 'en'];
+const steps = L.steps.map((s, i) => ({ ...s, no: String(i + 1).padStart(2, '0'), tone: tones[i] }));
 ---
 
-<UgFrame mode="scroll" size={size} label="ピン留め">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site pn" data-demo="pinning">
     <header class="ug-nav">
-      <span class="ug-logo">山の宿 ひかり</span>
-      <span>お部屋</span><span>料金</span>
-      <span class="ug-cta">予約する</span>
+      <span class="ug-logo">{L.logo}</span>
+      {L.nav.map((n) => <span>{n}</span>)}
+      <span class="ug-cta">{L.cta}</span>
     </header>
 
     <section class="ug-sec intro">
       <p class="ug-label">HOW TO</p>
-      <h3 class="ug-h">ご予約は3ステップ</h3>
+      <h3 class="ug-h">{L.lead}</h3>
     </section>
 
     <!-- この区間（枠の3画面ぶん）のあいだだけ、中のパネルが止まる -->
     <section class="pin-sec">
-      <div class="pin" data-ug-focus="ピン留め">
+      <div class="pin" data-ug-focus={L.name}>
         <ol class="rail" aria-hidden="true">
           {steps.map((s, i) => <li class:list={['dot', { 'is-on': i === 0 }]}>{s.no}</li>)}
         </ol>
@@ -48,19 +66,19 @@ const steps = [
 
     <section class="ug-sec">
       <p class="ug-label">FAQ</p>
-      <h3 class="ug-h">よくある質問</h3>
+      <h3 class="ug-h">{L.faq}</h3>
       <div class="ug-lines"><i></i><i></i><i></i><i></i></div>
     </section>
     <section class="ug-sec">
       <div class="ug-lines"><i></i><i></i></div>
-      <Btn type={btnType} class="ug-btn-site more">空室を見る</Btn>
+      <Btn type={btnType} class="ug-btn-site more">{L.more}</Btn>
     </section>
   </div>
 </UgFrame>
 
 <style>
-  /* 区間の長さ＝止めておきたいスクロール量（ここでは3画面ぶん） */
-  .pin-sec { height: calc(var(--vh, 420px) * 3); }
+  /* 区間の長さ＝止めておきたいスクロール量（枠いくつ分か。つまみ --t-len） */
+  .pin-sec { height: calc(var(--vh, 420px) * var(--t-len)); }
   /* これが演出の本体: 区間の中にいる間だけ、上端に止まる */
   .pin {
     position: sticky;
@@ -122,11 +140,11 @@ const steps = [
     align-items: center;
     gap: 24px;
     opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    transform: translateY(var(--t-dist));
+    transition: opacity var(--t-dur) ease-out, transform var(--t-dur) ease-out;
   }
   .step.is-on { opacity: 1; transform: none; }
-  .step.is-past { transform: translateY(-16px); }
+  .step.is-past { transform: translateY(calc(var(--t-dist) * -1)); }
   .step-no { display: flex; align-items: baseline; gap: 6px; font-size: 44px; font-weight: 800; line-height: 1; color: var(--ug-orange); font-variant-numeric: tabular-nums; }
   .step-no small { font-size: 12px; letter-spacing: 0.12em; }
   .step-h { margin-top: 12px !important; font-size: 22px; font-weight: 800; }
@@ -160,7 +178,7 @@ const steps = [
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, onTune } from '../../../lib/ugoki/runtime';
 
   document.querySelectorAll<HTMLElement>('[data-demo="pinning"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
@@ -191,6 +209,11 @@ const steps = [
     };
     view.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
     update();
+    // 区間の長さが変わったら、いまの位置で表示し直す
+    onTune(view, () => {
+      current = -1;
+      update();
+    });
 
     // 自動再生: 区間に入ったら、1ステップずつ止まりながら進む
     onTour(root, async (t) => {
@@ -201,10 +224,14 @@ const steps = [
       const dist = sec.offsetHeight - t.view.clientHeight;
       await t.scrollTo(start, 800);
       await t.sleep(1100);
-      await t.scrollTo(start + dist * 0.5, 1000);
-      await t.sleep(1300);
-      await t.scrollTo(start + dist, 1000);
-      await t.sleep(1300);
+      // 区間を同じ速さで進む（区間が長いほど、次のステップまで長くスクロールする）
+      const leg = dist / steps.length;
+      const ms = Math.max(500, (leg / t.view.clientHeight) * 1300);
+      for (let i = 1; i <= steps.length; i++) {
+        const p = i === steps.length ? 1 : i / steps.length + 0.06;
+        await t.scrollTo(start + dist * p, ms);
+        await t.sleep(1000);
+      }
       await t.scrollTo(t.view.scrollHeight, 1000);
       await t.sleep(900);
       await t.scrollTo(0, 900);

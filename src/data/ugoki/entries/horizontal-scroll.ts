@@ -28,10 +28,10 @@ export default {
     'スマホで指で横にスワイプしたくなる見た目のとき（縦にスクロールしないと動かず、迷わせる）',
   ],
   prompt:
-    '施工事例のセクションを「横スクロール（縦スクロールに連動して横に流れる、horizontal scroll section）」にしてください。セクションの中のパネルを position: sticky; top: 0; height: 100vh; で固定し、カードを横一列（display: flex）に並べてください。セクションの高さは「画面の高さ＋カード列の横幅−画面の幅」にし、区間をスクロールした量と同じだけカード列を transform: translateX で左へ動かしてください。進み具合が分かる細い線も付けてください。ライブラリは使わないでください。prefers-reduced-motion: reduce の人には固定せず、指やバーで動かせる普通の横スクロール（overflow-x: auto）にしてください。',
+    '施工事例のセクションを「横スクロール（縦スクロールに連動して横に流れる、horizontal scroll section）」にしてください。セクションの中のパネルを position: sticky; top: 0; height: 100vh; で固定し、幅{{card:t}}のカードを{{gap:t}}の間隔で横一列（display: flex）に並べてください。縦に1px進むごとにカード列を{{speed:n}}pxずつ transform: translateX で左へ動かし、セクションの高さは「画面の高さ＋（カード列の横幅−画面の幅）÷{{speed:n}}」にして、流し終わったところで区間を抜けるようにしてください。進み具合が分かる細い線も付けてください。ライブラリは使わないでください。prefers-reduced-motion: reduce の人には固定せず、指やバーで動かせる普通の横スクロール（overflow-x: auto）にしてください。',
   howTo: [
     '仕組みは「ピン留め」と同じです。外側の区間に高さを持たせ、中のパネルを position: sticky で止めておきます。止まっている間、縦にスクロールした量（px）と同じだけカード列を左へずらすと、縦の動きが横の動きに置き換わって見えます。',
-    'ポイントは区間の高さです。「画面の高さ＋横に流す距離（カード列の幅−画面の幅）」にすると、流し終わったちょうどそのときに区間を抜けます。カードの枚数や画面の幅で距離が変わるので、高さはJavaScriptで計算して入れ、画面の大きさが変わったら計算し直します。',
+    'ポイントは区間の高さです。「画面の高さ＋横に流す距離（カード列の幅−画面の幅）」にすると、流し終わったちょうどそのときに区間を抜けます。横に流す距離を速さの倍率で割れば、縦1pxで横に2px動く、のように速さも変えられます。カードの枚数や画面の幅で距離が変わるので、高さはJavaScriptで計算して入れ、画面の大きさが変わったら計算し直します。',
   ],
   code: [
     {
@@ -66,7 +66,7 @@ export default {
 /* カードは横一列。JavaScriptで左へずらす */
 .hs-track {
   display: flex;
-  gap: 16px;
+  gap: {{gap}};
   width: max-content;
   padding: 0 24px;
   will-change: transform;
@@ -74,8 +74,8 @@ export default {
 /* flex: none でカードが縮まないようにする */
 .work {
   flex: none;
-  width: 280px;
-  height: 200px;
+  width: {{card}};
+  aspect-ratio: 7 / 5;
   border-radius: 12px;
   background: #e9eefb;
 }
@@ -94,19 +94,20 @@ export default {
 const pin = sec.querySelector('.hs-pin');
 const track = sec.querySelector('.hs-track');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+const SPEED = {{speed:n}}; // 縦に1px進むと、横に何px動くか
 let dist = 0;
 
-// 区間の高さ＝画面の高さ＋横に流す距離
+// 区間の高さ＝画面の高さ＋横に流す距離÷速さ
 function fit() {
   dist = Math.max(0, track.scrollWidth - pin.clientWidth);
-  sec.style.height = reduce.matches ? '' : \`\${window.innerHeight + dist}px\`;
+  sec.style.height = reduce.matches ? '' : \`\${window.innerHeight + dist / SPEED}px\`;
   update();
 }
 
-// 区間を縦に進んだ量だけ、横へずらす
+// 区間を縦に進んだ割合だけ、横へずらす
 function update() {
   if (reduce.matches) return;
-  const p = Math.min(1, Math.max(0, -sec.getBoundingClientRect().top / dist || 0));
+  const p = Math.min(1, Math.max(0, (-sec.getBoundingClientRect().top * SPEED) / dist || 0));
   track.style.transform = \`translate3d(\${-p * dist}px, 0, 0)\`;
 }
 
@@ -114,6 +115,11 @@ window.addEventListener('scroll', () => requestAnimationFrame(update), { passive
 window.addEventListener('resize', fit);
 fit();`,
     },
+  ],
+  tune: [
+    { key: 'speed', label: '横に動く速さ（縦1pxあたり）', min: 0.5, max: 3, step: 0.25, value: 1, unit: '' },
+    { key: 'card', label: 'カードの幅', min: 160, max: 360, step: 10, value: 280, unit: 'px' },
+    { key: 'gap', label: 'カードの間隔', min: 8, max: 48, step: 4, value: 16, unit: 'px' },
   ],
   cautions: [
     '親要素に overflow: hidden などが付いていると position: sticky が効かず、パネルが止まりません。止まらないときは親を確認してください。',

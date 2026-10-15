@@ -1,0 +1,276 @@
+---
+// UI部品の見本: ページネーション（ページ送り）
+// 24件の宿を3件ずつ8ページに分け、下の番号で行き来する。今のページは aria-current="page"。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const L = {
+  ja: {
+    name: 'ページネーション',
+    aria: 'ページ送り',
+    nav: ['宿をさがす', '特集'],
+    cta: '予約',
+    h: '温泉のある宿',
+    count: '全24件中 {a}〜{b}件目',
+    prev: '前へ',
+    next: '次へ',
+    prevAria: '前のページ',
+    nextAria: '次のページ',
+    pageAria: '{n}ページ目',
+    heads: ['山', '海', '森', '湖', '星', '川', '空', '花'],
+    tails: ['の宿 ひかり', 'の宿 あおば', 'の宿 こだま'],
+    areas: ['長野県', '静岡県', '岐阜県', '山梨県', '栃木県', '群馬県', '北海道', '大分県'],
+    price: (n: number) => `1泊 ${n.toLocaleString('ja-JP')}円〜`,
+  },
+  en: {
+    name: 'Pagination',
+    aria: 'Pagination',
+    nav: ['Find a stay', 'Deals'],
+    cta: 'Book',
+    h: 'Stays with hot springs',
+    count: 'Showing {a}–{b} of 24',
+    prev: 'Previous',
+    next: 'Next',
+    prevAria: 'Previous page',
+    nextAria: 'Next page',
+    pageAria: 'Page {n}',
+    heads: ['Mountain', 'Seaside', 'Forest', 'Lakeside', 'Stargazer', 'Riverside', 'Skyline', 'Garden'],
+    tails: [' Lodge', ' Inn', ' Cabins'],
+    areas: ['Colorado', 'Maine', 'Oregon', 'Vermont', 'Utah', 'Montana', 'Idaho', 'Arizona'],
+    price: (n: number) => `From $${Math.round(n / 80)} / night`,
+  },
+}[lang as 'ja' | 'en'];
+// 24件の宿（3件ずつ8ページ）
+const stays = L.heads.flatMap((h, p) => L.tails.map((t, i) => ({ page: p + 1, name: h + t, area: L.areas[p], price: L.price(8800 + ((p * 3 + i) * 1700) % 9000), tone: (p + i) % 3 })));
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div
+    class="ug-site pg-site"
+    data-demo="pagination"
+    data-count={L.count}
+    data-prev={L.prev}
+    data-next={L.next}
+    data-prev-aria={L.prevAria}
+    data-next-aria={L.nextAria}
+    data-page-aria={L.pageAria}
+  >
+    <header class="ug-nav pg-head"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
+    <section class="ug-sec pg-body">
+      <div class="pg-top">
+        <h3 class="ug-h pg-h" data-pg-h tabindex="-1">{L.h}</h3>
+        <p class="pg-count" data-pg-count></p>
+      </div>
+      <ul class="pg-rows">
+        {stays.map((s) => (
+          <li class="pg-row" data-pg-page={s.page} hidden={s.page !== 1}>
+            <span class={`pg-thumb pg-tone-${s.tone}`} aria-hidden="true"></span>
+            <span class="pg-text"><b>{s.name}</b><small>{s.area} ・ {s.price}</small></span>
+          </li>
+        ))}
+      </ul>
+      <!-- これが部品の本体: 番号つきのページ送り。中身は JavaScript が作る -->
+      <nav class="pg-nav" aria-label={L.aria} data-ug-focus={L.name}>
+        <ul class="pg-list" data-pg-list></ul>
+      </nav>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .pg-site { min-height: 100%; display: flex; flex-direction: column; }
+  .pg-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .pg-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .pg-h { margin: 0; outline: none; }
+  .pg-count { font-size: 12px; color: var(--ug-ink-2); font-variant-numeric: tabular-nums; }
+  .pg-rows { list-style: none; display: grid; gap: 8px; }
+  .pg-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border: 1px solid var(--ug-line);
+    border-radius: 10px;
+    background: #fff;
+  }
+  .pg-row.is-in { animation: pg-in 0.2s ease-out both; }
+  @keyframes pg-in { from { opacity: 0; transform: translateY(4px); } }
+  .pg-thumb { flex: none; width: 56px; height: 40px; border-radius: 6px; }
+  .pg-tone-0 { background: linear-gradient(160deg, #dfe8fb 45%, #4f73d9 46%); }
+  .pg-tone-1 { background: linear-gradient(160deg, #ffe3d4 45%, #f06a35 46%); }
+  .pg-tone-2 { background: linear-gradient(160deg, #26304f 45%, #7b93d6 46%); }
+  .pg-text { display: grid; line-height: 1.4; min-width: 0; }
+  .pg-text b { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pg-text small { font-size: 11px; color: var(--ug-ink-2); }
+
+  /* ページ送り。ボタンの大きさ・角丸・間隔はつまみ（--t-size・--t-radius・--t-gap）から */
+  .pg-nav { position: relative; margin-top: auto; padding-top: 8px; }
+  /* 見どころの名札はページ送りの上に出す */
+  :global(.show-focus) .pg-nav[data-ug-focus]::after { top: auto; bottom: calc(100% + 2px); }
+  .pg-list { list-style: none; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: var(--t-gap); }
+  .pg-list :global(.pg-item) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: var(--t-size);
+    height: var(--t-size);
+    padding: 0 8px;
+    border: 1px solid var(--ug-line);
+    border-radius: var(--t-radius);
+    background: #fff;
+    color: var(--ug-ink) !important;
+    font-size: 13px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out;
+  }
+  .pg-list :global(.pg-item:hover), .pg-list :global(.pg-item.is-hover) { background: var(--ug-bg); border-color: #cfccc4; }
+  /* 今のページ: 色を反転させ、押せないことが見て分かるように */
+  .pg-list :global(.pg-item[aria-current='page']) { background: var(--ug-navy); border-color: var(--ug-navy); color: #fff !important; }
+  /* 端のページでは「前へ」「次へ」を薄くして押せなくする */
+  .pg-list :global(.pg-item[aria-disabled='true']) { opacity: 0.4; pointer-events: none; }
+  .pg-list :global(.pg-gap) { min-width: 16px; text-align: center; color: var(--ug-ink-2); }
+  .pg-list :global(.pg-item svg) { flex: none; }
+
+  /* 狭い枠: 「前へ」「次へ」の文字を隠して矢印だけに */
+  @container (max-width: 420px) {
+    .pg-list :global(.pg-word) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .pg-list :global(.pg-item) { padding: 0 4px; }
+  }
+  @container (max-width: 340px) {
+    .pg-body { padding: 12px; }
+  }
+  /* 一覧の小さな見本: 2件だけにして、ページ送りまで最初の196pxに収める */
+  :global(.is-mini) .pg-head { display: none; }
+  :global(.is-mini) .pg-body { padding: 10px 12px; gap: 6px; }
+  :global(.is-mini) .pg-h { font-size: 14px; }
+  :global(.is-mini) .pg-row { padding: 4px 6px; }
+  :global(.is-mini) .pg-row:nth-child(3n) { display: none; }
+  :global(.is-mini) .pg-thumb { width: 44px; height: 30px; }
+  :global(.is-mini) .pg-nav { padding-top: 0; }
+  :global(.is-mini) .pg-list :global(.pg-item) { min-width: 32px; height: 32px; }
+  @media (prefers-reduced-motion: reduce) {
+    .pg-row.is-in { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  const TOTAL = 8;
+  const PER = 3;
+  const chevron = (d: string) =>
+    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+
+  /** 表示する番号を決める: 先頭・末尾・今のページの前後。離れていれば「…」 */
+  const pagesFor = (cur: number, around: number) => {
+    const out: (number | '…')[] = [];
+    for (let n = 1; n <= TOTAL; n++) {
+      if (n === 1 || n === TOTAL || Math.abs(n - cur) <= around) out.push(n);
+      else if (out[out.length - 1] !== '…') out.push('…');
+    }
+    return out;
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-demo="pagination"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const mini = root.closest<HTMLElement>('[data-ug-frame]')!.dataset.size === 'mini';
+    const list = root.querySelector<HTMLElement>('[data-pg-list]')!;
+    const count = root.querySelector<HTMLElement>('[data-pg-count]')!;
+    const heading = root.querySelector<HTMLElement>('[data-pg-h]')!;
+    const rows = [...root.querySelectorAll<HTMLElement>('[data-pg-page]')];
+    const d = root.dataset;
+    let cur = 1;
+
+    // 一覧の小さな見本はリンクの中に入るので、押せる要素（a）を作らない
+    const item = (label: string, page: number, opts: { current?: boolean; disabled?: boolean; aria?: string; rel?: string } = {}) => {
+      const el = document.createElement(mini ? 'span' : 'a');
+      el.className = 'pg-item';
+      el.innerHTML = label;
+      el.dataset.page = String(page);
+      if (!mini) el.setAttribute('href', `?page=${page}`);
+      if (opts.aria) el.setAttribute('aria-label', opts.aria);
+      if (opts.rel && !mini) el.setAttribute('rel', opts.rel);
+      if (opts.current) el.setAttribute('aria-current', 'page');
+      if (opts.disabled) {
+        el.setAttribute('aria-disabled', 'true');
+        el.removeAttribute('href');
+      }
+      const li = document.createElement('li');
+      li.append(el);
+      return li;
+    };
+
+    const render = (animate = false) => {
+      rows.forEach((r) => {
+        const on = Number(r.dataset.pgPage) === cur;
+        r.hidden = !on;
+        r.classList.toggle('is-in', on && animate);
+      });
+      count.textContent = d.count!.replace('{a}', String((cur - 1) * PER + 1)).replace('{b}', String(cur * PER));
+      const around = view.clientWidth < 420 ? 0 : 1;
+      list.replaceChildren(
+        item(`${chevron('M15 6l-6 6 6 6')}<span class="pg-word">${d.prev}</span>`, cur - 1, { disabled: cur === 1, aria: d.prevAria, rel: 'prev' }),
+        ...pagesFor(cur, around).map((n) => {
+          if (n === '…') {
+            const li = document.createElement('li');
+            li.innerHTML = '<span class="pg-gap" aria-hidden="true">…</span>';
+            return li;
+          }
+          return item(String(n), n, { current: n === cur, aria: d.pageAria!.replace('{n}', String(n)) });
+        }),
+        item(`<span class="pg-word">${d.next}</span>${chevron('M9 6l6 6-6 6')}`, cur + 1, { disabled: cur === TOTAL, aria: d.nextAria, rel: 'next' })
+      );
+    };
+
+    const go = (page: number, real: boolean) => {
+      if (page < 1 || page > TOTAL || page === cur) return;
+      cur = page;
+      render(true);
+      // 本物の操作のときは、一覧の見出しへ焦点を移す（読み上げで「新しい一覧」が分かる）
+      if (real && !mini) heading.focus({ preventScroll: true });
+    };
+
+    list.addEventListener('click', (e) => {
+      const el = (e.target as HTMLElement).closest<HTMLElement>('.pg-item');
+      if (!el) return;
+      e.preventDefault();
+      go(Number(el.dataset.page), true);
+    });
+    list.addEventListener('ug:click', (e) => {
+      const el = (e.target as HTMLElement).closest<HTMLElement>('.pg-item');
+      if (el) go(Number(el.dataset.page), false);
+    });
+    view.addEventListener('ug:reset', () => {
+      cur = 1;
+      render();
+    });
+    render();
+
+    const find = (page: number, kind: 'num' | 'next' | 'prev' = 'num') => {
+      const items = [...list.querySelectorAll<HTMLElement>('.pg-item')];
+      if (kind === 'next') return items[items.length - 1];
+      if (kind === 'prev') return items[0];
+      // 狭い枠で番号が出ていなければ「次へ」を押す
+      return items.find((x) => x.textContent === String(page)) ?? items[items.length - 1];
+    };
+
+    onTour(root, async (t) => {
+      cur = 1;
+      render();
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.5 }, 10);
+      await t.sleep(700);
+      const steps: [number, 'num' | 'next' | 'prev'][] = [[2, 'num'], [3, 'next'], [8, 'num'], [7, 'prev'], [1, 'num']];
+      for (const [page, kind] of steps) {
+        const el = find(page, kind);
+        await t.move(el, 700);
+        t.hover(el);
+        await t.sleep(300);
+        await t.click(el);
+        t.hover(null);
+        await t.sleep(1300);
+      }
+    });
+  });
+</script>

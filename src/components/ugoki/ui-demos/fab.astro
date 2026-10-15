@@ -1,0 +1,190 @@
+---
+// UI部品の見本: フローティングアクションボタン（FAB）
+// 右下に浮いた丸いボタン。いちばん上では「＋ 追加」と文字つき、下へスクロールすると丸だけに縮み、上へ戻すとまた伸びる。
+// 押すと一覧の先頭に新しい項目が入る。
+// 枠の中に収めるため、ボタンは枠内の position: sticky で右下に留める（記事のコードは本番向けに position: fixed）。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: 'FAB',
+    title: '買い物リスト',
+    sub: '週末のキャンプ',
+    add: '追加',
+    addAria: '項目を追加',
+    added: '新しい項目',
+    items: ['炭 3kg', '着火剤', 'ソーセージ', 'とうもろこし 4本', '玉ねぎ', 'マシュマロ', '紙皿 20枚', '割りばし', 'ゴミ袋', '氷 2袋', '麦茶 2L', '虫よけスプレー', '懐中電灯の電池'],
+    done: [1, 4],
+  },
+  en: {
+    name: 'FAB',
+    title: 'Shopping list',
+    sub: 'Weekend camping trip',
+    add: 'Add item',
+    addAria: 'Add item',
+    added: 'New item',
+    items: ['Charcoal, 7 lb', 'Fire starters', 'Hot dogs', 'Corn, 4 ears', 'Onions', 'Marshmallows', 'Paper plates (20)', 'Napkins', 'Trash bags', 'Ice, 2 bags', 'Iced tea, half gallon', 'Bug spray', 'Flashlight batteries'],
+    done: [1, 4],
+  },
+}[lang as 'ja' | 'en'];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site fb-site" data-demo="fab" data-added={L.added}>
+    <header class="fb-head">
+      <h3 class="fb-title">{L.title}</h3>
+      <p class="fb-sub">{L.sub}</p>
+    </header>
+    <ul class="fb-list" data-fb-list>
+      {L.items.map((it, i) => (
+        <li class:list={['fb-row', { 'is-done': L.done.includes(i) }]}>
+          <span class="fb-box" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+          </span>
+          <span class="fb-name">{it}</span>
+        </li>
+      ))}
+    </ul>
+
+    <!-- これが部品の本体: 画面の右下に浮かぶ、その画面でいちばん大事な操作のボタン -->
+    <div class="fb-dock">
+      <span class="fb-wrap" data-ug-focus={L.name}>
+        <Btn class="fb-btn" {...btn} aria-label={L.addAria} data-fb-btn>
+          <svg class="fb-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          <span class="fb-text" aria-hidden="true">{L.add}</span>
+        </Btn>
+      </span>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .fb-site { position: relative; min-height: 100%; background: #fff; }
+  .fb-head { position: sticky; top: 0; z-index: 3; padding: 16px 16px 8px; background: #fff; border-bottom: 1px solid var(--ug-line); }
+  .fb-title { font-size: 18px; font-weight: 800; }
+  .fb-sub { font-size: 12px; color: var(--ug-ink-2); }
+  .fb-list { list-style: none; padding: 4px 16px; }
+  .fb-row { display: flex; align-items: center; gap: 12px; min-height: 48px; border-bottom: 1px solid var(--ug-line); font-size: 14px; }
+  .fb-row.is-done { color: var(--ug-ink-2); text-decoration: line-through; }
+  .fb-box { display: grid; place-items: center; flex: none; width: 22px; height: 22px; border: 2px solid #c9c6be; border-radius: 6px; color: transparent; }
+  .fb-row.is-done .fb-box { border-color: var(--ug-ink-2); background: var(--ug-ink-2); color: #fff; }
+  .fb-row.is-new { animation: fb-new 1.4s ease-out; }
+  @keyframes fb-new { from { background: #fff1e9; } }
+
+  /* 右下に留める台。高さ0の台を下端に貼りつけ、ボタンはその上に置く。
+     ボタンの大きさ・端からの余白・色はつまみ（--t-size・--t-inset・--t-color）から */
+  .fb-dock {
+    position: sticky;
+    bottom: var(--t-inset);
+    z-index: 4;
+    height: 0;
+    margin-top: calc(var(--t-size) + var(--t-inset) * 2);
+  }
+  .fb-wrap { position: absolute; right: var(--t-inset); bottom: 0; display: block; border-radius: 999px; }
+  /* 見どころの名札はボタンの上に出す */
+  :global(.show-focus) .fb-wrap[data-ug-focus]::after { top: auto; bottom: calc(100% + 6px); right: 0; }
+  .fb-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--t-size);
+    min-width: var(--t-size);
+    max-width: 200px;
+    padding: 0 calc((var(--t-size) - 24px) / 2);
+    border: 0;
+    border-radius: 999px;
+    background: var(--t-color);
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 6px 16px -4px rgba(20, 24, 40, 0.35), 0 2px 4px rgba(20, 24, 40, 0.15);
+    transition: max-width 0.25s ease-out, box-shadow 0.15s ease-out, transform 0.15s ease-out;
+  }
+  .fb-plus { flex: none; width: 24px; height: 24px; }
+  .fb-text { padding-right: 4px; transition: opacity 0.2s ease-out; }
+  .fb-btn:hover, .fb-btn.is-hover { box-shadow: 0 10px 22px -6px rgba(20, 24, 40, 0.45), 0 2px 4px rgba(20, 24, 40, 0.15); }
+  .fb-btn:active { transform: scale(0.96); }
+  .fb-btn:focus-visible { outline: 3px solid var(--ug-blue); outline-offset: 3px; }
+  /* 下へスクロールしている間は丸だけに縮める（読む邪魔をしない） */
+  .is-compact .fb-btn { max-width: var(--t-size); }
+  .is-compact .fb-text { opacity: 0; }
+
+  @container (max-width: 340px) {
+    .fb-head { padding: 12px 12px 6px; }
+    .fb-list { padding: 0 12px; }
+    .fb-row { min-height: 44px; font-size: 13px; }
+  }
+  :global(.is-mini) .fb-head { padding: 8px 12px 4px; }
+  :global(.is-mini) .fb-title { font-size: 15px; }
+  :global(.is-mini) .fb-sub { display: none; }
+  :global(.is-mini) .fb-row { min-height: 36px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) {
+    .fb-btn, .fb-text { transition: none; }
+    .fb-row.is-new { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="fab"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const fab = root.querySelector<HTMLElement>('[data-fb-btn]')!;
+    const list = root.querySelector<HTMLElement>('[data-fb-list]')!;
+    const tmpl = list.querySelector<HTMLElement>('.fb-row:not(.is-done)')!;
+    let lastY = 0;
+
+    // 下へスクロールしたら縮め、上へ戻したら伸ばす
+    const onScroll = () => {
+      const y = view.scrollTop;
+      if (y > lastY + 4 && y > 24) root.classList.add('is-compact');
+      else if (y < lastY - 4 || y <= 24) root.classList.remove('is-compact');
+      lastY = y;
+    };
+    view.addEventListener('scroll', onScroll, { passive: true });
+
+    const add = () => {
+      const row = tmpl.cloneNode(true) as HTMLElement;
+      row.classList.add('is-new');
+      row.dataset.fbAdded = '';
+      row.querySelector('.fb-name')!.textContent = root.dataset.added!;
+      list.prepend(row);
+      view.scrollTop = 0;
+    };
+    fab.addEventListener('click', add);
+    fab.addEventListener('ug:click', add);
+
+    const reset = () => {
+      list.querySelectorAll('[data-fb-added]').forEach((r) => r.remove());
+      root.classList.remove('is-compact');
+      lastY = 0;
+    };
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      reset();
+      t.view.scrollTop = 0;
+      t.showCursor(false);
+      await t.sleep(1000);
+      await t.scrollTo(260, 1200);
+      await t.sleep(1000);
+      await t.scrollTo(120, 800);
+      await t.sleep(900);
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.6 + t.view.scrollTop }, 10);
+      await t.move(fab, 800);
+      t.hover(fab);
+      await t.sleep(300);
+      await t.click(fab);
+      t.hover(null);
+      await t.sleep(2000);
+    });
+  });
+</script>

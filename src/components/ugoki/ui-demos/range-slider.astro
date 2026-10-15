@@ -1,0 +1,249 @@
+---
+// UI部品の見本: スライダー（レンジスライダー）
+// 本体は <input type="range">。見た目は下に描いた線と丸で、本物の input を透明にして重ねている
+// （キーボード・読み上げ・ドラッグは本物の input がそのまま受け持つ）。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const MIN = 5000;
+const MAX = 40000;
+const INIT = 15000;
+const L = {
+  ja: {
+    name: 'スライダー',
+    nav: ['宿をさがす', '特集'],
+    label: 'SEARCH',
+    title: '箱根の宿',
+    field: '1泊の予算（上限）',
+    unit: (v: number) => `${v.toLocaleString('ja-JP')}円`,
+    minT: '5,000円',
+    maxT: '40,000円',
+    count: '{a}件中 {b}件',
+    hotels: [
+      ['湯本の小宿', 7800], ['山の宿 こもれび', 11500], ['川辺の湯', 14000], ['芦ノ湖ホテル', 19800], ['強羅 花の宿', 26000], ['仙石原リゾート', 36000],
+    ],
+  },
+  en: {
+    name: 'Range slider',
+    nav: ['Used cars', 'Sell'],
+    label: 'SEARCH',
+    title: 'Used cars near Denver',
+    field: 'Max price',
+    unit: (v: number) => `$${v.toLocaleString('en-US')}`,
+    minT: '$5,000',
+    maxT: '$40,000',
+    count: '{b} of {a} cars',
+    hotels: [
+      ['2016 Honda Civic', 7800], ['2018 Toyota Corolla', 11500], ['2017 Mazda3', 14000], ['2019 Subaru Outback', 19800], ['2020 Ford F-150', 26000], ['2022 Tesla Model 3', 36000],
+    ],
+  },
+}[lang as 'ja' | 'en'];
+const p = (INIT - MIN) / (MAX - MIN);
+const hit = L.hotels.filter((h) => Number(h[1]) <= INIT).length;
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site rs-site" data-demo="range-slider" data-lang={lang} data-count={L.count}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec">
+      <p class="ug-label">{L.label}</p>
+      <h3 class="ug-h">{L.title}</h3>
+
+      <div class="rs-field" data-ug-focus={L.name} data-ug-focus-at="below">
+        <div class="rs-top">
+          {mini ? <span class="rs-name">{L.field}</span> : <label class="rs-name" data-rs-label>{L.field}</label>}
+          <output class="rs-val" data-rs-val>{L.unit(INIT)}</output>
+        </div>
+        <!-- これが部品の本体: つまみを左右に動かして、範囲の中の値を選ぶ -->
+        <div class="rs-slider" style={`--p: ${p}`} data-rs-slider>
+          <span class="rs-track" aria-hidden="true"><span class="rs-fill"></span></span>
+          <span class="rs-thumb" aria-hidden="true" data-rs-thumb></span>
+          {!mini && <input class="rs-input" type="range" min={MIN} max={MAX} step="1000" value={INIT} data-rs-input />}
+        </div>
+        <div class="rs-ends" aria-hidden="true"><span>{L.minT}</span><span>{L.maxT}</span></div>
+      </div>
+
+      <p class="rs-count" aria-live="polite" data-rs-count>{L.count.replace('{a}', String(L.hotels.length)).replace('{b}', String(hit))}</p>
+      <ul class="rs-list">
+        {L.hotels.map(([n, v]) => (
+          <li class:list={['rs-item', Number(v) > INIT && 'is-out']} data-price={v}>
+            <span>{n}</span><b>{L.unit(Number(v))}</b>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .rs-site { min-height: 100%; }
+  .rs-field { position: relative; margin-top: 8px; max-width: 440px; }
+  .rs-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .rs-name { font-size: 12px; font-weight: 700; color: var(--ug-ink-2); }
+  .rs-val { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+  /* スライダーの本体。つまみの大きさ・線の太さはつまみ（--t-thumb・--t-track）から */
+  .rs-slider { position: relative; height: 44px; }
+  .rs-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: var(--t-track);
+    border-radius: 999px;
+    background: #dedcd5;
+    transform: translateY(-50%);
+    overflow: hidden;
+  }
+  /* 選んだところまでを塗る */
+  .rs-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc((100% - var(--t-thumb)) * var(--p) + var(--t-thumb) / 2);
+    background: var(--ug-orange);
+  }
+  .rs-thumb {
+    position: absolute;
+    top: 50%;
+    left: calc((100% - var(--t-thumb)) * var(--p));
+    width: var(--t-thumb);
+    height: var(--t-thumb);
+    border: 2px solid var(--ug-orange);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(20, 24, 40, 0.25);
+    transform: translateY(-50%);
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  }
+  .rs-slider:hover .rs-thumb, .rs-slider.is-hover .rs-thumb, .rs-slider.is-drag .rs-thumb {
+    transform: translateY(-50%) scale(1.12);
+    box-shadow: 0 0 0 6px rgba(240, 106, 53, 0.18), 0 2px 6px rgba(20, 24, 40, 0.25);
+  }
+  .rs-slider:has(.rs-input:focus-visible) .rs-thumb { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+  /* 本物の input は透明にして上に重ねる。つまみの大きさは見た目とそろえる */
+  .rs-input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; appearance: none; background: transparent; }
+  .rs-input::-webkit-slider-thumb { appearance: none; width: var(--t-thumb); height: var(--t-thumb); }
+  .rs-input::-moz-range-thumb { width: var(--t-thumb); height: var(--t-thumb); border: 0; }
+  .rs-ends { display: flex; justify-content: space-between; font-size: 10px; color: var(--ug-ink-2); font-variant-numeric: tabular-nums; }
+
+  .rs-count { margin-top: 12px; font-size: 13px; font-weight: 800; }
+  .rs-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .rs-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--ug-line);
+    border-radius: 8px;
+    font-size: 12px;
+    transition: opacity 0.2s ease-out;
+  }
+  .rs-item b { font-variant-numeric: tabular-nums; }
+  .rs-item.is-out { opacity: 0.3; }
+
+  @container (max-width: 340px) {
+    .rs-site .ug-label { display: none; }
+    .rs-count { margin-top: 4px; }
+    .rs-list { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rs-thumb, .rs-item { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour, onPointer, onTune, tuneNum } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="range-slider"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const slider = root.querySelector<HTMLElement>('[data-rs-slider]')!;
+    const thumb = root.querySelector<HTMLElement>('[data-rs-thumb]')!;
+    const input = root.querySelector<HTMLInputElement>('[data-rs-input]');
+    const val = root.querySelector<HTMLElement>('[data-rs-val]')!;
+    const count = root.querySelector<HTMLElement>('[data-rs-count]')!;
+    const items = [...root.querySelectorAll<HTMLElement>('[data-price]')];
+    const en = root.dataset.lang === 'en';
+    const MIN = 5000;
+    const MAX = 40000;
+    const INIT = 15000;
+    const fmt = (v: number) => (en ? `$${v.toLocaleString('en-US')}` : `${v.toLocaleString('ja-JP')}円`);
+    let value = INIT;
+    let dragging = false;
+
+    // ラベルと input を結びつける（id は見本ごとに作る）
+    if (input) {
+      const id = `rs-${Math.random().toString(36).slice(2, 8)}`;
+      input.id = id;
+      root.querySelector('[data-rs-label]')?.setAttribute('for', id);
+    }
+
+    const step = () => tuneNum(root, 'step', 1000);
+    const set = (v: number) => {
+      const s = step();
+      value = Math.min(MAX, Math.max(MIN, MIN + Math.round((v - MIN) / s) * s));
+      slider.style.setProperty('--p', String((value - MIN) / (MAX - MIN)));
+      val.textContent = fmt(value);
+      if (input) {
+        input.value = String(value);
+        // 読み上げでは「15000」ではなく「15,000円」と伝える
+        input.setAttribute('aria-valuetext', fmt(value));
+      }
+      // 動かしている最中から結果を絞り込む（決定ボタンなし）
+      let hit = 0;
+      items.forEach((it) => {
+        const out = Number(it.dataset.price) > value;
+        it.classList.toggle('is-out', out);
+        if (!out) hit++;
+      });
+      count.textContent = (root.dataset.count ?? '').replace('{a}', String(items.length)).replace('{b}', String(hit));
+    };
+    const applyStep = () => {
+      if (input) input.step = String(step());
+      set(value);
+    };
+
+    input?.addEventListener('input', () => set(Number(input.value)));
+    onTune(view, applyStep);
+    applyStep();
+
+    // 偽物の矢印でつまみをつかんで動かす
+    const fromX = (x: number) => {
+      const r = slider.getBoundingClientRect();
+      const v = view.getBoundingClientRect();
+      const th = thumb.offsetWidth;
+      const k = (x - (r.left - v.left) - th / 2) / (r.width - th);
+      set(MIN + Math.min(1, Math.max(0, k)) * (MAX - MIN));
+    };
+    onPointer(view, (pt, real) => {
+      if (!real && dragging) fromX(pt.x);
+    });
+    const xOf = (v: number) => {
+      const r = slider.getBoundingClientRect();
+      const vr = view.getBoundingClientRect();
+      const th = thumb.offsetWidth;
+      return r.left - vr.left + th / 2 + ((v - MIN) / (MAX - MIN)) * (r.width - th);
+    };
+    view.addEventListener('ug:reset', () => set(INIT));
+
+    onTour(root, async (t) => {
+      set(INIT);
+      dragging = false;
+      await t.move({ x: t.view.clientWidth * 0.7, y: t.view.clientHeight * 0.85 }, 10);
+      await t.sleep(500);
+      await t.move(thumb, 700);
+      t.hover(slider);
+      await t.sleep(300);
+      const y = thumb.getBoundingClientRect().top - t.view.getBoundingClientRect().top + thumb.offsetHeight / 2 + t.view.scrollTop;
+      for (const target of [9000, 32000, INIT]) {
+        dragging = true;
+        slider.classList.add('is-drag');
+        await t.move({ x: xOf(target), y }, 1100);
+        dragging = false;
+        slider.classList.remove('is-drag');
+        await t.sleep(1100);
+      }
+      t.hover(null);
+      await t.sleep(600);
+    });
+  });
+</script>

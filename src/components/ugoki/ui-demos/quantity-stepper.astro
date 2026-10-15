@@ -1,0 +1,293 @@
+---
+// UI部品の見本: 数量ステッパー
+// 本体は「−」ボタン＋ <input type="number"> ＋「＋」ボタン。カートの中なので、変えた瞬間に合計を更新する。
+// 下限（1）と上限（在庫数＝つまみ）では、その向きのボタンを押せなくして理由を出す。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: '数量ステッパー',
+    nav: ['商品', 'カート'],
+    title: 'カート',
+    qty: '数量',
+    dec: '数量を1つ減らす',
+    inc: '数量を1つ増やす',
+    remove: '削除',
+    items: [
+      { n: '有田焼のマグカップ', p: 1800, q: 2, tone: '#c9d8f7' },
+      { n: 'リネンのふきん（2枚組）', p: 1200, q: 1, tone: '#ffd9c7' },
+    ],
+    total: '合計（税込）',
+    stock: '在庫は残り{n}点です',
+    note: '数量を変えると、合計がすぐに変わります。',
+    go: 'レジに進む',
+  },
+  en: {
+    name: 'Quantity stepper',
+    nav: ['Shop', 'Cart'],
+    title: 'Your cart',
+    qty: 'Quantity',
+    dec: 'Decrease quantity',
+    inc: 'Increase quantity',
+    remove: 'Remove',
+    items: [
+      { n: 'Stoneware mug', p: 2400, q: 2, tone: '#c9d8f7' },
+      { n: 'Linen tea towels (set of 2)', p: 1600, q: 1, tone: '#ffd9c7' },
+    ],
+    total: 'Subtotal',
+    stock: 'Only {n} left in stock',
+    note: 'Changing the quantity updates the total right away.',
+    go: 'Checkout',
+  },
+}[lang as 'ja' | 'en'];
+const money = (n: number) => (lang === 'en' ? `$${(n / 100).toFixed(2)}` : `${n.toLocaleString('ja-JP')}円`);
+const sum = L.items.reduce((a, it) => a + it.p * it.q, 0);
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site qs-site" data-demo="quantity-stepper" data-lang={lang} data-stock={L.stock}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec">
+      <h3 class="ug-h">{L.title}</h3>
+      <p class="qs-note">{L.note}</p>
+      <ul class="qs-list">
+        {L.items.map((it, i) => (
+          <li class="qs-item" data-qs-item data-price={it.p} data-init={it.q}>
+            <span class="qs-thumb" style={`background: ${it.tone}`} aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1d2541" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">{i === 0 ? <path d="M5 7h11v8a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4zM16 9h1.5a2.5 2.5 0 0 1 0 5H16" /> : <path d="M6 4h12v16H6zM6 9h12M10 4v5" />}</svg>
+            </span>
+            <div class="qs-body">
+              <p class="qs-name" data-qs-name>{it.n}</p>
+              <p class="qs-price">{money(it.p)}</p>
+              <div class="qs-ctrl">
+                <!-- これが部品の本体: −と＋で1つずつ増減。真ん中の数字は直接打ち替えもできる -->
+                <div class="qs-stepper" data-qs-stepper {...(i === 0 ? { 'data-ug-focus': L.name, 'data-ug-focus-at': 'below' } : {})}>
+                  <Btn class="qs-btn" {...btn} aria-label={mini ? undefined : `${L.dec}（${it.n}）`} data-qs-dec>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12" /></svg>
+                  </Btn>
+                  {mini ? (
+                    <span class="qs-num" data-qs-num>{it.q}</span>
+                  ) : (
+                    <input class="qs-num" type="number" inputmode="numeric" min="1" max="5" step="1" value={it.q} aria-label={`${L.qty}（${it.n}）`} data-qs-num />
+                  )}
+                  <Btn class="qs-btn" {...btn} aria-label={mini ? undefined : `${L.inc}（${it.n}）`} data-qs-inc>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12M12 6v12" /></svg>
+                  </Btn>
+                </div>
+                <Btn class="qs-remove" {...btn}>{L.remove}</Btn>
+              </div>
+              <p class="qs-msg" data-qs-msg></p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div class="qs-total">
+        <span>{L.total}</span>
+        <strong aria-live="polite" data-qs-total>{money(sum)}</strong>
+      </div>
+      <Btn class="ug-btn-site qs-go" {...btn}>{L.go}</Btn>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .qs-site { min-height: 100%; }
+  .qs-note { font-size: 11px; color: var(--ug-ink-2); }
+  .qs-list { list-style: none; margin: 8px 0 0; padding: 0; }
+  .qs-item { display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid var(--ug-line); }
+  .qs-thumb { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 10px; }
+  .qs-body { flex: 1; min-width: 0; }
+  .qs-name { font-size: 13px; font-weight: 700; line-height: 1.4; }
+  .qs-price { font-size: 12px; color: var(--ug-ink-2); font-variant-numeric: tabular-nums; }
+  .qs-ctrl { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+
+  /* ステッパーの本体。ボタンの大きさはつまみ（--t-size）から */
+  .qs-stepper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px solid #c9c7c0;
+    border-radius: 999px;
+    background: #fff;
+  }
+  .qs-btn {
+    display: grid;
+    place-items: center;
+    width: var(--t-size);
+    height: var(--t-size);
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ug-ink);
+    cursor: pointer;
+    transition: background-color 0.15s ease-out, transform 0.1s ease-out;
+  }
+  .qs-btn:hover, .qs-btn.is-hover { background: var(--ug-bg); }
+  .qs-btn:active, .qs-btn.is-press { transform: scale(0.9); background: #e4e2dc; }
+  .qs-btn:focus-visible { outline: 3px solid var(--ug-blue); outline-offset: -2px; }
+  /* 下限・上限ではその向きを押せなくする */
+  .qs-btn:disabled, .qs-btn.is-off { color: #c9c7c0; cursor: not-allowed; background: transparent; transform: none; }
+  .qs-num {
+    display: grid;
+    place-items: center;
+    width: 2.6em;
+    height: var(--t-size);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--ug-ink);
+    font-variant-numeric: tabular-nums;
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+  .qs-num::-webkit-inner-spin-button, .qs-num::-webkit-outer-spin-button { appearance: none; margin: 0; }
+  .qs-num:focus-visible { outline: 3px solid var(--ug-blue); outline-offset: -2px; border-radius: 6px; }
+  .qs-num.is-bump { animation: qs-bump 0.18s ease-out; }
+  @keyframes qs-bump { 50% { transform: scale(1.2); } }
+  .qs-remove {
+    min-height: 44px;
+    padding: 0 4px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 12px;
+    color: var(--ug-ink-2);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .qs-msg { min-height: 16px; font-size: 11px; color: #b4521e; }
+
+  .qs-total { display: flex; align-items: baseline; justify-content: space-between; padding: 12px 0; border-top: 1px solid var(--ug-line); font-size: 13px; }
+  .qs-total strong { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .qs-go { width: 100%; }
+
+  @container (max-width: 340px) {
+    .qs-note { display: none; }
+    .qs-thumb { width: 44px; height: 44px; }
+    .qs-item { gap: 8px; padding: 8px 0; }
+  }
+  :global(.ug-frame.is-mini) .qs-site .ug-nav { display: none; }
+  :global(.ug-frame.is-mini) .qs-msg { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .qs-btn { transition: none; }
+    .qs-num.is-bump { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour, onTune, tuneNum } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="quantity-stepper"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const en = root.dataset.lang === 'en';
+    const items = [...root.querySelectorAll<HTMLElement>('[data-qs-item]')];
+    const total = root.querySelector<HTMLElement>('[data-qs-total]')!;
+    const money = (n: number) => (en ? `$${(n / 100).toFixed(2)}` : `${n.toLocaleString('ja-JP')}円`);
+    const max = () => Math.round(tuneNum(root, 'max', 5));
+
+    const numEl = (it: HTMLElement) => it.querySelector<HTMLElement>('[data-qs-num]')!;
+    const getQ = (it: HTMLElement) => {
+      const el = numEl(it);
+      return Number(el instanceof HTMLInputElement ? el.value : el.textContent) || 1;
+    };
+    const sync = () => {
+      let sum = 0;
+      items.forEach((it) => {
+        const q = getQ(it);
+        sum += q * Number(it.dataset.price);
+        const dec = it.querySelector<HTMLElement>('[data-qs-dec]')!;
+        const inc = it.querySelector<HTMLElement>('[data-qs-inc]')!;
+        // 端に来たら、その向きのボタンを押せなくする
+        for (const [b, off] of [[dec, q <= 1], [inc, q >= max()]] as const) {
+          if (b instanceof HTMLButtonElement) b.disabled = off;
+          b.classList.toggle('is-off', off);
+        }
+        const el = numEl(it);
+        if (el instanceof HTMLInputElement) el.max = String(max());
+        const msg = it.querySelector<HTMLElement>('[data-qs-msg]')!;
+        msg.textContent = q >= max() ? (root.dataset.stock ?? '').replace('{n}', String(max())) : '';
+      });
+      total.textContent = money(sum);
+    };
+    const setQ = (it: HTMLElement, q: number) => {
+      const v = Math.min(max(), Math.max(1, Math.round(q)));
+      const el = numEl(it);
+      if (el instanceof HTMLInputElement) el.value = String(v);
+      else el.textContent = String(v);
+      el.classList.remove('is-bump');
+      void el.offsetWidth;
+      el.classList.add('is-bump');
+      sync();
+    };
+
+    items.forEach((it) => {
+      const dec = it.querySelector<HTMLElement>('[data-qs-dec]')!;
+      const inc = it.querySelector<HTMLElement>('[data-qs-inc]')!;
+      const step = (d: number) => setQ(it, getQ(it) + d);
+      dec.addEventListener('click', () => step(-1));
+      inc.addEventListener('click', () => step(1));
+      dec.addEventListener('ug:click', () => step(-1));
+      inc.addEventListener('ug:click', () => step(1));
+      // 直接打ち替えたときは、欄を離れたときに範囲へ収める（打っている途中では直さない）
+      const el = numEl(it);
+      if (el instanceof HTMLInputElement) {
+        el.addEventListener('input', () => {
+          if (el.value !== '') sync();
+        });
+        el.addEventListener('change', () => setQ(it, Number(el.value) || 1));
+      }
+    });
+    onTune(view, () => {
+      items.forEach((it) => getQ(it) > max() && setQ(it, max()));
+      sync();
+    });
+    sync();
+
+    const reset = () => {
+      items.forEach((it) => {
+        const el = numEl(it);
+        const v = it.dataset.init ?? '1';
+        if (el instanceof HTMLInputElement) el.value = v;
+        else el.textContent = v;
+      });
+      sync();
+    };
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      reset();
+      const it = items[0];
+      const dec = it.querySelector<HTMLElement>('[data-qs-dec]')!;
+      const inc = it.querySelector<HTMLElement>('[data-qs-inc]')!;
+      await t.move({ x: t.view.clientWidth * 0.7, y: t.view.clientHeight * 0.9 }, 10);
+      await t.sleep(500);
+      await t.move(inc, 700);
+      t.hover(inc);
+      // 上限まで押す（上限では押せなくなり、理由が出る）
+      while (getQ(it) < max()) {
+        await t.sleep(450);
+        await t.click(inc);
+      }
+      await t.sleep(1600);
+      t.hover(null);
+      await t.move(dec, 600);
+      t.hover(dec);
+      while (getQ(it) > 1) {
+        await t.sleep(400);
+        await t.click(dec);
+      }
+      await t.sleep(1400);
+      t.hover(null);
+      await t.sleep(400);
+    });
+  });
+</script>

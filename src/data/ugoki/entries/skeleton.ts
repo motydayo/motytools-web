@@ -28,7 +28,7 @@ export default {
     'ファイルの書き出しや送信など、終わるまでの進み具合を知りたい処理（進捗の棒や残り時間の方が親切）',
   ],
   prompt:
-    'カード一覧の読み込み中を「スケルトンスクリーン（skeleton screen）」にしてください。本物のカードと同じ要素・同じ大きさのまま、写真・タイトル・説明・料金の場所を灰色（#ecebe7）の角丸の帯にし、明るい光の筋を1.4秒で左から右へ流し続けてください（シマー）。データが届いたら is-loading クラスを外し、中身を0.3秒でフェードインさせ、カードごとに0.06秒ずつずらしてください。読み込み中は一覧に aria-busy="true" を付け、終わったら role="status" の見えない文字で「4件表示しました」と知らせてください。動きを減らす設定の人には光の筋を止めてください。CSSとJavaScriptだけで作ること。',
+    'カード一覧の読み込み中を「スケルトンスクリーン（skeleton screen）」にしてください。本物のカードと同じ要素・同じ大きさのまま、写真・タイトル・説明・料金の場所を灰色（#ecebe7）の角丸の帯にし、明るい光の筋を1周{{shimmer:t}}で左から右へ流し続けてください（シマー）。データが届いたら is-loading クラスを外し、中身を{{fade:t}}でフェードインさせ、カードごとに{{stagger:t}}ずつずらしてください。読み込み中は一覧に aria-busy="true" を付け、終わったら role="status" の見えない文字で「4件表示しました」と知らせてください。動きを減らす設定の人には光の筋を止めてください。CSSとJavaScriptだけで作ること。',
   howTo: [
     '骨組みを別の部品として用意するのではなく、本物のカードに is-loading クラスを付けて「中身を透明にし、同じ場所を灰色の帯にする」CSSを当てます。形も大きさも本物と同じなので、データが届いてクラスを外したとき、画面の位置がほとんどずれません。見本もこの方法で作っています。',
     '光の筋は、横長の linear-gradient（色が少しずつ変わる背景）を background-position で流して作ります。データが届いたらJavaScriptで文字を入れてクラスを外すだけです。本物のサイトでは、下のコードの loadItems() の中身を fetch（サーバーからデータを取ってくる命令）に置き換えてください。',
@@ -39,15 +39,15 @@ export default {
       label: 'HTML',
       code: `<!-- 読み込み中は is-loading と aria-busy="true" -->
 <ul class="list is-loading" aria-busy="true">
-  <li class="item">
+  <li class="item" style="--i: 0">
     <div class="thumb"></div>
     <div class="txt"><p class="title">&nbsp;</p><p class="price">&nbsp;</p></div>
   </li>
-  <li class="item">
+  <li class="item" style="--i: 1">
     <div class="thumb"></div>
     <div class="txt"><p class="title">&nbsp;</p><p class="price">&nbsp;</p></div>
   </li>
-  <li class="item">
+  <li class="item" style="--i: 2">
     <div class="thumb"></div>
     <div class="txt"><p class="title">&nbsp;</p><p class="price">&nbsp;</p></div>
   </li>
@@ -69,7 +69,7 @@ export default {
   border-radius: 6px;
   background: linear-gradient(90deg, #ecebe7 40%, #f7f6f3 50%, #ecebe7 60%);
   background-size: 300% 100%;
-  animation: shimmer 1.4s linear infinite;
+  animation: shimmer {{shimmer}} linear infinite;
 }
 .is-loading .title { width: 72%; }
 .is-loading .price { width: 34%; }
@@ -78,10 +78,11 @@ export default {
   to { background-position: 0 0; }
 }
 
-/* 届いたら中身をふわっと出す */
-.list:not(.is-loading) .item > * { animation: fade-in 0.3s ease-out both; }
-.list:not(.is-loading) .item:nth-child(2) > * { animation-delay: 0.06s; }
-.list:not(.is-loading) .item:nth-child(3) > * { animation-delay: 0.12s; }
+/* 届いたら中身をふわっと出す（--i 番目のカードほど遅らせる） */
+.list:not(.is-loading) .item > * {
+  animation: fade-in {{fade}} ease-out both;
+  animation-delay: calc(var(--i, 0) * {{stagger}});
+}
 @keyframes fade-in { from { opacity: 0; } }
 
 .visually-hidden {
@@ -121,6 +122,11 @@ loadItems().then((items) => {
   status.textContent = \`\${items.length}件を表示しました\`;
 });`,
     },
+  ],
+  tune: [
+    { key: 'shimmer', label: '光の筋が1周する時間', min: 0.6, max: 3, step: 0.1, value: 1.4, unit: 's' },
+    { key: 'fade', label: '中身が出る速さ', min: 0, max: 0.8, step: 0.05, value: 0.3, unit: 's' },
+    { key: 'stagger', label: 'カードごとのずれ', min: 0, max: 0.2, step: 0.02, value: 0.06, unit: 's' },
   ],
   cautions: [
     '骨組みと本物の形・大きさが違うと、差し替えた瞬間に画面がガタッと動きます。骨組みは本物と同じ要素に is-loading を付けて作るのがいちばん確実です。',

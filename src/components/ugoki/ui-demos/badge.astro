@@ -1,0 +1,327 @@
+---
+// UI部品の見本: バッジ
+// アイコンの右上に重ねる「件数のバッジ」「点だけのバッジ」と、カードの角に付ける「状態のバッジ（NEW・残りわずか）」。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: 'バッジ',
+    bell: 'お知らせ',
+    chat: 'メッセージ',
+    cart: 'カート',
+    chatLabel: 'メッセージ（未読あり）',
+    count: (label: string, n: number) => (n > 0 ? `${label}（${n}件）` : label),
+    cartCount: (n: number) => (n > 0 ? `カート（${n}点）` : 'カート'),
+    added: (n: number) => `カートに入れました。カートは${n}点です`,
+    label: 'NEW ARRIVALS',
+    heading: '新着の器',
+    items: [
+      { tone: 'sunset', t: '益子焼 マグカップ', p: '2,800円', tag: 'NEW', st: '' },
+      { tone: 'day', t: '藍色の小皿 5枚組', p: '3,600円', tag: 'NEW', st: '残り2点' },
+      { tone: 'night', t: '黒釉の飯碗', p: '2,400円', tag: '', st: '' },
+    ],
+    add: 'カートに入れる',
+    panelH: 'お知らせ',
+    notices: ['秋の器フェアが始まりました', 'ご注文の品を発送しました', 'お気に入りの品が再入荷しました', '送料無料は5,000円以上から'],
+  },
+  en: {
+    name: 'Badge',
+    bell: 'Notifications',
+    chat: 'Messages',
+    cart: 'Cart',
+    chatLabel: 'Messages (unread)',
+    count: (label: string, n: number) => (n > 0 ? `${label} (${n} new)` : label),
+    cartCount: (n: number) => (n > 0 ? `Cart (${n} ${n === 1 ? 'item' : 'items'})` : 'Cart'),
+    added: (n: number) => `Added to cart. ${n} ${n === 1 ? 'item' : 'items'} in cart`,
+    label: 'NEW ARRIVALS',
+    heading: 'Just in: ceramics',
+    items: [
+      { tone: 'sunset', t: 'Stoneware Mug', p: '$24', tag: 'NEW', st: '' },
+      { tone: 'day', t: 'Indigo Plates, Set of 5', p: '$32', tag: 'NEW', st: 'Only 2 left' },
+      { tone: 'night', t: 'Black Glaze Bowl', p: '$20', tag: '', st: '' },
+    ],
+    add: 'Add to cart',
+    panelH: 'Notifications',
+    notices: ['Our fall ceramics sale has started', 'Your order has shipped', 'An item on your wishlist is back', 'Free shipping on orders over $50'],
+  },
+}[lang as 'ja' | 'en'];
+const bell0 = 3;
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site bd-site" data-demo="badge" data-bd-bell-label={L.bell}>
+    <header class="ug-nav bd-nav">
+      <span class="ug-logo">SAMPLE</span>
+      <!-- これが部品の本体: アイコンの右上に重ねた小さな札。件数か「点」で、見に来てほしいことを知らせる -->
+      <div class="bd-icons" data-ug-focus={L.name} data-ug-focus-at="below">
+        <Btn class="bd-icon" {...btn} aria-label={L.count(L.bell, bell0)} aria-expanded={mini ? undefined : 'false'} data-bd-bell>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+          <span class="bd-badge" aria-hidden="true" data-bd-bell-n>{bell0}</span>
+        </Btn>
+        <Btn class="bd-icon" {...btn} aria-label={L.chatLabel}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+          <span class="bd-badge bd-dot" aria-hidden="true"></span>
+        </Btn>
+        <Btn class="bd-icon" {...btn} aria-label={L.cartCount(0)} data-bd-cart>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4" /><circle cx="18" cy="20" r="1.4" /><path d="M2.5 3h2.6l2.4 12h11.4l2-8H6.2" /></svg>
+          <span class="bd-badge" aria-hidden="true" data-bd-cart-n hidden>0</span>
+        </Btn>
+      </div>
+      <div class="bd-panel" data-bd-panel hidden>
+        <p class="bd-panel-h">{L.panelH}</p>
+        <ul>{L.notices.map((x, i) => <li data-bd-notice={i}>{x}</li>)}</ul>
+      </div>
+    </header>
+
+    <section class="ug-sec bd-sec">
+      <p class="ug-label">{L.label}</p>
+      <h3 class="ug-h">{L.heading}</h3>
+      <div class="bd-grid">
+        {L.items.map((it, i) => (
+          <div class="ug-card bd-card">
+            <div class="bd-photo">
+              <Scene tone={it.tone as 'day' | 'sunset' | 'night'} />
+              {it.tag && <span class="bd-tag">{it.tag}</span>}
+            </div>
+            <div class="bd-body">
+              <p class="bd-t">{it.t}</p>
+              <p class="bd-p">{it.p}{it.st && <span class="bd-stock">{it.st}</span>}</p>
+              <Btn class="bd-add" {...btn} data-bd-add={i}>{L.add}</Btn>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+    <p class="sr-only" role="status" data-bd-status data-bd-added={JSON.stringify([L.added(1), L.added(2), L.added(3)])}></p>
+  </div>
+</UgFrame>
+
+<style>
+  .bd-site { position: relative; min-height: 100%; }
+  .bd-nav { position: relative; gap: 4px; }
+  .bd-icons { position: relative; display: flex; gap: 4px; }
+  .bd-icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ug-ink);
+    cursor: pointer;
+  }
+  .bd-icon:hover, .bd-icon.is-hover { background: var(--ug-bg); }
+  .bd-icon:focus-visible, .bd-add:focus-visible { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+
+  /* バッジ: 大きさと色はつまみ（--t-size・--t-color）から。白いふちで、アイコンと重なっても形が読める */
+  .bd-badge {
+    position: absolute;
+    top: calc(12px - var(--t-size) / 2);
+    left: calc(50% + 4px);
+    min-width: var(--t-size);
+    height: var(--t-size);
+    padding: 0 calc(var(--t-size) * 0.28);
+    border: 2px solid #fff;
+    border-radius: 999px;
+    background: var(--t-color);
+    color: #fff;
+    font-size: calc(var(--t-size) * 0.58);
+    font-weight: 800;
+    line-height: calc(var(--t-size) - 4px);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    box-sizing: border-box;
+  }
+  .bd-badge[hidden] { display: none; }
+  /* 数を出さない「点だけ」のバッジ */
+  .bd-dot { top: 8px; left: calc(50% + 5px); min-width: 0; width: calc(var(--t-size) * 0.55); height: calc(var(--t-size) * 0.55); padding: 0; }
+  /* 数が変わったら一度だけ弾ませる */
+  .bd-badge.is-pop { animation: bd-pop 0.2s ease-out; }
+  @keyframes bd-pop { 50% { transform: scale(1.25); } }
+
+  .bd-panel {
+    position: absolute;
+    top: 46px;
+    right: 12px;
+    z-index: 20;
+    width: min(260px, calc(100% - 24px));
+    padding: 12px 0 8px;
+    border: 1px solid var(--ug-line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 16px 32px -12px rgba(29, 37, 65, 0.35);
+    animation: bd-in 0.2s ease-out;
+  }
+  .bd-panel[hidden] { display: none; }
+  @keyframes bd-in { from { opacity: 0; transform: translateY(-4px); } }
+  .bd-panel-h { padding: 0 16px 6px; font-size: 12px; font-weight: 800; }
+  .bd-panel ul { margin: 0; padding: 0; list-style: none; }
+  .bd-panel li { padding: 8px 16px; border-top: 1px solid var(--ug-line); font-size: 12px; color: var(--ug-ink); }
+
+  .bd-sec { padding-top: 16px; }
+  .bd-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 12px; margin-top: 14px; }
+  .bd-card { overflow: visible; }
+  .bd-photo { position: relative; }
+  .bd-photo :global(.ug-scene) { border-radius: 9px 9px 0 0; }
+  /* 状態のバッジ: 角に、少しはみ出して */
+  .bd-tag {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--ug-navy);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+  .bd-body { display: grid; gap: 2px; padding: 8px 10px 10px; }
+  .bd-t { font-size: 12px; font-weight: 700; line-height: 1.4; }
+  .bd-p { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .bd-stock { padding: 0 6px; border: 1px solid #c2410c; border-radius: 4px; color: #b23a0b; font-size: 10px; font-weight: 700; line-height: 16px; }
+  .bd-add {
+    margin-top: 6px;
+    min-height: 36px;
+    padding: 0 8px;
+    border: 1px solid var(--ug-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ug-ink);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    line-height: 34px;
+  }
+  .bd-add:hover, .bd-add.is-hover { background: var(--ug-bg); }
+
+  @container (max-width: 480px) {
+    .bd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bd-card:nth-child(3) { display: none; }
+  }
+  :global(.is-mini) .bd-sec { padding: 12px; }
+  :global(.is-mini) .bd-sec .ug-label { display: none; }
+  :global(.is-mini) .bd-sec .ug-h { font-size: 13px; margin: 0; }
+  :global(.is-mini) .bd-grid { margin-top: 12px; }
+  :global(.is-mini) .bd-add { display: none; }
+  :global(.is-mini) .bd-body { padding: 6px 8px; }
+  :global(.is-mini) .bd-icon { width: 36px; }
+  @media (prefers-reduced-motion: reduce) {
+    .bd-badge.is-pop, .bd-panel { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="badge"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const ja = (root.closest('[lang]')?.getAttribute('lang') ?? 'ja') === 'ja';
+    const bell = root.querySelector<HTMLElement>('[data-bd-bell]')!;
+    const bellN = root.querySelector<HTMLElement>('[data-bd-bell-n]')!;
+    const cart = root.querySelector<HTMLElement>('[data-bd-cart]')!;
+    const cartN = root.querySelector<HTMLElement>('[data-bd-cart-n]')!;
+    const panel = root.querySelector<HTMLElement>('[data-bd-panel]')!;
+    const status = root.querySelector<HTMLElement>('[data-bd-status]')!;
+    const adds = [...root.querySelectorAll<HTMLElement>('[data-bd-add]')];
+    const addedMsg: string[] = JSON.parse(status.dataset.bdAdded ?? '[]');
+    const bellLabel = root.dataset.bdBellLabel ?? '';
+    let bellCount = 3;
+    let cartCount = 0;
+
+    // 数を札に書く。0なら隠す。100以上は「99+」にして札の幅を暴れさせない
+    const setBadge = (el: HTMLElement, n: number, pop: boolean) => {
+      el.hidden = n <= 0;
+      el.textContent = n > 99 ? '99+' : String(n);
+      el.classList.remove('is-pop');
+      if (pop && n > 0) {
+        void el.offsetWidth;
+        el.classList.add('is-pop');
+      }
+    };
+    // 読み上げ用の名前にも件数を入れる（札そのものは aria-hidden）
+    const label = () => {
+      bell.setAttribute('aria-label', bellCount > 0 ? (ja ? `${bellLabel}（${bellCount}件）` : `${bellLabel} (${bellCount} new)`) : bellLabel);
+      cart.setAttribute('aria-label', cartCount > 0 ? (ja ? `カート（${cartCount}点）` : `Cart (${cartCount} ${cartCount === 1 ? 'item' : 'items'})`) : ja ? 'カート' : 'Cart');
+    };
+    const setBell = (n: number, pop = true) => {
+      bellCount = n;
+      setBadge(bellN, n, pop);
+      label();
+    };
+    const setCart = (n: number, pop = true) => {
+      cartCount = n;
+      setBadge(cartN, n, pop);
+      label();
+    };
+    const notices = [...panel.querySelectorAll<HTMLElement>('[data-bd-notice]')];
+    const showNotices = () => notices.forEach((li, i) => (li.hidden = i >= Math.max(bellCount, 3)));
+
+    const addToCart = () => {
+      setCart(Math.min(cartCount + 1, 120));
+      status.textContent = addedMsg[Math.min(cartCount, 3) - 1] ?? '';
+    };
+    const togglePanel = (force?: boolean) => {
+      const open = force ?? panel.hidden;
+      if (open) showNotices();
+      panel.hidden = !open;
+      bell.setAttribute('aria-expanded', String(open));
+      // 開いて見たら「未読」の札は消す
+      if (open && bellCount > 0) setBell(0, false);
+    };
+    const on = (el: HTMLElement, fn: () => void) => {
+      el.addEventListener('click', fn);
+      el.addEventListener('ug:click', fn);
+    };
+    adds.forEach((b) => on(b, addToCart));
+    on(bell, () => togglePanel());
+    view.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) togglePanel(false);
+    });
+
+    const reset = () => {
+      setBell(3, false);
+      setCart(0, false);
+      panel.hidden = true;
+      bell.setAttribute('aria-expanded', 'false');
+      status.textContent = '';
+    };
+    view.addEventListener('ug:reset', reset);
+    reset();
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.3, y: t.view.clientHeight * 0.9 }, 10);
+      await t.sleep(800);
+      for (const b of adds.slice(0, 2)) {
+        if (!b.offsetParent) continue;
+        await t.move(b, 750);
+        t.hover(b);
+        await t.sleep(250);
+        await t.click(b);
+        t.hover(null);
+        await t.sleep(900);
+      }
+      // 新しいお知らせが届く
+      setBell(4);
+      await t.sleep(1200);
+      await t.move(bell, 800);
+      t.hover(bell);
+      await t.sleep(250);
+      await t.click(bell);
+      t.hover(null);
+      await t.sleep(2000);
+      await t.click(bell);
+      await t.sleep(900);
+    });
+  });
+</script>

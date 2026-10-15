@@ -28,9 +28,9 @@ export default {
     'ボタンを押すとすぐ別のページへ移る場合（波紋が見える前に画面が変わる）',
   ],
   prompt:
-    'ボタンと選択リストに「リップルエフェクト（ripple effect）」を付けてください。押した位置（pointerdown の座標）を中心に円の span を作り、いちばん遠い角まで届く大きさから transform: scale(0) → scale(1) に広げながら opacity を0にします。時間は0.5秒、ease-out。終わったら span を消してください。ボタンには position: relative と overflow: hidden を付けます。キーボードの Enter・スペースで押したときはボタンの中心から広げます。prefers-reduced-motion: reduce のときは波紋を出さないでください。ライブラリは使わないでください。',
+    'ボタンと選択リストに「リップルエフェクト（ripple effect）」を付けてください。押した位置（pointerdown の座標）を中心に円の span を作り、いちばん遠い角まで届く大きさから transform: scale(0) → scale(1) に広げながら opacity を0にします。円の色は白（不透明度 {{alpha:t}}）、時間は{{dur:t}}、ease-out。終わったら span を消してください。ボタンには position: relative と overflow: hidden を付けます。キーボードの Enter・スペースで押したときはボタンの中心から広げます。prefers-reduced-motion: reduce のときは波紋を出さないでください。ライブラリは使わないでください。',
   howTo: [
-    '押されたら、押した位置を中心にした円（span）をボタンの中に1つ足します。円の大きさは、押した位置からいちばん遠い角までの距離の2倍にすると、どこを押してもボタン全体を覆えます。あとはCSSアニメーションで円を0から1倍に広げつつ透明にし、終わったら取り除きます。',
+    '押されたら、押した位置を中心にした円（span）をボタンの中に1つ足します。円の大きさは、押した位置からいちばん遠い角までの距離の2倍にすると、どこを押してもボタン全体を覆えます。あとはCSSアニメーションで円を0から1倍に広げつつ透明にし、終わったら取り除きます。時間は0.4〜0.6秒が目安で、短すぎると広がる前に消えて「押した所から」が伝わらず、1秒を超えると次の操作を待たされているように感じます。',
     '円がボタンの外へはみ出さないよう、ボタンに overflow: hidden を付けます。押した位置は pointerdown（指やマウスが触れた瞬間）で取ると、指を離すのを待たずに反応できます。',
   ],
   code: [
@@ -60,10 +60,10 @@ export default {
 .ripple {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, {{alpha:n}}); /* 波紋の濃さ */
   transform: scale(0);
   pointer-events: none;
-  animation: ripple 0.5s ease-out forwards;
+  animation: ripple {{dur}} ease-out forwards;
 }
 @keyframes ripple {
   to { transform: scale(1); opacity: 0; }
@@ -98,6 +98,10 @@ document.querySelectorAll('.ripple-btn').forEach((btn) => {
   });
 });`,
     },
+  ],
+  tune: [
+    { key: 'dur', label: '波紋が広がる時間', min: 0.2, max: 1.5, step: 0.05, value: 0.5, unit: 's' },
+    { key: 'alpha', label: '波紋の濃さ', min: 0.1, max: 0.9, step: 0.05, value: 0.4, unit: '' },
   ],
   cautions: [
     'リップルはマウスでもタップでも同じように出せる、数少ない「スマホでも成立する」反応です。ただしタップ後すぐページが切り替わるボタンでは見えないので、画面が残るボタン（選択・送信中の表示があるもの）に向いています。',

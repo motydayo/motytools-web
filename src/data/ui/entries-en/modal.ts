@@ -6,11 +6,11 @@ export default {
   category: 'overlay',
   name: 'Modal dialog',
   en: 'モーダル',
-  aka: ['Modal', 'Modal window', 'Dialog', 'Lightbox dialog', 'Popup'],
+  aka: ['Modal', 'Modal window', 'Dialog', 'Dialog box', 'Popup'],
   mode: 'script',
-  title: 'Modal Dialog: Build It Right with <dialog> and showModal() (Demo)',
+  title: 'Modal vs Dialog vs Popup: Build an Accessible Modal with <dialog>',
   description:
-    'What a modal is, how it differs from a popup or a drawer, and how to build one properly with the HTML <dialog> element: Esc to close, backdrop click, focus return, scroll lock and an enter animation. Live demo, code and an AI prompt.',
+    'What a modal dialog is, how it differs from a popup or a drawer, and how to build one with HTML <dialog>: Esc, backdrop click, focus return and scroll lock.',
   oneLine: 'A window opens in the middle of the screen and blocks the page until you close it.',
   what: [
     'A modal lays a small window over the current page and dims everything behind it, saying “deal with this first”. In the demo, “Review booking” opens a confirmation, and nothing behind it can be clicked until you choose Book now or Cancel.',
@@ -39,7 +39,7 @@ export default {
       code: `<button type="button" class="open-btn">Review booking</button>
 
 <dialog class="modal" aria-labelledby="modal-title">
-  <form method="dialog">
+  <form method="dialog" class="modal-body">
     <button class="modal-x" value="cancel" aria-label="Close">×</button>
     <h2 id="modal-title">Confirm this booking?</h2>
     <p>Nov 3, 1 night · 2 adults · Total $220</p>
@@ -53,7 +53,7 @@ export default {
       label: 'CSS',
       code: `.modal {
   width: min(90vw, 360px);
-  padding: 24px;
+  padding: 0; /* padding goes on the inner box so backdrop clicks are detected correctly */
   border: 0;
   border-radius: 16px;
   /* Open/close motion (ease-out on the way in) */
@@ -68,6 +68,9 @@ export default {
 @starting-style {
   .modal[open] { opacity: 0; transform: scale({{scale:n}}); }
 }
+
+/* Padding lives on the inner box */
+.modal-body { padding: 24px; }
 
 /* The dimmed backdrop */
 .modal::backdrop {
@@ -89,7 +92,7 @@ const openBtn = document.querySelector('.open-btn');
 
 openBtn.addEventListener('click', () => dialog.showModal());
 
-// Close when the backdrop (outside the box) is clicked
+// Close on backdrop click (the dialog has no padding, so only the backdrop hits this)
 dialog.addEventListener('click', (e) => {
   if (e.target === dialog) dialog.close('cancel');
 });

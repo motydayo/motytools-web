@@ -28,7 +28,7 @@ export default {
     '画質の低い小さな画像（拡大でぼやけが目立つ）',
   ],
   prompt:
-    '画像一覧に「ホバーで画像ズーム（image zoom on hover）」を付けてください。画像を包む枠に overflow: hidden を付け、マウスを乗せたら中の img だけを transform: scale(1.1) で1.1倍にします。枠の大きさは変えないでください。時間は0.35秒、ease-out。CSSだけで作り、:hover は @media (hover: hover) の中に書いて、スマホでは拡大しないでください。キーボード操作では :focus-visible で同じ拡大にし、prefers-reduced-motion: reduce のときは拡大せず少し暗くするだけにしてください。',
+    '画像一覧に「ホバーで画像ズーム（image zoom on hover）」を付けてください。画像を包む枠に overflow: hidden を付け、マウスを乗せたら中の img だけを transform: scale で{{scale:t}}倍にします。枠の大きさは変えないでください。時間は{{dur:t}}、ease-out。CSSだけで作り、:hover は @media (hover: hover) の中に書いて、スマホでは拡大しないでください。キーボード操作では :focus-visible で同じ拡大にし、prefers-reduced-motion: reduce のときは拡大せず少し暗くするだけにしてください。',
   howTo: [
     '画像を1枚の「窓」に入れるイメージで作ります。外側の枠に overflow: hidden（はみ出た部分を隠す指定）を付け、中の画像だけを transform: scale で大きくします。枠は動かないので、まわりの並びは崩れません。',
     '倍率は1.05〜1.15倍、時間は0.3〜0.4秒が目安です。大きくしすぎたり速すぎたりすると、写真が飛び出してくるように見えて落ち着きません。',
@@ -61,17 +61,17 @@ export default {
   height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  transition: transform 0.35s ease-out;
+  transition: transform {{dur}} ease-out;
 }
 
 /* マウスのある端末だけ、乗せたら中の画像を拡大 */
 @media (hover: hover) {
-  .work:hover .work-pic img { transform: scale(1.1); }
+  .work:hover .work-pic img { transform: scale({{scale}}); }
 }
 /* キーボードで選んだときも */
 .work:focus-visible { outline: none; }
 .work:focus-visible .work-pic { outline: 2px solid #4f73d9; outline-offset: 2px; }
-.work:focus-visible .work-pic img { transform: scale(1.1); }
+.work:focus-visible .work-pic img { transform: scale({{scale}}); }
 
 /* 動きを減らす設定なら、拡大せず少し暗くするだけ */
 @media (prefers-reduced-motion: reduce) {
@@ -80,6 +80,10 @@ export default {
   .work:focus-visible .work-pic img { transform: none; filter: brightness(0.92); }
 }`,
     },
+  ],
+  tune: [
+    { key: 'scale', label: '拡大の倍率', min: 1, max: 1.5, step: 0.01, value: 1.1, unit: '' },
+    { key: 'dur', label: '拡大の速さ', min: 0.1, max: 1.2, step: 0.05, value: 0.35, unit: 's' },
   ],
   cautions: [
     'スマホにはマウスがないので、乗せて拡大する場面がありません。タップするとすぐ次のページへ移るので、拡大は「マウスのある端末のおまけ」と考え、写真そのものを十分魅力的にしておきます。',

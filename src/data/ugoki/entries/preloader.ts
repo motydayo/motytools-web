@@ -29,10 +29,10 @@ export default {
     '毎回同じ人が何度も開く管理画面（2回目以降は待ち時間が邪魔なだけになる）',
   ],
   prompt:
-    'ページを開いたときに「ローディング画面（preloader）」を出してください。画面全体を紺色の幕でおおい、中央にロゴと細い進むバーを置きます。window の load イベントで幕を0.3秒かけてフェードアウトさせ、消えたら要素ごと非表示にしてください。読み込みが遅くても最大3秒で必ず消す保険のタイマーを入れ、JavaScriptが動かない環境では最初から幕を出さないでください。幕には role="status" と「読み込み中」の読み上げ用ラベルを付け、prefers-reduced-motion が reduce の人にはバーやロゴを動かさないでください。',
+    'ページを開いたときに「ローディング画面（preloader）」を出してください。画面全体を紺色の幕でおおい、中央にロゴと細い進むバーを置きます。バーは{{fill:t}}かけて90%まで進め、終わったら100%にしてください。window の load イベントで幕を{{fade:t}}かけてフェードアウトさせ、消えたら要素ごと非表示にしてください。読み込みが遅くても最大{{limit:t}}で必ず消す保険のタイマーを入れ、JavaScriptが動かない環境では最初から幕を出さないでください。幕には role="status" と「読み込み中」の読み上げ用ラベルを付け、prefers-reduced-motion が reduce の人にはバーやロゴを動かさないでください。',
   howTo: [
     '幕はページの先頭に置いた1つの要素で、position: fixed（画面に貼り付ける指定）で全体をおおいます。window の load イベント（画像まで含めて読み込みが終わった合図）が来たらクラスを付け、CSSの transition で透明にしてから非表示にします。',
-    '進み具合を正確に測るのは難しいため、バーは「90%までそれらしく進め、終わったら100%にする」作りが一般的です。もうひとつ大事なのが保険です。何かの理由で load が来ないと幕が消えず、ページが永遠に見えなくなります。最大3秒で必ず消すタイマーを入れておきましょう。',
+    '進み具合を正確に測るのは難しいため、バーは「90%までそれらしく進め、終わったら100%にする」作りが一般的です。もうひとつ大事なのが保険です。何かの理由で load が来ないと幕が消えず、ページが永遠に見えなくなります。最大3秒で必ず消すタイマーを入れておきましょう。見本は「読み込みに2秒かかるページ」なので、下のつまみで保険のタイマーを2秒より短くすると、読み込みの途中でも幕が消えるのが分かります。',
   ],
   code: [
     {
@@ -60,7 +60,7 @@ export default {
   background: #1d2541;
   color: #fff;
   /* 消えるときは加速（ease-in）で、すっと引く */
-  transition: opacity 0.3s ease-in, visibility 0s linear 0.3s;
+  transition: opacity {{fade}} ease-in, visibility 0s linear {{fade}};
 }
 .preloader.is-done {
   opacity: 0;
@@ -83,7 +83,7 @@ export default {
   width: 0;
   background: #f06a35;
   /* 進み具合は分からないので、90%までそれらしく進める */
-  animation: preloader-fill 2s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  animation: preloader-fill {{fill}} cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
 }
 .preloader.is-done .preloader-bar i {
   width: 100%;
@@ -105,7 +105,7 @@ export default {
       code: `// 1. JavaScriptが動くことを CSS に知らせる（幕はこのときだけ出る）
 document.documentElement.classList.add('js');
 
-// 2. 読み込みが終わったら幕を消す。来なくても3秒で必ず消す（消えない事故を防ぐ保険）
+// 2. 読み込みが終わったら幕を消す。来なくても{{limit:t}}で必ず消す（消えない事故を防ぐ保険）
 const hidePreloader = () => {
   const el = document.querySelector('.preloader');
   if (!el || el.classList.contains('is-done')) return;
@@ -113,8 +113,13 @@ const hidePreloader = () => {
   el.addEventListener('transitionend', () => el.remove(), { once: true });
 };
 window.addEventListener('load', hidePreloader);
-setTimeout(hidePreloader, 3000);`,
+setTimeout(hidePreloader, {{limit:n}} * 1000);`,
     },
+  ],
+  tune: [
+    { key: 'fill', label: 'バーが90%まで進む時間', min: 0.5, max: 4, step: 0.1, value: 2, unit: 's' },
+    { key: 'fade', label: '幕が消える速さ', min: 0.1, max: 1, step: 0.05, value: 0.3, unit: 's' },
+    { key: 'limit', label: '保険のタイマー（最大で待つ時間）', min: 1, max: 6, step: 0.5, value: 3, unit: 's' },
   ],
   cautions: [
     '幕を出すと、中身が準備できていても読む人は見られません。Googleが表示の速さを測る指標（LCP＝いちばん大きな要素が見えるまでの時間）も、幕の分だけ遅れて記録されることがあります。まずは画像の圧縮や遅延読み込みで、ページ自体を速くする方が効果的です。',

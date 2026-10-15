@@ -28,7 +28,7 @@ export default {
     'どこまでも続く無限スクロールのページで、先頭に戻すと読んでいた位置が分からなくなるとき',
   ],
   prompt:
-    'ページに「上に戻るボタン（back to top button）」を付けてください。画面の右下（右16px・下16px）に position: fixed で直径48pxの丸いボタンを置き、中は上向き矢印のSVGにして aria-label="ページの先頭へ戻る" を付けます。画面の高さの6割以上スクロールしたら、下から12px浮き上がりながら0.25秒で現れ、上に戻ったら0.2秒で消えるようにしてください。隠れている間は visibility: hidden で焦点が入らないようにします。押したら window.scrollTo で先頭へなめらかに戻し、キーボードの焦点もページ先頭へ移してください。動きを減らす設定の人には瞬間移動で戻してください。ライブラリは使わないこと。',
+    'ページに「上に戻るボタン（back to top button）」を付けてください。画面の右下（右16px・下16px）に position: fixed で直径{{size:t}}の丸いボタンを置き、中は上向き矢印のSVGにして aria-label="ページの先頭へ戻る" を付けます。画面の高さの{{show:t}}以上スクロールしたら、下から12px浮き上がりながら{{dur:t}}で現れ、上に戻ったら同じくらいの速さで消えるようにしてください。隠れている間は visibility: hidden で焦点が入らないようにします。押したら window.scrollTo で先頭へなめらかに戻し、キーボードの焦点もページ先頭へ移してください。動きを減らす設定の人には瞬間移動で戻してください。ライブラリは使わないこと。',
   howTo: [
     'ボタンは position: fixed で画面の右下に置き、最初は透明＋visibility: hidden で隠しておきます。スクロールの量が画面の高さの6割を超えたらクラスを付けて表示します。スクロールのたびに呼ばれる処理なので、{ passive: true } を付けて軽くしておきます。',
     '押したら window.scrollTo({ top: 0, behavior: \'smooth\' }) で先頭へ戻します。見た目だけ戻しても、キーボードの焦点はページの下のボタンに残ったままです。先頭の要素（ページの見出しや「本文へスキップ」リンク）へ焦点を移すと、キーボードで操作する人も続きから迷わず進めます。見本は枠の中で動かすため position: sticky で右下に置いていますが、出し方と戻し方は同じです。',
@@ -60,8 +60,8 @@ export default {
   z-index: 50;
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: {{size}};
+  height: {{size}};
   border: 0;
   border-radius: 50%;
   background: #1d2541;
@@ -77,7 +77,7 @@ export default {
   opacity: 1;
   visibility: visible;
   transform: none;
-  transition: opacity 0.25s ease-out, transform 0.25s ease-out, visibility 0s;
+  transition: opacity {{dur}} ease-out, transform {{dur}} ease-out, visibility 0s;
 }
 .to-top:hover { background: #4f73d9; }
 .to-top:focus-visible { outline: 3px solid #f06a35; outline-offset: 2px; }
@@ -93,8 +93,8 @@ export default {
       code: `const btn = document.querySelector('.to-top');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// 画面の高さの6割以上スクロールしたら出す
-const sync = () => btn.classList.toggle('is-shown', scrollY > innerHeight * 0.6);
+// 画面の高さの{{show:n}}%以上スクロールしたら出す
+const sync = () => btn.classList.toggle('is-shown', scrollY > innerHeight * {{show:n}} / 100);
 addEventListener('scroll', sync, { passive: true });
 sync();
 
@@ -105,6 +105,11 @@ btn.addEventListener('click', () => {
   document.getElementById('page-top').focus({ preventScroll: true });
 });`,
     },
+  ],
+  tune: [
+    { key: 'show', label: 'ボタンが出る位置（画面の高さに対して）', min: 20, max: 200, step: 10, value: 60, unit: '%' },
+    { key: 'size', label: 'ボタンの大きさ', min: 36, max: 64, step: 4, value: 48, unit: 'px' },
+    { key: 'dur', label: '出る速さ', min: 0.1, max: 0.6, step: 0.05, value: 0.25, unit: 's' },
   ],
   cautions: [
     'スマホでは右下が親指のよく通る場所です。ボタンが本文の文字やリンクに被り続けないよう、48px程度の大きさにとどめ、ページ下の固定ボタンやチャットの窓口と重ならない位置に置いてください。',

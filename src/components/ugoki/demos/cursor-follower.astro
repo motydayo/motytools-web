@@ -1,24 +1,43 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const Btn = size === 'mini' ? 'span' : 'button';
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'マウスストーカー',
+    nav: ['実績', '会社概要'],
+    cta: '相談する',
+    title: ['動きで、', '心をつかむ。'],
+    lead: 'Webサイトと映像の制作会社です。',
+    go: '実績を見る',
+  },
+  en: {
+    name: 'Cursor follower',
+    nav: ['Work', 'About'],
+    cta: 'Contact',
+    title: ['Motion that', 'moves people.'],
+    lead: 'A studio for websites and film.',
+    go: 'See our work',
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="script" size={size} label="マウスストーカー">
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
   <div class="ug-site page" data-demo="cursor-follower">
-    <header class="ug-nav nav"><span class="ug-logo">STUDIO</span><span>実績</span><span>会社概要</span><span class="ug-cta">相談する</span></header>
+    <header class="ug-nav nav"><span class="ug-logo">STUDIO</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="hero">
       <div class="copy">
         <p class="ug-label">CREATIVE STUDIO</p>
-        <h3 class="title">動きで、<br />心をつかむ。</h3>
-        <p class="lead">Webサイトと映像の制作会社です。</p>
-        <Btn class="ug-btn-site go" type={size === 'mini' ? undefined : 'button'} data-hot>実績を見る</Btn>
+        <h3 class="title">{L.title[0]}<br />{L.title[1]}</h3>
+        <p class="lead">{L.lead}</p>
+        <Btn class="ug-btn-site go" type={size === 'mini' ? undefined : 'button'} data-hot>{L.go}</Btn>
       </div>
       <div class="pic" data-hot><Scene tone="night" /></div>
     </section>
     <!-- これが演出の本体: マウスを少し遅れて追いかける輪（pointer-events: none で邪魔をしない） -->
-    <div class="stalker" aria-hidden="true" data-ug-focus="マウスストーカー" data-ug-focus-at="below"><i></i></div>
+    <div class="stalker" aria-hidden="true" data-ug-focus={L.name} data-ug-focus-at="below"><i></i></div>
   </div>
 </UgFrame>
 
@@ -33,9 +52,10 @@ const Btn = size === 'mini' ? 'span' : 'button';
     top: 0;
     left: 0;
     z-index: 20;
-    width: 40px;
-    height: 40px;
-    margin: -20px 0 0 -20px;
+    /* 輪の大きさはつまみ（--t-size）から。中心をマウスに合わせる */
+    width: var(--t-size);
+    height: var(--t-size);
+    margin: calc(var(--t-size) / -2) 0 0 calc(var(--t-size) / -2);
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s ease-out;
@@ -50,7 +70,7 @@ const Btn = size === 'mini' ? 'span' : 'button';
     /* リンクやボタンに乗ったら、輪を大きくして「押せる」ことを知らせる */
     transition: transform 0.2s ease-out, background-color 0.2s ease-out;
   }
-  .stalker.is-big i { transform: scale(1.8); background: rgba(240, 106, 53, 0.16); }
+  .stalker.is-big i { transform: scale(var(--t-grow)); background: rgba(240, 106, 53, 0.16); }
   @container (max-width: 340px) {
     .hero { grid-template-columns: 1fr 0.8fr; gap: 12px; padding: 16px; }
     .title { font-size: 20px; }
@@ -62,7 +82,7 @@ const Btn = size === 'mini' ? 'span' : 'button';
 </style>
 
 <script>
-  import { onTour, onPointer, type Point } from '../../../lib/ugoki/runtime';
+  import { onTour, onPointer, onTune, tuneNum, type Point } from '../../../lib/ugoki/runtime';
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -71,6 +91,9 @@ const Btn = size === 'mini' ? 'span' : 'button';
     const stalker = root.querySelector<HTMLElement>('.stalker');
     if (!view || !stalker) return;
     const hots = [...root.querySelectorAll<HTMLElement>('[data-hot]')];
+    // 1フレームで残りの距離の何%だけ近づくか（つまみ --t-follow）。毎フレーム読むと重いので、変わったときだけ読み直す
+    let rate = tuneNum(root, 'follow', 16) / 100;
+    onTune(view, () => (rate = tuneNum(root, 'follow', 16) / 100));
 
     // 目標（マウスの位置）と、今いる位置。毎フレーム少しずつ目標へ寄せると「遅れてついてくる」
     let goal: Point = { x: view.clientWidth * 0.7, y: view.clientHeight * 0.5 };
@@ -78,7 +101,7 @@ const Btn = size === 'mini' ? 'span' : 'button';
     let raf = 0;
     stalker.style.transform = `translate(${now.x}px, ${now.y}px)`;
     const tick = () => {
-      const k = reduce ? 1 : 0.16; // 1回に縮める割合。小さいほどゆっくり追う
+      const k = reduce ? 1 : rate; // 1回に縮める割合。小さいほどゆっくり追う
       now.x += (goal.x - now.x) * k;
       now.y += (goal.y - now.y) * k;
       stalker.style.transform = `translate(${now.x}px, ${now.y}px)`;

@@ -1,29 +1,59 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const mini = size === 'mini';
 const Btn = mini ? 'span' : 'button';
-const favs = [
-  { tone: 'day', name: '山の宿 はなれ', short: '山の宿', price: '1泊 12,000円〜' },
-  { tone: 'sunset', name: '海の宿 しおさい', short: '海の宿', price: '1泊 15,000円〜' },
-  { tone: 'night', name: '星の宿 そらの', short: '星の宿', price: '1泊 9,800円〜' },
-  { tone: 'day', name: '森の宿 こもれび', short: '森の宿', price: '1泊 11,500円〜' },
-] as const;
+const tones = ['day', 'sunset', 'night', 'day'] as const;
+// 見本の中の文字（日英）。{x} に宿の短い名前が入る
+const L = {
+  ja: {
+    name: 'トースト通知',
+    nav: ['宿をさがす', 'お気に入り'],
+    cta: 'ログイン',
+    h: 'お気に入り',
+    undo: '元に戻す',
+    remove: (n: string) => `${n}をお気に入りから外す`,
+    msg: '「{x}」をお気に入りから外しました',
+    msgShort: '「{x}」を外しました',
+    favs: [
+      { name: '山の宿 はなれ', short: '山の宿', price: '1泊 12,000円〜' },
+      { name: '海の宿 しおさい', short: '海の宿', price: '1泊 15,000円〜' },
+      { name: '星の宿 そらの', short: '星の宿', price: '1泊 9,800円〜' },
+      { name: '森の宿 こもれび', short: '森の宿', price: '1泊 11,500円〜' },
+    ],
+  },
+  en: {
+    name: 'Toast notification',
+    nav: ['Find a stay', 'Saved'],
+    cta: 'Sign in',
+    h: 'Saved stays',
+    undo: 'Undo',
+    remove: (n: string) => `Remove ${n} from saved`,
+    msg: 'Removed “{x}” from saved',
+    msgShort: 'Removed “{x}”',
+    favs: [
+      { name: 'Pinecrest Mountain Lodge', short: 'Pinecrest', price: 'From $129 / night' },
+      { name: 'Driftwood Seaside Inn', short: 'Driftwood', price: 'From $165 / night' },
+      { name: 'Stargazer Cabins', short: 'Stargazer', price: 'From $98 / night' },
+      { name: 'Hollow Creek Retreat', short: 'Hollow Creek', price: 'From $119 / night' },
+    ],
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="script" size={size} label="トースト通知">
-  <div class="ug-site ts" data-demo="toast">
-    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>宿をさがす</span><span>お気に入り</span><span class="ug-cta">ログイン</span></header>
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site ts" data-demo="toast" data-msg={mini ? L.msgShort : L.msg}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="body">
-      <h3 class="ug-h">お気に入り</h3>
+      <h3 class="ug-h">{L.h}</h3>
       <ul class="favs">
-        {favs.map((f) => (
+        {L.favs.map((f, i) => (
           <li class="fav" data-short={f.short}>
             <div class="row">
-              <div class="th"><Scene tone={f.tone} /></div>
+              <div class="th"><Scene tone={tones[i]} /></div>
               <div class="tx"><b>{f.name}</b><small>{f.price}</small></div>
-              <Btn class="heart" type={mini ? undefined : 'button'} aria-label={mini ? undefined : `${f.name}をお気に入りから外す`}>
+              <Btn class="heart" type={mini ? undefined : 'button'} aria-label={mini ? undefined : L.remove(f.name)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 3.9 4 7.4 4c2 0 3.5 1.1 4.6 2.6C13.1 5.1 14.6 4 16.6 4c3.5 0 5.8 3.6 4.6 7.1-1.7 4.8-9.2 9.4-9.2 9.4z" /></svg>
               </Btn>
             </div>
@@ -33,9 +63,9 @@ const favs = [
     </section>
     <!-- 枠の下端にくっつける台（position: sticky; bottom）。本物のサイトでは position: fixed で画面の下に置く -->
     <div class="dock">
-      <div class="toast" role="status" aria-live="polite" data-ug-focus="トースト通知">
+      <div class="toast" role="status" aria-live="polite" data-ug-focus={L.name}>
         <span class="msg"></span>
-        <Btn class="undo" type={mini ? undefined : 'button'}>元に戻す</Btn>
+        <Btn class="undo" type={mini ? undefined : 'button'}>{L.undo}</Btn>
         <i class="timer" aria-hidden="true"></i>
       </div>
     </div>
@@ -87,17 +117,18 @@ const favs = [
     color: #fff;
     font-size: 12px;
     box-shadow: 0 12px 28px -12px rgba(29, 37, 65, 0.6);
-    /* 隠れているとき: 少し下＋透明。visibility も隠して「元に戻す」に焦点が行かないようにする */
+    /* 隠れているとき: 少し下＋透明。visibility も隠して「元に戻す」に焦点が行かないようにする。ずらす距離はつまみ（--t-rise）から */
     opacity: 0;
     visibility: hidden;
-    transform: translate(-50%, 16px);
+    transform: translate(-50%, var(--t-rise));
     transition: opacity 0.2s ease-in, transform 0.2s ease-in, visibility 0s linear 0.2s;
   }
   .toast.is-shown {
     opacity: 1;
     visibility: visible;
     transform: translate(-50%, 0);
-    transition: opacity 0.25s ease-out, transform 0.25s ease-out, visibility 0s;
+    /* 出る速さはつまみ（--t-enter）から */
+    transition: opacity var(--t-enter) ease-out, transform var(--t-enter) ease-out, visibility 0s;
   }
   .msg { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .undo {
@@ -117,9 +148,9 @@ const favs = [
   }
   .undo:hover, .undo.is-hover { background: rgba(255, 255, 255, 0.22); }
   .undo:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-  /* 残り時間の線（5秒で右から縮む）。マウスが乗っている間・焦点がある間は止まる */
+  /* 残り時間の線（表示時間 --t-show で右から縮む）。マウスが乗っている間・焦点がある間は止まる */
   .timer { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--ug-orange); transform-origin: left; }
-  .toast.is-shown .timer { animation: ts-timer 5s linear forwards; }
+  .toast.is-shown .timer { animation: ts-timer var(--t-show) linear forwards; }
   .toast:hover .timer, .toast:focus-within .timer, .toast.is-paused .timer { animation-play-state: paused; }
   @keyframes ts-timer {
     to { transform: scaleX(0); }
@@ -146,7 +177,7 @@ const favs = [
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, tuneNum } from '../../../lib/ugoki/runtime';
 
   document.querySelectorAll<HTMLElement>('[data-demo="toast"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
@@ -157,7 +188,6 @@ const favs = [
     if (!view || !toast || !msg || !undo || !timer) return;
     const favs = [...root.querySelectorAll<HTMLElement>('.fav')];
     let last: HTMLElement | null = null;
-    const mini = Boolean(root.closest('.is-mini'));
 
     const hide = () => toast.classList.remove('is-shown', 'is-paused');
     const show = (text: string) => {
@@ -173,7 +203,7 @@ const favs = [
       li.classList.add('is-removed');
       li.setAttribute('inert', '');
       last = li;
-      show(mini ? `「${li.dataset.short}」を外しました` : `「${li.dataset.short}」をお気に入りから外しました`);
+      show((root.dataset.msg ?? '{x}').replace('{x}', li.dataset.short ?? ''));
     };
     const restore = (real: boolean) => {
       if (last) {
@@ -228,10 +258,10 @@ const favs = [
       await t.sleep(200);
       await t.click(h2);
       t.hover(null);
-      // 何もしなければ5秒で自然に消える
+      // 何もしなければ表示時間（--t-show）で自然に消える
       await t.move({ x: t.view.clientWidth * 0.3, y: t.view.clientHeight * 0.3 }, 600);
       t.showCursor(false);
-      await t.sleep(5600);
+      await t.sleep(tuneNum(root, 'show', 5) * 1000 + 600);
     });
   });
 </script>

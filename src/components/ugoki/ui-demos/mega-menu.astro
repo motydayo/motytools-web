@@ -1,0 +1,269 @@
+---
+// UI部品の見本: メガメニュー
+// ヘッダーの「宿をさがす」にマウスを乗せる（または押す）と、横幅いっぱいの大きなパネルが開く。
+// 中は見出しつきの列に分かれ、特集の写真も置ける。乗せてから開くまで・外れてから閉じるまでに少し待つ。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const A = mini ? 'span' : 'a';
+const href = mini ? undefined : '#';
+const L = {
+  ja: {
+    name: 'メガメニュー',
+    trigger: '宿をさがす',
+    others: ['特集', 'ガイド'],
+    cta: 'ログイン',
+    cols: [
+      { h: 'エリアから', items: ['北海道', '東北', '関東', '中部', '関西', '九州・沖縄'] },
+      { h: '目的から', items: ['温泉が自慢', '海が見える', 'ペットと泊まる', '一棟貸し', '朝食がおいしい'] },
+    ],
+    feature: { label: '特集', h: '紅葉を見に行く宿 30選', p: '11月の見ごろに合わせて' },
+    all: 'すべての宿を見る',
+    hero: { label: 'AUTUMN', h: '秋の旅を、もっと気軽に' },
+  },
+  en: {
+    name: 'Mega menu',
+    trigger: 'Find a stay',
+    others: ['Deals', 'Guides'],
+    cta: 'Sign in',
+    cols: [
+      { h: 'By region', items: ['Northeast', 'Southeast', 'Midwest', 'Southwest', 'Mountain West', 'Pacific'] },
+      { h: 'By trip type', items: ['Hot springs', 'Ocean views', 'Pet-friendly', 'Whole homes', 'Great breakfast'] },
+    ],
+    feature: { label: 'Featured', h: '30 stays for fall foliage', p: 'Timed for peak color in October' },
+    all: 'See all stays',
+    hero: { label: 'FALL', h: 'Fall getaways, made easy' },
+  },
+}[lang as 'ja' | 'en'];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site mm-site" data-demo="mega-menu">
+    <header class="ug-nav mm-head">
+      <span class="ug-logo">SAMPLE</span>
+      <div class="mm-item" data-mm-item>
+        <Btn class="mm-trigger" {...btn} aria-expanded="false" data-mm-trigger>
+          {L.trigger}
+          <svg class="mm-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+        </Btn>
+        <!-- これが部品の本体: 横幅いっぱいのパネル。見出しつきの列で、たくさんの行き先を一度に見せる -->
+        <div class="mm-panel" data-mm-panel data-ug-focus={L.name} data-ug-focus-at="below">
+          {L.cols.map((c) => (
+            <div class="mm-col">
+              <p class="mm-colh">{c.h}</p>
+              <ul class="mm-links">{c.items.map((it) => <li><A class="mm-link" href={href}>{it}</A></li>)}</ul>
+            </div>
+          ))}
+          <A class="mm-feature" href={href}>
+            <Scene tone="sunset" />
+            <span class="mm-flabel">{L.feature.label}</span>
+            <b>{L.feature.h}</b>
+            <small>{L.feature.p}</small>
+          </A>
+          <A class="mm-all" href={href}>
+            {L.all}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </A>
+        </div>
+      </div>
+      {L.others.map((n) => <span>{n}</span>)}
+      <span class="ug-cta">{L.cta}</span>
+    </header>
+    <div class="mm-dim" data-mm-dim aria-hidden="true"></div>
+    <section class="ug-sec mm-hero">
+      <p class="ug-label">{L.hero.label}</p>
+      <h3 class="ug-h">{L.hero.h}</h3>
+      <div class="ug-lines"><i></i><i></i></div>
+      <div class="ug-grid mm-grid">
+        <div class="ug-card"><Scene tone="day" /></div>
+        <div class="ug-card"><Scene tone="sunset" /></div>
+        <div class="ug-card"><Scene tone="night" /></div>
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .mm-site { position: relative; height: 100%; overflow: hidden; }
+  .mm-head { position: relative; z-index: 12; }
+  .mm-item { display: flex; align-items: stretch; height: 100%; order: 0; }
+  .mm-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+    min-height: 44px;
+    padding: 0 4px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ug-ink) !important;
+    cursor: pointer;
+    box-shadow: inset 0 -2px 0 transparent;
+    transition: box-shadow 0.15s ease-out;
+  }
+  .mm-trigger:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: -6px; border-radius: 6px; }
+  .mm-caret { transition: transform var(--t-dur) ease-out; }
+  .is-open .mm-trigger { box-shadow: inset 0 -2px 0 var(--ug-orange); }
+  .is-open .mm-caret { transform: rotate(180deg); }
+
+  /* パネル: ヘッダーの真下に、枠の横幅いっぱいで出す。開く速さはつまみ（--t-dur）から */
+  .mm-panel {
+    position: absolute;
+    top: 48px;
+    left: 0;
+    right: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 8px 24px;
+    padding: 16px 24px;
+    background: #fff;
+    border-bottom: 1px solid var(--ug-line);
+    box-shadow: 0 16px 32px -16px rgba(20, 24, 40, 0.35);
+    opacity: 0;
+    transform: translateY(-6px);
+    visibility: hidden;
+    transition: opacity var(--t-dur) ease-in, transform var(--t-dur) ease-in, visibility 0s linear var(--t-dur);
+  }
+  .is-open .mm-panel {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    transition: opacity var(--t-dur) ease-out, transform var(--t-dur) ease-out, visibility 0s;
+  }
+  .mm-colh { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: var(--ug-ink-2); }
+  .mm-links { list-style: none; margin-top: 4px; }
+  .mm-link {
+    display: flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 8px;
+    margin-inline: -8px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--ug-ink) !important;
+    text-decoration: none;
+  }
+  .mm-link:hover, .mm-link.is-hover { background: var(--ug-bg); color: var(--ug-blue) !important; }
+  .mm-feature { display: grid; gap: 4px; align-content: start; color: var(--ug-ink) !important; text-decoration: none; }
+  .mm-feature :global(.ug-scene) { border-radius: 8px; aspect-ratio: 16 / 9; }
+  .mm-flabel { font-size: 10px; font-weight: 800; color: var(--ug-orange); }
+  .mm-feature b { font-size: 13px; line-height: 1.4; }
+  .mm-feature small { font-size: 11px; color: var(--ug-ink-2); }
+  .mm-all {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    justify-self: start;
+    min-height: 32px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ug-blue) !important;
+    text-decoration: none;
+  }
+  /* 後ろのページを少し暗くして、パネルに目を向けさせる */
+  .mm-dim {
+    position: absolute;
+    inset: 48px 0 0;
+    z-index: 11;
+    background: rgba(20, 24, 40, 0.28);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--t-dur) ease-out;
+  }
+  .is-open .mm-dim { opacity: 1; }
+  .mm-hero :global(.ug-scene) { border-radius: 0; }
+  .mm-grid { margin-top: 12px; }
+
+  /* 狭い枠: 特集を外して2列に（本番のスマホではハンバーガーメニューの中のアコーディオンにする） */
+  @container (max-width: 520px) {
+    .mm-panel { grid-template-columns: 1fr 1fr; gap: 4px 16px; padding: 12px 16px; }
+    .mm-feature { display: none; }
+    .mm-link { min-height: 30px; font-size: 12px; }
+  }
+  @container (max-width: 340px) {
+    .mm-head > span:not(.ug-logo):not(.ug-cta) { display: none; }
+    .mm-panel { padding: 8px 12px; }
+    .mm-link { min-height: 26px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mm-panel, .is-open .mm-panel, .mm-dim, .mm-caret { transition-duration: 0.01s; transition-delay: 0s; }
+  }
+</style>
+
+<script>
+  import { onTour, tuneNum } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="mega-menu"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const item = root.querySelector<HTMLElement>('[data-mm-item]')!;
+    const trigger = root.querySelector<HTMLElement>('[data-mm-trigger]')!;
+    const panel = root.querySelector<HTMLElement>('[data-mm-panel]')!;
+    const links = [...panel.querySelectorAll<HTMLElement>('.mm-link')];
+    const pid = `mm-panel-${Math.random().toString(36).slice(2, 8)}`;
+    panel.id = pid;
+    trigger.setAttribute('aria-controls', pid);
+    let timer = 0;
+
+    const set = (open: boolean) => {
+      clearTimeout(timer);
+      root.classList.toggle('is-open', open);
+      trigger.setAttribute('aria-expanded', String(open));
+    };
+    // マウスは「乗せてから開くまで」「外れてから閉じるまで」少し待つ（つまみ: --t-delay・--t-grace）
+    const hoverIn = () => {
+      clearTimeout(timer);
+      if (root.classList.contains('is-open')) return;
+      timer = window.setTimeout(() => set(true), tuneNum(root, 'delay', 0.15) * 1000);
+    };
+    const hoverOut = () => {
+      clearTimeout(timer);
+      timer = window.setTimeout(() => set(false), tuneNum(root, 'grace', 0.3) * 1000);
+    };
+
+    item.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && hoverIn());
+    item.addEventListener('pointerleave', (e) => e.pointerType === 'mouse' && hoverOut());
+    // 押したら（タッチ・キーボード）すぐ開閉
+    trigger.addEventListener('click', () => set(trigger.getAttribute('aria-expanded') !== 'true'));
+    // Esc で閉じて焦点をボタンへ。パネルの外へ焦点が出たら閉じる
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && root.classList.contains('is-open')) {
+        set(false);
+        trigger.focus({ preventScroll: true });
+      }
+    });
+    item.addEventListener('focusout', (e) => {
+      if (!item.contains(e.relatedTarget as Node)) set(false);
+    });
+    panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+    view.addEventListener('ug:reset', () => set(false));
+
+    onTour(root, async (t) => {
+      set(false);
+      await t.move({ x: t.view.clientWidth * 0.55, y: t.view.clientHeight * 0.7 }, 10);
+      await t.sleep(800);
+      await t.move(trigger, 800);
+      t.hover(trigger);
+      hoverIn();
+      await t.sleep(1000);
+      for (const i of [0, 2, 7]) {
+        const l = links[i];
+        if (!l) continue;
+        await t.move(l, 600);
+        t.hover(l);
+        await t.sleep(700);
+      }
+      t.hover(null);
+      // パネルの外（下のページ）へ外す → 少し待ってから閉じる
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight - 16 }, 700);
+      hoverOut();
+      await t.sleep(1600);
+    });
+  });
+</script>

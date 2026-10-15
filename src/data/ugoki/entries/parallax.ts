@@ -28,10 +28,11 @@ export default {
     '1ページに何か所も入れたいとき（どこを見ればいいか分からなくなり、表示も重くなる）',
   ],
   prompt:
-    'トップの1画面目を「パララックススクロール（parallax scrolling）」にしてください。背景の空・奥の山・見出し・手前の山を別々の層（position: absolute）に分け、スクロール量に対して奥の層ほど大きく下へずらして、ゆっくり動いて見えるようにしてください（係数は太陽0.75、奥の山0.5、見出し0.35、手前の山0.15）。動かすのは transform: translate3d だけにし、scroll イベントは requestAnimationFrame で間引いてください。ライブラリは使わないでください。prefers-reduced-motion: reduce の人には層をずらさず止めた絵で見せてください。',
+    'トップの1画面目を「パララックススクロール（parallax scrolling）」にしてください。背景の空・奥の山・見出し・手前の山を別々の層（position: absolute）に分け、スクロール量に対して奥の層ほど大きく下へずらして、ゆっくり動いて見えるようにしてください。係数は太陽0.75、奥の山0.5、見出し0.35、手前の山0.15を基準にし、全体に視差の強さ{{depth:n}}をかけてください。途中に挟む写真の帯は、枠は普通に流し、中の絵だけを「帯の中心と画面の中心の距離×{{band:n}}」だけずらしてください（ずらす量は80pxまで）。動かすのは transform: translate3d だけにし、scroll イベントは requestAnimationFrame で間引いてください。ライブラリは使わないでください。prefers-reduced-motion: reduce の人には層をずらさず止めた絵で見せてください。',
   howTo: [
     '絵を層に分けて重ね、スクロール量（scrollY）に係数をかけた分だけ、各層を下へずらします。ページ自体は上へ流れるので、下へずらした層ほど「ゆっくり上がっていく」ように見えます。係数が1に近いほど遠く、0なら普通のスクロールと同じ速さです。',
     '動かすのは transform だけにします。top や margin を変えるとブラウザが毎回レイアウトを計算し直してカクつきます。scroll イベントは1秒に何十回も来るので、requestAnimationFrame（画面の描き替えに合わせて1回だけ実行する仕組み）でまとめて処理します。なお、CSSだけで作れる animation-timeline: scroll() という新しい書き方もありますが、まだ対応していないブラウザがあるため、ここではJavaScriptで作っています。',
+    '区切りの写真の帯は、もっと控えめな型です。帯そのものは普通に流し、中の絵だけを「帯の中心が画面の中心からどれだけ離れているか」に係数をかけた分ずらします。絵は帯より上下に大きくしておき、ずらす量に上限を付けると、端に隙間が出ません。',
   ],
   code: [
     {
@@ -52,7 +53,16 @@ export default {
     <path d="M0 260 V164 L90 116 L170 176 L250 124 L320 168 V260Z" fill="#4f73d9" />
   </svg>
 </section>
-<main style="height: 150vh">ここから本文</main>`,
+
+<main>
+  <p>ここから本文</p>
+  <!-- 区切りの写真の帯: 帯は普通に流れ、中の絵だけゆっくり動く -->
+  <section class="band">
+    <img class="band-bg" src="onsen.jpg" alt="" />
+    <p class="band-text">夕暮れの露天風呂</p>
+  </section>
+  <p>本文のつづき</p>
+</main>`,
     },
     {
       lang: 'css',
@@ -76,15 +86,37 @@ export default {
   padding: 10vh 24px 0;
 }
 
+/* 区切りの帯。中の絵は上下に80pxずつ大きくして、ずらしても隙間が出ないように */
+.band {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.band-bg {
+  position: absolute;
+  top: -80px;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 160px);
+  object-fit: cover;
+  will-change: transform;
+}
+.band-text { position: relative; color: #fff; font-weight: 800; }
+
 /* 「動きを減らす」設定の人には止めた絵で見せる */
 @media (prefers-reduced-motion: reduce) {
-  .layer { transform: none !important; }
+  .layer, .band-bg { transform: none !important; }
 }`,
     },
     {
       lang: 'js',
       label: 'JavaScript',
-      code: `const layers = document.querySelectorAll('[data-speed]');
+      code: `const DEPTH = {{depth:n}}; // 視差の強さ（0なら普通のスクロールと同じ）
+const BAND = {{band:n}};  // 帯の中の絵のずれ方
+const layers = document.querySelectorAll('[data-speed]');
+const bands = document.querySelectorAll('.band');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 let ticking = false;
 
@@ -94,7 +126,14 @@ function update() {
   const y = window.scrollY;
   layers.forEach((el) => {
     // 奥の層ほど係数が大きい＝ゆっくり動いて見える
-    el.style.transform = \`translate3d(0, \${y * el.dataset.speed}px, 0)\`;
+    el.style.transform = \`translate3d(0, \${y * el.dataset.speed * DEPTH}px, 0)\`;
+  });
+  bands.forEach((band) => {
+    // 帯の中心が画面の中心からどれだけ離れているかで、中の絵をずらす
+    const r = band.getBoundingClientRect();
+    const off = r.top + r.height / 2 - window.innerHeight / 2;
+    const shift = Math.max(-80, Math.min(80, -off * BAND));
+    band.querySelector('.band-bg').style.transform = \`translate3d(0, \${shift}px, 0)\`;
   });
 }
 
@@ -106,6 +145,10 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 update();`,
     },
+  ],
+  tune: [
+    { key: 'depth', label: '視差の強さ', min: 0, max: 1.3, step: 0.05, value: 1, unit: '' },
+    { key: 'band', label: '帯の中の絵のずれ方', min: 0, max: 0.6, step: 0.05, value: 0.25, unit: '' },
   ],
   cautions: [
     '画面が大きく動く演出は、乗り物酔いのような症状を起こす人がいます。prefers-reduced-motion: reduce（端末の「動きを減らす」設定。iPhoneでは「視差効果を減らす」）のときは必ず止めてください。',

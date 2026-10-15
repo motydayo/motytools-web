@@ -1,0 +1,275 @@
+---
+// UI部品の見本: カルーセル（スライダー）
+// 横スクロール＋scroll-snap を土台に、前後ボタン・点（現在位置）・枚数表示・矢印キーで送る。自動再生はしない。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: 'カルーセル',
+    nav: ['お部屋', '料金'],
+    heading: 'お部屋を選ぶ',
+    rd: 'カルーセル',
+    slideRd: 'スライド',
+    slides: [
+      { tone: 'day', t: '和室 10畳', p: '1泊2食 15,000円〜' },
+      { tone: 'sunset', t: '露天風呂つき客室', p: '1泊2食 24,000円〜' },
+      { tone: 'night', t: '離れ「月見」', p: '1泊2食 32,000円〜' },
+      { tone: 'day', t: '洋室ツイン', p: '1泊2食 13,000円〜' },
+      { tone: 'sunset', t: 'ファミリー和洋室', p: '1泊2食 18,000円〜' },
+    ],
+    prev: '前のお部屋',
+    next: '次のお部屋',
+    goto: (n: number) => `${n}枚目を表示`,
+  },
+  en: {
+    name: 'Carousel',
+    nav: ['Rooms', 'Rates'],
+    heading: 'Choose your room',
+    rd: 'carousel',
+    slideRd: 'slide',
+    slides: [
+      { tone: 'day', t: 'Deluxe King', p: 'From $140 / night' },
+      { tone: 'sunset', t: 'Ocean Suite', p: 'From $220 / night' },
+      { tone: 'night', t: 'Garden Villa', p: 'From $310 / night' },
+      { tone: 'day', t: 'Classic Twin', p: 'From $120 / night' },
+      { tone: 'sunset', t: 'Family Room', p: 'From $180 / night' },
+    ],
+    prev: 'Previous room',
+    next: 'Next room',
+    goto: (n: number) => `Show slide ${n}`,
+  },
+}[lang as 'ja' | 'en'];
+const n = L.slides.length;
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site cr-site" data-demo="carousel">
+    <header class="ug-nav cr-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((x) => <span>{x}</span>)}</header>
+    <section class="cr-sec">
+      <p class="ug-label cr-kicker">ROOMS</p>
+      <h3 class="ug-h cr-h">{L.heading}</h3>
+
+      <!-- これが部品の本体: 横に並んだ板を1枚ずつ送る。点と枚数で「今どこか」を見せる -->
+      <div class="cr" role="region" aria-roledescription={L.rd} aria-label={L.heading} data-cr data-ug-focus={L.name} data-ug-focus-at="below">
+        <div class="cr-track" data-cr-track tabindex={mini ? undefined : 0} aria-label={L.heading}>
+          {L.slides.map((s, i) => (
+            <div class="cr-slide" role="group" aria-roledescription={L.slideRd} aria-label={`${i + 1} / ${n}`}>
+              <Scene tone={s.tone as 'day' | 'sunset' | 'night'} />
+              <div class="cr-cap">
+                <p class="cr-t">{s.t}</p>
+                <p class="cr-p">{s.p}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="cr-ctrl">
+          <Btn class="cr-arrow" {...btn} aria-label={L.prev} data-cr-prev>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+          </Btn>
+          <div class="cr-dots">
+            {L.slides.map((_, i) => (
+              <Btn class="cr-dot" {...btn} aria-label={L.goto(i + 1)} aria-current={i === 0 ? 'true' : undefined} data-cr-dot={i}><i></i></Btn>
+            ))}
+          </div>
+          <p class="cr-count" aria-live="polite" data-cr-count>1 / {n}</p>
+          <Btn class="cr-arrow" {...btn} aria-label={L.next} data-cr-next>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+          </Btn>
+        </div>
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .cr-site { min-height: 100%; }
+  .cr-sec { padding: 16px 16px 20px; }
+  .cr { position: relative; margin-top: 8px; }
+
+  /* 横に並べて、1枚ずつピタッと止める（scroll-snap）。幅と間隔はつまみ（--t-width・--t-gap）から */
+  .cr-track {
+    position: relative;
+    display: flex;
+    gap: var(--t-gap);
+    margin: 0 -16px;
+    padding: 0 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    outline: none;
+  }
+  .cr-track::-webkit-scrollbar { display: none; }
+  .cr-track:focus-visible { box-shadow: inset 0 0 0 3px var(--ug-blue); border-radius: 12px; }
+  .cr-slide {
+    position: relative;
+    flex: 0 0 var(--t-width);
+    height: 220px;
+    border-radius: 12px;
+    overflow: hidden;
+    scroll-snap-align: start;
+    background: var(--ug-navy);
+  }
+  .cr-slide :global(.ug-scene) { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; }
+  .cr-cap {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 32px 16px 12px;
+    background: linear-gradient(to top, rgba(29, 37, 65, 0.82), rgba(29, 37, 65, 0));
+    color: #fff;
+  }
+  .cr-t { font-size: 16px; font-weight: 800; line-height: 1.3; }
+  .cr-p { font-size: 12px; opacity: 0.92; }
+
+  /* 前後ボタン・点・枚数 */
+  .cr-ctrl { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+  .cr-arrow {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--ug-line);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--ug-ink);
+    cursor: pointer;
+    transition: background-color 0.15s ease-out, opacity 0.15s ease-out;
+  }
+  .cr-arrow:hover, .cr-arrow.is-hover { background: var(--ug-bg); }
+  .cr-arrow:active { transform: scale(0.94); }
+  .cr-arrow[aria-disabled='true'] { opacity: 0.35; cursor: default; }
+  .cr-arrow:focus-visible, .cr-dot:focus-visible { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+  .cr-dots { display: flex; justify-content: center; flex: 1; }
+  .cr-dot {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .cr-dot i { width: 8px; height: 8px; border-radius: 4px; background: #cfccc4; transition: width 0.2s ease-out, background-color 0.2s ease-out; }
+  .cr-dot[aria-current='true'] i { width: 20px; background: var(--ug-navy); }
+  .cr-count { min-width: 40px; font-size: 12px; font-weight: 700; color: var(--ug-ink-2); text-align: center; font-variant-numeric: tabular-nums; }
+
+  @container (max-width: 400px) {
+    .cr-slide { height: 190px; }
+    .cr-count { display: none; }
+  }
+  :global(.is-mini) .cr-nav { display: none; }
+  :global(.is-mini) .cr-sec { padding: 10px 12px; }
+  :global(.is-mini) .cr-kicker { display: none; }
+  :global(.is-mini) .cr-h { margin: 0; font-size: 14px; }
+  :global(.is-mini) .cr { margin-top: 6px; }
+  :global(.is-mini) .cr-track { margin: 0 -12px; padding: 0 12px; scroll-padding-inline: 12px; }
+  :global(.is-mini) .cr-slide { height: 112px; border-radius: 10px; }
+  :global(.is-mini) .cr-cap { padding: 20px 10px 6px; }
+  :global(.is-mini) .cr-t { font-size: 13px; }
+  :global(.is-mini) .cr-p { font-size: 10px; }
+  :global(.is-mini) .cr-ctrl { margin-top: 6px; gap: 4px; }
+  :global(.is-mini) .cr-arrow { width: 30px; height: 30px; }
+  :global(.is-mini) .cr-dot { width: 16px; }
+  @media (prefers-reduced-motion: reduce) {
+    .cr-track { scroll-behavior: auto; }
+    .cr-dot i { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour, onTune } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="carousel"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const box = root.querySelector<HTMLElement>('[data-cr]')!;
+    const track = root.querySelector<HTMLElement>('[data-cr-track]')!;
+    const slides = [...track.children] as HTMLElement[];
+    const prev = root.querySelector<HTMLElement>('[data-cr-prev]')!;
+    const next = root.querySelector<HTMLElement>('[data-cr-next]')!;
+    const dots = [...root.querySelectorAll<HTMLElement>('[data-cr-dot]')];
+    const count = root.querySelector<HTMLElement>('[data-cr-count]')!;
+    const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let index = 0;
+
+    const pad = () => parseFloat(getComputedStyle(track).paddingLeft) || 0;
+    const maxLeft = () => track.scrollWidth - track.clientWidth;
+    const leftOf = (i: number) => Math.min(slides[i].offsetLeft - pad(), maxLeft());
+
+    // いま何枚目か（いちばん近い板。右端まで来たら最後の1枚）
+    const current = () => {
+      if (track.scrollLeft >= maxLeft() - 2) return slides.length - 1;
+      let best = 0;
+      slides.forEach((_, i) => {
+        if (Math.abs(leftOf(i) - track.scrollLeft) < Math.abs(leftOf(best) - track.scrollLeft)) best = i;
+      });
+      return best;
+    };
+    const paint = () => {
+      index = current();
+      dots.forEach((d, i) => (i === index ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current')));
+      count.textContent = `${index + 1} / ${slides.length}`;
+      // 端では押せないことを見せる（disabled にすると焦点が消えるので aria-disabled）
+      prev.setAttribute('aria-disabled', String(index === 0));
+      next.setAttribute('aria-disabled', String(index === slides.length - 1));
+    };
+    const go = (i: number, instant = false) => {
+      const to = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: leftOf(to), behavior: instant || reduce() ? 'auto' : 'smooth' });
+    };
+
+    let raf = 0;
+    track.addEventListener('scroll', () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(paint);
+    }, { passive: true });
+
+    const on = (el: HTMLElement, fn: () => void) => {
+      el.addEventListener('click', fn);
+      el.addEventListener('ug:click', fn);
+    };
+    on(prev, () => go(index - 1));
+    on(next, () => go(index + 1));
+    dots.forEach((d, i) => on(d, () => go(i)));
+    // 左右の矢印キーで1枚ずつ（Home/End で最初・最後）
+    box.addEventListener('keydown', (e) => {
+      const map: Record<string, number> = { ArrowLeft: index - 1, ArrowRight: index + 1, Home: 0, End: slides.length - 1 };
+      if (!(e.key in map)) return;
+      e.preventDefault();
+      go(map[e.key]);
+    });
+
+    onTune(view, () => requestAnimationFrame(() => go(index, true)));
+    new ResizeObserver(() => go(index, true)).observe(track);
+    view.addEventListener('ug:reset', () => go(0, true));
+    paint();
+
+    onTour(root, async (t) => {
+      go(0, true);
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.9 }, 10);
+      await t.sleep(900);
+      await t.move(next, 700);
+      for (let k = 0; k < 3; k++) {
+        t.hover(next);
+        await t.sleep(250);
+        await t.click(next);
+        await t.sleep(1300);
+      }
+      t.hover(null);
+      await t.move(dots[0], 700);
+      t.hover(dots[0]);
+      await t.sleep(250);
+      await t.click(dots[0]);
+      t.hover(null);
+      await t.sleep(1500);
+    });
+  });
+</script>

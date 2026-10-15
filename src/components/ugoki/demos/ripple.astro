@@ -1,31 +1,45 @@
 ---
 import UgFrame from '../UgFrame.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const mini = size === 'mini';
 const Btn = mini ? 'span' : 'button';
-const plans = [
-  { name: 'お試しプラン', note: '1か月だけ使う', price: '0円' },
-  { name: 'スタンダード', note: 'いちばん人気', price: '月 980円' },
-  { name: 'まとめ払い', note: '1年分を前払い', price: '年 9,800円' },
-];
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'リップルエフェクト',
+    focus: '押した所から波紋',
+    nav: ['特長', '料金', 'FAQ'],
+    h: 'プランを選ぶ',
+    plans: [['お試しプラン', '1か月だけ使う', '0円'], ['スタンダード', 'いちばん人気', '月 980円'], ['まとめ払い', '1年分を前払い', '年 9,800円']],
+    go: 'このプランで申し込む',
+  },
+  en: {
+    name: 'Ripple effect',
+    focus: 'Ripple from the tap point',
+    nav: ['Features', 'Pricing', 'FAQ'],
+    h: 'Choose a plan',
+    plans: [['Free trial', 'Try it for a month', '$0'], ['Standard', 'Most popular', '$9 / mo'], ['Annual', 'Pay yearly, save 20%', '$86 / yr']],
+    go: 'Continue with this plan',
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="pointer" size={size} label="リップルエフェクト">
+<UgFrame mode="pointer" size={size} label={L.name} lang={lang}>
   <div class="ug-site page" data-demo="ripple">
-    <header class="ug-nav nav"><span class="ug-logo">SAMPLE</span><span>特長</span><span>料金</span><span>FAQ</span></header>
+    <header class="ug-nav nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
     <section class="ug-sec body">
       <p class="ug-label lb">PLAN</p>
-      <h3 class="ug-h">プランを選ぶ</h3>
-      <div class="list" data-ug-focus="押した所から波紋">
-        {plans.map((p, i) => (
+      <h3 class="ug-h">{L.h}</h3>
+      <div class="list" data-ug-focus={L.focus}>
+        {L.plans.map(([pname, note, price], i) => (
           <Btn class:list={['row', 'rp', { 'is-on': i === 0 }]} type={mini ? undefined : 'button'} aria-pressed={mini ? undefined : String(i === 0)} data-ug-target={i === 1 ? 'click' : undefined}>
             <span class="dot" aria-hidden="true"></span>
-            <span class="row-name">{p.name}<small>{p.note}</small></span>
-            <span class="row-price">{p.price}</span>
+            <span class="row-name">{pname}<small>{note}</small></span>
+            <span class="row-price">{price}</span>
           </Btn>
         ))}
       </div>
-      <Btn class="ug-btn-site rp go" type={mini ? undefined : 'button'} data-ug-target="click">このプランで申し込む</Btn>
+      <Btn class="ug-btn-site rp go" type={mini ? undefined : 'button'} data-ug-target="click">{L.go}</Btn>
     </section>
   </div>
 </UgFrame>
@@ -64,12 +78,13 @@ const plans = [
   .rp :global(.ripple) {
     position: absolute;
     border-radius: 50%;
-    background: rgba(79, 115, 217, 0.28);
+    /* 波紋の濃さと広がる時間はつまみ（--t-alpha・--t-dur）から */
+    background: rgba(79, 115, 217, var(--t-alpha));
     transform: scale(0);
     pointer-events: none;
-    animation: ug-ripple 0.5s ease-out forwards;
+    animation: ug-ripple var(--t-dur) ease-out forwards;
   }
-  .go :global(.ripple) { background: rgba(255, 255, 255, 0.5); }
+  .go :global(.ripple) { background: rgba(255, 255, 255, var(--t-alpha)); }
   @keyframes ug-ripple {
     to { transform: scale(1); opacity: 0; }
   }

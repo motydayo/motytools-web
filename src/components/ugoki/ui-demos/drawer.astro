@@ -1,0 +1,339 @@
+---
+// UI部品の見本: ドロワー（ナビゲーションドロワー）
+// 枠の中に収めるため、見本は div[role=dialog] を absolute で出す。記事のコードは <dialog> と showModal() を使う。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const Link = mini ? 'span' : 'a';
+const link = mini ? {} : { href: '#' };
+const L = {
+  ja: {
+    name: 'ドロワー',
+    open: 'メニューを開く',
+    close: 'メニューを閉じる',
+    menu: 'メニュー',
+    cta: '予約する',
+    label: 'STAY',
+    h: '海の見える宿を、ひとつずつ',
+    stays: ['海の宿 ひかり', '山の宿 こだま', '星の宿 しずく'],
+    items: ['ホーム', '宿をさがす', '特集・読みもの', '予約の確認', 'よくある質問'],
+    login: 'ログイン',
+    member: '会員登録は無料です',
+  },
+  en: {
+    name: 'Drawer',
+    open: 'Open menu',
+    close: 'Close menu',
+    menu: 'Menu',
+    cta: 'Book',
+    label: 'STAY',
+    h: 'Stays by the sea, one at a time',
+    stays: ['Hikari Seaside Inn', 'Kodama Mountain Lodge', 'Shizuku Star Cabin'],
+    items: ['Home', 'Find a stay', 'Stories & guides', 'My bookings', 'Help center'],
+    login: 'Sign in',
+    member: 'Membership is free',
+  },
+}[lang as 'ja' | 'en'];
+const icons = [
+  'M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z',
+  'M11 4a7 7 0 1 1 0 14 7 7 0 0 1 0-14zM20 20l-4-4',
+  'M4 5h11a3 3 0 0 1 3 3v12H7a3 3 0 0 1-3-3zM18 8h2v12',
+  'M4 6h16v14H4zM4 10h16M9 3v5M15 3v5',
+  'M12 4a8 8 0 1 1 0 16 8 8 0 0 1 0-16zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 16.5v.5',
+];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site dr-site" data-demo="drawer">
+    <!-- 後ろのページ。開いている間は inert で触れなくする -->
+    <div class="dr-page" data-dr-page>
+      <header class="ug-nav dr-nav">
+        <Btn class="dr-menu" {...btn} aria-label={L.open} aria-expanded="false" data-dr-open>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </Btn>
+        <span class="ug-logo">SAMPLE</span>
+        <span class="ug-cta">{L.cta}</span>
+      </header>
+      <section class="ug-sec dr-body">
+        <Scene tone="day" wide />
+        <p class="ug-label">{L.label}</p>
+        <h3 class="ug-h">{L.h}</h3>
+        <div class="ug-grid">
+          <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">{L.stays[0]}</div></div>
+          <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.stays[1]}</div></div>
+          <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.stays[2]}</div></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 暗幕。押すと閉じる -->
+    <div class="dr-scrim" data-dr-scrim aria-hidden="true"></div>
+
+    <!-- これが部品の本体: 画面の端から引き出すメニューの板 -->
+    <div class="dr-panel" role="dialog" aria-modal="true" aria-label={L.menu} data-dr-panel data-ug-focus={L.name} data-ug-focus-at="left">
+      <div class="dr-head">
+        <span class="ug-logo">SAMPLE</span>
+        <Btn class="dr-x" {...btn} aria-label={L.close} data-dr-close>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </Btn>
+      </div>
+      <nav class="dr-list" aria-label={L.menu}>
+        {L.items.map((t, i) => (
+          <Link class="dr-item" {...link} aria-current={i === 0 ? 'page' : undefined} data-dr-item>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons[i]} /></svg>
+            {t}
+          </Link>
+        ))}
+      </nav>
+      <div class="dr-foot">
+        <Btn class="ug-btn-site dr-login" {...btn} data-dr-close>{L.login}</Btn>
+        <span class="dr-member">{L.member}</span>
+      </div>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .dr-site { position: relative; height: 100%; overflow: hidden; }
+  .dr-nav { gap: 8px; padding-left: 4px; }
+  .dr-nav .ug-logo { margin-right: auto; }
+  .dr-menu {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ug-ink);
+    cursor: pointer;
+  }
+  .dr-menu:hover, .dr-menu.is-hover { background: var(--ug-bg); }
+  .dr-body { display: grid; gap: 4px; }
+  .dr-body > :global(.ug-scene) { border-radius: 10px; margin-bottom: 8px; }
+  .dr-body .ug-grid { margin-top: 6px; }
+
+  /* 暗幕。濃さと速さはつまみ（--t-dim・--t-dur）から */
+  .dr-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    background: rgba(20, 24, 40, var(--t-dim));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--t-dur) ease-in;
+  }
+  .dr-site.is-open .dr-scrim { opacity: 1; pointer-events: auto; transition-timing-function: ease-out; }
+
+  /* 板は左の外に隠しておき、開いたら滑り込ませる。閉じている間は visibility で焦点も読み上げも外す */
+  .dr-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 21;
+    display: flex;
+    flex-direction: column;
+    width: min(var(--t-width), 84%);
+    background: #fff;
+    box-shadow: 8px 0 32px -12px rgba(20, 24, 40, 0.45);
+    transform: translateX(-100%);
+    visibility: hidden;
+    touch-action: pan-y;
+    transition: transform calc(var(--t-dur) * 0.8) ease-in, visibility 0s linear calc(var(--t-dur) * 0.8);
+  }
+  .dr-site.is-open .dr-panel {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform var(--t-dur) ease-out, visibility 0s;
+  }
+  .dr-panel.is-dragging { transition: none !important; }
+  /* 見どころの名札（左上）と重ならないよう、中身は帯の下側にそろえる */
+  .dr-head { display: flex; align-items: flex-end; justify-content: space-between; height: 56px; padding: 0 4px 2px 16px; border-bottom: 1px solid var(--ug-line); }
+  .dr-head .ug-logo { margin-bottom: 12px; }
+  .dr-x {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ug-ink-2);
+    cursor: pointer;
+  }
+  .dr-x:hover, .dr-x.is-hover { background: var(--ug-bg); }
+  .dr-list { display: grid; padding: 8px; }
+  .dr-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 10px;
+    color: var(--ug-ink);
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.15s ease-out;
+  }
+  .dr-item svg { flex: none; color: var(--ug-ink-2); }
+  .dr-item[aria-current='page'] { background: #fdeee7; color: #b5461b; }
+  .dr-item[aria-current='page'] svg { color: currentColor; }
+  .dr-item:hover, .dr-item.is-hover { background: var(--ug-bg); }
+  .dr-item:focus-visible, .dr-x:focus-visible, .dr-menu:focus-visible, .dr-login:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+  .dr-foot { display: grid; gap: 4px; margin-top: auto; padding: 16px; border-top: 1px solid var(--ug-line); }
+  .dr-member { font-size: 11px; color: var(--ug-ink-2); text-align: center; }
+
+  @container (max-width: 340px) {
+    .dr-body > :global(.ug-scene) { display: none; }
+    .dr-list { padding: 4px; }
+    .dr-item { min-height: 32px; }
+    .dr-x { width: 40px; height: 40px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dr-panel, .dr-site.is-open .dr-panel, .dr-scrim, .dr-site.is-open .dr-scrim { transition-duration: 0.01s; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="drawer"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const frame = root.closest<HTMLElement>('[data-ug-frame]')!;
+    const mini = frame.dataset.size === 'mini';
+    const page = root.querySelector<HTMLElement>('[data-dr-page]')!;
+    const panel = root.querySelector<HTMLElement>('[data-dr-panel]')!;
+    const scrim = root.querySelector<HTMLElement>('[data-dr-scrim]')!;
+    const openBtn = root.querySelector<HTMLElement>('[data-dr-open]')!;
+    const items = [...root.querySelectorAll<HTMLElement>('[data-dr-item]')];
+    const isOpen = () => root.classList.contains('is-open');
+
+    // real: 本物の操作のときだけ焦点を動かす（自動再生では動かさない）
+    const open = (real = false) => {
+      if (isOpen()) return;
+      root.classList.add('is-open');
+      openBtn.setAttribute('aria-expanded', 'true');
+      page.setAttribute('inert', '');
+      // 焦点はメニューの最初の項目へ（閉じたら開くボタンへ戻す）
+      if (real && !mini) window.setTimeout(() => items[0]?.focus({ preventScroll: true }), 30);
+    };
+    const close = () => {
+      if (!isOpen()) return;
+      root.classList.remove('is-open');
+      openBtn.setAttribute('aria-expanded', 'false');
+      page.removeAttribute('inert');
+      panel.style.transform = '';
+      if (!mini && view.contains(document.activeElement)) openBtn.focus({ preventScroll: true });
+    };
+
+    openBtn.addEventListener('click', () => open(true));
+    openBtn.addEventListener('ug:click', () => open());
+    root.querySelectorAll<HTMLElement>('[data-dr-close]').forEach((b) => {
+      b.addEventListener('click', close);
+      b.addEventListener('ug:click', close);
+    });
+    // 項目を選んだら、移動したつもりで閉じる（見本なので実際には移動しない）
+    items.forEach((a) => {
+      const pick = (e?: Event) => {
+        e?.preventDefault();
+        items.forEach((x) => x.removeAttribute('aria-current'));
+        a.setAttribute('aria-current', 'page');
+        close();
+      };
+      a.addEventListener('click', pick);
+      a.addEventListener('ug:click', () => pick());
+    });
+    // 暗幕を押す・Esc で閉じる
+    scrim.addEventListener('click', close);
+    scrim.addEventListener('ug:click', close);
+    view.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) {
+        e.preventDefault();
+        close();
+      }
+    });
+    // 板の中で Tab が外へ出ないようにする
+    panel.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const f = [...panel.querySelectorAll<HTMLElement>('a, button')];
+      const first = f[0];
+      const last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+    // 左へスワイプして閉じる（指・マウスのドラッグ）
+    let startX = 0;
+    let dx = 0;
+    let dragging = false;
+    panel.addEventListener('pointerdown', (e) => {
+      if (!isOpen()) return;
+      dragging = true;
+      startX = e.clientX;
+      dx = 0;
+    });
+    panel.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      dx = Math.min(0, e.clientX - startX);
+      if (dx < -6) {
+        panel.classList.add('is-dragging');
+        panel.style.transform = `translateX(${dx}px)`;
+      }
+    });
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      panel.classList.remove('is-dragging');
+      panel.style.transform = '';
+      if (dx < -panel.offsetWidth * 0.3) close();
+    };
+    panel.addEventListener('pointerup', endDrag);
+    panel.addEventListener('pointercancel', endDrag);
+    panel.addEventListener('click', (e) => {
+      // ドラッグの直後に項目が押されたことにならないようにする
+      if (dx < -6) e.preventDefault();
+    }, true);
+
+    const reset = () => {
+      root.classList.remove('is-open');
+      openBtn.setAttribute('aria-expanded', 'false');
+      page.removeAttribute('inert');
+      panel.style.transform = '';
+      items.forEach((x, i) => (i === 0 ? x.setAttribute('aria-current', 'page') : x.removeAttribute('aria-current')));
+    };
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.55, y: t.view.clientHeight * 0.6 }, 10);
+      await t.sleep(600);
+      await t.move(openBtn, 800);
+      t.hover(openBtn);
+      await t.sleep(300);
+      await t.click(openBtn);
+      t.hover(null);
+      await t.sleep(700);
+      for (const el of items.slice(1, 4)) {
+        await t.move(el, 450);
+        t.hover(el);
+        await t.sleep(350);
+      }
+      t.hover(null);
+      await t.sleep(400);
+      // 板の外（暗幕）を押して閉じる
+      await t.move({ x: t.view.clientWidth - 28, y: t.view.clientHeight * 0.55 }, 700);
+      await t.sleep(250);
+      await t.click(scrim);
+      await t.sleep(1500);
+    });
+  });
+</script>

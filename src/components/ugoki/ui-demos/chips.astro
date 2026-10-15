@@ -1,0 +1,266 @@
+---
+// UI部品の見本: チップ（フィルターチップ）
+// 本体は fieldset の中のチェックボックス。見た目を丸い札にして、押した瞬間に一覧を絞り込む。
+// 下の宿カードの「温泉」などは押せないタグ、「残り2室」はバッジ。並べて違いが分かるようにしている。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Group = mini ? 'div' : 'fieldset';
+const Legend = mini ? 'p' : 'legend';
+const Chip = mini ? 'span' : 'label';
+const Btn = mini ? 'span' : 'button';
+const L = {
+  ja: {
+    name: 'チップ',
+    nav: ['宿をさがす', '特集'],
+    title: '伊豆の宿',
+    legend: '絞り込み',
+    clear: 'すべて解除',
+    count: '{a}件中 {b}件',
+    empty: '条件に合う宿がありません。条件を1つ外してみてください。',
+    chips: [['onsen', '温泉'], ['meal', '朝食つき'], ['pet', 'ペット可'], ['park', '駐車場あり'], ['station', '駅から5分']],
+    hotels: [
+      { n: '山の宿 こもれび', p: '1泊 12,000円〜', f: ['onsen', 'meal', 'park'], badge: '残り2室' },
+      { n: '駅前ホテル みなと', p: '1泊 8,500円〜', f: ['meal', 'station'] },
+      { n: '川辺の湯 せせらぎ', p: '1泊 15,000円〜', f: ['onsen', 'pet', 'park'] },
+      { n: '海のコテージ', p: '1泊 18,000円〜', f: ['pet', 'park'], badge: '新着' },
+      { n: '花の宿 さくら', p: '1泊 13,500円〜', f: ['onsen', 'meal', 'station'] },
+    ],
+  },
+  en: {
+    name: 'Chips',
+    nav: ['Stays', 'Deals'],
+    title: 'Stays in Napa Valley',
+    legend: 'Filters',
+    clear: 'Clear all',
+    count: '{b} of {a} stays',
+    empty: 'No stays match. Try removing a filter.',
+    chips: [['onsen', 'Hot tub'], ['meal', 'Breakfast'], ['pet', 'Pet-friendly'], ['park', 'Free parking'], ['station', 'Near downtown']],
+    hotels: [
+      { n: 'Vineyard Cottage', p: 'From $180 / night', f: ['onsen', 'meal', 'park'], badge: '2 left' },
+      { n: 'Main Street Inn', p: 'From $125 / night', f: ['meal', 'station'] },
+      { n: 'Creekside Lodge', p: 'From $210 / night', f: ['onsen', 'pet', 'park'] },
+      { n: 'Hillside Cabin', p: 'From $240 / night', f: ['pet', 'park'], badge: 'New' },
+      { n: 'Oak Tree B&B', p: 'From $195 / night', f: ['onsen', 'meal', 'station'] },
+    ],
+  },
+}[lang as 'ja' | 'en'];
+const tagName = Object.fromEntries(L.chips);
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site cp-site" data-demo="chips" data-count={L.count}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec cp-sec">
+      <h3 class="ug-h">{L.title}</h3>
+
+      <!-- これが部品の本体: 押すたびにオン・オフする小さな札。いくつでも同時に選べる -->
+      <Group class="cp-group">
+        <Legend class="cp-legend">{L.legend}</Legend>
+        <div class="cp-row" data-ug-focus={L.name} data-ug-focus-at="below">
+          {L.chips.map(([v, t]) => (
+            <Chip class="cp-chip" data-cp-chip={v}>
+              {!mini && <input type="checkbox" class="cp-cb" name="feature" value={v} />}
+              <svg class="cp-mark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+              <span>{t}</span>
+            </Chip>
+          ))}
+        </div>
+      </Group>
+
+      <div class="cp-status">
+        <p class="cp-count" aria-live="polite" data-cp-count>{L.count.replace('{a}', String(L.hotels.length)).replace('{b}', String(L.hotels.length))}</p>
+        <Btn class="cp-clear" {...(mini ? {} : { type: 'button' })} hidden data-cp-clear>{L.clear}</Btn>
+      </div>
+
+      <ul class="cp-list">
+        {L.hotels.map((h) => (
+          <li class="cp-card" data-f={h.f.join(' ')}>
+            <div class="cp-card-top">
+              <span class="cp-card-name">{h.n}</span>
+              {h.badge && <span class="cp-badge">{h.badge}</span>}
+            </div>
+            <span class="cp-card-price">{h.p}</span>
+            <span class="cp-tags">{h.f.map((f) => <span class="cp-tag">{tagName[f]}</span>)}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="cp-empty" hidden data-cp-empty>{L.empty}</p>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .cp-site { min-height: 100%; }
+  .cp-group { margin: 4px 0 0; padding: 0; border: 0; min-width: 0; }
+  .cp-legend { display: block; margin: 0 0 4px; padding: 0; font-size: 11px; font-weight: 700; color: var(--ug-ink-2); }
+  .cp-row { position: relative; display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* チップ1つ。角の丸み・選んだ色はつまみ（--t-r・--t-color）から */
+  .cp-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid #c9c7c0;
+    border-radius: var(--t-r);
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ug-ink);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s ease-out, border-color 0.15s ease-out, padding 0.15s ease-out;
+  }
+  /* 見た目は36pxでも、押せる範囲は上下に広げて44pxにする */
+  .cp-chip::before { content: ''; position: absolute; inset: -4px 0; }
+  .cp-chip:hover, .cp-chip.is-hover { background: var(--ug-bg); }
+  .cp-cb { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+  .cp-chip:has(.cp-cb:focus-visible) { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+  .cp-mark { width: 0; margin-left: -4px; opacity: 0; transition: width 0.15s ease-out, opacity 0.15s ease-out, margin 0.15s ease-out; }
+  .cp-chip.is-on {
+    border-color: var(--t-color);
+    background: color-mix(in srgb, var(--t-color) 12%, #fff);
+    color: color-mix(in srgb, var(--t-color) 75%, #000);
+    padding-left: 10px;
+  }
+  .cp-chip.is-on .cp-mark { width: 16px; margin-left: 0; opacity: 1; }
+  /* 「色だけ」で選んだ印を出す設定（比べる用） */
+  .cp-site.is-color-only .cp-chip.is-on .cp-mark { width: 0; margin-left: -4px; opacity: 0; }
+  .cp-site.is-color-only .cp-chip.is-on { padding-left: 14px; }
+
+  .cp-status { display: flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 8px; }
+  .cp-count { font-size: 13px; font-weight: 800; }
+  .cp-clear {
+    min-height: 44px;
+    padding: 0 8px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ug-blue);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .cp-clear[hidden] { display: none; }
+
+  .cp-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .cp-card { display: grid; gap: 2px; padding: 8px 12px 12px; border: 1px solid var(--ug-line); border-radius: 10px; }
+  .cp-card[hidden] { display: none; }
+  .cp-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .cp-card-name { font-size: 13px; font-weight: 800; }
+  .cp-card-price { font-size: 11px; color: var(--ug-ink-2); }
+  /* タグ: 押せない分類の札（灰色・枠なし） */
+  .cp-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .cp-tag { padding: 0 6px; border-radius: 4px; background: #efede7; font-size: 10px; color: var(--ug-ink-2); }
+  /* バッジ: 状態を知らせる小さな印（押せない） */
+  .cp-badge { flex: none; padding: 0 8px; border-radius: 999px; background: #d64545; color: #fff; font-size: 10px; font-weight: 700; line-height: 18px; }
+  .cp-empty { margin-top: 8px; font-size: 12px; color: var(--ug-ink-2); }
+
+  @container (max-width: 340px) {
+    .cp-site .ug-h { display: none; }
+    .cp-chip { height: 32px; padding: 0 10px; font-size: 12px; }
+    .cp-chip.is-on { padding-left: 8px; }
+    .cp-status { min-height: 32px; margin-top: 4px; }
+    .cp-list { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cp-chip, .cp-mark { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour, onTune, tuneStr } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="chips"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const chips = [...root.querySelectorAll<HTMLElement>('[data-cp-chip]')];
+    const cards = [...root.querySelectorAll<HTMLElement>('[data-f]')];
+    const count = root.querySelector<HTMLElement>('[data-cp-count]')!;
+    const clear = root.querySelector<HTMLElement>('[data-cp-clear]')!;
+    const empty = root.querySelector<HTMLElement>('[data-cp-empty]')!;
+    const cbOf = (c: HTMLElement) => c.querySelector<HTMLInputElement>('.cp-cb');
+    const isOn = (c: HTMLElement) => c.classList.contains('is-on');
+    // チェックボックスの組の名前を見本ごとに分ける
+    const name = `cp-${Math.random().toString(36).slice(2, 8)}`;
+    chips.forEach((c) => cbOf(c) && (cbOf(c)!.name = name));
+
+    // 押した瞬間に一覧を絞り込む（選んだ条件をすべて満たす宿だけ）
+    const apply = () => {
+      const on = chips.filter(isOn).map((c) => c.dataset.cpChip!);
+      let hit = 0;
+      cards.forEach((card) => {
+        const f = (card.dataset.f ?? '').split(' ');
+        const show = on.every((v) => f.includes(v));
+        card.hidden = !show;
+        if (show) hit++;
+      });
+      count.textContent = (root.dataset.count ?? '').replace('{a}', String(cards.length)).replace('{b}', String(hit));
+      clear.hidden = on.length === 0;
+      empty.hidden = hit > 0;
+    };
+    const setOn = (c: HTMLElement, on: boolean) => {
+      c.classList.toggle('is-on', on);
+      const cb = cbOf(c);
+      if (cb) cb.checked = on;
+    };
+
+    chips.forEach((c) => {
+      cbOf(c)?.addEventListener('change', () => {
+        setOn(c, cbOf(c)!.checked);
+        apply();
+      });
+      c.addEventListener('ug:click', () => {
+        setOn(c, !isOn(c));
+        apply();
+      });
+    });
+    const clearAll = () => {
+      chips.forEach((c) => setOn(c, false));
+      apply();
+      chips[0].querySelector<HTMLElement>('.cp-cb')?.focus({ preventScroll: true });
+    };
+    clear.addEventListener('click', clearAll);
+    clear.addEventListener('ug:click', () => {
+      chips.forEach((c) => setOn(c, false));
+      apply();
+    });
+
+    // つまみ: 選んだ印を「チェック印あり」か「色だけ」か
+    const syncMark = () => root.classList.toggle('is-color-only', tuneStr(root, 'mark', 'check') === 'color');
+    onTune(view, syncMark);
+    syncMark();
+
+    const reset = () => {
+      chips.forEach((c) => setOn(c, false));
+      apply();
+    };
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.9 }, 10);
+      await t.sleep(500);
+      for (const i of [0, 1]) {
+        await t.move(chips[i], 650);
+        t.hover(chips[i]);
+        await t.sleep(200);
+        await t.click(chips[i]);
+        t.hover(null);
+        await t.sleep(1400);
+      }
+      await t.move(chips[1], 500);
+      await t.click(chips[1]);
+      await t.sleep(1200);
+      await t.move(clear, 700);
+      t.hover(clear);
+      await t.sleep(200);
+      await t.click(clear);
+      t.hover(null);
+      await t.sleep(1200);
+    });
+  });
+</script>

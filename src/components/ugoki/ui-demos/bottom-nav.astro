@@ -1,0 +1,232 @@
+---
+// UI部品の見本: タブバー（ボトムナビゲーション）
+// スマホ向けの画面の下に、主な行き先4つを並べる。押すと画面が切り替わり、今の場所は色で示す。
+// 枠の中に収めるため、バーは枠内のグリッドの最下段に置く（記事のコードは本番向けに position: fixed）。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const A = mini ? 'span' : 'a';
+const L = {
+  ja: {
+    name: 'タブバー',
+    aria: 'メイン',
+    tabs: ['ホーム', 'さがす', '予約', 'マイページ'],
+    badge: '新着1件',
+    home: { h: '今週のおすすめ', cards: ['山の宿', '海の宿'] },
+    search: { h: 'どこへ行きますか？', field: 'エリア・宿の名前', areas: ['長野県', '静岡県', '北海道', '沖縄県', '大分県'] },
+    trips: { h: '予約', rows: [['山の宿 ひかり', '11月3日（月）から1泊'], ['海の宿 あおば', '12月20日（土）から2泊']] },
+    me: { h: 'マイページ', user: '佐藤 みのり さん', rows: ['お気に入り', 'クーポン', '設定'] },
+  },
+  en: {
+    name: 'Bottom navigation',
+    aria: 'Main',
+    tabs: ['Home', 'Search', 'Trips', 'Account'],
+    badge: '1 new',
+    home: { h: 'Picks for this week', cards: ['Mountain lodge', 'Seaside inn'] },
+    search: { h: 'Where to?', field: 'City, area or hotel', areas: ['Colorado', 'Maine', 'Oregon', 'Hawaii', 'Utah'] },
+    trips: { h: 'Trips', rows: [['Aspen Ridge Lodge', 'Nov 3 · 1 night'], ['Blue Lake Inn', 'Dec 20 · 2 nights']] },
+    me: { h: 'Account', user: 'Jamie Parker', rows: ['Saved', 'Coupons', 'Settings'] },
+  },
+}[lang as 'ja' | 'en'];
+const icons = [
+  '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>',
+];
+const ids = ['home', 'search', 'trips', 'me'];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site bn-site" data-demo="bottom-nav">
+    <div class="bn-app">
+      <header class="bn-top"><span class="ug-logo">SAMPLE</span></header>
+
+      <div class="bn-screens">
+        <section class="bn-screen" data-bn-screen="home">
+          <h3 class="bn-h">{L.home.h}</h3>
+          <Scene tone="sunset" wide />
+          <div class="bn-cards">
+            <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.home.cards[0]}</div></div>
+            <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.home.cards[1]}</div></div>
+          </div>
+        </section>
+        <section class="bn-screen" data-bn-screen="search" hidden>
+          <h3 class="bn-h">{L.search.h}</h3>
+          <div class="bn-field">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+            {L.search.field}
+          </div>
+          <div class="bn-tags">{L.search.areas.map((a) => <span>{a}</span>)}</div>
+          <div class="ug-lines"><i></i><i></i><i></i></div>
+        </section>
+        <section class="bn-screen" data-bn-screen="trips" hidden>
+          <h3 class="bn-h">{L.trips.h}</h3>
+          {L.trips.rows.map(([n, d], i) => (
+            <div class="bn-trip"><Scene tone={i ? 'sunset' : 'day'} /><span><b>{n}</b><small>{d}</small></span></div>
+          ))}
+        </section>
+        <section class="bn-screen" data-bn-screen="me" hidden>
+          <h3 class="bn-h">{L.me.h}</h3>
+          <p class="bn-user"><span class="bn-avatar" aria-hidden="true"></span>{L.me.user}</p>
+          <ul class="bn-menu">{L.me.rows.map((r) => <li>{r}</li>)}</ul>
+        </section>
+      </div>
+
+      <!-- これが部品の本体: 画面の下に固定する、主な行き先のバー。今の場所は aria-current="page" -->
+      <nav class="bn-bar" aria-label={L.aria} data-ug-focus={L.name}>
+        {L.tabs.map((tab, i) => (
+          <A class="bn-tab" href={mini ? undefined : `#${ids[i]}`} data-bn-tab={ids[i]} aria-current={i === 0 ? 'page' : undefined}>
+            <span class="bn-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[i]} />
+              {i === 2 && <span class="bn-badge"><span class="sr-only">{L.badge}</span></span>}
+            </span>
+            <span class="bn-label">{tab}</span>
+          </A>
+        ))}
+      </nav>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .bn-site { height: 100%; background: var(--ug-bg); }
+  /* アプリの画面: 上から「見出し・中身（ここだけスクロール）・タブバー」 */
+  .bn-app {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    max-width: 420px;
+    height: 100%;
+    margin: 0 auto;
+    background: #fff;
+    border-inline: 1px solid var(--ug-line);
+  }
+  .bn-top { display: flex; align-items: center; height: 44px; padding: 0 16px; border-bottom: 1px solid var(--ug-line); }
+  .bn-screens { grid-row: 2; overflow: auto; scrollbar-width: none; }
+  .bn-screen { display: grid; gap: 12px; padding: 16px; }
+  .bn-screen.is-in { animation: bn-in 0.2s ease-out; }
+  @keyframes bn-in { from { opacity: 0; } }
+  .bn-h { font-size: 17px; font-weight: 800; }
+  .bn-screen :global(.ug-scene) { border-radius: 10px; }
+  .bn-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .bn-cards :global(.ug-scene) { border-radius: 0; }
+  .bn-field { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; border: 1px solid var(--ug-line); border-radius: 10px; color: var(--ug-ink-2); }
+  .bn-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bn-tags span { padding: 4px 12px; border-radius: 999px; background: var(--ug-bg); font-size: 12px; font-weight: 700; }
+  .bn-trip { display: flex; align-items: center; gap: 12px; padding: 8px; border: 1px solid var(--ug-line); border-radius: 10px; }
+  .bn-trip :global(.ug-scene) { width: 72px; flex: none; border-radius: 6px; }
+  .bn-trip span { display: grid; line-height: 1.5; }
+  .bn-trip small { color: var(--ug-ink-2); font-size: 11px; }
+  .bn-user { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+  .bn-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--ug-sky); }
+  .bn-menu { list-style: none; }
+  .bn-menu li { display: flex; align-items: center; min-height: 44px; border-bottom: 1px solid var(--ug-line); }
+
+  /* タブバー。高さ・アイコンの大きさ・今の場所の色はつまみ（--t-height・--t-icon・--t-color）から */
+  .bn-bar {
+    position: relative;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-row: 3;
+    height: var(--t-height);
+    background: #fff;
+    border-top: 1px solid var(--ug-line);
+  }
+  /* 見どころの名札はバーの上に出す */
+  :global(.show-focus) .bn-bar[data-ug-focus]::after { top: auto; bottom: calc(100% + 4px); }
+  .bn-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 44px;
+    color: var(--ug-ink-2) !important;
+    text-decoration: none;
+    transition: color 0.15s ease-out;
+  }
+  .bn-tab:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: -4px; border-radius: 8px; }
+  .bn-icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: calc(var(--t-icon) + 28px);
+    height: calc(var(--t-icon) + 6px);
+    border-radius: 999px;
+    transition: background-color 0.2s ease-out;
+  }
+  .bn-icon svg { width: var(--t-icon); height: var(--t-icon); }
+  .bn-label { font-size: 10px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
+  .bn-tab:hover, .bn-tab.is-hover { color: var(--ug-ink) !important; }
+  /* 今の場所: 色を変え、アイコンの後ろに淡い丸を敷く（色だけに頼らない） */
+  .bn-tab[aria-current='page'] { color: var(--t-color) !important; }
+  .bn-tab[aria-current='page'] .bn-icon { background: color-mix(in srgb, var(--t-color) 14%, transparent); }
+  .bn-badge {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e5484d;
+    box-shadow: 0 0 0 2px #fff;
+  }
+  /* 小さな枠: 中身を詰めて、タブバーが最初から見えるように */
+  @container (max-width: 340px) {
+    .bn-screen { gap: 8px; padding: 12px; }
+    .bn-cards { display: none; }
+  }
+  :global(.is-mini) .bn-top { display: none; }
+  :global(.is-mini) .bn-screen { padding: 8px 12px; }
+  :global(.is-mini) .bn-h { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) {
+    .bn-screen.is-in { animation: none; }
+    .bn-tab, .bn-icon { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="bottom-nav"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const tabs = [...root.querySelectorAll<HTMLElement>('[data-bn-tab]')];
+    const screens = [...root.querySelectorAll<HTMLElement>('[data-bn-screen]')];
+    const scroller = root.querySelector<HTMLElement>('.bn-screens')!;
+
+    const select = (id: string, animate = true) => {
+      tabs.forEach((t) => (t.dataset.bnTab === id ? t.setAttribute('aria-current', 'page') : t.removeAttribute('aria-current')));
+      screens.forEach((s) => {
+        const on = s.dataset.bnScreen === id;
+        s.hidden = !on;
+        s.classList.toggle('is-in', on && animate);
+      });
+      scroller.scrollTop = 0;
+    };
+
+    tabs.forEach((t) => {
+      t.addEventListener('click', (e) => {
+        e.preventDefault();
+        select(t.dataset.bnTab!);
+      });
+      t.addEventListener('ug:click', () => select(t.dataset.bnTab!));
+    });
+    view.addEventListener('ug:reset', () => select('home', false));
+
+    onTour(root, async (t) => {
+      select('home', false);
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.4 }, 10);
+      await t.sleep(800);
+      for (const i of [1, 2, 3, 0]) {
+        await t.move(tabs[i], 700);
+        t.hover(tabs[i]);
+        await t.sleep(250);
+        await t.click(tabs[i]);
+        t.hover(null);
+        await t.sleep(1300);
+      }
+    });
+  });
+</script>

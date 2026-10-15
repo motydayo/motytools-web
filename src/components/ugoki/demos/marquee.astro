@@ -1,20 +1,38 @@
 ---
 import UgFrame from '../UgFrame.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const words = ['WEB DESIGN', 'BRANDING', 'MOTION', 'APP UI'];
-const clients = ['山の宿', 'まちの本屋', 'みなと珈琲', '森のパン工房', 'ひかり歯科', 'そら不動産'];
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'マーキー',
+    nav: ['実績', '会社概要'],
+    cta: '相談する',
+    title: 'わたしたちにできること',
+    cap: '導入いただいたお店・会社',
+    clients: ['山の宿', 'まちの本屋', 'みなと珈琲', '森のパン工房', 'ひかり歯科', 'そら不動産'],
+  },
+  en: {
+    name: 'Marquee',
+    nav: ['Work', 'About'],
+    cta: 'Contact us',
+    title: 'What we do',
+    cap: 'Trusted by local businesses',
+    clients: ['Pine Ridge Lodge', 'Corner Books', 'Harbor Coffee', 'Forest Bakery', 'Bright Dental', 'Skyline Realty'],
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="loop" size={size} label="マーキー">
+<UgFrame mode="loop" size={size} label={L.name} lang={lang}>
   <div class="ug-site mq-site">
-    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>実績</span><span>会社概要</span><span class="ug-cta">相談する</span></header>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="mq-intro">
       <p class="ug-label">SERVICE</p>
-      <h3 class="ug-h">わたしたちにできること</h3>
+      <h3 class="ug-h">{L.title}</h3>
       <div class="ug-lines mq-lines"><i></i><i></i></div>
     </section>
     <!-- これが演出の本体: 同じ並びを2回並べ、半分だけ左へ動かしてから最初に戻すと、つなぎ目が見えない -->
-    <div class="band ug-pausable" data-ug-focus="マーキー">
+    <div class="band ug-pausable" data-ug-focus={L.name}>
       <div class="track">
         {[0, 1].map((n) => (
           <div class="set" aria-hidden={n === 1 ? 'true' : undefined}>
@@ -26,12 +44,12 @@ const clients = ['山の宿', 'まちの本屋', 'みなと珈琲', '森のパ�
       </div>
     </div>
     <section class="mq-clients">
-      <p class="mq-cap">導入いただいたお店・会社</p>
+      <p class="mq-cap">{L.cap}</p>
       <div class="mq-logos ug-pausable">
-        <div class="track is-slow is-reverse">
+        <div class="track is-sub">
           {[0, 1].map((n) => (
             <div class="set" aria-hidden={n === 1 ? 'true' : undefined}>
-              {clients.map((c) => (
+              {L.clients.map((c) => (
                 <span class="mq-logo"><i></i>{c}</span>
               ))}
             </div>
@@ -51,16 +69,17 @@ const clients = ['山の宿', 'まちの本屋', 'みなと珈琲', '森のパ�
   .track {
     display: flex;
     width: max-content;
-    /* 一定の速さで左へ流し続ける（流し続ける動きだけは等速） */
-    animation: ug-marquee 14s linear infinite;
+    /* 一定の速さで流し続ける（流し続ける動きだけは等速）。1周の時間と向きはつまみ（--t-dur・--t-dir）から */
+    animation: ug-marquee var(--t-dur) linear infinite var(--t-dir);
   }
-  .track.is-slow { animation-duration: 24s; }
-  .track.is-reverse { animation-direction: reverse; }
+  /* 下の段（導入先）は、上の段の1.5倍ゆっくり・逆向きに流して、2段の動きを分ける */
+  .track.is-sub { animation-duration: calc(var(--t-dur) * 1.5); animation-direction: reverse; }
   /* マウスを乗せたら止めて、読めるようにする */
   .band:hover .track,
   .mq-logos:hover .track { animation-play-state: paused; }
   .set { display: flex; }
-  .w { display: inline-flex; align-items: center; gap: 24px; padding-right: 24px; font-size: 20px; font-weight: 800; letter-spacing: 0.06em; white-space: nowrap; }
+  /* 項目の間隔はつまみ（--t-gap）から。点の左右に同じだけ空ける */
+  .w { display: inline-flex; align-items: center; gap: var(--t-gap); padding-right: var(--t-gap); font-size: 20px; font-weight: 800; letter-spacing: 0.06em; white-space: nowrap; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ug-orange); }
   @keyframes ug-marquee {
     to { transform: translateX(-50%); }
@@ -77,7 +96,7 @@ const clients = ['山の宿', 'まちの本屋', 'みなと珈琲', '森のパ�
     .mq-intro { padding: 12px 12px 10px; }
     .mq-lines { display: none; }
     .band { padding: 10px 0; }
-    .w { font-size: 16px; gap: 16px; padding-right: 16px; }
+    .w { font-size: 16px; gap: calc(var(--t-gap) * 0.7); padding-right: calc(var(--t-gap) * 0.7); }
   }
   /* 端末で「動きを減らす」設定なら止める（並びの先頭が読める状態で止まる） */
   @media (prefers-reduced-motion: reduce) {

@@ -28,10 +28,10 @@ export default {
     '中を比べながら読む情報（料金プランの比較など。1つずつしか開かないと比べられない）',
   ],
   prompt:
-    'よくある質問を「アコーディオン（accordion）」にしてください。HTMLの details と summary を使い、JavaScriptは使わないでください。質問を押すと答えが0.3秒で減速しながら開き、閉じるときも0.3秒で閉じるようにします。:root に interpolate-size: allow-keywords を指定し、details::details-content の height を 0 から auto へ transition させてください。details には同じ name を付けて、1つ開くとほかが閉じるようにしてください。summary の標準の三角は消し、右に下向きの矢印（SVG）を置いて、開いたら180度回します。質問の行は高さ48px以上、キーボードの焦点が見えるようにし、動きを減らす設定の人には動きなしで開閉してください。',
+    'よくある質問を「アコーディオン（accordion）」にしてください。HTMLの details と summary を使い、JavaScriptは使わないでください。質問を押すと答えが{{dur:t}}で開き、閉じるときも{{dur:t}}で閉じるようにします。動きの緩急は {{ease}} にしてください。:root に interpolate-size: allow-keywords を指定し、details::details-content の height を 0 から auto へ transition させてください。details には同じ name を付けて、1つ開くとほかが閉じるようにしてください。summary の標準の三角は消し、右に下向きの矢印（SVG）を置いて、開いたら180度回します。質問の行は高さ{{row:t}}以上、キーボードの焦点が見えるようにし、動きを減らす設定の人には動きなしで開閉してください。interpolate-size に対応していないブラウザでは、動きなしで一瞬で開けば十分です。',
   howTo: [
     '土台はHTMLの details（開閉できる箱）と summary（その見出し）です。これだけで、押すと開く・もう一度押すと閉じる・キーボードのEnterやSpaceで操作できる・読み上げソフトに「折りたたみ、閉じています」と伝わる、の全部が手に入ります。同じ name を付けた details は、1つ開くとほかが自動で閉じます。',
-    'なめらかに開くには、CSSの interpolate-size: allow-keywords（height: auto までの変化を計算できるようにする指定）と、details の中身の箱を指す ::details-content を使います。高さを0から auto へ transition させるだけで、JavaScriptはいりません。対応していないブラウザでは動きなしで開閉するだけなので、壊れることはありません。',
+    'なめらかに開くには、CSSの interpolate-size: allow-keywords（height: auto までの変化を計算できるようにする指定）と、details の中身の箱を指す ::details-content を使います。高さを0から auto へ transition させるだけで、JavaScriptはいりません。::details-content はもう主要なブラウザすべてで使えますが、interpolate-size はまだChrome系だけです。対応していないブラウザでは動きなしで開閉するだけなので、壊れることはありません。',
     'どのブラウザでも動かしたいときは、答えを div で包み、grid-template-rows を 0fr から 1fr へ変える方法があります（見本の一覧の小さな枠はこの方法です）。この場合は開閉の状態を JavaScript で切り替え、ボタンに aria-expanded を付けます。',
   ],
   code: [
@@ -69,7 +69,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 48px;
+  min-height: {{row}};
   font-weight: 700;
   cursor: pointer;
   list-style: none; /* 標準の三角を消す */
@@ -84,7 +84,7 @@ export default {
 .faq details::details-content {
   height: 0;
   overflow: clip;
-  transition: height 0.3s ease-out, content-visibility 0.3s allow-discrete;
+  transition: height {{dur}} {{ease}}, content-visibility {{dur}} allow-discrete;
 }
 .faq details[open]::details-content { height: auto; }
 
@@ -93,8 +93,24 @@ export default {
 }`,
     },
   ],
+  tune: [
+    { key: 'dur', label: '開閉の速さ', min: 0, max: 0.8, step: 0.05, value: 0.3, unit: 's' },
+    {
+      key: 'ease',
+      type: 'select',
+      label: '動きの緩急',
+      value: 'ease-out',
+      options: [
+        { value: 'ease-out', label: '減速して止まる（ease-out）' },
+        { value: 'ease-in-out', label: 'ゆっくり出て、ゆっくり止まる（ease-in-out）' },
+        { value: 'linear', label: '等速（linear）' },
+        { value: 'cubic-bezier(0.34, 1.56, 0.64, 1)', label: '少し行き過ぎて戻る（弾む）' },
+      ],
+    },
+    { key: 'row', label: '質問の行の高さ', min: 40, max: 64, step: 4, value: 48, unit: 'px' },
+  ],
   cautions: [
-    'interpolate-size と ::details-content は新しい指定で、2026年時点ではChrome・Edgeなどで動き、まだ対応していないブラウザもあります。対応していなくても一瞬で開閉するだけで、中身は問題なく読めます。',
+    '::details-content は主要なブラウザすべてで使えるようになりましたが、interpolate-size はまだ Chrome・Edge などのChrome系ブラウザだけです。それ以外のブラウザでは、なめらかに動かず一瞬で開閉するだけで、中身は問題なく読めます。',
     'summary の中にリンクやボタンを入れないでください。押したときに「開閉」と「リンクへ移動」のどちらが起きるか分からなくなり、読み上げも混乱します。',
     'div と JavaScript で自作する場合は、見出しを button にして aria-expanded（開いているか）と aria-controls（どこを開くか）を付けないと、キーボードや読み上げソフトで使えません。details/summary ならこの手間がいりません。',
     '閉じた中の文字もページ内検索で見つかるようにしたいときも details が有利です。Chromeでは、ページ内検索で閉じた details の中の語が見つかると自動で開きます。',
@@ -112,7 +128,7 @@ export default {
   faq: [
     {
       q: 'details の開閉がアニメーションしないのはなぜですか？',
-      a: 'details は開くと中身が一瞬で表示される作りなので、height の transition を書くだけでは動きません。interpolate-size: allow-keywords と ::details-content の height を組み合わせてください。それでも動かない場合は、ブラウザがまだ対応していない可能性があります。',
+      a: 'details は開くと中身が一瞬で表示される作りなので、height の transition を書くだけでは動きません。interpolate-size: allow-keywords と ::details-content の height を組み合わせてください。それでも動かない場合は、そのブラウザがまだ interpolate-size に対応していない可能性があります（今のところChrome系だけです）。',
     },
     {
       q: 'アコーディオンの中の文章はSEOで評価されますか？',

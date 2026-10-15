@@ -27,10 +27,10 @@ export default {
     '本物のマウスカーソルを消して輪だけにする作り（どこを指しているか分かりにくくなる）',
   ],
   prompt:
-    'サイトに「マウスストーカー（cursor follower）」を付けてください。直径40px・線2pxの丸い輪を position: fixed で置き、pointer-events: none にします。マウスの位置へ requestAnimationFrame で毎フレーム16%ずつ近づけて、少し遅れてついてくるようにしてください。a や button の上では輪を1.8倍にして薄く塗ります。本物のカーソルは消さないでください。マウスのない端末（@media (pointer: fine) に当てはまらない端末）では輪を出さず、prefers-reduced-motion: reduce のときは遅れなしでマウスに重ねるだけにしてください。ライブラリは使わないでください。',
+    'サイトに「マウスストーカー（cursor follower）」を付けてください。直径{{size:t}}・線2pxの丸い輪を position: fixed で置き、pointer-events: none にします。マウスの位置へ requestAnimationFrame で毎フレーム「残りの距離の{{follow:t}}」ずつ近づけて、少し遅れてついてくるようにし、追いついたらループを止めてください。位置は transform ではなく translate プロパティで動かし、大きくするときの scale でその場から広がるようにします。a や button の上では輪を{{grow:t}}倍にして薄く塗ります。本物のカーソルは消さないでください。輪には aria-hidden="true" を付けます。マウスのない端末（@media (pointer: fine) に当てはまらない端末）では輪を出さず、prefers-reduced-motion: reduce のときは遅れなしでマウスに重ねるだけにしてください。ライブラリは使わないでください。',
   howTo: [
-    '輪を1つ置き、JavaScriptでマウスの位置を覚えておきます。毎フレーム（1秒に約60回）、輪の位置を「マウスまでの距離の16%」だけ近づけると、近いほどゆっくりになる、なめらかな追いかけ方になります。この「少しずつ近づける」計算が、遅れてついてくる感じの正体です。',
-    'リンクやボタンの上に来たら輪にクラスを付けて大きくします。輪には pointer-events: none（クリックを素通りさせる指定）を付け、下にあるボタンを押せなくならないようにします。',
+    '輪を1つ置き、JavaScriptでマウスの位置を覚えておきます。毎フレーム（1秒に約60回）、輪の位置を「マウスまでの残りの距離の16%」だけ近づけると、近いほどゆっくりになる、なめらかな追いかけ方になります。この「少しずつ近づける」計算が、遅れてついてくる感じの正体です。割合を100%にすると遅れが消えて輪がマウスに重なるだけになり、5%ほどまで下げると置いていかれて、どこを指しているのか分かりにくくなります。12〜20%あたりが「ついてくる」と感じやすい範囲です。',
+    'リンクやボタンの上に来たら輪にクラスを付けて大きくします。輪には pointer-events: none（クリックを素通りさせる指定）を付け、下にあるボタンを押せなくならないようにします。位置は transform ではなく translate プロパティで動かします。transform で動かすと、リンクの上で大きくする scale が移動の距離まで拡大してしまい、輪が画面の左上を起点にマウスから離れてずれるためです。translate で動かせば、輪はその場で大きくなります。',
   ],
   code: [
     {
@@ -46,9 +46,9 @@ export default {
   top: 0;
   left: 0;
   z-index: 1000;
-  width: 40px;
-  height: 40px;
-  margin: -20px 0 0 -20px; /* 輪の中心をマウスに合わせる */
+  width: {{size}};
+  height: {{size}};
+  margin: calc({{size}} / -2) 0 0 calc({{size}} / -2); /* 輪の中心をマウスに合わせる */
   border: 2px solid #f06a35;
   border-radius: 50%;
   pointer-events: none;     /* クリックを下の要素へ素通りさせる */
@@ -57,7 +57,7 @@ export default {
 }
 .stalker.is-on { opacity: 1; }
 /* リンクやボタンの上では大きく */
-.stalker.is-big { scale: 1.8; background-color: rgba(240, 106, 53, 0.16); }
+.stalker.is-big { scale: {{grow:n}}; background-color: rgba(240, 106, 53, 0.16); }
 
 /* マウスのない端末では出さない */
 @media not all and (pointer: fine) {
@@ -77,10 +77,11 @@ if (stalker && fine) {
   let raf = 0;
 
   const tick = () => {
-    const k = reduce ? 1 : 0.16; // 1回に近づく割合。小さいほどゆっくり
+    const k = reduce ? 1 : {{follow:n}} / 100; // 1回に近づく割合。小さいほどゆっくり
     now.x += (goal.x - now.x) * k;
     now.y += (goal.y - now.y) * k;
-    stalker.style.transform = \`translate(\${now.x}px, \${now.y}px)\`;
+    // transform ではなく translate で動かす。CSSの scale がその場で輪を大きくできる
+    stalker.style.translate = \`\${now.x}px \${now.y}px\`;
     const far = Math.abs(goal.x - now.x) + Math.abs(goal.y - now.y) > 0.3;
     raf = far ? requestAnimationFrame(tick) : 0; // 止まったら計算もやめる
   };
@@ -102,6 +103,11 @@ if (stalker && fine) {
 }`,
     },
   ],
+  tune: [
+    { key: 'follow', label: '追いかける速さ（1回に近づく割合）', min: 4, max: 100, step: 2, value: 16, unit: '%' },
+    { key: 'size', label: '輪の大きさ', min: 16, max: 80, step: 2, value: 40, unit: 'px' },
+    { key: 'grow', label: 'リンクの上で大きくなる倍率', min: 1, max: 3, step: 0.1, value: 1.8, unit: '' },
+  ],
   cautions: [
     'スマホやタブレットにはマウスがないので、追いかける相手がいません。指で触っている間だけ出すこともできますが、指で隠れて見えないため、多くのサイトはスマホでは出しません。見本の枠では、タップした場所へ輪が追いかけていくようにしてあります。',
     '本物のカーソルを cursor: none で消して輪だけにすると、遅れのぶん「どこを押すのか」がずれて見え、押し間違いが起きます。本物のカーソルは残しておくのが安全です。',
@@ -122,7 +128,7 @@ if (stalker && fine) {
   faq: [
     {
       q: 'マウスストーカーは重くなりませんか？',
-      a: '輪を1つ動かすだけなら、ほとんど負担はありません。重くなるのは、top・left で位置を変えている場合や、輪にぼかし（filter: blur）を付けている場合です。位置は transform で動かし、追いついたら計算を止めてください。',
+      a: '輪を1つ動かすだけなら、ほとんど負担はありません。重くなるのは、top・left で位置を変えている場合や、輪にぼかし（filter: blur）を付けている場合です。位置は translate（または transform）で動かし、追いついたら計算を止めてください。',
     },
     {
       q: 'スマホでマウスストーカーはどうなりますか？',

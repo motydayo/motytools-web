@@ -28,7 +28,7 @@ export default {
     'ページの一部だけで使い、残りは普通に読ませたいとき（mandatory は吸い付きが強く、読みにくくなる）',
   ],
   prompt:
-    'トップページを「スクロールスナップ（scroll snap）」にしてください。CSSだけで作り、JavaScriptやライブラリは使わないでください。html に scroll-snap-type: y mandatory; を指定し、各セクションを height: 100svh; にして scroll-snap-align: start; と scroll-snap-stop: always; を付け、1画面ずつ必ず止まるようにしてください。いま何枚目かが分かる点の目印を右端に置いてください。セクションの中身が画面に収まらないときは、そのセクションだけ高さを auto にし、吸い付きを proximity（近いときだけ吸い付く）に弱めてください。',
+    'トップページを「スクロールスナップ（scroll snap）」にしてください。CSSだけで作り、JavaScriptやライブラリは使わないでください。html に scroll-snap-type: y {{snap}}; を指定し、各セクションを height: {{size:n}}svh;（画面の{{size:t}}）にして scroll-snap-align: {{align}}; と scroll-snap-stop: always; を付け、1画面ずつ止まるようにしてください。いま何枚目かが分かる点の目印を右端に置いてください。セクションの中身が画面に収まらないときは、そのセクションだけ高さを auto にし、吸い付きを proximity（近いときだけ吸い付く）に弱めてください。',
   howTo: [
     '作り方はCSSの2種類の指定だけです。スクロールする箱（ページ全体なら html）に scroll-snap-type: y mandatory（縦方向で、必ずどこかに止める）を付け、止めたい要素に scroll-snap-align: start（その要素の上端で止める）を付けます。各要素の高さを画面1つ分にすれば、1画面ずつ止まります。',
     'scroll-snap-stop: always を足すと、勢いよくスクロールしても途中の画面を飛ばさず、必ず1枚ずつ止まります。吸い付きを弱めたいときは mandatory を proximity（区切りの近くで手を離したときだけ吸い付く）に変えます。横向きにしたいときは x にして、要素を横に並べるだけです。',
@@ -56,16 +56,16 @@ export default {
       label: 'CSS',
       code: `/* スクロールする箱（ページ全体なら html）に付ける */
 html {
-  scroll-snap-type: y mandatory; /* 縦方向で、必ずどこかに止める */
+  scroll-snap-type: y {{snap}}; /* mandatory＝必ず止める／proximity＝近いときだけ */
 }
 body { margin: 0; }
 
 .slide {
-  height: 100svh;              /* 画面1つ分（スマホのバーの出し入れにも強い） */
+  height: {{size:n}}svh; /* 画面に対する高さ（svh はスマホのバーの出し入れにも強い） */
   display: grid;
   place-items: center;
-  scroll-snap-align: start;    /* この要素の上端で止める */
-  scroll-snap-stop: always;    /* 勢いよく動かしても1枚ずつ止める */
+  scroll-snap-align: {{align}}; /* start＝上端で止める／center＝真ん中で止める */
+  scroll-snap-stop: always; /* 勢いよく動かしても1枚ずつ止める */
 }
 .slide:nth-child(odd) { background: #dfe8fb; }
 .slide:nth-child(even) { background: #ffe3d4; }
@@ -74,6 +74,29 @@ body { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-snap-type: y proximity; }
 }`,
+    },
+  ],
+  tune: [
+    {
+      key: 'snap',
+      type: 'select',
+      label: '吸い付きの強さ',
+      value: 'mandatory',
+      options: [
+        { value: 'mandatory', label: 'mandatory（必ず止める）' },
+        { value: 'proximity', label: 'proximity（近いときだけ）' },
+      ],
+    },
+    { key: 'size', label: '1枚の高さ（画面に対して）', min: 60, max: 100, step: 5, value: 100, unit: '%' },
+    {
+      key: 'align',
+      type: 'select',
+      label: '止める位置',
+      value: 'start',
+      options: [
+        { value: 'start', label: 'start（上端）' },
+        { value: 'center', label: 'center（真ん中）' },
+      ],
     },
   ],
   cautions: [

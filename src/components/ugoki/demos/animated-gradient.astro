@@ -1,22 +1,47 @@
 ---
 import UgFrame from '../UgFrame.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'グラデーションアニメーション',
+    url: 'nagare-app.jp',
+    logo: 'ナガレ',
+    nav: ['機能', '料金'],
+    cta: '無料で試す',
+    kicker: 'チームの予定表アプリ',
+    title: ['予定のすり合わせを、', '1日5分に。'],
+    sub: 'カレンダーを重ねるだけで、全員の空き時間が見つかります。',
+    btn: '14日間 無料で試す',
+    points: [['3分', 'はじめての設定'], ['40社', '先行導入'], ['0円', '5人まで無料']],
+  },
+  en: {
+    name: 'Animated gradient',
+    url: 'flowcal.app',
+    logo: 'Flowcal',
+    nav: ['Features', 'Pricing'],
+    cta: 'Start free',
+    kicker: 'SHARED TEAM CALENDAR',
+    title: ['Schedule your team', 'in five minutes a day.'],
+    sub: 'Overlay everyone’s calendars and the open slots appear.',
+    btn: 'Start 14-day free trial',
+    points: [['3 min', 'to set up'], ['40', 'early teams'], ['$0', 'up to 5 seats']],
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="loop" size={size} label="グラデーションアニメーション" url="nagare-app.jp">
+<UgFrame mode="loop" size={size} label={L.name} url={L.url} lang={lang}>
   <div class="ug-site ag-site">
-    <header class="ug-nav"><span class="ug-logo">ナガレ</span><span>機能</span><span>料金</span><span class="ug-cta">無料で試す</span></header>
+    <header class="ug-nav"><span class="ug-logo">{L.logo}</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <!-- これが演出の本体: 大きなグラデーションの背景を、ゆっくり左右に動かし続ける -->
-    <section class="ag-hero ug-pausable" data-ug-focus="グラデーションアニメーション">
-      <p class="ag-kicker">チームの予定表アプリ</p>
-      <h3 class="ag-title">予定のすり合わせを、<br />1日5分に。</h3>
-      <p class="ag-sub">カレンダーを重ねるだけで、全員の空き時間が見つかります。</p>
-      <span class="ag-btn">14日間 無料で試す</span>
+    <section class="ag-hero ug-pausable" data-ug-focus={L.name}>
+      <p class="ag-kicker">{L.kicker}</p>
+      <h3 class="ag-title">{L.title[0]}<br />{L.title[1]}</h3>
+      <p class="ag-sub">{L.sub}</p>
+      <span class="ag-btn">{L.btn}</span>
     </section>
     <section class="ag-points">
-      <div class="ag-point"><b>3分</b><span>はじめての設定</span></div>
-      <div class="ag-point"><b>40社</b><span>先行導入</span></div>
-      <div class="ag-point"><b>0円</b><span>5人まで無料</span></div>
+      {L.points.map(([b, s]) => <div class="ag-point"><b>{b}</b><span>{s}</span></div>)}
     </section>
     <section class="ug-sec">
       <div class="ug-lines"><i></i><i></i><i></i></div>
@@ -29,13 +54,17 @@ const { size = 'full' } = Astro.props;
     position: relative;
     padding: 40px 24px 36px;
     color: #fff;
-    /* 色を多めに並べた帯を3倍の大きさで敷き、見える位置を動かす */
-    background: linear-gradient(120deg, #1d2541, #4f73d9, #b4467a, #f06a35, #4f73d9, #1d2541);
+    /* 色を並べた帯を3倍の大きさで敷き、見える位置を動かす。2色はつまみ（--t-c1・--t-c2）から */
+    background: linear-gradient(120deg, #1d2541, var(--t-c1), var(--t-c2), var(--t-c1), #1d2541);
     background-size: 300% 300%;
-    animation: ag-shift 8s ease-in-out infinite alternate;
+    animation: ag-shift var(--t-dur) ease-in-out infinite alternate;
   }
-  /* 白い文字が読めるよう、薄い暗幕を1枚かぶせる */
-  .ag-hero::before { content: ''; position: absolute; inset: 0; background: rgba(20, 24, 45, 0.28); pointer-events: none; }
+  /* oklch で混ぜると、2色の間がにごらず鮮やかにつながる（対応ブラウザだけ） */
+  @supports (background: linear-gradient(in oklch, red, blue)) {
+    .ag-hero { background-image: linear-gradient(120deg in oklch, #1d2541, var(--t-c1), var(--t-c2), var(--t-c1), #1d2541); }
+  }
+  /* 白い文字が読めるよう、薄い暗幕を1枚かぶせる。濃さはつまみ（--t-dim）から */
+  .ag-hero::before { content: ''; position: absolute; inset: 0; background: rgba(20, 24, 45, var(--t-dim)); pointer-events: none; }
   .ag-hero > * { position: relative; }
   @keyframes ag-shift {
     from { background-position: 0% 50%; }

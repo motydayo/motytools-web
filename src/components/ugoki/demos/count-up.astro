@@ -1,55 +1,85 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
-// 数字は最初から「最後の値」で書いておく（JSが動かない環境でも正しい数字が読める）
-const top = [
-  { to: 1280, dec: 0, unit: '社', cap: '導入企業' },
-  { to: 98.2, dec: 1, unit: '%', cap: '継続率' },
-  { to: 4.6, dec: 1, unit: '時間', cap: '1日の削減時間' },
-];
-const band = [
-  { to: 32400, dec: 0, unit: '人', cap: '年間の利用者' },
-  { to: 4.8, dec: 1, unit: '点', cap: '満足度（5点満点）' },
-  { to: 63, dec: 0, unit: '%', cap: 'リピート率' },
-];
-const fmt = (v: number, dec: number) => v.toLocaleString('ja-JP', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+const { size = 'full', lang = 'ja' } = Astro.props;
+// 見本の中の文字（日英）。数字は最初から「最後の値」で書いておく（JSが動かない環境でも正しい数字が読める）
+const L = {
+  ja: {
+    name: 'カウントアップ',
+    locale: 'ja-JP',
+    nav: ['導入事例', '料金'],
+    cta: '資料請求',
+    top: [
+      { to: 1280, dec: 0, pre: '', unit: '社', cap: '導入企業' },
+      { to: 98.2, dec: 1, pre: '', unit: '%', cap: '継続率' },
+      { to: 4.6, dec: 1, pre: '', unit: '時間', cap: '1日の削減時間' },
+    ],
+    band: [
+      { to: 32400, dec: 0, pre: '', unit: '人', cap: '年間の利用者' },
+      { to: 4.8, dec: 1, pre: '', unit: '点', cap: '満足度（5点満点）' },
+      { to: 63, dec: 0, pre: '', unit: '%', cap: 'リピート率' },
+    ],
+    caseH: '導入した会社の声',
+    cases: ['山の宿', '海辺の食堂', '星の村'],
+    price: '料金プラン',
+  },
+  en: {
+    name: 'Count-up',
+    locale: 'en-US',
+    nav: ['Customers', 'Pricing'],
+    cta: 'Get a demo',
+    top: [
+      { to: 1280, dec: 0, pre: '', unit: '+', cap: 'Businesses' },
+      { to: 98.2, dec: 1, pre: '', unit: '%', cap: 'Retention' },
+      { to: 4.6, dec: 1, pre: '', unit: 'h', cap: 'Saved per day' },
+    ],
+    band: [
+      { to: 32400, dec: 0, pre: '', unit: '', cap: 'Guests a year' },
+      { to: 4.8, dec: 1, pre: '', unit: '/5', cap: 'Average rating' },
+      { to: 2.4, dec: 1, pre: '$', unit: 'M', cap: 'Booked in 2026' },
+    ],
+    caseH: 'What customers say',
+    cases: ['Mountain lodge', 'Seaside diner', 'Stargazer village'],
+    price: 'Plans & pricing',
+  },
+}[lang as 'ja' | 'en'];
+const fmt = (v: number, dec: number) => v.toLocaleString(L.locale, { minimumFractionDigits: dec, maximumFractionDigits: dec });
 ---
 
-<UgFrame mode="script" size={size} label="カウントアップ">
-  <div class="ug-site cu" data-demo="count-up">
-    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>導入事例</span><span>料金</span><span class="ug-cta">資料請求</span></header>
-    <section class="stats" data-count-group data-ug-focus="カウントアップ" data-ug-focus-at="below">
-      {top.map((s) => (
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site cu" data-demo="count-up" data-locale={L.locale}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
+    <section class="stats" data-count-group data-ug-focus={L.name} data-ug-focus-at="below">
+      {L.top.map((s) => (
         <div class="stat">
-          <span class="sr-only">{s.cap} {fmt(s.to, s.dec)}{s.unit}</span>
-          <span class="cu-num" aria-hidden="true"><b class="count" data-to={s.to} data-dec={s.dec}>{fmt(s.to, s.dec)}</b><small>{s.unit}</small></span>
+          <span class="sr-only">{s.cap} {s.pre}{fmt(s.to, s.dec)}{s.unit}</span>
+          <span class="cu-num" aria-hidden="true">{s.pre && <small>{s.pre}</small>}<b class="count" data-to={s.to} data-dec={s.dec}>{fmt(s.to, s.dec)}</b><small>{s.unit}</small></span>
           <span class="cap" aria-hidden="true">{s.cap}</span>
         </div>
       ))}
     </section>
     <section class="ug-sec">
       <p class="ug-label">CASE</p>
-      <h3 class="ug-h">導入した会社の声</h3>
+      <h3 class="ug-h">{L.caseH}</h3>
       <div class="ug-grid">
-        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">山の宿</div></div>
-        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">海辺の食堂</div></div>
-        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">星の村</div></div>
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.cases[0]}</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">{L.cases[1]}</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.cases[2]}</div></div>
       </div>
       <div class="ug-lines"><i></i><i></i><i></i></div>
     </section>
     <section class="stats is-dark" data-count-group>
-      {band.map((s) => (
+      {L.band.map((s) => (
         <div class="stat">
-          <span class="sr-only">{s.cap} {fmt(s.to, s.dec)}{s.unit}</span>
-          <span class="cu-num" aria-hidden="true"><b class="count" data-to={s.to} data-dec={s.dec}>{fmt(s.to, s.dec)}</b><small>{s.unit}</small></span>
+          <span class="sr-only">{s.cap} {s.pre}{fmt(s.to, s.dec)}{s.unit}</span>
+          <span class="cu-num" aria-hidden="true">{s.pre && <small>{s.pre}</small>}<b class="count" data-to={s.to} data-dec={s.dec}>{fmt(s.to, s.dec)}</b><small>{s.unit}</small></span>
           <span class="cap" aria-hidden="true">{s.cap}</span>
         </div>
       ))}
     </section>
     <section class="ug-sec">
       <p class="ug-label">PRICE</p>
-      <h3 class="ug-h">料金プラン</h3>
+      <h3 class="ug-h">{L.price}</h3>
       <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i></div>
     </section>
   </div>
@@ -91,17 +121,15 @@ const fmt = (v: number, dec: number) => v.toLocaleString('ja-JP', { minimumFract
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, onTune, tuneNum } from '../../../lib/ugoki/runtime';
 
   const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fmt = (v: number, dec: number) =>
-    v.toLocaleString('ja-JP', { minimumFractionDigits: dec, maximumFractionDigits: dec });
-  // 出るときは減速（最初は速く、最後はゆっくり止まる）
-  const easeOut = (k: number) => 1 - Math.pow(1 - k, 3);
 
   document.querySelectorAll<HTMLElement>('[data-demo="count-up"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
     if (!view) return;
+    const locale = root.dataset.locale ?? 'ja-JP';
+    const fmt = (v: number, dec: number) => v.toLocaleString(locale, { minimumFractionDigits: dec, maximumFractionDigits: dec });
     const groups = [...root.querySelectorAll<HTMLElement>('[data-count-group]')];
     let token = 0;
 
@@ -116,18 +144,24 @@ const fmt = (v: number, dec: number) => v.toLocaleString('ja-JP', { minimumFract
     const play = (g: HTMLElement) => {
       g.dataset.done = '1';
       const my = token;
-      g.querySelectorAll<HTMLElement>('.count').forEach((el) => {
+      // 数値はつまみ（--t-dur・--t-ease・--t-stagger）から
+      const ms = tuneNum(root, 'dur', 1.6) * 1000;
+      const pow = tuneNum(root, 'ease', 3);
+      const gap = tuneNum(root, 'stagger', 0.1) * 1000;
+      // 緩急の強さ: 1なら等速、数が大きいほど最初が速く最後がゆっくり
+      const easeOut = (k: number) => 1 - Math.pow(1 - k, pow);
+      g.querySelectorAll<HTMLElement>('.count').forEach((el, i) => {
         const to = Number(el.dataset.to);
         const dec = Number(el.dataset.dec);
         if (reduce()) {
           el.textContent = fmt(to, dec);
           return;
         }
-        const t0 = performance.now();
-        const ms = 1600;
+        el.textContent = fmt(0, dec);
+        const t0 = performance.now() + i * gap;
         const tick = (now: number) => {
           if (my !== token) return; // 「最初から」で止める
-          const k = Math.min(1, (now - t0) / ms);
+          const k = Math.max(0, Math.min(1, (now - t0) / ms));
           el.textContent = fmt(to * easeOut(k), dec);
           if (k < 1) requestAnimationFrame(tick);
         };
@@ -161,17 +195,32 @@ const fmt = (v: number, dec: number) => v.toLocaleString('ja-JP', { minimumFract
       requestAnimationFrame(() => play(groups[0]));
     });
 
+    // つまみを動かしたら、見えている数字をすぐに数え直して違いを見せる
+    let tuneTimer = 0;
+    onTune(view, () => {
+      clearTimeout(tuneTimer);
+      tuneTimer = window.setTimeout(() => {
+        token++;
+        const vr = view.getBoundingClientRect();
+        groups.forEach((g) => {
+          const r = g.getBoundingClientRect();
+          if (r.bottom > vr.top && r.top < vr.bottom) play(g);
+        });
+      }, 250);
+    });
+
     onTour(root, async (t) => {
       t.showCursor(false);
       reset();
       t.view.scrollTop = 0;
       await t.sleep(500);
       play(groups[0]);
-      await t.sleep(2600);
+      const wait = () => tuneNum(root, 'dur', 1.6) * 1000 + tuneNum(root, 'stagger', 0.1) * 2000 + 1000;
+      await t.sleep(wait());
       const g = groups[1];
       const top = g.getBoundingClientRect().top - t.view.getBoundingClientRect().top + t.view.scrollTop;
       await t.scrollTo(top - (t.view.clientHeight - g.offsetHeight) / 2, 1000);
-      await t.sleep(2800);
+      await t.sleep(wait() + 200);
       await t.scrollTo(0, 800);
       await t.sleep(400);
     });

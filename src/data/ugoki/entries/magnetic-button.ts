@@ -27,10 +27,10 @@ export default {
     '小さなボタン（寄る量が大きく感じられ、逃げるように見える）',
   ],
   prompt:
-    '一番大事なボタン1つを「マグネティックボタン（magnetic button）」にしてください。マウスがボタンの中心から110px以内に入ったら、マウスとのずれの35%だけ transform: translate でボタンをマウスの方へ動かし、中の文字はさらに15%ずらして立体感を出します。範囲の外に出たら0.35秒の ease-out で元の位置へ戻してください。JavaScriptは pointermove だけで、ライブラリは使わないでください。マウスのない端末（pointer: fine でない端末）と prefers-reduced-motion: reduce のときは動かさないでください。',
+    '一番大事なボタン1つを「マグネティックボタン（magnetic button）」にしてください。マウスがボタンの中心から{{range:t}}以内に入ったら、マウスとのずれの{{power:t}}だけ transform: translate でボタンをマウスの方へ動かし、中の文字はその半分だけさらにずらして立体感を出します。寄るときは0.15秒ですばやく、範囲の外に出たら{{back:t}}の ease-out でゆっくり元の位置へ戻してください。JavaScriptは pointermove だけで、ライブラリは使わないでください。マウスのない端末（pointer: fine でない端末）と prefers-reduced-motion: reduce のときは動かさないでください。',
   howTo: [
-    'マウスが動くたびに、ボタンの中心とマウスとの距離を計算します。距離が決めた範囲（ここでは110px）より近ければ、そのずれに0.35を掛けた分だけボタンを transform で動かします。掛ける数を小さくすると控えめに、大きくすると強く吸い寄せられます。',
-    '動き始めは0.15秒ですばやく、戻るときは0.35秒でゆっくりにすると、磁石から離れたような余韻が出ます。中心の位置はボタンをずらす前の場所で測るのがコツで、ここでは親の箱の中心を使っています。',
+    'マウスが動くたびに、ボタンの中心とマウスとの距離を計算します。距離が決めた範囲（ここでは110px）より近ければ、そのずれの35%だけボタンを transform で動かします。割合を小さくすると控えめに、大きくすると強く吸い寄せられます。50%を超えるとボタンがマウスに張り付くように動き、押そうとした場所から逃げていくように感じ始めます。',
+    '動き始めは0.15秒ですばやく、戻るときは0.3〜0.5秒でゆっくりにすると、磁石から離れたような余韻が出ます。中心の位置はボタンをずらす前の場所で測るのがコツで、ここでは親の箱の中心を使っています。',
   ],
   code: [
     {
@@ -45,7 +45,7 @@ export default {
     {
       lang: 'css',
       label: 'CSS',
-      code: `.magnet { display: inline-block; padding: 40px; } /* 吸い寄せが効く余白 */
+      code: `.magnet { display: inline-block; padding: 40px; } /* 吸い寄せが効く余白（範囲はJSの RANGE） */
 .mag-btn {
   display: inline-flex;
   align-items: center;
@@ -56,9 +56,9 @@ export default {
   color: #fff;
   font-weight: 700;
   text-decoration: none;
-  transition: transform 0.35s ease-out; /* 戻るときはゆっくり */
+  transition: transform {{back}} ease-out; /* 戻るときはゆっくり */
 }
-.mag-text { display: block; transition: transform 0.35s ease-out; }
+.mag-text { display: block; transition: transform {{back}} ease-out; }
 .mag-btn.is-pull,
 .mag-btn.is-pull .mag-text { transition-duration: 0.15s; } /* 寄るときはすばやく */
 .mag-btn:focus-visible { outline: 2px solid #4f73d9; outline-offset: 3px; }`,
@@ -66,8 +66,8 @@ export default {
     {
       lang: 'js',
       label: 'JavaScript',
-      code: `const RANGE = 110; // ボタンの中心からこの距離（px）以内で吸い寄せる
-const POWER = 0.35; // ずれの何割だけ寄るか
+      code: `const RANGE = {{range:n}}; // ボタンの中心からこの距離（px）以内で吸い寄せる
+const POWER = {{power:n}} / 100; // ずれの何%だけ寄るか
 
 const ok = matchMedia('(pointer: fine)').matches &&
   !matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -91,11 +91,17 @@ document.querySelectorAll('.magnet').forEach((box) => {
     if (Math.hypot(dx, dy) > RANGE) return release();
     btn.classList.add('is-pull');
     btn.style.transform = \`translate(\${dx * POWER}px, \${dy * POWER}px)\`;
-    text.style.transform = \`translate(\${dx * 0.15}px, \${dy * 0.15}px)\`;
+    // 中の文字はボタンの半分だけさらに寄せて、立体感を出す
+    text.style.transform = \`translate(\${dx * POWER * 0.5}px, \${dy * POWER * 0.5}px)\`;
   });
   document.documentElement.addEventListener('pointerleave', release);
 });`,
     },
+  ],
+  tune: [
+    { key: 'range', label: '吸い寄せが届く範囲（半径）', min: 60, max: 160, step: 10, value: 110, unit: 'px' },
+    { key: 'power', label: '寄る強さ（ずれの割合）', min: 10, max: 80, step: 5, value: 35, unit: '%' },
+    { key: 'back', label: '元に戻る速さ', min: 0.1, max: 1, step: 0.05, value: 0.35, unit: 's' },
   ],
   cautions: [
     'スマホにはマウスがないので、近づける操作そのものがありません。指で押した瞬間に少し寄せることはできますが、押す場所がずれて見えるため、スマホでは動かさないのが基本です。見本の枠ではタップした場所へ寄るようにしてあります。',

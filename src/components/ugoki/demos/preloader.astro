@@ -1,40 +1,67 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 // 一覧の小さな見本は外側がリンクなので、中に押せる要素を置かない（span で代用）
 const Btn = size === 'mini' ? 'span' : 'button';
 const btnAttrs = size === 'mini' ? {} : { type: 'button' };
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'ローディング画面',
+    url: 'yama-no-yado.jp',
+    logo: '山の宿',
+    nav: ['客室', '料理'],
+    cta: '予約する',
+    title: ['湖のほとりで、', '何もしない休日を。'],
+    price: '1泊2食 18,000円〜',
+    rooms: ['和室', '露天風呂付き', '湖側の洋室'],
+    reload: 'もう一度読み込む',
+    loading: '読み込み中',
+  },
+  en: {
+    name: 'Preloader',
+    url: 'pineridgelodge.com',
+    logo: 'Pine Ridge',
+    nav: ['Rooms', 'Dining'],
+    cta: 'Book now',
+    title: ['A quiet weekend', 'by the lake.'],
+    price: 'From $160 / night, meals included',
+    rooms: ['Classic room', 'Private hot tub', 'Lakeview suite'],
+    reload: 'Reload',
+    loading: 'Loading',
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="script" size={size} label="ローディング画面" url="yama-no-yado.jp">
+<UgFrame mode="script" size={size} label={L.name} url={L.url} lang={lang}>
   <div class="ug-site pl-site" data-demo="preloader">
-    <header class="ug-nav"><span class="ug-logo">山の宿</span><span>客室</span><span>料理</span><span class="ug-cta">予約する</span></header>
+    <header class="ug-nav"><span class="ug-logo">{L.logo}</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="pl-hero">
       <Scene tone="sunset" wide class="pl-bg" />
       <div class="pl-copy">
         <p class="pl-kicker">WELCOME</p>
-        <h3 class="pl-title">湖のほとりで、<br />何もしない休日を。</h3>
-        <p class="pl-price">1泊2食 18,000円〜</p>
+        <h3 class="pl-title">{L.title[0]}<br />{L.title[1]}</h3>
+        <p class="pl-price">{L.price}</p>
       </div>
     </section>
     <section class="pl-rooms">
-      <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">和室</div></div>
-      <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">露天風呂付き</div></div>
-      <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">湖側の洋室</div></div>
+      <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.rooms[0]}</div></div>
+      <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.rooms[1]}</div></div>
+      <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">{L.rooms[2]}</div></div>
     </section>
 
     <Btn {...btnAttrs} class="pl-reload" data-reload>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 4v5h-5" /></svg>
-      もう一度読み込む
+      {L.reload}
     </Btn>
 
     <!-- これが演出の本体: ページの上にかぶせる幕。読み込みが終わったら消す -->
-    <div class="pl-loader" data-loader data-ug-focus="ローディング画面" role="status" aria-label="読み込み中">
+    <div class="pl-loader" data-loader data-ug-focus={L.name} role="status" aria-label={L.loading}>
       <span class="pl-mark" aria-hidden="true"></span>
-      <span class="pl-name">山の宿</span>
+      <span class="pl-name">{L.logo}</span>
       <span class="pl-bar" aria-hidden="true"><i></i></span>
-      <span class="pl-msg">読み込み中</span>
+      <span class="pl-msg">{L.loading}</span>
     </div>
   </div>
 </UgFrame>
@@ -91,8 +118,8 @@ const btnAttrs = size === 'mini' ? {} : { type: 'button' };
     gap: 10px;
     background: var(--ug-navy);
     color: #fff;
-    /* 消えるときは加速（ease-in）で、すっと引く */
-    transition: opacity 0.3s ease-in, visibility 0s linear 0.3s;
+    /* 消えるときは加速（ease-in）で、すっと引く。速さはつまみ（--t-fade）から */
+    transition: opacity var(--t-fade) ease-in, visibility 0s linear var(--t-fade);
   }
   .pl-loader.is-done { opacity: 0; visibility: hidden; }
   .pl-mark { width: 28px; height: 28px; border-radius: 8px; background: var(--ug-orange); animation: pl-pulse 1.2s ease-in-out infinite; }
@@ -100,7 +127,7 @@ const btnAttrs = size === 'mini' ? {} : { type: 'button' };
   .pl-bar { width: 140px; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.18); overflow: hidden; }
   .pl-bar i { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--ug-orange); }
   /* 進み具合は分からないので、90%まで「それらしく」進め、終わったら100%にする */
-  .pl-loader.is-run .pl-bar i { animation: pl-fill 1.6s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+  .pl-loader.is-run .pl-bar i { animation: pl-fill var(--t-fill) cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
   .pl-loader.is-done .pl-bar i { width: 100%; animation: none; transition: width 0.15s ease-out; }
   .pl-msg { font-size: 11px; color: rgba(255, 255, 255, 0.7); }
   @keyframes pl-fill { to { width: 90%; } }
@@ -122,7 +149,10 @@ const btnAttrs = size === 'mini' ? {} : { type: 'button' };
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, onTune, tuneNum } from '../../../lib/ugoki/runtime';
+
+  // 見本では「ページの読み込みに2秒かかる」と仮定する
+  const LOAD_MS = 2000;
 
   document.querySelectorAll<HTMLElement>('[data-demo="preloader"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
@@ -130,8 +160,12 @@ const btnAttrs = size === 'mini' ? {} : { type: 'button' };
     const btn = root.querySelector<HTMLElement>('[data-reload]');
     if (!view || !loader || !btn) return;
     let timer = 0;
+    let replay = 0;
 
-    // 読み込み完了の合図で幕を消す（見本では1.6秒後に「読み込み完了」とみなす）
+    // 幕を出している時間: 読み込み完了（2秒）か、保険のタイマー（つまみ --t-limit）の早い方
+    const waitMs = () => Math.min(LOAD_MS, tuneNum(root, 'limit', 3) * 1000);
+    const fadeMs = () => tuneNum(root, 'fade', 0.3) * 1000;
+
     const hide = () => {
       loader.classList.add('is-done');
       root.classList.add('is-ready');
@@ -142,15 +176,20 @@ const btnAttrs = size === 'mini' ? {} : { type: 'button' };
       loader.classList.remove('is-done', 'is-run');
       void loader.offsetWidth; // 進むバーのアニメーションを最初からやり直す
       loader.classList.add('is-run');
-      timer = window.setTimeout(hide, 1600);
+      timer = window.setTimeout(hide, waitMs());
     };
 
     btn.addEventListener('click', play);
     view.addEventListener('ug:reset', play);
+    // つまみを動かし終えたら、もう一度読み込んで違いを見せる
+    onTune(view, () => {
+      clearTimeout(replay);
+      replay = window.setTimeout(play, 450);
+    });
 
     onTour(root, async (t) => {
       play();
-      await t.sleep(1600 + 300 + 2400);
+      await t.sleep(waitMs() + fadeMs() + 2400);
       await t.move(btn, 700);
       t.hover(btn);
       await t.sleep(200);

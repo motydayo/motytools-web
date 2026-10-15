@@ -20,7 +20,8 @@ export function formatTune(p: TuneParam, value: string | number, fmt: Fmt, lang:
     if (fmt === 't') return p.options.find((o) => o.value === value)?.label ?? String(value);
     return String(value);
   }
-  const n = Number(value).toFixed(decimals(p.step));
+  // 刻み幅で丸めてから、末尾の余分な0を落とす（1.00 → 1、0.50 → 0.5）
+  const n = String(parseFloat(Number(value).toFixed(decimals(p.step))));
   if (fmt === 'n') return n;
   if (fmt === 'css') return `${n}${p.unit}`;
   return `${n}${TEXT_UNIT[lang][p.unit]}`;

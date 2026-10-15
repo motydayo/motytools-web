@@ -28,9 +28,9 @@ export default {
     '1ページに何か所も入れること（どこを読めばいいか分からなくなる）',
   ],
   prompt:
-    'トップの見出しを「タイプライター（typewriter effect）」にしてください。「旅の予約を、」は固定し、その後ろに「もっと手軽に。」「スマホひとつで。」「24時間いつでも。」を順番に1文字0.11秒で打ち出し、1.7秒止めてから1文字0.045秒で消して次へ進み、最後まで行ったら最初に戻してください。打っている位置には幅3pxの縦棒を付け、止まっている間だけ1秒間隔で点滅させます。JavaScriptはライブラリなしで、読み上げソフトには3つの言葉をまとめた全文を渡し、動きを減らす設定の人には最初の言葉を止めたまま表示してください。',
+    'トップの見出しを「タイプライター（typewriter effect）」にしてください。「旅の予約を、」は固定し、その後ろに「もっと手軽に。」「スマホひとつで。」「24時間いつでも。」を順番に1文字{{type:t}}で打ち出し、{{hold:t}}止めてから1文字{{erase:t}}で消して次へ進み、最後まで行ったら最初に戻してください。打っている位置には幅3pxの縦棒を付け、止まっている間だけ1秒間隔で点滅させます。JavaScriptはライブラリなしで、文字列は split(\'\') ではなく [...text] で分けて絵文字が割れないようにし、読み上げソフトには3つの言葉をまとめた全文を渡し、動きを減らす設定の人には最初の言葉を止めたまま表示してください。',
   howTo: [
-    'JavaScriptで文字列を1文字ずつ切り出し、少し待っては表示する文字を1つ増やす、を繰り返します。日本語や絵文字を正しく1文字ずつ区切るため、文字列は [...text] のように配列にしてから扱います。消すときは逆に1文字ずつ減らし、打つより速くするとテンポよく見えます。',
+    'JavaScriptで文字列を1文字ずつ切り出し、少し待っては表示する文字を1つ増やす、を繰り返します。文字列は text.split(\'\') ではなく [...text] で配列にします。split(\'\') だと絵文字が半分に割れて化けますが、[...text] は文字の番号（コードポイント）ごとに分けるので、日本語やたいていの絵文字はそのまま1文字になります。ただし国旗の絵文字や、肌の色付き・家族などいくつかの絵文字を組み合わせた絵文字はそれでもバラバラになるので、使うなら Intl.Segmenter で見た目の1文字ごとに区切ってください。消すときは逆に1文字ずつ減らし、打つより速くするとテンポよく見えます。',
     '縦棒はCSSの ::after で作り、animation の steps(1) でパッと消えてパッと付く点滅にします。打っている最中は点滅を止めると、本物の入力欄らしく見えます。読み上げソフトが1文字ずつ読まないよう、動く文字には aria-hidden="true" を付け、全文は見えない文字で渡します。',
   ],
   code: [
@@ -81,18 +81,18 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function loop() {
   for (let n = 0; ; n = (n + 1) % words.length) {
-    const chars = [...words[n]]; // 1文字ずつに分ける
+    const chars = [...words[n]]; // 文字の番号ごとに分ける（たいていの絵文字も割れない）
     el.classList.add('is-typing');
     for (let i = 1; i <= chars.length; i++) {
       el.textContent = chars.slice(0, i).join('');
-      await wait(110);
+      await wait({{type:n}} * 1000); // 1文字打つ間隔
     }
     el.classList.remove('is-typing');
-    await wait(1700);
+    await wait({{hold:n}} * 1000); // 打ち終わって止める時間
     el.classList.add('is-typing');
     for (let i = chars.length - 1; i >= 0; i--) {
       el.textContent = chars.slice(0, i).join('');
-      await wait(45);
+      await wait({{erase:n}} * 1000); // 1文字消す間隔
     }
     await wait(300);
   }
@@ -101,6 +101,11 @@ async function loop() {
 // 動きを減らす設定の人には、最初の言葉を止めたまま見せる
 if (!matchMedia('(prefers-reduced-motion: reduce)').matches) loop();`,
     },
+  ],
+  tune: [
+    { key: 'type', label: '1文字打つ間隔', min: 0.03, max: 0.3, step: 0.01, value: 0.11, unit: 's' },
+    { key: 'erase', label: '1文字消す間隔', min: 0.01, max: 0.15, step: 0.005, value: 0.045, unit: 's' },
+    { key: 'hold', label: '打ち終わって止める時間', min: 0.5, max: 4, step: 0.1, value: 1.7, unit: 's' },
   ],
   cautions: [
     '文字が増えるたびに見出しの幅や行数が変わると、下のボタンや本文が上下に揺れます。見出しに min-height を付けるか、いちばん長い言葉が入る幅を確保してください。',

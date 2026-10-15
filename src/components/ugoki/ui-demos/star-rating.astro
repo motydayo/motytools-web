@@ -1,0 +1,232 @@
+---
+// UI部品の見本: 星評価（スターレーティング）
+// 本体は fieldset ＋ ラジオボタン（星1つ＝選択肢1つ）。乗せると何個になるかを先に見せ、押すと決まる。
+// 上の「平均 4.3」は押せない表示用の星。入力用の星との違いを並べて見せる。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Group = mini ? 'div' : 'fieldset';
+const Legend = mini ? 'p' : 'legend';
+const Btn = mini ? 'span' : 'button';
+const L = {
+  ja: {
+    name: '星評価',
+    nav: ['お部屋', '口コミ'],
+    title: '山の宿 こもれび',
+    avg: '平均 4.3',
+    reviews: '口コミ128件',
+    form: '口コミを書く',
+    legend: 'この宿の満足度',
+    words: ['不満', 'やや不満', 'ふつう', '満足', 'とても満足'],
+    star: '星{n}つ',
+    of: '{n} / {max}',
+    none: '星を選んでください',
+    text: 'よかったところ',
+    sample: '露天風呂から見える紅葉がきれいでした。',
+    send: '口コミを投稿する',
+  },
+  en: {
+    name: 'Star rating',
+    nav: ['Rooms', 'Reviews'],
+    title: 'Aspen Ridge Lodge',
+    avg: '4.3 average',
+    reviews: '128 reviews',
+    form: 'Write a review',
+    legend: 'Your overall rating',
+    words: ['Terrible', 'Poor', 'Average', 'Very good', 'Excellent'],
+    star: '{n} star',
+    of: '{n} of {max}',
+    none: 'Select a rating',
+    text: 'What did you like?',
+    sample: 'The hot tub view of the mountains was amazing.',
+    send: 'Post review',
+  },
+}[lang as 'ja' | 'en'];
+const STAR = 'M12 2.8l2.83 5.73 6.32.92-4.57 4.46 1.08 6.3L12 17.24l-5.66 2.97 1.08-6.3L2.85 9.45l6.32-.92z';
+const text = { words: L.words, star: L.star, of: L.of, none: L.none, star1: lang === 'en' ? '{n} stars' : '星{n}つ' };
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site rt-site" data-demo="star-rating" data-text={JSON.stringify(text)}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec">
+      <h3 class="ug-h">{L.title}</h3>
+      <!-- 表示用の星（押せない）: 平均点を塗りの幅で見せる -->
+      <p class="rt-avg">
+        <span class="rt-avg-stars" style="--v: 0.86" role="img" aria-label={`${L.avg} / 5`}>
+          {[1, 2, 3, 4, 5].map(() => <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d={STAR} /></svg>)}
+          <span class="rt-avg-fill" aria-hidden="true">
+            {[1, 2, 3, 4, 5].map(() => <svg width="16" height="16" viewBox="0 0 24 24"><path d={STAR} /></svg>)}
+          </span>
+        </span>
+        <b>{L.avg}</b><span>{L.reviews}</span>
+      </p>
+
+      <div class="rt-form">
+        <p class="rt-form-h">{L.form}</p>
+        <!-- これが部品の本体: 星を押して点数を付ける。乗せると何個になるかを先に見せる -->
+        <Group class="rt-group">
+          <Legend class="rt-legend">{L.legend}</Legend>
+          <div class="rt-row">
+            <div class="rt-stars" data-rt-stars data-ug-focus={L.name} data-ug-focus-at="below"></div>
+            <span class="rt-word" aria-hidden="true" data-rt-word>{L.none}</span>
+          </div>
+        </Group>
+        <p class="rt-label">{L.text}</p>
+        <p class="rt-textarea">{L.sample}</p>
+        <Btn class="ug-btn-site rt-send" {...(mini ? {} : { type: 'button' })}>{L.send}</Btn>
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .rt-site { min-height: 100%; }
+  .rt-avg { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ug-ink-2); }
+  .rt-avg b { color: var(--ug-ink); }
+  .rt-avg-stars { position: relative; display: inline-flex; fill: #dedcd5; }
+  .rt-avg-fill { position: absolute; inset: 0 auto 0 0; display: inline-flex; width: calc(var(--v) * 100%); overflow: hidden; fill: var(--t-color); }
+  .rt-avg-fill svg { flex: none; }
+
+  .rt-form { margin-top: 12px; padding: 16px; border: 1px solid var(--ug-line); border-radius: 12px; background: var(--ug-bg); }
+  .rt-form-h { font-size: 14px; font-weight: 800; }
+  .rt-group { margin: 8px 0 0; padding: 0; border: 0; min-width: 0; }
+  .rt-legend { display: block; margin: 0 0 4px; padding: 0; font-size: 12px; font-weight: 700; color: var(--ug-ink-2); }
+  .rt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+  .rt-stars { position: relative; display: inline-flex; flex-wrap: wrap; }
+
+  /* 星1つ。大きさ・色はつまみ（--t-size・--t-color）から。押せる範囲は44px以上 */
+  .rt-stars :global(.rt-star) {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-width: max(44px, calc(var(--t-size) + 4px));
+    height: max(44px, calc(var(--t-size) + 4px));
+    cursor: pointer;
+  }
+  .rt-stars :global(.rt-star svg) {
+    width: var(--t-size);
+    height: var(--t-size);
+    fill: #fff;
+    stroke: #b9b6ae;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+    transition: transform 0.15s ease-out, fill 0.15s ease-out, stroke 0.15s ease-out;
+  }
+  .rt-stars :global(.rt-star.is-fill svg) { fill: var(--t-color); stroke: var(--t-color); }
+  /* 乗せている間の「仮の塗り」は少し薄く */
+  .rt-stars :global(.rt-star.is-preview svg) { fill: color-mix(in srgb, var(--t-color) 55%, #fff); stroke: var(--t-color); }
+  .rt-stars :global(.rt-star.is-hot svg) { transform: scale(1.15); }
+  .rt-stars :global(.rt-star input) { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+  .rt-stars :global(.rt-star:has(input:focus-visible)) { outline: 3px solid var(--ug-blue); outline-offset: -2px; border-radius: 8px; }
+  .rt-word { min-width: 6em; font-size: 13px; font-weight: 700; color: var(--ug-ink-2); }
+  .rt-word.is-set { color: var(--ug-ink); }
+
+  .rt-label { margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--ug-ink-2); }
+  .rt-textarea { margin-top: 4px; padding: 8px 12px; border: 1.5px solid #c9c7c0; border-radius: 8px; background: #fff; font-size: 13px; }
+  .rt-send { margin-top: 12px; }
+
+  @container (max-width: 340px) {
+    .rt-form { padding: 12px; }
+    .rt-label, .rt-textarea { display: none; }
+  }
+  :global(.ug-frame.is-mini) .rt-site .ug-nav { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .rt-stars :global(.rt-star svg) { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour, onTune, tuneNum } from '../../../lib/ugoki/runtime';
+
+  const STAR = 'M12 2.8l2.83 5.73 6.32.92-4.57 4.46 1.08 6.3L12 17.24l-5.66 2.97 1.08-6.3L2.85 9.45l6.32-.92z';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="star-rating"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const mini = root.closest<HTMLElement>('[data-ug-frame]')?.dataset.size === 'mini';
+    const text: { words: string[]; star: string; star1: string; of: string; none: string } = JSON.parse(root.dataset.text ?? '{}');
+    const box = root.querySelector<HTMLElement>('[data-rt-stars]')!;
+    const word = root.querySelector<HTMLElement>('[data-rt-word]')!;
+    const name = `rt-${Math.random().toString(36).slice(2, 8)}`;
+    let value = 0;
+    let max = 5;
+
+    // 点数を言葉にする（5段階なら「満足」、それ以外は「4 / 7」）
+    const wordOf = (n: number) => (max === 5 ? `${text.words[n - 1]}` : text.of.replace('{n}', String(n)).replace('{max}', String(max)));
+    const stars = () => [...box.querySelectorAll<HTMLElement>('.rt-star')];
+    const paint = (n: number, preview = false) => {
+      stars().forEach((s, i) => {
+        s.classList.toggle('is-fill', !preview && i < n);
+        s.classList.toggle('is-preview', preview && i < n);
+      });
+      word.textContent = n ? wordOf(n) : text.none;
+      word.classList.toggle('is-set', !!n);
+    };
+    const set = (n: number) => {
+      value = n;
+      box.querySelectorAll<HTMLInputElement>('input').forEach((r) => (r.checked = Number(r.value) === n));
+      paint(n);
+    };
+
+    const build = () => {
+      const n = Math.round(tuneNum(root, 'count', 5));
+      // 星の数が変わったときだけ作り直す（大きさ・色は CSS が受け持つ）
+      if (n === max && box.children.length) return;
+      max = n;
+      if (value > max) value = max;
+      box.innerHTML = Array.from({ length: max }, (_, i) => {
+        const n = i + 1;
+        const label = (n === 1 ? text.star : text.star1).replace('{n}', String(n)) + (max === 5 ? `（${text.words[i]}）` : ` / ${max}`);
+        const svg = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${STAR}"/></svg>`;
+        return mini
+          ? `<span class="rt-star" data-n="${n}">${svg}</span>`
+          : `<label class="rt-star" data-n="${n}"><input type="radio" name="${name}" value="${n}" aria-label="${label}">${svg}</label>`;
+      }).join('');
+      box.querySelectorAll<HTMLInputElement>('input').forEach((r) => r.addEventListener('change', () => set(Number(r.value))));
+      set(value);
+    };
+
+    // 乗せている間は、押したら何個になるかを仮に塗って見せる
+    box.addEventListener('pointerover', (e) => {
+      const s = (e.target as HTMLElement).closest<HTMLElement>('.rt-star');
+      if (s) paint(Number(s.dataset.n), true);
+    });
+    box.addEventListener('pointerleave', () => paint(value));
+    box.addEventListener('ug:click', (e) => {
+      const s = (e.target as HTMLElement).closest<HTMLElement>('.rt-star');
+      if (s) set(Number(s.dataset.n));
+    });
+
+    onTune(view, build);
+    build();
+    view.addEventListener('ug:reset', () => set(0));
+
+    onTour(root, async (t) => {
+      set(0);
+      await t.move({ x: t.view.clientWidth * 0.7, y: t.view.clientHeight * 0.9 }, 10);
+      await t.sleep(400);
+      const list = stars();
+      // 左から右へなぞって、仮の塗りを見せる
+      for (const s of list) {
+        await t.move(s, list.indexOf(s) === 0 ? 700 : 260);
+        s.classList.add('is-hot');
+        paint(Number(s.dataset.n), true);
+        await t.sleep(160);
+        s.classList.remove('is-hot');
+      }
+      await t.sleep(400);
+      const pickN = Math.max(1, list.length - 1);
+      const target = list[pickN - 1];
+      await t.move(target, 500);
+      paint(pickN, true);
+      await t.sleep(300);
+      target.classList.add('is-hot');
+      await t.click(target);
+      target.classList.remove('is-hot');
+      await t.sleep(400);
+      await t.move({ x: t.view.clientWidth * 0.75, y: t.view.clientHeight * 0.92 }, 600);
+      paint(value);
+      await t.sleep(1800);
+    });
+  });
+</script>

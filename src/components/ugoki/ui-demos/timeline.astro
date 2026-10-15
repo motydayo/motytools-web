@@ -1,0 +1,162 @@
+---
+// UI部品の見本: タイムライン（縦の年表）
+// 縦の線に沿って、印・日付・出来事を時間順に並べる。スクロールに合わせて、読み終えたところまで線が色づく。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const L = {
+  ja: {
+    name: 'タイムライン',
+    nav: ['お部屋', '歩み'],
+    label: 'HISTORY',
+    heading: '山の宿 ひかりの歩み',
+    lead: '6部屋の湯治宿から始まった、60年あまりの記録です。',
+    upcoming: '予定',
+    items: [
+      { d: '1962', dt: '1962年', t: '創業', p: '6部屋の湯治宿として、初代の夫婦が開きました。' },
+      { d: '1975', dt: '1975年', t: '源泉を掘り当てる', p: '敷地の奥で源泉が湧き、かけ流しの大浴場ができました。', scene: 'day' },
+      { d: '1988', dt: '1988年', t: '露天風呂を新設', p: '山を望む露天風呂を造り、日帰りの入浴も始めました。' },
+      { d: '2004', dt: '2004年', t: '離れ「月見」が完成', p: '全4棟の離れを建て、小さなお子さま連れでも泊まりやすくなりました。', scene: 'night' },
+      { d: '2015', dt: '2015年', t: '全館を改装', p: '館内の段差をなくし、車いすで使えるお部屋を2室用意しました。' },
+      { d: '2021', dt: '2021年', t: '連泊プランを開始', p: '全室にWi-Fiと机を置き、3泊以上の割引を始めました。', scene: 'sunset' },
+      { d: '2027-04', dt: '2027年4月', t: '新館オープン', p: '地元の野菜を使う食事処と、貸切風呂3つを備えた新館を建てています。', future: true },
+    ],
+  },
+  en: {
+    name: 'Timeline',
+    nav: ['Rooms', 'Our story'],
+    label: 'HISTORY',
+    heading: 'The Hikari Lodge story',
+    lead: 'Sixty-plus years, from a six-room hot-spring inn to today.',
+    upcoming: 'Upcoming',
+    items: [
+      { d: '1962', dt: '1962', t: 'Founded', p: 'A young couple opened the lodge as a six-room hot-spring inn.' },
+      { d: '1975', dt: '1975', t: 'Struck a hot spring', p: 'A spring was found on the grounds, and the main bath opened.', scene: 'day' },
+      { d: '1988', dt: '1988', t: 'Outdoor bath added', p: 'An open-air bath with mountain views, plus day passes for visitors.' },
+      { d: '2004', dt: '2004', t: 'Garden villas open', p: 'Four private villas made it easy to stay with small children.', scene: 'night' },
+      { d: '2015', dt: '2015', t: 'Full renovation', p: 'Step-free throughout, with two wheelchair-accessible rooms.' },
+      { d: '2021', dt: '2021', t: 'Long-stay plan launched', p: 'Desks and Wi-Fi in every room, and a discount for three nights or more.', scene: 'sunset' },
+      { d: '2027-04', dt: 'Apr 2027', t: 'New wing opens', p: 'A farm-to-table restaurant and three private baths are on the way.', future: true },
+    ],
+  },
+}[lang as 'ja' | 'en'];
+---
+
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
+  <div class="ug-site tl-site" data-demo="timeline">
+    <header class="ug-nav tl-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((x) => <span>{x}</span>)}</header>
+    <section class="ug-sec tl-sec">
+      <p class="ug-label tl-kicker">{L.label}</p>
+      <h3 class="ug-h tl-h">{L.heading}</h3>
+      <p class="tl-lead">{L.lead}</p>
+
+      <!-- これが部品の本体: 縦の線・印・日付・出来事。上から古い順 -->
+      <div class="tl-wrap" data-ug-focus={L.name}>
+      <ol class="tl" data-tl>
+        {L.items.map((it) => (
+          <li class:list={['tl-item', { 'is-future': it.future }]}>
+            <time class="tl-date" datetime={it.d}>{it.dt}{it.future && <span class="tl-up">{L.upcoming}</span>}</time>
+            <p class="tl-t">{it.t}</p>
+            <p class="tl-p">{it.p}</p>
+            {it.scene && <div class="tl-pic"><Scene tone={it.scene as 'day' | 'sunset' | 'night'} wide /></div>}
+          </li>
+        ))}
+      </ol>
+      </div>
+    </section>
+    <section class="ug-sec tl-foot">
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .tl-sec { padding-bottom: 8px; }
+  .tl-lead { font-size: 12px; color: var(--ug-ink-2); }
+  /* 見どころの名札は ::after を使うので、線を描く ol とは別の箱に付ける */
+  .tl-wrap { position: relative; margin-top: 24px; }
+
+  /* 縦の線と印。印の大きさ・線の太さ・項目の間隔はつまみ（--t-dot・--t-line・--t-gap）から */
+  .tl {
+    --rail: calc(var(--t-dot) + 16px);
+    position: relative;
+    display: grid;
+    gap: var(--t-gap);
+    margin: 0;
+    padding: 8px 0 8px var(--rail);
+    list-style: none;
+  }
+  /* 灰色の線（全体） */
+  .tl::before,
+  .tl::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: calc(var(--t-dot) / 2 - var(--t-line) / 2);
+    width: var(--t-line);
+    border-radius: 999px;
+  }
+  .tl::before { bottom: 0; background: var(--ug-line); }
+  /* 色の線（読み進めたところまで） */
+  .tl::after { height: var(--fill, 0px); max-height: calc(100% - 14px); background: var(--ug-orange); transition: height 0.15s ease-out; }
+  .tl-item { position: relative; }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: calc(var(--rail) * -1);
+    z-index: 1;
+    width: var(--t-dot);
+    height: var(--t-dot);
+    box-sizing: border-box;
+    border: 2px solid var(--ug-orange);
+    border-radius: 50%;
+    background: #fff;
+    transition: background-color 0.2s ease-out;
+  }
+  .tl-item.is-past::before { background: var(--ug-orange); }
+  /* これからの予定は点線の印で区別する（色だけに頼らない） */
+  .tl-item.is-future::before { border-style: dashed; border-color: var(--ug-ink-2); }
+  .tl-date { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: var(--ug-orange); font-variant-numeric: tabular-nums; }
+  .is-future .tl-date { color: var(--ug-ink-2); }
+  .tl-up { padding: 0 8px; border: 1px dashed var(--ug-ink-2); border-radius: 999px; font-size: 10px; line-height: 18px; color: var(--ug-ink-2); }
+  .tl-t { margin-top: 2px; font-size: 15px; font-weight: 800; line-height: 1.4; }
+  .tl-p { margin-top: 2px; font-size: 12px; color: var(--ug-ink-2); }
+  .tl-pic { max-width: 360px; margin-top: 8px; border-radius: 10px; overflow: hidden; }
+  .tl-foot { padding-top: 16px; }
+
+  :global(.is-mini) .tl-nav, :global(.is-mini) .tl-kicker, :global(.is-mini) .tl-lead { display: none; }
+  :global(.is-mini) .tl-sec { padding: 12px 14px; }
+  :global(.is-mini) .tl-h { font-size: 14px; }
+  :global(.is-mini) .tl-wrap { margin-top: 6px; }
+  :global(.is-mini) .tl { gap: calc(var(--t-gap) * 0.5); }
+  :global(.is-mini) .tl-t { font-size: 13px; }
+  :global(.is-mini) .tl-p { font-size: 11px; }
+  :global(.is-mini) .tl-pic { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .tl::after, .tl-item::before { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTune } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="timeline"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const list = root.querySelector<HTMLElement>('[data-tl]');
+    if (!view || !list) return;
+    const items = [...list.querySelectorAll<HTMLElement>('.tl-item')];
+
+    // 枠の高さの55%の位置を「読んでいる場所」とみなし、そこまで線を色づけ、通り過ぎた印を塗る
+    const sync = () => {
+      const top = list.getBoundingClientRect().top - view.getBoundingClientRect().top;
+      const reading = view.clientHeight * 0.55 - top;
+      list.style.setProperty('--fill', `${Math.max(0, reading)}px`);
+      items.forEach((it) => it.classList.toggle('is-past', !it.classList.contains('is-future') && it.offsetTop + 10 <= reading));
+    };
+    view.addEventListener('scroll', sync, { passive: true });
+    onTune(view, () => requestAnimationFrame(sync));
+    new ResizeObserver(sync).observe(view);
+    sync();
+  });
+</script>

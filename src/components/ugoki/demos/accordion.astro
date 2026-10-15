@@ -1,27 +1,49 @@
 ---
 import UgFrame from '../UgFrame.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const mini = size === 'mini';
 // 一覧の小さな見本は外側がリンクなので、details/summary の代わりに div で同じ見た目を作る
 const Item = mini ? 'div' : 'details';
 const Sum = mini ? 'div' : 'summary';
 // name をそろえると「1つ開くとほかが閉じる」。同じページに見本が複数あるので見本ごとに変える
 const group = `faq-${Math.random().toString(36).slice(2, 8)}`;
-const faqs = [
-  { q: 'チェックインは何時からですか？', a: '15時から19時までです。19時を過ぎる場合は、当日のお昼までにお電話ください。' },
-  { q: '駐車場はありますか？', a: '宿の正面に12台ぶんの無料駐車場があります。予約はいりません。' },
-  { q: 'キャンセル料はいつからかかりますか？', a: '宿泊日の3日前から宿泊料金の30%、前日は50%、当日は100%をいただきます。' },
-  { q: '子ども連れでも泊まれますか？', a: 'はい。添い寝のお子さまは無料です。ベビーベッドの貸し出しもあります（要予約）。' },
-];
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'アコーディオン',
+    nav: ['お部屋', 'アクセス'],
+    cta: '予約する',
+    h: 'よくある質問',
+    faqs: [
+      { q: 'チェックインは何時からですか？', a: '15時から19時までです。19時を過ぎる場合は、当日のお昼までにお電話ください。' },
+      { q: '駐車場はありますか？', a: '宿の正面に12台ぶんの無料駐車場があります。予約はいりません。' },
+      { q: 'キャンセル料はいつからかかりますか？', a: '宿泊日の3日前から宿泊料金の30%、前日は50%、当日は100%をいただきます。' },
+      { q: '子ども連れでも泊まれますか？', a: 'はい。添い寝のお子さまは無料です。ベビーベッドの貸し出しもあります（要予約）。' },
+    ],
+  },
+  en: {
+    name: 'Accordion',
+    nav: ['Rooms', 'Getting here'],
+    cta: 'Book now',
+    h: 'Frequently asked questions',
+    faqs: [
+      { q: 'What time is check-in?', a: 'Check-in is from 3 PM to 7 PM. Arriving later? Just give us a call before noon on the day of your stay.' },
+      { q: 'Is there parking?', a: 'Yes. There are 12 free spaces right in front of the inn, no reservation needed.' },
+      { q: 'What is the cancellation policy?', a: 'Free cancellation up to 3 days before arrival. After that, 30% of the rate is charged, 50% the day before, and 100% on the day.' },
+      { q: 'Are kids welcome?', a: 'Absolutely. Children sharing a bed stay free, and cribs are available on request.' },
+    ],
+  },
+}[lang as 'ja' | 'en'];
+const faqs = L.faqs;
 ---
 
-<UgFrame mode="script" size={size} label="アコーディオン">
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
   <div class="ug-site ac" data-demo="accordion">
-    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>お部屋</span><span>アクセス</span><span class="ug-cta">予約する</span></header>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="body">
       <p class="ug-label">FAQ</p>
-      <h3 class="ug-h">よくある質問</h3>
-      <div class="qa-list" data-ug-focus="アコーディオン" data-ug-focus-at="below">
+      <h3 class="ug-h">{L.h}</h3>
+      <div class="qa-list" data-ug-focus={L.name} data-ug-focus-at="below">
         {faqs.map((f, i) => (
           <Item class:list={['det', { 'is-open': mini && i === 0 }]} name={mini ? undefined : group} open={!mini && i === 0}>
             <Sum class="sum">
@@ -54,7 +76,7 @@ const faqs = [
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    min-height: 48px;
+    min-height: var(--t-row); /* 質問の行の高さはつまみ（--t-row）から */
     padding: 0 8px;
     font-weight: 700;
     cursor: pointer;
@@ -69,18 +91,18 @@ const faqs = [
   details[open] > .sum .chev, .det.is-open .chev { transform: rotate(180deg); }
   .ans { margin: 0; padding: 0 8px 12px; color: var(--ug-ink-2); font-size: 12px; }
 
-  /* 開閉のなめらかな動き（details の中身の箱 ::details-content の高さを動かす） */
+  /* 開閉のなめらかな動き（details の中身の箱 ::details-content の高さを動かす）。速さと緩急はつまみ（--t-dur・--t-ease）から */
   details::details-content {
     height: 0;
     overflow: clip;
     transition:
-      height 0.3s ease-out,
-      content-visibility 0.3s allow-discrete;
+      height var(--t-dur) var(--t-ease),
+      content-visibility var(--t-dur) allow-discrete;
   }
   details[open]::details-content { height: auto; }
 
   /* 一覧の小さな見本（div版）は grid-template-rows で同じ動きを作る */
-  .mini-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; }
+  .mini-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--t-dur) var(--t-ease); }
   .det.is-open .mini-wrap { grid-template-rows: 1fr; }
   .mini-in { overflow: hidden; min-height: 0; }
 

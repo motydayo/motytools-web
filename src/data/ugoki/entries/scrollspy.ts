@@ -28,7 +28,7 @@ export default {
     '目次を固定するとスマホで本文がほとんど見えなくなるとき（横並びの帯にするか、目次をたたむ）',
   ],
   prompt:
-    '記事の目次を「スクロールスパイ（scrollspy）」にしてください。パソコンでは目次を本文の左に置いて position: sticky で追従させ、スマホ（幅640px以下）では本文の上にくっつく横スクロールの帯にしてください。IntersectionObserver を rootMargin: "0px 0px -65% 0px" で使い、画面の上から35%の範囲に入っている区画のうち最も下のものを現在地にします。現在地の項目には aria-current="true" を付け、文字を太く・左に色の線を0.2秒で出してください。目次を押したら scroll-behavior: smooth でその見出しへ移動し、見出しには scroll-margin-top を指定して固定ヘッダーに隠れないようにすること。動きを減らす設定の人にはスクロールを瞬間移動にしてください。',
+    '記事の目次を「スクロールスパイ（scrollspy）」にしてください。パソコンでは目次を本文の左に置いて position: sticky で追従させ、スマホ（幅640px以下）では本文の上にくっつく横スクロールの帯にしてください。IntersectionObserver の rootMargin で画面の下側を判定から外し、画面の上から{{line:t}}の範囲に入っている区画のうち最も下のものを現在地にします。現在地の項目には aria-current="true" を付け、文字を太く・左に色の線を{{speed:t}}で出してください。目次を押したら scroll-behavior: smooth でその見出しへ移動し、見出しには scroll-margin-top を指定して固定ヘッダーに隠れないようにすること。動きを減らす設定の人にはスクロールを瞬間移動にしてください。',
   howTo: [
     '「今どの見出しを読んでいるか」は IntersectionObserver（要素が画面に入ったかを教えてくれる仕組み）で調べます。rootMargin で画面の下65%を判定から外すと、「画面の上から35%の帯」に入った区画だけが報告されます。帯に入っている区画のうち、いちばん下のものを現在地にすれば、見出しが帯をくぐった瞬間に印が移ります。',
     'スクロールのたびに全部の見出しの位置を計算する古いやり方と違い、変化があったときだけ呼ばれるので軽く動きます。目次はページ内リンク（href="#..."）にしておけば、押したときの移動はCSSの scroll-behavior: smooth だけで済みます。',
@@ -69,7 +69,7 @@ section { scroll-margin-top: 72px; } /* 固定ヘッダーに隠れないよう�
   padding: 8px 12px;
   color: #5d6272;
   text-decoration: none;
-  transition: color 0.2s ease-out;
+  transition: color {{speed}} ease-out;
 }
 /* 今いる場所の印 */
 .toc a::before {
@@ -79,7 +79,7 @@ section { scroll-margin-top: 72px; } /* 固定ヘッダーに隠れないよう�
   width: 2px;
   background: #f06a35;
   transform: scaleY(0);
-  transition: transform 0.2s ease-out;
+  transition: transform {{speed}} ease-out;
 }
 .toc a[aria-current='true'] { color: #1f2433; font-weight: 700; }
 .toc a[aria-current='true']::before { transform: scaleY(1); }
@@ -105,6 +105,7 @@ section { scroll-margin-top: 72px; } /* 固定ヘッダーに隠れないよう�
       code: `const links = [...document.querySelectorAll('.toc a')];
 const sections = links.map((a) => document.querySelector(a.getAttribute('href')));
 const inBand = new Set();
+const LINE = {{line:n}}; // 画面の上から何%の線で切り替えるか
 
 function setActive(i) {
   links.forEach((a, j) => {
@@ -113,12 +114,12 @@ function setActive(i) {
   });
 }
 
-// 画面の上から35%の帯に入っている区画を数える
+// 画面の上から LINE% の帯に入っている区画を数える
 const io = new IntersectionObserver((entries) => {
   entries.forEach((e) => (e.isIntersecting ? inBand.add(e.target) : inBand.delete(e.target)));
   const hit = sections.filter((s) => inBand.has(s));
   if (hit.length) setActive(sections.indexOf(hit[hit.length - 1]));
-}, { rootMargin: '0px 0px -65% 0px' });
+}, { rootMargin: \`0px 0px -\${100 - LINE}% 0px\` });
 
 sections.forEach((s) => io.observe(s));
 
@@ -129,6 +130,10 @@ addEventListener('scroll', () => {
   }
 }, { passive: true });`,
     },
+  ],
+  tune: [
+    { key: 'line', label: '切り替わる線（画面の上から）', min: 10, max: 90, step: 5, value: 35, unit: '%' },
+    { key: 'speed', label: '印が出る速さ', min: 0, max: 0.6, step: 0.05, value: 0.2, unit: 's' },
   ],
   cautions: [
     '最後の区画が短いと、ページのいちばん下までスクロールしても帯に届かず、最後の項目が光りません。下端に来たら最後の項目にする処理を入れるか、最後の区画に余白を足してください。',

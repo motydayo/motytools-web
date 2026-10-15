@@ -1,40 +1,66 @@
 ---
 import UgFrame from '../UgFrame.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const Btn = size === 'mini' ? 'span' : 'button';
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'マグネティックボタン',
+    focus: '吸い寄せる範囲',
+    nav: ['特長', '料金', 'FAQ'],
+    h: 'まずは無料で相談する',
+    lead: 'オンラインで30分。しつこい営業はしません。',
+    btn: '相談を予約する',
+  },
+  en: {
+    name: 'Magnetic button',
+    focus: 'Magnetic range',
+    nav: ['Features', 'Pricing', 'FAQ'],
+    h: 'Talk to us for free',
+    lead: '30 minutes on video. No hard sell.',
+    btn: 'Book a call',
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="script" size={size} label="マグネティックボタン">
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
   <div class="ug-site page" data-demo="magnetic-button">
-    <header class="ug-nav nav"><span class="ug-logo">SAMPLE</span><span>特長</span><span>料金</span><span>FAQ</span></header>
+    <header class="ug-nav nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
     <section class="cta">
       <p class="ug-label">CONTACT</p>
-      <h3 class="ug-h">まずは無料で相談する</h3>
-      <p class="lead">オンラインで30分。しつこい営業はしません。</p>
-      <!-- 点線の円 = 吸い寄せが効く範囲（見本で分かりやすくするための印） -->
-      <div class="mag-field" data-ug-focus="吸い寄せる範囲" data-ug-focus-at="below">
+      <h3 class="ug-h">{L.h}</h3>
+      <p class="lead">{L.lead}</p>
+      <!-- 円 = 吸い寄せが効く範囲（見本で分かりやすくするための印）。大きさはつまみ --t-range に合わせて変わる -->
+      <div class="mag-slot">
+      <div class="mag-field" data-ug-focus={L.focus} data-ug-focus-at="below">
         <Btn class="mag" type={size === 'mini' ? undefined : 'button'}>
-          <span class="mag-text">相談を予約する</span>
+          <span class="mag-text">{L.btn}</span>
         </Btn>
+      </div>
       </div>
     </section>
   </div>
 </UgFrame>
 
 <style>
-  .page { min-height: 100%; display: flex; flex-direction: column; }
+  .page { min-height: 100%; display: flex; flex-direction: column; overflow: clip; } /* 大きな範囲の円で枠がスクロールしないように */
   .cta { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px 16px 40px; }
   .lead { font-size: 12px; color: var(--ug-ink-2); }
+  /* 円の大きさが変わっても、まわりの並びは動かさない（高さ固定の置き場所） */
+  .mag-slot { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 200px; margin-top: 8px; }
   .mag-field {
     position: relative;
     display: grid;
     place-items: center;
-    width: 220px; /* 吸い寄せが効く範囲（半径110px）と同じ大きさの円 */
-    height: 220px;
-    margin-top: 8px;
+    flex: none;
+    width: calc(var(--t-range) * 2); /* 吸い寄せが効く範囲（半径 --t-range）と同じ大きさの円 */
+    height: calc(var(--t-range) * 2);
+    margin: calc(100px - var(--t-range)) 0;
     border-radius: 999px;
-    background: radial-gradient(closest-side, rgba(79, 115, 217, 0.08), transparent);
+    background: radial-gradient(closest-side, rgba(79, 115, 217, 0.1), rgba(79, 115, 217, 0.03) 96%, transparent);
+    pointer-events: none;
   }
+  .mag-field > * { pointer-events: auto; }
   .mag {
     display: inline-flex;
     align-items: center;
@@ -48,12 +74,13 @@ const Btn = size === 'mini' ? 'span' : 'button';
     font: inherit;
     font-size: 14px;
     font-weight: 700;
+    white-space: nowrap;
     cursor: pointer;
-    /* これが演出の本体: マウスの方へ少しずれる。戻るときはゆっくり */
-    transition: transform 0.35s ease-out;
+    /* これが演出の本体: マウスの方へ少しずれる。戻るときはゆっくり（--t-back） */
+    transition: transform var(--t-back) ease-out;
   }
   .mag.is-pull { transition-duration: 0.15s; }
-  .mag-text { display: block; transition: transform 0.35s ease-out; }
+  .mag-text { display: block; transition: transform var(--t-back) ease-out; }
   .mag.is-pull .mag-text { transition-duration: 0.15s; }
   .mag:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 3px; }
   .mag:active { background: #2b365c; }
@@ -63,18 +90,17 @@ const Btn = size === 'mini' ? 'span' : 'button';
   }
   :global(.is-mini) .nav { display: none; }
   :global(.is-mini) .cta { padding: 12px 16px 24px; }
-  :global(.is-mini) .mag-field { height: 112px; width: 220px; margin-top: 0; }
+  :global(.is-mini) .mag-slot { height: 112px; margin-top: 0; }
+  :global(.is-mini) .mag-field { margin: calc(56px - var(--t-range)) 0; }
   @media (prefers-reduced-motion: reduce) {
     .mag, .mag-text { transition: none; }
   }
 </style>
 
 <script>
-  import { onTour, onPointer, type Point } from '../../../lib/ugoki/runtime';
+  import { onTour, onPointer, onTune, tuneNum, type Point } from '../../../lib/ugoki/runtime';
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const RANGE = 110; // ボタンの中心からこの距離（px）以内で吸い寄せる
-  const POWER = 0.35; // マウスとのずれの何割だけ寄るか
 
   document.querySelectorAll<HTMLElement>('[data-demo="magnetic-button"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
@@ -82,6 +108,18 @@ const Btn = size === 'mini' ? 'span' : 'button';
     const text = root.querySelector<HTMLElement>('.mag-text');
     const field = root.querySelector<HTMLElement>('.mag-field');
     if (!view || !btn || !text || !field) return;
+    // RANGE: ボタンの中心からこの距離（px）以内で吸い寄せる。POWER: マウスとのずれの何割だけ寄るか（つまみから）
+    let RANGE = 110;
+    let POWER = 0.35;
+    const readTune = () => {
+      RANGE = tuneNum(root, 'range', 110);
+      POWER = tuneNum(root, 'power', 35) / 100;
+    };
+    readTune();
+    onTune(view, () => {
+      readTune();
+      release();
+    });
 
     const release = () => {
       btn.classList.remove('is-pull');
@@ -101,7 +139,7 @@ const Btn = size === 'mini' ? 'span' : 'button';
       btn.classList.add('is-pull');
       btn.style.transform = `translate(${dx * POWER}px, ${dy * POWER}px)`;
       // 中の文字はさらに少しだけ寄せると、立体的に見える
-      text.style.transform = `translate(${dx * 0.15}px, ${dy * 0.15}px)`;
+      text.style.transform = `translate(${dx * POWER * 0.5}px, ${dy * POWER * 0.5}px)`;
     };
     onPointer(view, (p) => pull(p));
     view.addEventListener('pointerdown', (e) => {
@@ -123,14 +161,15 @@ const Btn = size === 'mini' ? 'span' : 'button';
       const c = { x: fr.left - vr.left + fr.width / 2, y: fr.top - vr.top + fr.height / 2 };
       await t.move({ x: w * 0.12, y: h * 0.9 }, 400);
       await t.sleep(300);
-      // 範囲の外から近づく → 吸い寄せられる
-      await t.move({ x: c.x - 150, y: c.y + 40 }, 700);
-      await t.move({ x: c.x - 70, y: c.y + 30 }, 700);
+      // 範囲の外から近づく → 吸い寄せられる（距離は範囲の大きさに合わせる）
+      const R = Math.min(RANGE, w * 0.42);
+      await t.move({ x: c.x - R - 40, y: c.y + 40 }, 700);
+      await t.move({ x: c.x - R * 0.65, y: c.y + 30 }, 700);
       await t.sleep(400);
       // ボタンのまわりを回る → ついてくる
-      await t.move({ x: c.x - 10, y: c.y - 45 }, 600);
-      await t.move({ x: c.x + 75, y: c.y - 10 }, 600);
-      await t.move({ x: c.x + 30, y: c.y + 45 }, 600);
+      await t.move({ x: c.x - 10, y: c.y - R * 0.42 }, 600);
+      await t.move({ x: c.x + R * 0.68, y: c.y - 10 }, 600);
+      await t.move({ x: c.x + R * 0.28, y: c.y + R * 0.42 }, 600);
       await t.move({ x: c.x + 6, y: c.y + 4 }, 500);
       await t.sleep(300);
       await t.click(btn);

@@ -1,32 +1,41 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
-const photos = [
-  { tone: 'day', name: '朝の湖' },
-  { tone: 'sunset', name: '夕焼けの尾根' },
-  { tone: 'night', name: '星空の展望台' },
-  { tone: 'day', name: '高原の牧場' },
-  { tone: 'sunset', name: '岬の灯台' },
-  { tone: 'night', name: '夜の温泉街' },
-  { tone: 'day', name: '渓谷の吊り橋' },
-  { tone: 'sunset', name: '棚田の夕暮れ' },
-  { tone: 'night', name: '雪の山小屋' },
-  { tone: 'day', name: '海辺の朝市' },
-  { tone: 'sunset', name: '港の夕日' },
-  { tone: 'night', name: '森のキャンプ場' },
-] as const;
+const { size = 'full', lang = 'ja' } = Astro.props;
+const tones = ['day', 'sunset', 'night'] as const;
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: '遅延読み込み',
+    logo: '旅の写真帖',
+    nav: ['地域', '季節'],
+    cta: '投稿する',
+    title: '今月の旅の写真',
+    photos: ['朝の湖', '夕焼けの尾根', '星空の展望台', '高原の牧場', '岬の灯台', '夜の温泉街', '渓谷の吊り橋', '棚田の夕暮れ', '雪の山小屋', '海辺の朝市', '港の夕日', '森のキャンプ場'],
+    count: ['読み込んだ写真', '枚'],
+  },
+  en: {
+    name: 'Lazy loading',
+    logo: 'Wander Album',
+    nav: ['Places', 'Seasons'],
+    cta: 'Share a photo',
+    title: 'Travel photos this month',
+    photos: ['Lake at dawn', 'Ridge at sunset', 'Stargazing deck', 'Highland ranch', 'Cape lighthouse', 'Hot springs at night', 'Canyon bridge', 'Rice terraces', 'Snowy cabin', 'Seaside market', 'Harbor sunset', 'Forest campsite'],
+    count: ['Photos loaded', ''],
+  },
+}[lang as 'ja' | 'en'];
+const photos = L.photos.map((name, i) => ({ name, tone: tones[i % 3] }));
 ---
 
-<UgFrame mode="scroll" size={size} label="遅延読み込み">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site" data-demo="lazy-loading">
-    <header class="ug-nav"><span class="ug-logo">旅の写真帖</span><span>地域</span><span>季節</span><span class="ug-cta">投稿する</span></header>
+    <header class="ug-nav"><span class="ug-logo">{L.logo}</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="ll-intro">
       <p class="ug-label">GALLERY</p>
-      <h3 class="ug-h">今月の旅の写真</h3>
+      <h3 class="ug-h">{L.title}</h3>
     </section>
     <!-- これが演出の本体: 写真は枠に近づいてから読み込む。それまでは灰色の場所取り -->
-    <div class="ll-grid" data-ug-focus="遅延読み込み">
+    <div class="ll-grid" data-ug-focus={L.name}>
       {photos.map((p) => (
         <figure class="ll-item">
           <span class="ll-ph" data-ll>
@@ -37,7 +46,7 @@ const photos = [
         </figure>
       ))}
     </div>
-    <p class="ll-count" aria-live="polite">読み込んだ写真 <b data-ll-count>0</b> / {photos.length}枚</p>
+    <p class="ll-count" aria-live="polite">{L.count[0]} <b data-ll-count>0</b> / {photos.length}{L.count[1]}</p>
   </div>
 </UgFrame>
 
@@ -60,18 +69,19 @@ const photos = [
     aspect-ratio: 16 / 10;
     border-radius: 8px;
     overflow: hidden;
-    background: #e9e7e1;
-    color: #b9b5ab;
+    /* 場所取りの色はつまみ（--t-ph）から */
+    background: var(--t-ph);
+    color: rgba(29, 37, 65, 0.25);
   }
   .ll-ph :global(.ll-img) {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    /* 読み込みが終わるまで隠し、終わったらふわっと出す */
+    /* 読み込みが終わるまで隠し、終わったらふわっと出す。速さと拡大はつまみ（--t-fade・--t-zoom）から */
     opacity: 0;
-    transform: scale(1.03);
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    transform: scale(var(--t-zoom));
+    transition: opacity var(--t-fade) ease-out, transform var(--t-fade) ease-out;
   }
   .ll-ph.is-loaded :global(.ll-img) { opacity: 1; transform: none; }
   .ll-count {
@@ -101,7 +111,7 @@ const photos = [
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, onTune } from '../../../lib/ugoki/runtime';
 
   document.querySelectorAll<HTMLElement>('[data-demo="lazy-loading"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
@@ -142,6 +152,12 @@ const photos = [
     };
     reset();
     view.addEventListener('ug:reset', reset);
+    // つまみを動かし終えたら、見えている写真を読み込み直して違いを見せる
+    let replay = 0;
+    onTune(view, () => {
+      clearTimeout(replay);
+      replay = window.setTimeout(reset, 450);
+    });
 
     // 自動再生: 先頭に戻ったら「まだ読み込んでいない」状態から見せ直す
     onTour(root, async (t) => {

@@ -1,23 +1,51 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const Btn = size === 'mini' ? 'span' : 'button';
-const secs = [
-  { title: 'チェックイン', tone: 'day', lines: 4 },
-  { title: 'お部屋', tone: 'sunset', lines: 5 },
-  { title: 'お食事', tone: 'night', lines: 4 },
-  { title: '温泉', tone: 'day', lines: 5 },
-  { title: 'アクセス', tone: 'sunset', lines: 6 },
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'スクロールスパイ',
+    focus: '目次の現在地',
+    nav: ['お部屋', '料金'],
+    cta: '予約する',
+    tocLabel: 'このページの目次',
+    tocH: '目次',
+    page: '山の宿 ご利用ガイド',
+    guide: '切り替わる線',
+    titles: ['チェックイン', 'お部屋', 'お食事', '温泉', 'アクセス'],
+  },
+  en: {
+    name: 'Scrollspy',
+    focus: 'Scrollspy',
+    nav: ['Rooms', 'Rates'],
+    cta: 'Book now',
+    tocLabel: 'On this page',
+    tocH: 'ON THIS PAGE',
+    page: 'Mountain Lodge Guest Guide',
+    guide: 'Switch line',
+    titles: ['Check-in', 'Rooms', 'Dining', 'Hot springs', 'Getting here'],
+  },
+}[lang as 'ja' | 'en'];
+const shape = [
+  { tone: 'day', lines: 4 },
+  { tone: 'sunset', lines: 5 },
+  { tone: 'night', lines: 4 },
+  { tone: 'day', lines: 5 },
+  { tone: 'sunset', lines: 6 },
 ] as const;
+const secs = shape.map((x, i) => ({ ...x, title: L.titles[i] }));
 ---
 
-<UgFrame mode="scroll" size={size} label="スクロールスパイ">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site sp" data-demo="scrollspy">
-    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>お部屋</span><span>料金</span><span class="ug-cta">予約する</span></header>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
+    <!-- 判定の線（つまみ --t-line の位置）。目で見て分かるように詳細ページの見本だけに出す -->
+    {size !== 'mini' && <div class="spy-guide" aria-hidden="true"><span>{L.guide}</span></div>}
     <div class="layout">
-      <nav class="spy-toc" aria-label={size === 'mini' ? undefined : 'このページの目次'} data-ug-focus="目次の現在地" data-ug-focus-at="below">
-        <p class="spy-toc-h">目次</p>
+      <nav class="spy-toc" aria-label={size === 'mini' ? undefined : L.tocLabel} data-ug-focus={L.focus} data-ug-focus-at="below">
+        <p class="spy-toc-h">{L.tocH}</p>
         <ol class="spy-toc-list">
           {secs.map((s, i) => (
             <li><Btn class:list={['spy-toc-i', { 'is-active': i === 0 }]} type={size === 'mini' ? undefined : 'button'} data-i={i} aria-current={i === 0 ? 'true' : undefined}>{s.title}</Btn></li>
@@ -25,7 +53,7 @@ const secs = [
         </ol>
       </nav>
       <div class="main">
-        <h2 class="page-h">山の宿 ご利用ガイド</h2>
+        <h2 class="page-h">{L.page}</h2>
         {secs.map((s, i) => (
           <section class="sec" data-sec={i}>
             <p class="ug-label">{String(i + 1).padStart(2, '0')}</p>
@@ -40,6 +68,29 @@ const secs = [
 </UgFrame>
 
 <style>
+  .sp { position: relative; }
+  /* 判定の線: ここをくぐった見出しが「今いる場所」になる */
+  .spy-guide {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 4;
+    height: 0;
+    border-top: 2px dashed rgba(240, 106, 53, 0.85);
+    pointer-events: none;
+  }
+  .spy-guide span {
+    position: absolute;
+    right: 8px;
+    bottom: 2px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--ug-orange);
+    font-size: 10px;
+    font-weight: 700;
+  }
   .layout { display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: 24px; padding: 0 16px 24px; }
   .spy-toc { position: sticky; top: 0; align-self: start; padding-top: 20px; z-index: 5; }
   .spy-toc-h { margin: 0 0 8px; font-size: 10px; font-weight: 800; letter-spacing: 0.12em; color: var(--ug-ink-2); }
@@ -56,7 +107,7 @@ const secs = [
     text-align: left;
     color: var(--ug-ink-2);
     cursor: pointer;
-    transition: color 0.2s ease-out;
+    transition: color var(--t-speed) ease-out;
   }
   /* 今いる場所の印: 左の線をオレンジにして、文字も濃くする */
   .spy-toc-i::before {
@@ -68,7 +119,7 @@ const secs = [
     width: 2px;
     background: var(--ug-orange);
     transform: scaleY(0);
-    transition: transform 0.2s ease-out;
+    transition: transform var(--t-speed) ease-out; /* 印が出る速さはつまみ（--t-speed）から */
   }
   .spy-toc-i.is-active { color: var(--ug-ink); font-weight: 800; }
   .spy-toc-i.is-active::before { transform: scaleY(1); }
@@ -100,7 +151,7 @@ const secs = [
       border-radius: 999px;
       background: var(--ug-bg);
       white-space: nowrap;
-      transition: background-color 0.2s ease-out, color 0.2s ease-out;
+      transition: background-color var(--t-speed) ease-out, color var(--t-speed) ease-out;
     }
     .spy-toc-i::before { display: none; }
     .spy-toc-i.is-active { background: var(--ug-navy); color: #fff; }
@@ -112,6 +163,8 @@ const secs = [
 </style>
 
 <script>
+  import { onTune, tuneNum } from '../../../lib/ugoki/runtime';
+
   document.querySelectorAll<HTMLElement>('[data-demo="scrollspy"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
     const toc = root.querySelector<HTMLElement>('.spy-toc');
@@ -134,16 +187,32 @@ const secs = [
       }
     };
 
-    // 枠の上から35%の帯に入っている見出しの区画のうち、いちばん下のものを「今いる場所」にする
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => (e.isIntersecting ? inBand.add(e.target) : inBand.delete(e.target)));
-        const hit = secs.filter((s) => inBand.has(s));
-        if (hit.length) setActive(secs.indexOf(hit[hit.length - 1]));
-      },
-      { root: view, rootMargin: '0px 0px -65% 0px', threshold: 0 }
-    );
-    secs.forEach((s) => io.observe(s));
+    // 枠の上から --t-line（初期値35%）の帯に入っている区画のうち、いちばん下のものを「今いる場所」にする
+    const guide = root.querySelector<HTMLElement>('.spy-guide');
+    let io: IntersectionObserver | null = null;
+    const watch = () => {
+      const line = tuneNum(root, 'line', 35);
+      io?.disconnect();
+      inBand.clear();
+      io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => (e.isIntersecting ? inBand.add(e.target) : inBand.delete(e.target)));
+          const hit = secs.filter((s) => inBand.has(s));
+          if (hit.length) setActive(secs.indexOf(hit[hit.length - 1]));
+        },
+        { root: view, rootMargin: `0px 0px -${100 - line}% 0px`, threshold: 0 }
+      );
+      secs.forEach((s) => io!.observe(s));
+      placeGuide();
+    };
+    // 判定の線を、枠の上から line% の位置に置き続ける
+    const placeGuide = () => {
+      if (guide) guide.style.transform = `translateY(${view.scrollTop + (view.clientHeight * tuneNum(root, 'line', 35)) / 100}px)`;
+    };
+    view.addEventListener('scroll', placeGuide, { passive: true });
+    new ResizeObserver(placeGuide).observe(view);
+    watch();
+    onTune(view, watch);
     // いちばん下までスクロールしたら最後の項目にする（最後の区画が短くても届くように）
     view.addEventListener(
       'scroll',

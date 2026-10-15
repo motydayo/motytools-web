@@ -1,27 +1,44 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const A = size === 'mini' ? 'span' : 'a';
 const href = size === 'mini' ? undefined : '#';
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: '下線アニメーション',
+    focus: '下線がのびる',
+    menu: ['ホーム', 'サービス', '料金', 'お問い合わせ'],
+    h: '秋の宿泊プランを公開しました',
+    p: ['紅葉が見ごろの10月下旬から、朝食つきのプランを始めます。くわしくは', 'プランの一覧', 'をご覧ください。'],
+  },
+  en: {
+    name: 'Underline animation',
+    focus: 'Underline grows',
+    menu: ['Home', 'Services', 'Pricing', 'Contact'],
+    h: 'Our fall packages are here',
+    p: ['From late October, when the leaves peak, every stay includes breakfast. See ', 'all packages', ' for dates and rates.'],
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="pointer" size={size} label="下線アニメーション">
+<UgFrame mode="pointer" size={size} label={L.name} lang={lang}>
   <div class="ug-site page" data-demo="underline">
     <header class="bar">
       <span class="ug-logo">SAMPLE</span>
-      <nav class="menu" data-ug-focus="下線がのびる" data-ug-focus-at="below">
-        <A class="ul is-current" href={href} aria-current={size === 'mini' ? undefined : 'page'}>ホーム</A>
-        <A class="ul" href={href} data-ug-target>サービス</A>
-        <A class="ul" href={href} data-ug-target>料金</A>
-        <A class="ul hide-s" href={href}>お問い合わせ</A>
+      <nav class="menu" data-ug-focus={L.focus} data-ug-focus-at="below">
+        <A class="ul is-current" href={href} aria-current={size === 'mini' ? undefined : 'page'}>{L.menu[0]}</A>
+        <A class="ul" href={href} data-ug-target>{L.menu[1]}</A>
+        <A class="ul" href={href} data-ug-target>{L.menu[2]}</A>
+        <A class="ul hide-s" href={href}>{L.menu[3]}</A>
       </nav>
     </header>
     <section class="body">
       <div class="text">
         <p class="ug-label">NEWS</p>
-        <h3 class="ug-h">秋の宿泊プランを公開しました</h3>
-        <p class="p">紅葉が見ごろの10月下旬から、朝食つきのプランを始めます。くわしくは<A class="ul in" href={href} data-ug-target>プランの一覧</A>をご覧ください。</p>
+        <h3 class="ug-h">{L.h}</h3>
+        <p class="p">{L.p[0]}<A class="ul in" href={href} data-ug-target>{L.p[1]}</A>{L.p[2]}</p>
       </div>
       <div class="pic"><Scene tone="sunset" /></div>
     </section>
@@ -47,14 +64,15 @@ const href = size === 'mini' ? undefined : '#';
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -4px;
-    height: 2px;
-    border-radius: 2px;
+    /* 線の太さ・文字との間・のびる速さはつまみ（--t-thick・--t-offset・--t-dur）から */
+    bottom: calc(var(--t-offset) * -1);
+    height: var(--t-thick);
+    border-radius: var(--t-thick);
     background: var(--ug-orange);
     /* これが演出の本体: ふだんは幅0。乗せると左からのびる */
     transform: scaleX(0);
     transform-origin: right; /* 離れるときは右へ縮んで消える */
-    transition: transform 0.25s ease-out;
+    transition: transform var(--t-dur) ease-out;
   }
   .ul.is-hover::after,
   .ul:focus-visible::after,
@@ -70,7 +88,7 @@ const href = size === 'mini' ? undefined : '#';
   .ul:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 4px; border-radius: 2px; }
   /* 文中のリンクは色で見分けがつくようにしておく（下線が無い間もリンクだと分かる） */
   .in { color: var(--ug-blue); font-weight: 700; }
-  .in::after { background: var(--ug-blue); bottom: -2px; }
+  .in::after { background: var(--ug-blue); }
 
   @container (max-width: 340px) {
     .bar { height: 48px; padding: 0 12px; gap: 12px; }

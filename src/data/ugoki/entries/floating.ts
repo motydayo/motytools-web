@@ -28,9 +28,9 @@ export default {
     'ボタンそのものを大きく揺らす（押そうとした場所がずれ、押し間違いの原因になる）',
   ],
   prompt:
-    'トップのスマホの画像に「ふわふわアニメーション（floating animation）」を付けてください。CSSだけで、@keyframes で transform: translateY(0) → translateY(-10px) → translateY(0) を3.2秒・ease-in-out・無限に繰り返してください。画像の下に楕円の影を置き、浮いたときに scaleX(0.78)・不透明度0.55になるよう同じ速さで動かしてください。まわりの吹き出し2つは animation-delay を -1.1秒・-2.2秒にずらして揺らしてください。prefers-reduced-motion が reduce の人にはアニメーションを止めてください。',
+    'トップのスマホの画像に「ふわふわアニメーション（floating animation）」を付けてください。CSSだけで、@keyframes で transform: translateY(0) → translateY(-{{dist}}) → translateY(0) を1往復{{dur:t}}・{{ease:t}}（{{ease}}）・無限に繰り返してください。画像の下に楕円の影を置き、浮いたときに scaleX(0.78)・不透明度0.55になるよう同じ速さで動かしてください。まわりの吹き出し2つは animation-delay をマイナスの値にして、周期も少しずつ変えて、タイミングをずらしてください。prefers-reduced-motion が reduce の人にはアニメーションを止めてください。',
   howTo: [
-    '@keyframes で「途中で上へ10px移動し、また戻る」動きを作り、infinite（無限）で繰り返すだけです。動かすのは transform: translateY（上下の移動）にします。top や margin を動かすより処理が軽く、まわりのレイアウトも崩れません。行き来する動きなので、緩急は ease-in-out（ゆっくり動き出して、ゆっくり止まる）が自然です。',
+    '@keyframes で「途中で上へ10px移動し、また戻る」動きを作り、infinite（無限）で繰り返すだけです。動かすのは transform: translateY（上下の移動）にします。top や margin を動かすより処理が軽く、まわりのレイアウトも崩れません。行き来する動きなので、緩急は ease-in-out（ゆっくり動き出して、ゆっくり止まる）が自然です。下のつまみで「等速」や「はずむ」に変えると、折り返しの瞬間が硬くなったり跳ねて見えたりする違いが分かります。',
     '本当に浮いて見せるコツは、足元の影も一緒に動かすことです。浮いたときに影を小さく薄くすると、地面から離れた感じが出ます。いくつも揺らすときは、animation-delay にマイナスの値を入れてタイミングをずらすと、そろって動く不自然さが消えます。',
   ],
   code: [
@@ -56,13 +56,13 @@ export default {
   height: auto;
 }
 
-/* 上へ10px、3.2秒で1往復。ゆっくり動き出してゆっくり止まる */
+/* 上へ{{dist}}、{{dur}}で1往復 */
 .float {
-  animation: float 3.2s ease-in-out infinite;
+  animation: float {{dur}} {{ease}} infinite;
 }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-{{dist}}); }
 }
 
 /* 影は、浮いたときに小さく薄くなる */
@@ -73,7 +73,7 @@ export default {
   border-radius: 50%;
   background: rgba(29, 37, 65, 0.22);
   filter: blur(4px);
-  animation: float-shadow 3.2s ease-in-out infinite;
+  animation: float-shadow {{dur}} {{ease}} infinite;
 }
 @keyframes float-shadow {
   0%, 100% { transform: scaleX(1); opacity: 1; }
@@ -89,8 +89,8 @@ export default {
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 10px 22px -12px rgba(29, 37, 65, 0.5);
-  animation-delay: -1.1s;
-  animation-duration: 3.8s;
+  animation-delay: calc({{dur}} * -0.34);
+  animation-duration: calc({{dur}} * 1.19);
 }
 
 /* 動きを減らす設定なら止める */
@@ -100,6 +100,21 @@ export default {
     animation: none;
   }
 }`,
+    },
+  ],
+  tune: [
+    { key: 'dist', label: '浮く高さ', min: 2, max: 32, step: 1, value: 10, unit: 'px' },
+    { key: 'dur', label: '1往復の時間', min: 1, max: 8, step: 0.1, value: 3.2, unit: 's' },
+    {
+      key: 'ease',
+      type: 'select',
+      label: '緩急',
+      value: 'ease-in-out',
+      options: [
+        { value: 'ease-in-out', label: 'ゆっくり往復' },
+        { value: 'linear', label: '等速' },
+        { value: 'ease-in', label: 'はずむ' },
+      ],
     },
   ],
   cautions: [

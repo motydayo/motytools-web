@@ -1,54 +1,81 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 // 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
 const Btn = size === 'mini' ? 'span' : 'button';
 const btnType = size === 'mini' ? undefined : 'button';
+// 見本の中の文字（日英）。mark で囲む部分を分けて持つ
+const L = {
+  ja: {
+    name: 'マーカーアニメーション', focus: 'マーカー', logo: '山の宿 ひかり', nav: ['お部屋', '料金'], cta: '予約する',
+    lead: ['はじめての方も、1泊から', '気軽に。'],
+    intro: ['山の宿 ひかりは、', '全室に温泉がついた', '8部屋だけの小さな宿です。'],
+    cards: ['和室 8畳', '露天風呂', '星空テラス'],
+    dinner: ['夕食はお部屋へお運びします。', '小さなお子さま連れでも、周りを気にせず', 'ゆっくり召し上がれます。'],
+    voiceH: 'お客さまの声',
+    voice: ['「露天風呂から見た朝焼けが忘れられません。', 'スタッフの方の気づかいがうれしかった', 'です」（40代・ご夫婦）'],
+    cancel: '前日まで、キャンセル料は無料',
+    price: ['1泊2食つき ', '12,000円〜'],
+    more: '空室を見る',
+  },
+  en: {
+    name: 'Highlighter animation', focus: 'Highlighter', logo: 'Hikari Lodge', nav: ['Rooms', 'Rates'], cta: 'Book',
+    lead: ['First time? Stay just one night', ' and see.'],
+    intro: ['Hikari is a small mountain lodge with ', 'a private hot spring in every room', ', and only eight rooms in all.'],
+    cards: ['Garden room', 'Open-air bath', 'Stargazing deck'],
+    dinner: ['Dinner is served in your room, ', 'so even with little kids you can relax', ' and take your time.'],
+    voiceH: 'What guests say',
+    voice: ['“We still talk about the sunrise from the bath. ', 'The staff thought of everything', '.” — Couple, 40s'],
+    cancel: 'Free cancellation until the day before',
+    price: ['Dinner & breakfast, ', 'from $95 / night'],
+    more: 'Check dates',
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="scroll" size={size} label="マーカーアニメーション">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site hl" data-demo="highlighter">
     <header class="ug-nav">
-      <span class="ug-logo">山の宿 ひかり</span>
-      <span>お部屋</span><span>料金</span>
-      <span class="ug-cta">予約する</span>
+      <span class="ug-logo">{L.logo}</span>
+      {L.nav.map((n) => <span>{n}</span>)}
+      <span class="ug-cta">{L.cta}</span>
     </header>
 
-    <section class="ug-sec hero" data-ug-focus="マーカー">
+    <section class="ug-sec hero" data-ug-focus={L.focus}>
       <p class="ug-label">FOR BEGINNERS</p>
-      <h3 class="lead"><mark class="mk">はじめての方も、1泊から</mark>気軽に。</h3>
-      <p class="txt">山の宿 ひかりは、<mark class="mk">全室に温泉がついた</mark>8部屋だけの小さな宿です。</p>
+      <h3 class="lead"><mark class="mk">{L.lead[0]}</mark>{L.lead[1]}</h3>
+      <p class="txt">{L.intro[0]}<mark class="mk">{L.intro[1]}</mark>{L.intro[2]}</p>
     </section>
 
     <section class="ug-sec">
       <div class="ug-grid">
-        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">和室 8畳</div></div>
-        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">露天風呂</div></div>
-        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">星空テラス</div></div>
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.cards[0]}</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">{L.cards[1]}</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.cards[2]}</div></div>
       </div>
-      <p class="txt">夕食はお部屋へお運びします。<mark class="mk">小さなお子さま連れでも、周りを気にせず</mark>ゆっくり召し上がれます。</p>
+      <p class="txt">{L.dinner[0]}<mark class="mk">{L.dinner[1]}</mark>{L.dinner[2]}</p>
       <div class="ug-lines"><i></i><i></i></div>
     </section>
 
     <section class="ug-sec">
       <p class="ug-label">VOICE</p>
-      <h3 class="ug-h">お客さまの声</h3>
-      <p class="txt voice">「露天風呂から見た朝焼けが忘れられません。<mark class="mk">スタッフの方の気づかいがうれしかった</mark>です」（40代・ご夫婦）</p>
+      <h3 class="ug-h">{L.voiceH}</h3>
+      <p class="txt voice">{L.voice[0]}<mark class="mk">{L.voice[1]}</mark>{L.voice[2]}</p>
       <div class="ug-lines"><i></i><i></i><i></i></div>
     </section>
 
     <section class="ug-sec">
       <p class="ug-label">CANCEL</p>
-      <h3 class="ug-h"><mark class="mk">前日まで、キャンセル料は無料</mark></h3>
+      <h3 class="ug-h"><mark class="mk">{L.cancel}</mark></h3>
       <div class="ug-lines"><i></i><i></i><i></i></div>
     </section>
 
     <section class="ug-sec">
       <p class="ug-label">PRICE</p>
-      <h3 class="ug-h">1泊2食つき <mark class="mk">12,000円〜</mark></h3>
+      <h3 class="ug-h">{L.price[0]}<mark class="mk">{L.price[1]}</mark></h3>
       <div class="ug-lines"><i></i><i></i></div>
-      <Btn type={btnType} class="ug-btn-site more">空室を見る</Btn>
+      <Btn type={btnType} class="ug-btn-site more">{L.more}</Btn>
     </section>
   </div>
 </UgFrame>
@@ -60,15 +87,15 @@ const btnType = size === 'mini' ? undefined : 'button';
   .more { margin-top: 16px; }
   .voice { padding: 12px 16px; border-left: 3px solid var(--ug-line); background: var(--ug-bg); border-radius: 0 8px 8px 0; }
 
-  /* これが演出の本体: 文字の下40%に蛍光ペンの帯。最初は幅0、見えたら左から100%まで伸ばす */
+  /* これが演出の本体: 文字の下に蛍光ペンの帯（太さ・色はつまみ）。最初は幅0、見えたら左から100%まで伸ばす */
   .mk {
     color: inherit;
     background-color: transparent;
-    background-image: linear-gradient(transparent 55%, #ffdf6b 55%);
+    background-image: linear-gradient(transparent calc(100% - var(--t-thick)), var(--t-color) 0);
     background-repeat: no-repeat;
     background-position: left bottom;
     background-size: 0% 100%;
-    transition: background-size 0.5s cubic-bezier(0.3, 0.6, 0.3, 1);
+    transition: background-size var(--t-dur) cubic-bezier(0.3, 0.6, 0.3, 1);
     padding: 0 2px;
   }
   .mk.is-on { background-size: 100% 100%; }
@@ -86,6 +113,8 @@ const btnType = size === 'mini' ? undefined : 'button';
 </style>
 
 <script>
+  import { onTune } from '../../../lib/ugoki/runtime';
+
   document.querySelectorAll<HTMLElement>('[data-demo="highlighter"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
     if (!view) return;
@@ -109,6 +138,30 @@ const btnType = size === 'mini' ? undefined : 'button';
       // 文字がすべて見えて、枠の下から15%以上入ったところで引く
       { root: view, rootMargin: '0px 0px -15% 0px', threshold: 1 }
     );
-    root.querySelectorAll('.mk').forEach((el) => io.observe(el));
+    const marks = [...root.querySelectorAll<HTMLElement>('.mk')];
+    marks.forEach((el) => io.observe(el));
+
+    // つまみの速さを動かしたら、いま引かれている線を引き直して見せる（色・太さはそのまま変わる）
+    let timer = 0;
+    let lastDur = getComputedStyle(root).getPropertyValue('--t-dur');
+    onTune(view, () => {
+      const dur = getComputedStyle(root).getPropertyValue('--t-dur');
+      if (dur === lastDur) return;
+      lastDur = dur;
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const shown = marks.filter((el) => el.classList.contains('is-on'));
+        shown.forEach((el) => {
+          el.style.transition = 'none';
+          el.classList.remove('is-on');
+        });
+        void root.offsetWidth;
+        shown.forEach((el, i) => {
+          el.style.transition = '';
+          el.style.transitionDelay = `${0.1 + i * 0.3}s`;
+        });
+        requestAnimationFrame(() => shown.forEach((el) => el.classList.add('is-on')));
+      }, 200);
+    });
   });
 </script>

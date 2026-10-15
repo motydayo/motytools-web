@@ -1,32 +1,62 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const Btn = size === 'mini' ? 'span' : 'button';
-const items = [
-  { tone: 'day', name: '山の宿 はなれ', meta: '長野県・露天風呂つき', price: '1泊 12,000円〜' },
-  { tone: 'sunset', name: '海の宿 しおさい', meta: '静岡県・海が見える部屋', price: '1泊 15,000円〜' },
-  { tone: 'night', name: '星の宿 そらの', meta: '岐阜県・天体観測つき', price: '1泊 9,800円〜' },
-  { tone: 'day', name: '森の宿 こもれび', meta: '群馬県・ペット可', price: '1泊 11,500円〜' },
-] as const;
+const tones = ['day', 'sunset', 'night', 'day'] as const;
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'スケルトンスクリーン',
+    nav: ['宿をさがす', '特集'],
+    cta: 'ログイン',
+    h: '今週のおすすめ',
+    reload: '更新',
+    reloadLabel: 'もう一度読み込む',
+    loading: 'おすすめの宿を読み込んでいます',
+    done: 'おすすめの宿を4件表示しました',
+    items: [
+      { name: '山の宿 はなれ', meta: '長野県・露天風呂つき', price: '1泊 12,000円〜' },
+      { name: '海の宿 しおさい', meta: '静岡県・海が見える部屋', price: '1泊 15,000円〜' },
+      { name: '星の宿 そらの', meta: '岐阜県・天体観測つき', price: '1泊 9,800円〜' },
+      { name: '森の宿 こもれび', meta: '群馬県・ペット可', price: '1泊 11,500円〜' },
+    ],
+  },
+  en: {
+    name: 'Skeleton screen',
+    nav: ['Find a stay', 'Guides'],
+    cta: 'Sign in',
+    h: 'Top picks this week',
+    reload: 'Refresh',
+    reloadLabel: 'Reload the list',
+    loading: 'Loading top picks',
+    done: 'Showing 4 top picks',
+    items: [
+      { name: 'Pinecrest Mountain Lodge', meta: 'Aspen, CO · Private hot tub', price: 'From $129 / night' },
+      { name: 'Driftwood Seaside Inn', meta: 'Carmel, CA · Ocean view', price: 'From $165 / night' },
+      { name: 'Stargazer Cabins', meta: 'Moab, UT · Dark-sky site', price: 'From $98 / night' },
+      { name: 'Hollow Creek Retreat', meta: 'Asheville, NC · Pet friendly', price: 'From $119 / night' },
+    ],
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="script" size={size} label="スケルトンスクリーン">
-  <div class="ug-site sk" data-demo="skeleton">
-    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>宿をさがす</span><span>特集</span><span class="ug-cta">ログイン</span></header>
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site sk" data-demo="skeleton" data-loading={L.loading} data-done={L.done}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="body">
       <div class="head">
-        <h3 class="ug-h">今週のおすすめ</h3>
-        <Btn class="reload" type={size === 'mini' ? undefined : 'button'} aria-label={size === 'mini' ? undefined : 'もう一度読み込む'}>
+        <h3 class="ug-h">{L.h}</h3>
+        <Btn class="reload" type={size === 'mini' ? undefined : 'button'} aria-label={size === 'mini' ? undefined : L.reloadLabel}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 4v5h-5" /></svg>
-          <span>更新</span>
+          <span>{L.reload}</span>
         </Btn>
       </div>
       <!-- 読み込み中は is-loading。同じ部品を灰色の骨組みとして見せるので、差し替わっても位置がずれない -->
-      <ul class="list is-loading" aria-busy="true" data-ug-focus="スケルトンスクリーン" data-ug-focus-at="below">
-        {items.map((it) => (
-          <li class="item">
-            <div class="thumb"><Scene tone={it.tone} /></div>
+      <ul class="list is-loading" aria-busy="true" data-ug-focus={L.name} data-ug-focus-at="below">
+        {L.items.map((it, i) => (
+          <li class="item" style={`--i:${i}`}>
+            <div class="thumb"><Scene tone={tones[i]} /></div>
             <div class="txt">
               <p class="t">{it.name}</p>
               <p class="m">{it.meta}</p>
@@ -35,7 +65,7 @@ const items = [
           </li>
         ))}
       </ul>
-      <p class="sr-only" role="status" data-status>おすすめの宿を読み込んでいます</p>
+      <p class="sr-only" role="status" data-status>{L.loading}</p>
     </section>
   </div>
 </UgFrame>
@@ -80,8 +110,8 @@ const items = [
     border-radius: 6px;
     background: linear-gradient(90deg, #ecebe7 0%, #ecebe7 40%, #f7f6f3 50%, #ecebe7 60%, #ecebe7 100%);
     background-size: 300% 100%;
-    /* 光の帯が左から右へ流れて「読み込み中」と伝える */
-    animation: sk-shimmer 1.4s linear infinite;
+    /* 光の帯が左から右へ流れて「読み込み中」と伝える。1周の時間はつまみ（--t-shimmer）から */
+    animation: sk-shimmer var(--t-shimmer) linear infinite;
   }
   .is-loading .thumb > :global(*) { opacity: 0; }
   .is-loading .t { width: 72%; }
@@ -91,11 +121,11 @@ const items = [
     from { background-position: 100% 0; }
     to { background-position: 0 0; }
   }
-  /* ── 読み込み完了: 中身をふわっと出す（少しずつ遅らせる） ── */
-  .list:not(.is-loading) .item > * { animation: sk-in 0.3s ease-out both; }
-  .list:not(.is-loading) .item:nth-child(2) > * { animation-delay: 0.06s; }
-  .list:not(.is-loading) .item:nth-child(3) > * { animation-delay: 0.12s; }
-  .list:not(.is-loading) .item:nth-child(4) > * { animation-delay: 0.18s; }
+  /* ── 読み込み完了: 中身をふわっと出す（カードごとに --t-stagger ずつ遅らせる） ── */
+  .list:not(.is-loading) .item > * {
+    animation: sk-in var(--t-fade) ease-out both;
+    animation-delay: calc(var(--i, 0) * var(--t-stagger));
+  }
   @keyframes sk-in {
     from { opacity: 0; }
   }
@@ -112,7 +142,7 @@ const items = [
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, onTune } from '../../../lib/ugoki/runtime';
 
   document.querySelectorAll<HTMLElement>('[data-demo="skeleton"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
@@ -125,7 +155,7 @@ const items = [
     const setLoading = (on: boolean) => {
       list.classList.toggle('is-loading', on);
       list.setAttribute('aria-busy', String(on));
-      status.textContent = on ? 'おすすめの宿を読み込んでいます' : 'おすすめの宿を4件表示しました';
+      status.textContent = (on ? root.dataset.loading : root.dataset.done) ?? '';
     };
     // 本物のサイトでは、ここで fetch してから中身を入れる。見本は1.6秒待つだけ
     const load = () => {
@@ -138,6 +168,12 @@ const items = [
     reload.addEventListener('ug:click', load);
     view.addEventListener('ug:reset', load);
     load();
+    // つまみを動かしたら読み込みからやり直して、光の筋と出方の違いを見せる
+    let tuneTimer = 0;
+    onTune(view, () => {
+      clearTimeout(tuneTimer);
+      tuneTimer = window.setTimeout(load, 300);
+    });
 
     onTour(root, async (t) => {
       load();

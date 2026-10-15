@@ -28,7 +28,7 @@ export default {
     '1ページに何本も流す（どこを見ればいいか分からず、落ち着かないページになる）',
   ],
   prompt:
-    '導入企業の名前を並べた帯を「マーキー（marquee）」にしてください。同じ並びを2回続けて並べ、CSSの @keyframes で transform: translateX(0) から translateX(-50%) へ、24秒・linear・無限に動かして、つなぎ目が見えないようにしてください。2回目の並びには aria-hidden="true" を付けて読み上げが重複しないようにし、マウスを乗せたら animation-play-state: paused で止めてください。prefers-reduced-motion が reduce の人にはアニメーションを止めてください。JavaScriptやライブラリは使わないでください。',
+    '導入企業の名前を並べた帯を「マーキー（marquee）」にしてください。同じ並びを2回続けて並べ、CSSの @keyframes で transform: translateX(0) から translateX(-50%) へ、1周{{dur:t}}・linear・無限に動かして、つなぎ目が見えないようにしてください。流れる向きは{{dir:t}}、項目と項目の間隔は{{gap:t}}にし、2つの並びの間にも同じ間隔を空けてください。2回目の並びには aria-hidden="true" を付けて読み上げが重複しないようにし、マウスを乗せたら animation-play-state: paused で止めてください。prefers-reduced-motion が reduce の人にはアニメーションを止めてください。JavaScriptやライブラリは使わないでください。',
   howTo: [
     'コツは「同じ並びを2回続けて並べる」ことです。全体を左へ動かし、ちょうど半分（1回分）動いたところで最初の位置に戻すと、戻った瞬間の見た目がまったく同じなので、つなぎ目なく永遠に流れているように見えます。動きは CSS の @keyframes と transform（要素を動かす指定）だけで作れ、JavaScript は要りません。',
     '流し続ける動きなので、緩急を付けない等速（linear）にします。マウスを乗せたら animation-play-state: paused で止め、読みたい人が読めるようにします。2回目の並びは読み上げソフトに同じ言葉を2度読ませないよう aria-hidden で隠します。',
@@ -64,14 +64,14 @@ export default {
 .marquee-track {
   display: flex;
   width: max-content;
-  /* 一定の速さで左へ流し続ける。半分動いたら最初に戻る */
-  animation: marquee 24s linear infinite;
+  /* 一定の速さで流し続ける。半分動いたら最初に戻る（reverse なら右へ） */
+  animation: marquee {{dur}} linear infinite {{dir}};
 }
 .marquee-set {
   display: flex;
-  gap: 32px;
+  gap: {{gap}};
   margin: 0;
-  padding: 0 32px 0 0; /* 2つの並びの間もそろえる */
+  padding: 0 {{gap}} 0 0; /* 2つの並びの間もそろえる */
   list-style: none;
   white-space: nowrap;
 }
@@ -90,11 +90,25 @@ export default {
 }`,
     },
   ],
+  tune: [
+    { key: 'dur', label: '1周の時間', min: 5, max: 60, step: 1, value: 20, unit: 's' },
+    { key: 'gap', label: '項目の間隔', min: 8, max: 80, step: 4, value: 32, unit: 'px' },
+    {
+      key: 'dir',
+      type: 'select',
+      label: '流れる向き',
+      value: 'normal',
+      options: [
+        { value: 'normal', label: '左へ流す' },
+        { value: 'reverse', label: '右へ流す' },
+      ],
+    },
+  ],
   cautions: [
     '1つの並びが画面の幅より短いと、流れの途中で右側に空白ができます。項目を増やすか、並びを3回以上繰り返してください（そのときは動かす距離も 1回分＝-33.33% などに合わせます）。',
-    '5秒以上動き続けるものには、止める手段を用意するのが望ましいとされています（WCAG＝Webアクセシビリティの国際的な基準）。マウスを乗せたら止める、停止ボタンを置く、などで対応してください。',
+    '5秒以上動き続けるものには、止める手段を用意するのが望ましいとされています（WCAG＝Webアクセシビリティの国際的な基準）。マウスを乗せたら止める作りは、マウスを使う人にしか効きません。スマホやキーボードで操作する人のために、目に見える停止ボタンも置いてください。',
     '速すぎると読めず、目も疲れます。帯の長さにもよりますが、1周20〜40秒くらいのゆっくりした速さが目安です。',
-    '昔の <marquee> タグは廃止された古い書き方です。今も動くブラウザはありますが、使わずに CSS で作ってください。',
+    '<marquee> 要素は、HTMLの標準で廃止扱いになっている古い書き方です。今もブラウザでは動きますが、1周ごとに文字の切れ目に空白ができ、動きを減らす設定にも従いません。CSS で作ってください。',
   ],
   similar: [
     {
@@ -113,7 +127,7 @@ export default {
     },
     {
       q: 'marquee タグは使ってもいいですか？',
-      a: 'おすすめしません。<marquee> はHTMLの標準から外れた古いタグで、止める・速さを細かく決める・読み上げに配慮する、といった調整がしにくいです。CSSのアニメーションで作れば、同じ見た目をより安全に実現できます。',
+      a: 'おすすめしません。<marquee> はHTMLの標準で廃止扱いになっていて、文法チェックでも指摘されます。ブラウザでは今も動きますが、繰り返しの間に空白ができてつなぎ目なく流せず、動きを減らす設定にも従いません。CSSのアニメーションなら、同じ見た目をこうした問題なしに作れます。',
     },
     {
       q: 'マーキーで流した文字はSEOに影響しますか？',

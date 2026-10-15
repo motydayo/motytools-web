@@ -28,16 +28,17 @@ export default {
     '1ページに何個も並べる使い方（どれを動かしているか分からなくなる）',
   ],
   prompt:
-    '施工事例に「ビフォーアフタースライダー（before/after slider）」を作ってください。同じ大きさの「前」と「後」の画像を重ね、上に重ねた「前」を clip-path: inset(0 calc(100% - var(--pos)) 0 0) で切り取ります。操作は全面に重ねた透明の input type="range"（0〜100）で受け、値を CSS変数 --pos に入れてください。これでドラッグ・タップ・キーボードの左右キーがそのまま使えます。境目には白い縦線と、直径44pxの丸いつまみ（左右の矢印アイコン）を出します。スライダーには aria-label を付け、縦のスクロールを邪魔しないよう touch-action: pan-y にしてください。境目は操作に合わせて動かすだけにし、勝手に動くアニメーションは付けないでください（動きを減らす設定 prefers-reduced-motion の人にも負担がないように）。ライブラリは使わないでください。',
+    '施工事例に「ビフォーアフタースライダー（before/after slider）」を作ってください。同じ大きさの「前」と「後」の画像を重ね、上に重ねた「前」を clip-path: inset(0 calc(100% - var(--pos)) 0 0) で切り取ります。操作は全面に重ねた透明の input type="range"（0〜100）で受け、値を CSS変数 --pos に入れてください。これでドラッグ・タップ・キーボードの左右キーがそのまま使えます。最初の境目は左から{{start:t}}の位置にします。境目には太さ{{line:t}}の白い縦線と、直径{{knob:t}}の丸いつまみ（左右の矢印アイコン）を出します。指でつかむ当たり判定は、見た目にかかわらず幅44px以上にしてください。スライダーには aria-label を付け、縦のスクロールを邪魔しないよう touch-action: pan-y にしてください。境目は操作に合わせて動かすだけにし、勝手に動くアニメーションは付けないでください（動きを減らす設定 prefers-reduced-motion の人にも負担がないように）。ライブラリは使わないでください。',
   howTo: [
     '「後」の画像の上に「前」の画像を重ね、「前」の右側を clip-path（要素の一部だけを見せるCSSの指定）で切り取ります。切り取る位置をCSS変数 --pos に入れておけば、その数字を変えるだけで境目が動きます。',
     '操作には input type="range"（つまみを動かして数字を選ぶ、HTML標準の部品）を使い、画像の全面に透明にして重ねます。自分でドラッグの処理を書かなくても、マウスのドラッグ・スマホの指・キーボードの左右キーがすべて最初から動き、読み上げソフトにも「スライダー」と伝わります。JavaScriptは、選ばれた数字を --pos に渡す1行だけです。',
+    '最初の境目は真ん中（50%）が基本ですが、「後」を主役に見せたいなら30%ほど左に寄せておくと、開いた瞬間に変化後の写真が大きく目に入ります。線は2〜4px、つまみは40〜48pxが、写真の邪魔をせずに「動かせる」と分かる大きさです。',
   ],
   code: [
     {
       lang: 'html',
       label: 'HTML',
-      code: `<div class="ba" style="--pos: 50%">
+      code: `<div class="ba" style="--pos: {{start}}">
   <img class="ba-after" src="after.jpg" alt="補正後の写真" width="800" height="450">
   <img class="ba-before" src="before.jpg" alt="補正前の写真" width="800" height="450">
   <div class="ba-handle" aria-hidden="true">
@@ -48,7 +49,7 @@ export default {
       </svg>
     </span>
   </div>
-  <input class="ba-range" type="range" min="0" max="100" value="50"
+  <input class="ba-range" type="range" min="0" max="100" value="{{start:n}}"
     aria-label="補正前と補正後の境目">
 </div>`,
     },
@@ -77,8 +78,8 @@ export default {
   top: 0;
   bottom: 0;
   left: var(--pos);
-  width: 3px;
-  margin-left: -1.5px;
+  width: {{line}};               /* 境目の線の太さ */
+  margin-left: calc({{line}} / -2);
   background: #fff;
   pointer-events: none;
 }
@@ -88,9 +89,9 @@ export default {
   left: 50%;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  margin: -22px 0 0 -22px;
+  width: {{knob}};               /* つまみの見た目の大きさ */
+  height: {{knob}};
+  margin: calc({{knob}} / -2) 0 0 calc({{knob}} / -2);
   border-radius: 50%;
   background: #fff;
   color: #1d2541;
@@ -124,6 +125,11 @@ export default {
   });
 });`,
     },
+  ],
+  tune: [
+    { key: 'start', label: '最初の境目の位置', min: 10, max: 90, step: 5, value: 50, unit: '%' },
+    { key: 'line', label: '境目の線の太さ', min: 1, max: 8, step: 1, value: 3, unit: 'px' },
+    { key: 'knob', label: 'つまみの大きさ', min: 28, max: 64, step: 2, value: 44, unit: 'px' },
   ],
   cautions: [
     'スマホでは指でつまみを左右になぞって動かします。画像の上を縦になぞったときはページがスクロールするよう、スライダーに touch-action: pan-y を付けておきます。付けないと、画像の上で指を置いたままスクロールできなくなることがあります。',

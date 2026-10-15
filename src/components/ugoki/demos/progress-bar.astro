@@ -1,37 +1,51 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
-const points = ['靴は足首まで守るものを', '雨具は上下に分かれた形を', '水は1時間に250mlが目安', '地図は紙とスマホの両方で'];
+const { size = 'full', lang = 'ja' } = Astro.props;
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'スクロールプログレスバー', focus: '読んだ割合', logo: 'やまある記', nav: ['記事一覧', '道具'],
+    aria: '記事を読んだ割合', label: 'GUIDE・読了まで約5分', title: 'はじめての山歩き、準備で外せない4つのこと',
+    points: ['靴は足首まで守るものを', '雨具は上下に分かれた形を', '水は1時間に250mlが目安', '地図は紙とスマホの両方で'],
+    sum: 'まとめ',
+  },
+  en: {
+    name: 'Scroll progress bar', focus: 'Reading progress', logo: 'Trail Notes', nav: ['Articles', 'Gear'],
+    aria: 'Reading progress', label: 'GUIDE · 5 MIN READ', title: 'Your first hike: 4 things to pack before you go',
+    points: ['Boots that support your ankles', 'A two-piece rain shell', 'About 8 oz of water per hour', 'A paper map and your phone'],
+    sum: 'The takeaway',
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="scroll" size={size} label="スクロールプログレスバー">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site pb" data-demo="progress-bar">
     <header class="top">
       <div class="ug-nav">
-        <span class="ug-logo">やまある記</span>
-        <span>記事一覧</span><span>道具</span>
+        <span class="ug-logo">{L.logo}</span>
+        {L.nav.map((n) => <span>{n}</span>)}
         <b class="pct" aria-hidden="true">0%</b>
       </div>
       <!-- これが演出の本体: 読んだ割合だけ左から伸びる帯 -->
-      <div class="bar" role="progressbar" aria-label="記事を読んだ割合" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-ug-focus="読んだ割合" data-ug-focus-at="below">
+      <div class="bar" role="progressbar" aria-label={L.aria} aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-ug-focus={L.focus} data-ug-focus-at="below">
         <i></i>
       </div>
     </header>
 
     <article class="post">
-      <p class="ug-label">GUIDE・読了まで約5分</p>
-      <h3 class="post-h">はじめての山歩き、準備で外せない4つのこと</h3>
+      <p class="ug-label">{L.label}</p>
+      <h3 class="post-h">{L.title}</h3>
       <Scene tone="day" wide />
       <div class="ug-lines"><i></i><i></i><i></i></div>
-      {points.map((p, i) => (
+      {L.points.map((p, i) => (
         <section class="pt">
           <h4 class="pt-h"><span>{i + 1}</span>{p}</h4>
           <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i></div>
         </section>
       ))}
       <section class="pt">
-        <h4 class="pt-h">まとめ</h4>
+        <h4 class="pt-h">{L.sum}</h4>
         <div class="ug-lines"><i></i><i></i><i></i></div>
       </section>
     </article>
@@ -42,14 +56,16 @@ const points = ['靴は足首まで守るものを', '雨具は上下に分か�
   .top { position: sticky; top: 0; z-index: 10; background: #fff; }
   .top .ug-nav { border-bottom: 0; }
   .pct { min-width: 3em; text-align: right; font-weight: 800; color: var(--ug-orange) !important; font-variant-numeric: tabular-nums; }
-  .bar { position: relative; height: 4px; background: var(--ug-line); }
+  .bar { position: relative; height: var(--t-thick); background: var(--ug-line); }
   .bar i {
     display: block;
     height: 100%;
-    background: var(--ug-orange);
+    background: var(--t-color);
     /* 幅ではなく横の伸び縮み（scaleX）で動かすと、表示が軽い */
     transform: scaleX(var(--p, 0));
     transform-origin: left center;
+    /* 追いつくまでの時間（つまみ）。0なら遅れずスクロールにぴったり合う */
+    transition: transform var(--t-lag) ease-out;
   }
   .post { padding: 24px 20px 48px; }
   .post-h { margin: 4px 0 16px !important; font-size: 20px; font-weight: 800; }
@@ -71,7 +87,10 @@ const points = ['靴は足首まで守るものを', '雨具は上下に分か�
     .post { padding: 20px 16px 40px; }
     .post-h { font-size: 17px; }
   }
-  :global(.is-mini) .bar { height: 5px; }
+  :global(.is-mini) .bar { height: calc(var(--t-thick) + 1px); }
+  @media (prefers-reduced-motion: reduce) {
+    .bar i { transition: none; }
+  }
   :global(.is-mini) .post { padding-top: 16px; }
   :global(.is-mini) .post-h { font-size: 15px; margin-bottom: 8px !important; }
 </style>

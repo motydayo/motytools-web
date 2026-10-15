@@ -1,59 +1,76 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 // 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
 const Btn = size === 'mini' ? 'span' : 'button';
 const btnType = size === 'mini' ? undefined : 'button';
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'スクロールでフェードイン', focus: 'フェードイン',
+    nav: ['特長', '料金', 'FAQ'], cta: '無料で試す',
+    reasons: '選ばれる3つの理由', cards: ['朝食つき', '駅から5分', '星がきれい'],
+    voice: 'お客さまの声', voices: ['40代・ご夫婦', '20代・友人と', '30代・家族4人'],
+    gallery: '季節ごとの景色', seasons: ['秋の夕暮れ', '冬の星空', '春の朝'],
+    price: '1泊 12,000円〜', apply: 'お申し込み',
+  },
+  en: {
+    name: 'Fade-in on scroll', focus: 'Fade in',
+    nav: ['Features', 'Pricing', 'FAQ'], cta: 'Try free',
+    reasons: 'Why guests choose us', cards: ['Breakfast included', '5 min from station', 'Dark-sky views'],
+    voice: 'What guests say', voices: ['Couple, 40s', 'Friends trip, 20s', 'Family of four'],
+    gallery: 'Through the seasons', seasons: ['Autumn dusk', 'Winter stars', 'Spring morning'],
+    price: 'From $95 / night', apply: 'Book now',
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="scroll" size={size} label="スクロールでフェードイン">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site fi" data-demo="fade-in">
     <header class="ug-nav">
       <span class="ug-logo">SAMPLE</span>
-      <span>特長</span><span>料金</span><span>FAQ</span>
-      <span class="ug-cta">無料で試す</span>
+      {L.nav.map((n) => <span>{n}</span>)}
+      <span class="ug-cta">{L.cta}</span>
     </header>
 
     <section class="ug-sec intro">
       <p class="ug-label reveal">FEATURE</p>
-      <h3 class="ug-h reveal">選ばれる3つの理由</h3>
+      <h3 class="ug-h reveal">{L.reasons}</h3>
       <div class="ug-lines reveal"><i></i><i></i></div>
     </section>
 
     <section class="ug-sec">
-      <div class="ug-grid fi-cards" data-ug-focus="フェードイン" data-ug-focus-at="below">
-        <div class="ug-card reveal"><Scene tone="day" /><div class="ug-card-body">朝食つき</div></div>
-        <div class="ug-card reveal"><Scene tone="sunset" /><div class="ug-card-body">駅から5分</div></div>
-        <div class="ug-card reveal"><Scene tone="night" /><div class="ug-card-body">星がきれい</div></div>
+      <div class="ug-grid fi-cards" data-ug-focus={L.focus} data-ug-focus-at="below">
+        <div class="ug-card reveal"><Scene tone="day" /><div class="ug-card-body">{L.cards[0]}</div></div>
+        <div class="ug-card reveal"><Scene tone="sunset" /><div class="ug-card-body">{L.cards[1]}</div></div>
+        <div class="ug-card reveal"><Scene tone="night" /><div class="ug-card-body">{L.cards[2]}</div></div>
       </div>
     </section>
 
     <section class="ug-sec">
       <p class="ug-label reveal">VOICE</p>
-      <h3 class="ug-h reveal">お客さまの声</h3>
+      <h3 class="ug-h reveal">{L.voice}</h3>
       <ul class="voices">
-        <li class="voice reveal"><b>40代・ご夫婦</b><span class="ug-lines"><i></i><i></i></span></li>
-        <li class="voice reveal"><b>20代・友人と</b><span class="ug-lines"><i></i><i></i></span></li>
-        <li class="voice reveal"><b>30代・家族4人</b><span class="ug-lines"><i></i><i></i></span></li>
+        {L.voices.map((v) => <li class="voice reveal"><b>{v}</b><span class="ug-lines"><i></i><i></i></span></li>)}
       </ul>
     </section>
 
     <section class="ug-sec">
       <p class="ug-label reveal">GALLERY</p>
-      <h3 class="ug-h reveal">季節ごとの景色</h3>
+      <h3 class="ug-h reveal">{L.gallery}</h3>
       <div class="ug-grid fi-cards">
-        <div class="ug-card reveal"><Scene tone="sunset" /><div class="ug-card-body">秋の夕暮れ</div></div>
-        <div class="ug-card reveal"><Scene tone="night" /><div class="ug-card-body">冬の星空</div></div>
-        <div class="ug-card reveal"><Scene tone="day" /><div class="ug-card-body">春の朝</div></div>
+        <div class="ug-card reveal"><Scene tone="sunset" /><div class="ug-card-body">{L.seasons[0]}</div></div>
+        <div class="ug-card reveal"><Scene tone="night" /><div class="ug-card-body">{L.seasons[1]}</div></div>
+        <div class="ug-card reveal"><Scene tone="day" /><div class="ug-card-body">{L.seasons[2]}</div></div>
       </div>
     </section>
 
     <section class="ug-sec">
       <p class="ug-label reveal">PRICE</p>
-      <h3 class="ug-h reveal">1泊 12,000円〜</h3>
+      <h3 class="ug-h reveal">{L.price}</h3>
       <div class="ug-lines reveal"><i></i><i></i><i></i></div>
-      <Btn type={btnType} class="ug-btn-site reveal">お申し込み</Btn>
+      <Btn type={btnType} class="ug-btn-site reveal">{L.apply}</Btn>
     </section>
   </div>
 </UgFrame>
@@ -66,21 +83,21 @@ const btnType = size === 'mini' ? undefined : 'button';
   .voice .ug-lines { margin-top: 4px; }
   .ug-btn-site { margin-top: 16px; }
 
-  /* これが演出の本体: 最初は透明で16px下。見えたら0.5秒で元の位置へ */
+  /* これが演出の本体: 最初は透明で少し下。見えたら元の位置へ（距離・速さはつまみ --t-* から） */
   .reveal {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(var(--t-dist));
     transition:
-      opacity 0.5s ease-out,
-      transform 0.5s ease-out;
+      opacity var(--t-dur) ease-out,
+      transform var(--t-dur) ease-out;
   }
   .reveal.is-in {
     opacity: 1;
     transform: none;
   }
   /* 横に並んだカードは少しずつ遅らせて、順番に出す */
-  .fi-cards .reveal:nth-child(2) { transition-delay: 0.1s; }
-  .fi-cards .reveal:nth-child(3) { transition-delay: 0.2s; }
+  .fi-cards .reveal:nth-child(2) { transition-delay: var(--t-stagger); }
+  .fi-cards .reveal:nth-child(3) { transition-delay: calc(var(--t-stagger) * 2); }
 
   @container (max-width: 340px) {
     .ug-sec { padding: 16px 12px; }
@@ -95,6 +112,8 @@ const btnType = size === 'mini' ? undefined : 'button';
 </style>
 
 <script>
+  import { onTune } from '../../../lib/ugoki/runtime';
+
   document.querySelectorAll<HTMLElement>('[data-demo="fade-in"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
     if (!view) return;
@@ -112,6 +131,23 @@ const btnType = size === 'mini' ? undefined : 'button';
       // 枠の下から10%入ったところで出す
       { root: view, rootMargin: '0px 0px -10% 0px', threshold: 0 }
     );
-    root.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    const items = [...root.querySelectorAll<HTMLElement>('.reveal')];
+    items.forEach((el) => io.observe(el));
+
+    // つまみを動かしたら、いま見えているものを隠して出し直す（新しい速さ・距離を見せる）
+    let timer = 0;
+    onTune(view, () => {
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const shown = items.filter((el) => el.classList.contains('is-in'));
+        shown.forEach((el) => {
+          el.style.transition = 'none';
+          el.classList.remove('is-in');
+        });
+        void root.offsetWidth;
+        shown.forEach((el) => (el.style.transition = ''));
+        requestAnimationFrame(() => shown.forEach((el) => el.classList.add('is-in')));
+      }, 180);
+    });
   });
 </script>

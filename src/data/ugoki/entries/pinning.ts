@@ -28,7 +28,7 @@ export default {
     '料金表や規約など、自分のペースで行き来して読みたい情報',
   ],
   prompt:
-    'ご予約の流れのセクションを「ピン留め（pinning）」にしてください。セクション全体の高さを画面3つ分（300vh）にし、中のパネルを position: sticky; top: 0; height: 100vh; で区間の間だけ画面に固定してください。区間をどこまで進んだか（0〜1）をスクロール量から計算し、3等分してSTEP 01・02・03の中身を切り替えてください。切り替えは0.3秒の ease-out で、下から16pxふわっと出します。いま何番目かが分かる目盛りも付けてください。ライブラリ（GSAPなど）は使わないでください。prefers-reduced-motion: reduce の人には、動かさずに中身だけ切り替えてください。',
+    'ご予約の流れのセクションを「ピン留め（pinning）」にしてください。セクション全体の高さを画面{{len:n}}枚分（calc(100vh * {{len:n}})）にし、中のパネルを position: sticky; top: 0; height: 100svh; で区間の間だけ画面に固定してください。区間をどこまで進んだか（0〜1）をスクロール量から計算し、3等分してSTEP 01・02・03の中身を切り替えてください。切り替えは{{dur:t}}の ease-out で、下から{{dist:t}}ふわっと出します。いま何番目かが分かる目盛りも付けてください。ライブラリ（GSAPなど）は使わないでください。prefers-reduced-motion: reduce の人には、動かさずに中身だけ切り替えてください。',
   howTo: [
     '「止める」部分はCSSだけで作れます。外側の区間を画面3つ分の高さにして、中のパネルに position: sticky と top: 0 を付けます。sticky（くっつく指定）は親の範囲の中でだけ効くので、区間を抜けるとパネルは自然に流れていきます。区間を長くするほど、長く止まります。',
     '中身の切り替えだけJavaScriptを使います。区間の上端がどれだけ画面の上へ過ぎたかを測り、区間の長さで割って「進み具合（0〜1）」を出します。それをステップの数で区切って、表示するものにクラスを付けます。昔はGSAPなどのライブラリで作るのが定番でしたが、この程度なら20行ほどで書けます。',
@@ -60,15 +60,15 @@ export default {
     {
       lang: 'css',
       label: 'CSS',
-      code: `/* 区間の長さ＝止めておくスクロール量（ここでは画面3つ分） */
+      code: `/* 区間の長さ＝止めておくスクロール量（画面いくつ分か） */
 .pin-sec {
-  height: 300vh;
+  height: calc(100vh * {{len:n}});
 }
 /* 区間の中にいる間だけ、画面の上端に止まる */
 .pin {
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: 100svh; /* スマホのアドレスバーが出ていても下が切れない高さ */
   display: grid;
   place-items: center;
 }
@@ -76,8 +76,8 @@ export default {
 .step {
   grid-area: 1 / 1;
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  transform: translateY({{dist}});
+  transition: opacity {{dur}} ease-out, transform {{dur}} ease-out;
 }
 .step.is-on {
   opacity: 1;
@@ -110,6 +110,11 @@ function update() {
 window.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
 update();`,
     },
+  ],
+  tune: [
+    { key: 'len', label: '区間の長さ（画面いくつ分）', min: 2, max: 7, step: 1, value: 3, unit: '' },
+    { key: 'dur', label: '切り替えの速さ', min: 0.1, max: 0.8, step: 0.05, value: 0.3, unit: 's' },
+    { key: 'dist', label: '下からずらす距離', min: 0, max: 48, step: 4, value: 16, unit: 'px' },
   ],
   cautions: [
     '親要素のどこかに overflow: hidden（auto・scroll も）が付いていると、position: sticky は効かず、パネルが止まりません。止まらないときはまず親を疑ってください。',

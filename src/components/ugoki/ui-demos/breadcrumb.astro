@@ -1,0 +1,218 @@
+---
+// UI部品の見本: パンくずリスト
+// 宿の詳細ページ → 「長野県」を押すと一覧ページへ。パンくずが1段短くなり、カードを押すとまた伸びる。
+// 枠の中で2つのページを切り替えて見せる（本当にページは移動しない）。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const A = mini ? 'span' : 'a';
+const href = mini ? undefined : '#';
+const L = {
+  ja: {
+    name: 'パンくずリスト',
+    aria: 'パンくずリスト',
+    nav: ['宿をさがす', '特集'],
+    cta: '予約',
+    trail: ['ホーム', '宿をさがす', '長野県'],
+    stay: '山の宿 ひかり',
+    meta: '長野県・白馬村 ／ 1泊 12,000円〜',
+    listH: '長野県の宿',
+    count: '18件',
+    stays: ['山の宿 ひかり', '湖の宿 あおば', '森の宿 こだま'],
+    prices: ['12,000円〜', '9,800円〜', '15,000円〜'],
+  },
+  en: {
+    name: 'Breadcrumbs',
+    aria: 'Breadcrumb',
+    nav: ['Find a stay', 'Deals'],
+    cta: 'Book',
+    trail: ['Home', 'Find a stay', 'Colorado'],
+    stay: 'Aspen Ridge Lodge',
+    meta: 'Aspen, Colorado · From $180 / night',
+    listH: 'Stays in Colorado',
+    count: '18 places',
+    stays: ['Aspen Ridge Lodge', 'Blue Lake Inn', 'Pine Hollow Cabins'],
+    prices: ['From $180', 'From $140', 'From $210'],
+  },
+}[lang as 'ja' | 'en'];
+const tones = ['day', 'sunset', 'night'] as const;
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site bc-site" data-demo="breadcrumb">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
+
+    <!-- 1枚目: 宿の詳細ページ（階層の4段目） -->
+    <div class="bc-screen" data-bc-screen="detail">
+      <!-- これが部品の本体: 今いるページまでの道すじ。最後（今いるページ）はリンクにせず aria-current="page" -->
+      <nav class="bc-nav" aria-label={L.aria} data-ug-focus={L.name} data-ug-focus-at="below">
+        <ol class="bc-list" data-bc-list>
+          <li><A class="bc-link" href={href}>{L.trail[0]}</A></li>
+          <li><A class="bc-link" href={href}>{L.trail[1]}</A></li>
+          <li><A class="bc-link" href={href} data-bc-go="list">{L.trail[2]}</A></li>
+          <li><span class="bc-here" aria-current="page">{L.stay}</span></li>
+        </ol>
+      </nav>
+      <section class="ug-sec bc-body">
+        <Scene tone="day" wide />
+        <h3 class="ug-h bc-title">{L.stay}</h3>
+        <p class="bc-meta">{L.meta}</p>
+        <div class="ug-lines"><i></i><i></i><i></i></div>
+      </section>
+    </div>
+
+    <!-- 2枚目: 県の一覧ページ（階層の3段目） -->
+    <div class="bc-screen" data-bc-screen="list" hidden>
+      <nav class="bc-nav" aria-label={L.aria} data-ug-focus={L.name} data-ug-focus-at="below">
+        <ol class="bc-list" data-bc-list>
+          <li><A class="bc-link" href={href}>{L.trail[0]}</A></li>
+          <li><A class="bc-link" href={href}>{L.trail[1]}</A></li>
+          <li><span class="bc-here" aria-current="page">{L.trail[2]}</span></li>
+        </ol>
+      </nav>
+      <section class="ug-sec bc-body">
+        <h3 class="ug-h">{L.listH}<span class="bc-count">{L.count}</span></h3>
+        <div class="ug-grid bc-grid">
+          {L.stays.map((s, i) => (
+            <A class="ug-card bc-card" href={href} data-bc-go={i === 0 ? 'detail' : undefined}>
+              <Scene tone={tones[i]} />
+              <span class="ug-card-body">{s}<small>{L.prices[i]}</small></span>
+            </A>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .bc-site { min-height: 100%; }
+  /* 区切り記号・間隔・文字の大きさはつまみ（--t-sep・--t-gap・--t-size）から */
+  .bc-nav {
+    position: relative;
+    padding: 0 16px;
+    background: var(--ug-bg);
+    border-bottom: 1px solid var(--ug-line);
+  }
+  .bc-list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    font-size: var(--t-size);
+    white-space: nowrap;
+    /* 狭い画面では折り返さず横にスクロール（最後の段が見えるよう右端へ送る） */
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  /* 横にあふれて左が切れているときは、左端を薄くして続きがあると分かるように */
+  .bc-list.is-cut { mask-image: linear-gradient(to right, transparent, #000 28px); }
+  .bc-list li { display: flex; align-items: center; flex: none; }
+  /* 区切りは CSS で描く。「/ ""」は読み上げでは読まない、という指定 */
+  .bc-list li + li::before {
+    content: var(--t-sep) / '';
+    margin-inline: var(--t-gap);
+    color: #a3a7b3;
+  }
+  .bc-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ug-blue) !important;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    border-radius: 4px;
+    transition: color 0.15s ease-out;
+  }
+  .bc-link:hover, .bc-link.is-hover { color: var(--ug-navy) !important; text-decoration-thickness: 2px; }
+  .bc-here { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: var(--ug-ink); }
+
+  .bc-body { display: grid; gap: 4px; }
+  .bc-body :global(.ug-scene) { border-radius: 10px; }
+  .bc-title { margin-top: 8px; }
+  .bc-meta { font-size: 12px; color: var(--ug-ink-2); }
+  .bc-count { margin-left: 8px; font-size: 12px; font-weight: 700; color: var(--ug-ink-2); }
+  .bc-grid { margin-top: 8px; }
+  .bc-card { display: block; color: inherit !important; text-decoration: none; transition: box-shadow 0.15s ease-out; }
+  .bc-card:hover, .bc-card.is-hover { box-shadow: 0 10px 20px -12px rgba(29, 37, 65, 0.5); }
+  .bc-card :global(.ug-card-body) { display: block; }
+  .bc-card small { display: block; font-weight: 400; color: var(--ug-ink-2); }
+  .bc-screen.is-in { animation: bc-in 0.25s ease-out; }
+  @keyframes bc-in { from { opacity: 0; transform: translateY(6px); } }
+
+  @container (max-width: 340px) {
+    .bc-nav { padding: 0 12px; }
+    .bc-body { padding: 12px; }
+    .bc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bc-grid > :nth-child(3) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bc-screen.is-in { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="breadcrumb"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const screens = [...root.querySelectorAll<HTMLElement>('[data-bc-screen]')];
+
+    const show = (name: string, animate = true) => {
+      screens.forEach((s) => {
+        const on = s.dataset.bcScreen === name;
+        s.hidden = !on;
+        s.classList.toggle('is-in', on && animate);
+        // 最後の段（今いるページ）が見えるよう、パンくずを右端まで送る
+        if (on) s.querySelectorAll<HTMLElement>('[data-bc-list]').forEach((ol) => {
+          ol.scrollLeft = ol.scrollWidth;
+          ol.classList.toggle('is-cut', ol.scrollLeft > 0);
+        });
+      });
+      view.scrollTop = 0;
+    };
+
+    root.querySelectorAll<HTMLElement>('[data-bc-go]').forEach((a) => {
+      const go = (e: Event) => {
+        e.preventDefault();
+        show(a.dataset.bcGo!);
+      };
+      a.addEventListener('click', go);
+      a.addEventListener('ug:click', go);
+    });
+    // 行き先のないリンクは、見本の中では何もしない
+    root.querySelectorAll<HTMLElement>('a:not([data-bc-go])').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+    root.querySelectorAll<HTMLElement>('[data-bc-list]').forEach((ol) =>
+      ol.addEventListener('scroll', () => ol.classList.toggle('is-cut', ol.scrollLeft > 0), { passive: true })
+    );
+    view.addEventListener('ug:reset', () => show('detail', false));
+    show('detail', false);
+
+    onTour(root, async (t) => {
+      show('detail', false);
+      await t.move({ x: t.view.clientWidth * 0.6, y: t.view.clientHeight * 0.75 }, 10);
+      await t.sleep(700);
+      const crumbs = [...screens[0].querySelectorAll<HTMLElement>('.bc-link')];
+      for (const c of crumbs.slice(0, 2)) {
+        await t.move(c, 600);
+        t.hover(c);
+        await t.sleep(500);
+      }
+      const pref = crumbs[2];
+      await t.move(pref, 500);
+      t.hover(pref);
+      await t.sleep(400);
+      await t.click(pref);
+      t.hover(null);
+      await t.sleep(1800);
+      const card = screens[1].querySelector<HTMLElement>('[data-bc-go="detail"]')!;
+      await t.move(card, 800);
+      t.hover(card);
+      await t.sleep(400);
+      await t.click(card);
+      t.hover(null);
+      await t.sleep(2000);
+    });
+  });
+</script>

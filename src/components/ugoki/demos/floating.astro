@@ -1,25 +1,58 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'ふわふわアニメーション',
+    focus: 'ふわふわ',
+    url: 'tabi-note.app',
+    logo: '旅ノート',
+    nav: ['機能', '使い方'],
+    cta: '入手する',
+    title: ['旅の予約を、', 'ひとつのアプリで。'],
+    sub: '宿・交通・旅程をまとめて管理。',
+    btn: '無料でダウンロード',
+    screen: '山の宿',
+    badgeA: '予約が確定しました',
+    reviews: 'レビュー1,200件',
+    feats: [['宿', '予約をまとめて表示'], ['交通', '乗り換えも一緒に'], ['旅程', '家族と共有できる']],
+  },
+  en: {
+    name: 'Floating animation',
+    focus: 'Floating',
+    url: 'tripnote.app',
+    logo: 'Tripnote',
+    nav: ['Features', 'How it works'],
+    cta: 'Get the app',
+    title: ['Every booking for your trip,', 'in one app.'],
+    sub: 'Hotels, trains and plans, all in one place.',
+    btn: 'Download free',
+    screen: 'Pine Ridge',
+    badgeA: 'Booking confirmed',
+    reviews: '1,200 reviews',
+    feats: [['Stays', 'All your bookings'], ['Travel', 'Transfers included'], ['Plans', 'Share with family']],
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="loop" size={size} label="ふわふわアニメーション" url="tabi-note.app">
+<UgFrame mode="loop" size={size} label={L.name} url={L.url} lang={lang}>
   <div class="ug-site fl-site">
-    <header class="ug-nav"><span class="ug-logo">旅ノート</span><span>機能</span><span>使い方</span><span class="ug-cta">入手する</span></header>
+    <header class="ug-nav"><span class="ug-logo">{L.logo}</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="fl-hero">
       <div class="fl-copy">
         <p class="ug-label">TRAVEL APP</p>
-        <h3 class="fl-title">旅の予約を、<br />ひとつのアプリで。</h3>
-        <p class="fl-sub">宿・交通・旅程をまとめて管理。</p>
-        <span class="ug-btn-site fl-btn">無料でダウンロード</span>
+        <h3 class="fl-title">{L.title[0]}<br />{L.title[1]}</h3>
+        <p class="fl-sub">{L.sub}</p>
+        <span class="ug-btn-site fl-btn">{L.btn}</span>
       </div>
       <!-- これが演出の本体: 画像を上下に少しだけ、ゆっくり行き来させ続ける -->
-      <div class="fl-stage ug-pausable" data-ug-focus="ふわふわ">
+      <div class="fl-stage ug-pausable" data-ug-focus={L.focus}>
         <div class="fl-float fl-phone">
           <div class="fl-screen">
             <Scene tone="day" />
-            <span class="fl-screen-h">山の宿</span>
+            <span class="fl-screen-h">{L.screen}</span>
             <span class="fl-screen-l"><i></i><i></i><i></i></span>
             <span class="fl-screen-btn"></span>
           </div>
@@ -27,19 +60,17 @@ const { size = 'full' } = Astro.props;
         <span class="fl-shadow" aria-hidden="true"></span>
         <span class="fl-float fl-badge fl-badge-a">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
-          予約が確定しました
+          {L.badgeA}
         </span>
         <span class="fl-float fl-badge fl-badge-b">
           <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z" fill="currentColor" /></svg>
-          4.8<small>レビュー1,200件</small>
+          4.8<small>{L.reviews}</small>
         </span>
       </div>
     </section>
     <section class="ug-sec fl-feat">
       <div class="ug-grid">
-        <div class="fl-f"><b>宿</b><span>予約をまとめて表示</span></div>
-        <div class="fl-f"><b>交通</b><span>乗り換えも一緒に</span></div>
-        <div class="fl-f"><b>旅程</b><span>家族と共有できる</span></div>
+        {L.feats.map(([b, t]) => <div class="fl-f"><b>{b}</b><span>{t}</span></div>)}
       </div>
     </section>
   </div>
@@ -53,16 +84,17 @@ const { size = 'full' } = Astro.props;
 
   .fl-stage { position: relative; display: grid; justify-items: center; padding: 16px 0 20px; }
 
-  /* ふわふわの本体: 上へ10px、3.2秒で1往復。行き来は ease-in-out でやわらかく */
-  .fl-float { animation: fl-float 3.2s ease-in-out infinite; }
-  .fl-badge-a { animation-delay: -1.1s; animation-duration: 3.8s; }
-  .fl-badge-b { animation-delay: -2.2s; animation-duration: 3.5s; }
+  /* ふわふわの本体: 上へ --t-dist、--t-dur で1往復。緩急は --t-ease（いずれもつまみから） */
+  .fl-float { animation: fl-float var(--t-dur) var(--t-ease) infinite; }
+  /* 吹き出しは、周期とタイミングを少しずつずらす */
+  .fl-badge-a { animation-delay: calc(var(--t-dur) * -0.34); animation-duration: calc(var(--t-dur) * 1.19); }
+  .fl-badge-b { animation-delay: calc(var(--t-dur) * -0.69); animation-duration: calc(var(--t-dur) * 1.09); }
   @keyframes fl-float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(calc(var(--t-dist) * -1)); }
   }
   /* 影は、浮いたときに小さく薄くなる */
-  .fl-shadow { width: 96px; height: 12px; margin-top: 8px; border-radius: 50%; background: rgba(29, 37, 65, 0.22); filter: blur(3px); animation: fl-shadow 3.2s ease-in-out infinite; }
+  .fl-shadow { width: 96px; height: 12px; margin-top: 8px; border-radius: 50%; background: rgba(29, 37, 65, 0.22); filter: blur(3px); animation: fl-shadow var(--t-dur) var(--t-ease) infinite; }
   @keyframes fl-shadow {
     0%, 100% { transform: scaleX(1); opacity: 1; }
     50% { transform: scaleX(0.78); opacity: 0.55; }

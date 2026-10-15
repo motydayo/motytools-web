@@ -28,7 +28,7 @@ export default {
     '別のページへ移るリンクの並び（それはタブではなくナビゲーション。role="tab" を付けない）',
   ],
   prompt:
-    'プランの切り替えを「下線がスライドするタブ（sliding tab indicator）」にしてください。タブは role="tablist" の中に role="tab" の button を並べ、中身は role="tabpanel" にして aria-selected・aria-controls・aria-labelledby で結び付けます。下線は tablist の中に1本だけ置き、選んだタブの offsetLeft と offsetWidth に合わせて transform: translateX と width を0.25秒の減速（ease-out）で動かしてください。左右の矢印キーで隣のタブへ（端では反対側へ回る）、Home と End で端のタブへ移り、選んでいないタブは tabindex="-1" にします。画面幅が変わったら下線を付け直し、動きを減らす設定の人には下線を動かさず切り替えてください。ライブラリは使わないこと。',
+    'プランの切り替えを「下線がスライドするタブ（sliding tab indicator）」にしてください。タブは role="tablist" の中に role="tab" の button を並べ、中身は role="tabpanel" にして aria-selected・aria-controls・aria-labelledby で結び付けます。下線は tablist の中に1本だけ置き、選んだタブの offsetLeft と offsetWidth に合わせて transform: translateX と width を{{dur:t}}かけて、緩急 {{ease}} で動かしてください。下線の太さは{{thick:t}}にします。左右の矢印キーで隣のタブへ（端では反対側へ回る）、Home と End で端のタブへ移り、選んでいないタブは tabindex="-1" にします。画面幅が変わったら下線を付け直し、動きを減らす設定の人には下線を動かさず切り替えてください。ライブラリは使わないこと。',
   howTo: [
     '下線はタブごとに付けるのではなく、タブの並び全体に1本だけ置きます。選んだタブの左端の位置（offsetLeft）と幅（offsetWidth）をJavaScriptで読み、下線の transform: translateX() と width に入れます。CSSの transition を付けておけば、値が変わるだけでなめらかにすべります。left ではなく transform で動かすのは、ブラウザが描き直す範囲が少なく、動きがカクつきにくいからです。',
     'タブには決まった書き方があります。role="tablist"・role="tab"・role="tabpanel" を付け、選んだタブに aria-selected="true" を付けると、読み上げソフトが「タブ、4個中1個目、選択済み」のように伝えてくれます。キーボードでは、Tabキーでタブの並びに入り、左右の矢印キーでタブを移る、というのが共通の約束です。',
@@ -73,11 +73,11 @@ export default {
   position: absolute;
   left: 0;
   bottom: -1px;
-  height: 3px;
+  height: {{thick}};
   background: #f06a35;
 }
 .tabs.is-ready .tab-bar {
-  transition: transform 0.25s ease-out, width 0.25s ease-out;
+  transition: transform {{dur}} {{ease}}, width {{dur}} {{ease}};
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -128,6 +128,22 @@ new ResizeObserver(() => {
   requestAnimationFrame(() => list.classList.add('is-ready'));
 }).observe(list);`,
     },
+  ],
+  tune: [
+    { key: 'dur', label: '下線がすべる速さ', min: 0.1, max: 0.8, step: 0.05, value: 0.25, unit: 's' },
+    {
+      key: 'ease',
+      type: 'select',
+      label: '動きの緩急',
+      value: 'ease-out',
+      options: [
+        { value: 'ease-out', label: '減速して止まる（ease-out）' },
+        { value: 'ease-in-out', label: 'ゆっくり出て、ゆっくり止まる（ease-in-out）' },
+        { value: 'linear', label: '等速（linear）' },
+        { value: 'cubic-bezier(0.34, 1.56, 0.64, 1)', label: '少し行き過ぎて戻る（弾む）' },
+      ],
+    },
+    { key: 'thick', label: '下線の太さ', min: 1, max: 6, step: 1, value: 3, unit: 'px' },
   ],
   cautions: [
     '下線の位置は文字の大きさや画面の幅で変わります。最初の表示・画面の回転・フォントの読み込み後に付け直さないと、下線がタブからずれます。ResizeObserver（要素の大きさの変化を教えてくれる仕組み）で見張ると確実です。',

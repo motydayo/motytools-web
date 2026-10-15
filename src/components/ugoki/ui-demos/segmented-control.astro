@@ -1,0 +1,216 @@
+---
+// UI部品の見本: セグメントコントロール
+// 本体は fieldset ＋ ラジオボタン。選んだ瞬間に同じグラフの「期間」が切り替わる（保存ボタンなし）。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Group = mini ? 'div' : 'fieldset';
+const Legend = mini ? 'p' : 'legend';
+const Opt = mini ? 'span' : 'label';
+const L = {
+  ja: {
+    name: 'セグメントコントロール',
+    nav: ['家計簿', 'レシート'],
+    label: 'SPENDING',
+    title: '支出のまとめ',
+    legend: '集計の期間',
+    opts: [
+      { v: 'week', t: '週', cap: '今週の支出', sum: '18,400円', bars: [['月', 21], ['火', 8], ['水', 34], ['木', 12], ['金', 26], ['土', 50], ['日', 33]] },
+      { v: 'month', t: '月', cap: '今月の支出', sum: '86,200円', bars: [['1週', 215], ['2週', 184], ['3週', 260], ['4週', 203]] },
+      { v: 'year', t: '年', cap: '今年の支出', sum: '1,024,000円', bars: [['1月', 92], ['2月', 78], ['3月', 101], ['4月', 88], ['5月', 84], ['6月', 79], ['7月', 95], ['8月', 112], ['9月', 81], ['10月', 86], ['11月', 60], ['12月', 68]] },
+    ],
+  },
+  en: {
+    name: 'Segmented control',
+    nav: ['Budget', 'Receipts'],
+    label: 'SPENDING',
+    title: 'Spending overview',
+    legend: 'Time range',
+    opts: [
+      { v: 'week', t: 'Week', cap: 'Spent this week', sum: '$142', bars: [['Mon', 21], ['Tue', 8], ['Wed', 34], ['Thu', 12], ['Fri', 26], ['Sat', 50], ['Sun', 33]] },
+      { v: 'month', t: 'Month', cap: 'Spent this month', sum: '$668', bars: [['Wk 1', 215], ['Wk 2', 184], ['Wk 3', 260], ['Wk 4', 203]] },
+      { v: 'year', t: 'Year', cap: 'Spent this year', sum: '$7,940', bars: [['Jan', 92], ['Feb', 78], ['Mar', 101], ['Apr', 88], ['May', 84], ['Jun', 79], ['Jul', 95], ['Aug', 112], ['Sep', 81], ['Oct', 86], ['Nov', 60], ['Dec', 68]] },
+    ],
+  },
+}[lang as 'ja' | 'en'];
+const first = L.opts[0];
+const top = Math.max(...first.bars.map((b) => Number(b[1])));
+const slots = Array.from({ length: 12 }, (_, i) => first.bars[i]);
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site sc-site" data-demo="segmented-control" data-opts={JSON.stringify(L.opts)}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec sc-sec">
+      <p class="ug-label">{L.label}</p>
+      <h3 class="ug-h">{L.title}</h3>
+
+      <!-- これが部品の本体: 横に並んだ選択肢から1つ。選んだ瞬間に下のグラフが切り替わる -->
+      <Group class="sc-group">
+        <Legend class="sc-legend">{L.legend}</Legend>
+        <div class="sc-seg" style={`--n: ${L.opts.length}; --i: 0`} data-sc-seg data-ug-focus={L.name} data-ug-focus-at="below">
+          <span class="sc-ind" aria-hidden="true"></span>
+          {L.opts.map((o, i) => (
+            <Opt class:list={['sc-opt', i === 0 && 'is-on']} data-sc-opt={i}>
+              {!mini && <input type="radio" class="sc-radio" name="sc-period" value={o.v} checked={i === 0} />}
+              <span class="sc-text">{o.t}</span>
+            </Opt>
+          ))}
+        </div>
+      </Group>
+
+      <p class="sc-total" aria-live="polite">
+        <span data-sc-cap>{first.cap}</span>
+        <strong data-sc-sum>{first.sum}</strong>
+      </p>
+      <div class="sc-chart" aria-hidden="true">
+        {slots.map((b) => (
+          <span class="sc-bar" hidden={!b} data-sc-bar>
+            <i style={`height: ${b ? Math.round((Number(b[1]) / top) * 100) : 0}%`}></i>
+            <b>{b ? b[0] : ''}</b>
+          </span>
+        ))}
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .sc-site { min-height: 100%; }
+  .sc-group { margin: 8px 0 0; padding: 0; border: 0; min-width: 0; }
+  .sc-legend { display: block; margin: 0 0 4px; padding: 0; font-size: 11px; font-weight: 700; color: var(--ug-ink-2); }
+
+  /* 入れ物。角の丸み・高さ・速さはつまみ（--t-r・--t-h・--t-dur）から */
+  .sc-seg {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    max-width: 320px;
+    padding: 3px;
+    border-radius: var(--t-r);
+    background: #ecebe6;
+  }
+  /* 選ばれている印（白い板）。選択肢の幅ぶんずつ横へすべる */
+  .sc-ind {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc((100% - 6px) / var(--n));
+    border-radius: max(0px, calc(var(--t-r) - 3px));
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(20, 24, 40, 0.18);
+    transform: translateX(calc(100% * var(--i)));
+    transition: transform var(--t-dur) ease-out;
+  }
+  .sc-opt {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: var(--t-h);
+    border-radius: max(0px, calc(var(--t-r) - 3px));
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ug-ink-2);
+    cursor: pointer;
+    transition: color var(--t-dur) ease-out;
+  }
+  .sc-opt.is-on { color: var(--ug-ink); }
+  .sc-opt:hover:not(.is-on), .sc-opt.is-hover:not(.is-on) { color: var(--ug-ink); }
+  /* 本物のラジオボタンは見えなくするだけ（キーボード・読み上げはそのまま効く） */
+  .sc-radio { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+  .sc-opt:has(.sc-radio:focus-visible) { outline: 3px solid var(--ug-blue); outline-offset: 1px; }
+  .sc-text { position: relative; }
+
+  .sc-total { display: flex; align-items: baseline; gap: 8px; margin-top: 16px; font-size: 12px; color: var(--ug-ink-2); }
+  .sc-total strong { font-size: 20px; font-weight: 800; color: var(--ug-ink); font-variant-numeric: tabular-nums; }
+  .sc-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 150px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-bottom: 1px solid var(--ug-line);
+  }
+  .sc-bar { flex: 1; display: grid; grid-template-rows: 1fr auto; align-items: end; height: 100%; min-width: 0; }
+  .sc-bar[hidden] { display: none; }
+  .sc-bar i {
+    display: block;
+    border-radius: 4px 4px 0 0;
+    background: var(--ug-blue);
+    transition: height 0.3s ease-out;
+  }
+  .sc-bar b { padding-top: 4px; font-size: 10px; font-weight: 500; color: var(--ug-ink-2); text-align: center; white-space: nowrap; overflow: hidden; }
+
+  @container (max-width: 340px) {
+    .sc-sec .ug-label { display: none; }
+    .sc-chart { gap: 3px; }
+    .sc-bar b { font-size: 8px; }
+  }
+  :global(.ug-frame.is-mini) .sc-total { margin-top: 8px; }
+  :global(.ug-frame.is-mini) .sc-chart { height: 72px; }
+  @media (prefers-reduced-motion: reduce) {
+    .sc-ind, .sc-opt, .sc-bar i { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  type Opt = { v: string; t: string; cap: string; sum: string; bars: [string, number][] };
+
+  document.querySelectorAll<HTMLElement>('[data-demo="segmented-control"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const opts: Opt[] = JSON.parse(root.dataset.opts ?? '[]');
+    const seg = root.querySelector<HTMLElement>('[data-sc-seg]')!;
+    const items = [...root.querySelectorAll<HTMLElement>('[data-sc-opt]')];
+    const bars = [...root.querySelectorAll<HTMLElement>('[data-sc-bar]')];
+    const cap = root.querySelector<HTMLElement>('[data-sc-cap]')!;
+    const sum = root.querySelector<HTMLElement>('[data-sc-sum]')!;
+    // 同じページに見本が複数あるので、ラジオの組の名前を見本ごとに分ける
+    const name = `sc-${Math.random().toString(36).slice(2, 8)}`;
+    root.querySelectorAll<HTMLInputElement>('.sc-radio').forEach((r) => (r.name = name));
+
+    const select = (i: number) => {
+      const o = opts[i];
+      seg.style.setProperty('--i', String(i));
+      items.forEach((el, k) => {
+        el.classList.toggle('is-on', k === i);
+        const r = el.querySelector<HTMLInputElement>('.sc-radio');
+        if (r) r.checked = k === i;
+      });
+      // 同じグラフのまま、期間だけを切り替える
+      const top = Math.max(...o.bars.map((b) => b[1]));
+      bars.forEach((bar, k) => {
+        const b = o.bars[k];
+        bar.hidden = !b;
+        if (!b) return;
+        bar.querySelector('i')!.style.height = `${Math.round((b[1] / top) * 100)}%`;
+        bar.querySelector('b')!.textContent = b[0];
+      });
+      cap.textContent = o.cap;
+      sum.textContent = o.sum;
+    };
+
+    items.forEach((el, i) => {
+      el.querySelector<HTMLInputElement>('.sc-radio')?.addEventListener('change', () => select(i));
+      el.addEventListener('ug:click', () => select(i));
+    });
+    view.addEventListener('ug:reset', () => select(0));
+
+    onTour(root, async (t) => {
+      select(0);
+      await t.move({ x: t.view.clientWidth * 0.6, y: t.view.clientHeight * 0.9 }, 10);
+      await t.sleep(500);
+      for (const i of [1, 2, 0]) {
+        await t.move(items[i], 650);
+        t.hover(items[i]);
+        await t.sleep(200);
+        await t.click(items[i]);
+        t.hover(null);
+        await t.sleep(1500);
+      }
+    });
+  });
+</script>

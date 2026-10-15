@@ -1,30 +1,27 @@
-// 動きの図鑑のOG画像（1200x630 PNG）を src/data/ugoki/entries/ から一括生成して public/og/ugoki/ に置く。
+// 図鑑のOG画像（1200x630 PNG）を4冊（動き・UI部品 × 日英）ぶん一括生成する。
+// 出力: public/og/ugoki/・ugoki-en/・ui/・ui-en/ の <slug>.png と index.png
 // 実行: node scripts/gen-og-ugoki.mjs （出力はコミットする）
 import sharp from 'sharp';
 import { mkdir, readdir, readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const entriesDir = path.join(root, 'src', 'data', 'ugoki', 'entries');
-const outDir = path.join(root, 'public', 'og', 'ugoki');
-await mkdir(outDir, { recursive: true });
+const BOOKS = [
+  { dir: 'src/data/ugoki/entries', out: 'ugoki', lang: 'ja', label: '動きの図鑑', index: { name: 'Webの動きの図鑑', en: 'motion patterns for websites', one: '動く見本と名前・作り方・AIへの頼み方' } },
+  { dir: 'src/data/ugoki/entries-en', out: 'ugoki-en', lang: 'en', label: 'Web Motion Library', index: { name: 'Web Motion Library', en: 'animation effects, named', one: 'Live demos, tweakable code and AI prompts' } },
+  { dir: 'src/data/ui/entries', out: 'ui', lang: 'ja', label: 'UI部品の図鑑', index: { name: 'UI部品の図鑑', en: 'UI components, named', one: '触れる見本と名前・使い分け・作り方' } },
+  { dir: 'src/data/ui/entries-en', out: 'ui-en', lang: 'en', label: 'UI Component Library', index: { name: 'UI Component Library', en: 'UI components, named', one: 'Hands-on demos, code and AI prompts' } },
+];
 
 const pick = (src, key) => {
-  const m = src.match(new RegExp(`\\b${key}:\\s*(?:'([^']*)'|(\\d+))`));
+  const m = src.match(new RegExp(`\\n  ${key}:\\s*(?:'([^']*)'|(\\d+))`));
   return m ? (m[1] ?? m[2]) : '';
 };
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-const entries = [];
-for (const f of await readdir(entriesDir)) {
-  if (!f.endsWith('.ts')) continue;
-  const src = await readFile(path.join(entriesDir, f), 'utf8');
-  entries.push({ slug: pick(src, 'slug'), no: Number(pick(src, 'no')), name: pick(src, 'name'), en: pick(src, 'en'), one: pick(src, 'oneLine') });
-}
-if (entries.length === 0) throw new Error('entries が見つかりません');
-
-// 図鑑の見本と同じ「ブラウザの枠＋山の絵」を右側に置く
+// 見本と同じ「ブラウザの枠＋山の絵」を右側に置く
 const frame = `
   <g transform="translate(700 150)">
     <rect width="420" height="330" rx="22" fill="#ffffff" stroke="#e4e2dc" stroke-width="2"/>
@@ -40,33 +37,54 @@ const frame = `
     <rect x="20" y="58" width="380" height="198" rx="14" fill="none" stroke="#4f73d9" stroke-width="3" stroke-dasharray="10 8"/>
   </g>`;
 
-// 一言を24字ずつ2行まで（句読点の直後で切れるならそこで切る）
-function lines(t) {
+// 一言を2行まで（日本語は24字、英語は42字で区切る）
+function lines(t, lang) {
   if (!t) return [];
-  if (t.length <= 24) return [t];
-  let cut = 24;
-  for (let i = 24; i >= 14; i--) if ('、。'.includes(t[i - 1])) { cut = i; break; }
-  const rest = t.slice(cut);
-  return [t.slice(0, cut), rest.length > 24 ? rest.slice(0, 23) + '…' : rest];
+  const max = lang === 'ja' ? 24 : 42;
+  if (t.length <= max) return [t];
+  let cut = max;
+  if (lang === 'ja') {
+    for (let i = max; i >= 14; i--) if ('、。'.includes(t[i - 1])) { cut = i; break; }
+  } else {
+    cut = t.lastIndexOf(' ', max);
+    if (cut < 20) cut = max;
+  }
+  const rest = t.slice(cut).trim();
+  return [t.slice(0, cut).trim(), rest.length > max ? rest.slice(0, max - 1) + '…' : rest];
 }
 
-function svg({ no, name, en, one }) {
-  const size = name.length > 11 ? 54 : name.length > 8 ? 62 : 72;
+function svg({ no, name, en, one }, b) {
+  // 右の絵（x=700〜）に重ならない大きさ。1文字の幅の目安は日本語=文字の大きさ、英語=その0.6倍
+  const perChar = b.lang === 'ja' ? 1 : 0.6;
+  const size = Math.min(72, Math.floor(590 / (name.length * perChar)));
+  const font = b.lang === 'ja' ? 'Hiragino Sans, sans-serif' : 'Inter, Helvetica, sans-serif';
   return `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
   <rect width="1200" height="630" fill="#f7f6f2"/>
   ${frame}
-  <text x="80" y="150" font-family="Inter, Hiragino Sans, sans-serif" font-size="30" font-weight="800" fill="#4f46e5">${no ? `No.${String(no).padStart(2, '0')}  ` : ''}<tspan fill="#5d6272" font-weight="600">動きの図鑑</tspan></text>
-  <text x="80" y="270" font-family="Hiragino Sans, sans-serif" font-size="${size}" font-weight="800" fill="#1f2433">${esc(name)}</text>
+  <text x="80" y="150" font-family="Inter, Hiragino Sans, sans-serif" font-size="30" font-weight="800" fill="#4f46e5">${no ? `No.${String(no).padStart(2, '0')}  ` : ''}<tspan fill="#5d6272" font-weight="600">${esc(b.label)}</tspan></text>
+  <text x="80" y="270" font-family="${font}" font-size="${size}" font-weight="800" fill="#1f2433">${esc(name)}</text>
   <text x="80" y="330" font-family="Inter, Hiragino Sans, sans-serif" font-size="30" font-weight="600" fill="#8a877f">${esc(en)}</text>
-  ${lines(one).map((l, i) => `<text x="80" y="${410 + i * 38}" font-family="Hiragino Sans, sans-serif" font-size="24" fill="#5d6272">${esc(l)}</text>`).join('')}
+  ${lines(one, b.lang).map((l, i) => `<text x="80" y="${410 + i * 38}" font-family="${font}" font-size="24" fill="#5d6272">${esc(l)}</text>`).join('')}
   <text x="80" y="550" font-family="Inter, Hiragino Sans, sans-serif" font-size="32" font-weight="700" fill="#1f2433">motytools<tspan fill="#8a877f">.com</tspan></text>
 </svg>`;
 }
 
-for (const e of entries) {
-  await sharp(Buffer.from(svg(e))).png().toFile(path.join(outDir, `${e.slug}.png`));
+let count = 0;
+for (const b of BOOKS) {
+  const dir = path.join(root, b.dir);
+  if (!existsSync(dir)) continue;
+  const outDir = path.join(root, 'public', 'og', b.out);
+  await mkdir(outDir, { recursive: true });
+  const files = (await readdir(dir)).filter((f) => f.endsWith('.ts'));
+  if (files.length === 0) continue;
+  for (const f of files) {
+    const src = await readFile(path.join(dir, f), 'utf8');
+    const e = { slug: pick(src, 'slug'), no: Number(pick(src, 'no')), name: pick(src, 'name'), en: pick(src, 'en'), one: pick(src, 'oneLine') };
+    await sharp(Buffer.from(svg(e, b))).png().toFile(path.join(outDir, `${e.slug}.png`));
+    count++;
+  }
+  const idx = { no: 0, ...b.index, en: b.index.en.includes(' ') && b.lang === 'en' ? `${files.length} ${b.index.en}` : `${files.length} ${b.index.en}` };
+  await sharp(Buffer.from(svg(idx, b))).png().toFile(path.join(outDir, 'index.png'));
+  count++;
 }
-await sharp(Buffer.from(svg({ no: 0, name: 'Webの動きの図鑑', en: `${entries.length} motion patterns for websites`, one: '動く見本と名前・作り方・AIへの頼み方' })))
-  .png()
-  .toFile(path.join(outDir, 'index.png'));
-console.log(`OG画像 ${entries.length + 1} 枚を public/og/ugoki/ に書き出しました`);
+console.log(`OG画像 ${count} 枚を書き出しました`);

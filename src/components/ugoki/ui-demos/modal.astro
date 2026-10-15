@@ -174,12 +174,13 @@ const L = {
     root.querySelector('[data-md-h]')!.id = hid;
     dialog.setAttribute('aria-labelledby', hid);
 
-    const open = () => {
+    const open = (real = true) => {
       backdrop.classList.remove('is-closing');
       backdrop.hidden = false;
       toast.hidden = true;
       page.setAttribute('inert', '');
-      if (!mini) {
+      // 焦点を動かすのは本物の操作のときだけ（自動再生でページの焦点を奪わない）
+      if (!mini && real) {
         lastFocus = document.activeElement as HTMLElement;
         dialog.querySelector<HTMLElement>('[data-md-close]')?.focus({ preventScroll: true });
       }
@@ -196,8 +197,8 @@ const L = {
       }, dur() * 0.7);
     };
 
-    openBtn.addEventListener('click', open);
-    openBtn.addEventListener('ug:click', open);
+    openBtn.addEventListener('click', () => open(true));
+    openBtn.addEventListener('ug:click', () => open(false));
     okBtn.addEventListener('click', () => close(true));
     okBtn.addEventListener('ug:click', () => close(true));
     root.querySelectorAll<HTMLElement>('[data-md-close]').forEach((b) => {

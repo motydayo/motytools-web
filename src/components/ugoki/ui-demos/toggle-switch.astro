@@ -1,0 +1,260 @@
+---
+// UI部品の見本: トグルスイッチ
+// 本体は <input type="checkbox" role="switch">。切り替えた瞬間に反映（保存ボタンなし）。
+// 下にチェックボックス＋送信ボタンの欄を置き、「押すまで反映されない」との違いを比べられるようにする。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Lb = mini ? 'div' : 'label';
+const Sw = mini ? 'span' : 'input';
+const Btn = mini ? 'span' : 'button';
+const L = {
+  ja: {
+    name: 'トグルスイッチ',
+    nav: ['予約', 'マイページ'],
+    label: 'SETTINGS',
+    title: '通知の設定',
+    lead: '切り替えるとすぐに反映されます。',
+    rows: [
+      { name: '新着メッセージ', desc: '宿からの返信をお知らせ', on: true },
+      { name: 'セールのお知らせ', desc: '週1回まで', on: true },
+      { name: '夜間も通知する', desc: '22時〜翌8時', on: false },
+    ],
+    on: 'オン',
+    off: 'オフ',
+    saved: '「{n}」を{s}にしました',
+    cmpLabel: 'くらべてみる',
+    cmpTitle: 'チェックボックスは「送信」で反映',
+    cmpBox: '返信をメールでも受け取る',
+    cmpSend: '送信する',
+    cmpYes: '送信しました（メールでも受け取る）',
+    cmpNo: '送信しました（メールでは受け取らない）',
+  },
+  en: {
+    name: 'Toggle switch',
+    nav: ['Trips', 'Account'],
+    label: 'SETTINGS',
+    title: 'Notifications',
+    lead: 'Changes take effect right away.',
+    rows: [
+      { name: 'New messages', desc: 'When a host replies', on: true },
+      { name: 'Deals and offers', desc: 'Once a week at most', on: true },
+      { name: 'Notify at night', desc: '10 PM – 8 AM', on: false },
+    ],
+    on: 'on',
+    off: 'off',
+    saved: '{n} turned {s}',
+    cmpLabel: 'COMPARE',
+    cmpTitle: 'A checkbox waits for Submit',
+    cmpBox: 'Also email me the reply',
+    cmpSend: 'Submit',
+    cmpYes: 'Sent (email copy: yes)',
+    cmpNo: 'Sent (email copy: no)',
+  },
+}[lang as 'ja' | 'en'];
+const sw = (on: boolean) =>
+  mini ? { class: on ? 'ts-switch is-on' : 'ts-switch', 'aria-hidden': 'true' } : { class: 'ts-switch', type: 'checkbox', role: 'switch', checked: on };
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site ts-site" data-demo="toggle-switch" data-on={L.on} data-off={L.off} data-saved={L.saved} data-yes={L.cmpYes} data-no={L.cmpNo}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec ts-sec">
+      <p class="ug-label">{L.label}</p>
+      <h3 class="ug-h">{L.title}</h3>
+      <p class="ts-lead">{L.lead}</p>
+      <!-- これが部品の本体: 押した瞬間にオン・オフが切り替わり、そのまま保存される -->
+      <ul class="ts-list" data-ug-focus={L.name} data-ug-focus-at="below">
+        {L.rows.map((r) => (
+          <li>
+            <Lb class="ts-row" data-ts-row data-name={r.name}>
+              <span class="ts-text">
+                <span class="ts-name">{r.name}</span>
+                <span class="ts-desc">{r.desc}</span>
+              </span>
+              <Sw {...sw(r.on)} data-ts-switch data-init={r.on ? '1' : '0'} />
+            </Lb>
+          </li>
+        ))}
+      </ul>
+      <p class="ts-status" role="status" data-ts-status></p>
+    </section>
+
+    <section class="ug-sec ts-cmp">
+      <p class="ug-label">{L.cmpLabel}</p>
+      <p class="ts-cmp-h">{L.cmpTitle}</p>
+      <div class="ts-cmp-row">
+        <Lb class="ts-check">
+          {mini ? <span class="ts-box" aria-hidden="true"></span> : <input type="checkbox" class="ts-box" data-ts-box />}
+          <span>{L.cmpBox}</span>
+        </Lb>
+        <Btn class="ts-send" {...(mini ? {} : { type: 'button' })} data-ts-send>{L.cmpSend}</Btn>
+      </div>
+      <p class="ts-cmp-done" role="status" data-ts-done></p>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .ts-site { min-height: 100%; background: var(--ug-bg); }
+  .ts-sec { background: #fff; }
+  .ts-lead { font-size: 12px; color: var(--ug-ink-2); }
+  .ts-list { position: relative; list-style: none; margin: 8px 0 0; padding: 0; }
+  .ts-list li + li { border-top: 1px solid var(--ug-line); }
+  .ts-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 56px;
+    padding: 8px 4px;
+    cursor: pointer;
+  }
+  .ts-text { display: grid; line-height: 1.4; }
+  .ts-name { font-size: 14px; font-weight: 700; }
+  .ts-desc { font-size: 11px; color: var(--ug-ink-2); }
+
+  /* スイッチの本体。幅・速さ・オンの色はつまみ（--t-w・--t-dur・--t-on）から */
+  .ts-switch {
+    --h: calc(var(--t-w) * 0.6);
+    position: relative;
+    flex: none;
+    display: inline-block;
+    width: var(--t-w);
+    height: var(--h);
+    margin: 0;
+    border-radius: 999px;
+    background: #c9c7c0;
+    appearance: none;
+    cursor: pointer;
+    transition: background-color var(--t-dur) ease-out;
+  }
+  .ts-switch::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: calc(var(--h) - 6px);
+    height: calc(var(--h) - 6px);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(20, 24, 40, 0.3);
+    transition: transform var(--t-dur) ease-out;
+  }
+  .ts-switch:checked, .ts-switch.is-on { background: var(--t-on); }
+  .ts-switch:checked::before, .ts-switch.is-on::before { transform: translateX(calc(var(--t-w) - var(--h))); }
+  .ts-switch:focus-visible { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+  .ts-row:hover .ts-switch, .ts-row.is-hover .ts-switch { filter: brightness(0.95); }
+
+  .ts-status { min-height: 20px; margin-top: 4px; font-size: 12px; font-weight: 700; color: #1f7a4d; }
+
+  .ts-cmp { background: var(--ug-bg); }
+  .ts-cmp-h { font-size: 13px; font-weight: 800; }
+  .ts-cmp-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-top: 8px; }
+  .ts-check { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 13px; cursor: pointer; }
+  .ts-box {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    border: 2px solid #8a877f;
+    border-radius: 4px;
+    background: #fff;
+    accent-color: var(--ug-blue);
+  }
+  input.ts-box { border: 0; }
+  .ts-send {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid var(--ug-line);
+    border-radius: 999px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ug-ink);
+    cursor: pointer;
+  }
+  .ts-send:hover, .ts-send.is-hover { background: var(--ug-paper); filter: brightness(0.97); }
+  .ts-cmp-done { min-height: 18px; font-size: 12px; color: var(--ug-ink-2); }
+
+  @container (max-width: 340px) {
+    .ts-lead { display: none; }
+    .ts-row { min-height: 48px; padding: 4px 0; }
+    .ts-desc { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ts-switch, .ts-switch::before { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="toggle-switch"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const rows = [...root.querySelectorAll<HTMLElement>('[data-ts-row]')];
+    const status = root.querySelector<HTMLElement>('[data-ts-status]')!;
+    const box = root.querySelector<HTMLInputElement>('[data-ts-box]');
+    const send = root.querySelector<HTMLElement>('[data-ts-send]')!;
+    const done = root.querySelector<HTMLElement>('[data-ts-done]')!;
+    const tpl = (n: string, s: string) => (root.dataset.saved ?? '').replace('{n}', n).replace('{s}', s);
+
+    const isOn = (sw: HTMLElement) => (sw instanceof HTMLInputElement ? sw.checked : sw.classList.contains('is-on'));
+    const setOn = (sw: HTMLElement, on: boolean) => {
+      if (sw instanceof HTMLInputElement) sw.checked = on;
+      else sw.classList.toggle('is-on', on);
+    };
+    // 切り替わった瞬間に保存して、結果を知らせる（ここでは表示だけ）
+    const report = (row: HTMLElement) => {
+      const sw = row.querySelector<HTMLElement>('[data-ts-switch]')!;
+      status.textContent = tpl(row.dataset.name ?? '', isOn(sw) ? root.dataset.on! : root.dataset.off!);
+    };
+
+    rows.forEach((row) => {
+      const sw = row.querySelector<HTMLElement>('[data-ts-switch]')!;
+      sw.addEventListener('change', () => report(row));
+      row.addEventListener('ug:click', () => {
+        setOn(sw, !isOn(sw));
+        report(row);
+      });
+    });
+
+    // くらべる欄: チェックボックスは「送信する」を押すまで何も起きない
+    const sendNow = () => {
+      done.textContent = (box?.checked ? root.dataset.yes : root.dataset.no) ?? '';
+    };
+    send.addEventListener('click', sendNow);
+    send.addEventListener('ug:click', sendNow);
+    box?.addEventListener('change', () => (done.textContent = ''));
+
+    const reset = () => {
+      rows.forEach((row) => {
+        const sw = row.querySelector<HTMLElement>('[data-ts-switch]')!;
+        setOn(sw, sw.dataset.init === '1');
+      });
+      status.textContent = '';
+      done.textContent = '';
+      if (box) box.checked = false;
+    };
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.9 }, 10);
+      await t.sleep(500);
+      for (const i of [1, 2, 1]) {
+        const sw = rows[i].querySelector<HTMLElement>('[data-ts-switch]')!;
+        await t.move(sw, 700);
+        t.hover(rows[i]);
+        await t.sleep(250);
+        await t.click(rows[i]);
+        t.hover(null);
+        await t.sleep(1300);
+      }
+      await t.sleep(600);
+    });
+  });
+</script>

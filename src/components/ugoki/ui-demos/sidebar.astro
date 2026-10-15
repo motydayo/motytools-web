@@ -1,0 +1,251 @@
+---
+// UI部品の見本: サイドバー（サイドナビゲーション）
+// 管理画面の左に、いつも見えている縦のメニュー。今のページは aria-current="page"。
+// 上のボタンでアイコンだけの細い帯（レール）に畳める。狭い枠では最初から畳み、開くと中身の上に重ねる。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const A = mini ? 'span' : 'a';
+const L = {
+  ja: {
+    name: 'サイドバー',
+    aria: '管理メニュー',
+    brand: '山の宿 管理',
+    collapse: 'メニューを畳む',
+    expand: 'メニューを広げる',
+    items: ['ダッシュボード', '予約', 'お客さま', '売上', '設定'],
+    stats: [['今日のチェックイン', '12組'], ['今月の売上', '1,284,000円'], ['空室', '5室']],
+    user: '佐藤 みのり',
+  },
+  en: {
+    name: 'Sidebar',
+    aria: 'Admin',
+    brand: 'Lodge Admin',
+    collapse: 'Collapse sidebar',
+    expand: 'Expand sidebar',
+    items: ['Dashboard', 'Bookings', 'Guests', 'Revenue', 'Settings'],
+    stats: [['Check-ins today', '12'], ['Revenue this month', '$48,210'], ['Rooms free', '5']],
+    user: 'Jamie Parker',
+  },
+}[lang as 'ja' | 'en'];
+const icons = [
+  '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+  '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-5.5 6.5-5.5s6.5 1.9 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2.1.6 3.5 2.3 3.5 5.2"/>',
+  '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site sb-site" data-demo="sidebar" data-collapse={L.collapse} data-expand={L.expand}>
+    <!-- これが部品の本体: 画面の左にいつも出ている縦のメニュー -->
+    <aside class="sb-side" data-sb-side data-ug-focus={L.name}>
+      <div class="sb-inner">
+      <div class="sb-top">
+        <Btn class="sb-toggle" {...btn} aria-expanded="true" aria-label={L.collapse} data-sb-toggle>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" /></svg>
+        </Btn>
+        <span class="sb-brand sb-label">{L.brand}</span>
+      </div>
+      <nav class="sb-nav" aria-label={L.aria} data-sb-nav>
+        <ul class="sb-list">
+          {L.items.map((it, i) => (
+            <li>
+              <A class="sb-link" href={mini ? undefined : '#'} data-sb-link={i} aria-current={i === 0 ? 'page' : undefined} title={it}>
+                <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[i]} />
+                <span class="sb-label">{it}</span>
+              </A>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div class="sb-user"><span class="sb-avatar" aria-hidden="true"></span><span class="sb-label">{L.user}</span></div>
+      </div>
+    </aside>
+    <div class="sb-scrim" data-sb-scrim aria-hidden="true"></div>
+
+    <div class="sb-main">
+      <h3 class="sb-h" data-sb-h>{L.items[0]}</h3>
+      <div class="sb-stats">
+        {L.stats.map(([k, v]) => <div class="sb-stat"><small>{k}</small><b>{v}</b></div>)}
+      </div>
+      <div class="sb-table">
+        <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  /* 幅・畳んだときの幅・開閉の速さはつまみ（--t-width・--t-rail・--t-dur）から */
+  .sb-site { position: relative; height: 100%; overflow: hidden; background: var(--ug-bg); }
+  .sb-side {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 6;
+    width: var(--t-width);
+    background: var(--ug-navy);
+    color: #dfe4f3;
+    transition: width var(--t-dur) ease-out, box-shadow var(--t-dur) ease-out;
+  }
+  /* はみ出した文字は内側の箱で隠す（外側で隠すと見どころの名札まで切れる） */
+  .sb-inner { display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 8px; overflow: hidden; }
+  /* 見どころの名札はサイドバーの右下の外に出す */
+  :global(.show-focus) .sb-side[data-ug-focus]::after { top: auto; bottom: 12px; right: auto; left: calc(100% + 8px); }
+  .is-collapsed .sb-side { width: var(--t-rail); }
+  .sb-top { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+  .sb-toggle {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    margin-left: calc((var(--t-rail) - 16px - 44px) / 2);
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  .sb-toggle:hover, .sb-toggle.is-hover { background: rgba(255, 255, 255, 0.1); }
+  .sb-toggle:focus-visible, .sb-link:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
+  .sb-brand { font-size: 13px; font-weight: 800; color: #fff; }
+  /* 畳んでも文字は消さずに透明にするだけ（読み上げでは名前が伝わる） */
+  .sb-label { white-space: nowrap; transition: opacity var(--t-dur) ease-out; }
+  .is-collapsed .sb-label { opacity: 0; }
+  .sb-list { list-style: none; display: grid; gap: 4px; }
+  .sb-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 0 calc((var(--t-rail) - 16px - 20px) / 2);
+    border-radius: 10px;
+    color: #c4cbe3 !important;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out;
+  }
+  .sb-icon { flex: none; width: 20px; height: 20px; }
+  .sb-link:hover, .sb-link.is-hover { background: rgba(255, 255, 255, 0.08); color: #fff !important; }
+  /* 今のページ: 地の色を変え、左に印を付ける */
+  .sb-link[aria-current='page'] { background: rgba(255, 255, 255, 0.14); color: #fff !important; box-shadow: inset 3px 0 0 var(--ug-orange); }
+  .sb-user { display: flex; align-items: center; gap: 12px; margin-top: auto; min-height: 44px; padding: 0 calc((var(--t-rail) - 16px - 28px) / 2); font-size: 12px; }
+  .sb-avatar { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--ug-sky); }
+
+  .sb-main {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    height: 100%;
+    padding: 16px 16px 16px calc(var(--t-width) + 16px);
+    transition: padding-left var(--t-dur) ease-out;
+  }
+  .is-collapsed .sb-main { padding-left: calc(var(--t-rail) + 16px); }
+  .sb-h { font-size: 18px; font-weight: 800; }
+  .sb-h.is-in { animation: sb-in 0.2s ease-out; }
+  @keyframes sb-in { from { opacity: 0; transform: translateY(4px); } }
+  .sb-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+  .sb-stat { display: grid; gap: 2px; padding: 12px; border: 1px solid var(--ug-line); border-radius: 10px; background: #fff; }
+  .sb-stat small { font-size: 11px; color: var(--ug-ink-2); }
+  .sb-stat b { font-size: 16px; font-variant-numeric: tabular-nums; }
+  .sb-table { padding: 16px; border: 1px solid var(--ug-line); border-radius: 10px; background: #fff; }
+  .sb-scrim { position: absolute; inset: 0; z-index: 5; background: rgba(20, 24, 40, 0.3); opacity: 0; pointer-events: none; transition: opacity var(--t-dur) ease-out; }
+
+  /* 狭い枠: 中身の左は常に細い帯の分だけ空け、広げたサイドバーは中身の上に重ねる */
+  @container (max-width: 560px) {
+    .sb-main, .is-collapsed .sb-main { padding-left: calc(var(--t-rail) + 12px); padding-right: 12px; }
+    .sb-site:not(.is-collapsed) .sb-side { box-shadow: 8px 0 24px -8px rgba(20, 24, 40, 0.5); }
+    .sb-site:not(.is-collapsed) .sb-scrim { opacity: 1; pointer-events: auto; }
+    .sb-stats { grid-template-columns: 1fr; }
+    .sb-stat:nth-child(3) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sb-side, .sb-label, .sb-main, .sb-scrim { transition: none; }
+    .sb-h.is-in { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="sidebar"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const toggle = root.querySelector<HTMLElement>('[data-sb-toggle]')!;
+    const nav = root.querySelector<HTMLElement>('[data-sb-nav]')!;
+    const links = [...root.querySelectorAll<HTMLElement>('[data-sb-link]')];
+    const heading = root.querySelector<HTMLElement>('[data-sb-h]')!;
+    const scrim = root.querySelector<HTMLElement>('[data-sb-scrim]')!;
+    const nid = `sb-nav-${Math.random().toString(36).slice(2, 8)}`;
+    nav.id = nid;
+    toggle.setAttribute('aria-controls', nid);
+    // 狭い枠では「重ねて出す」動きになる
+    const narrow = () => view.clientWidth <= 560;
+
+    const setCollapsed = (c: boolean) => {
+      root.classList.toggle('is-collapsed', c);
+      toggle.setAttribute('aria-expanded', String(!c));
+      toggle.setAttribute('aria-label', c ? root.dataset.expand! : root.dataset.collapse!);
+    };
+    const select = (i: number) => {
+      links.forEach((l, j) => (j === i ? l.setAttribute('aria-current', 'page') : l.removeAttribute('aria-current')));
+      heading.textContent = links[i].querySelector('.sb-label')!.textContent;
+      heading.classList.remove('is-in');
+      void heading.offsetWidth;
+      heading.classList.add('is-in');
+      // 重ねて出しているときは、選んだら畳む
+      if (narrow()) setCollapsed(true);
+    };
+
+    const toggleFn = () => setCollapsed(!root.classList.contains('is-collapsed'));
+    toggle.addEventListener('click', toggleFn);
+    toggle.addEventListener('ug:click', toggleFn);
+    links.forEach((l, i) => {
+      l.addEventListener('click', (e) => {
+        e.preventDefault();
+        select(i);
+      });
+      l.addEventListener('ug:click', () => select(i));
+    });
+    scrim.addEventListener('click', () => setCollapsed(true));
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && narrow() && !root.classList.contains('is-collapsed')) {
+        setCollapsed(true);
+        toggle.focus({ preventScroll: true });
+      }
+    });
+
+    const reset = () => {
+      links.forEach((l, j) => (j === 0 ? l.setAttribute('aria-current', 'page') : l.removeAttribute('aria-current')));
+      heading.textContent = links[0].querySelector('.sb-label')!.textContent;
+      setCollapsed(narrow());
+    };
+    view.addEventListener('ug:reset', reset);
+    reset();
+
+    onTour(root, async (t) => {
+      reset();
+      await t.move({ x: t.view.clientWidth * 0.7, y: t.view.clientHeight * 0.6 }, 10);
+      await t.sleep(800);
+      const press = async (el: HTMLElement, wait = 1300) => {
+        await t.move(el, 700);
+        t.hover(el);
+        await t.sleep(250);
+        await t.click(el);
+        t.hover(null);
+        await t.sleep(wait);
+      };
+      await press(links[1]);
+      await press(toggle, 1600);
+      if (narrow()) await press(links[3]);
+      else await press(toggle, 1300);
+      await press(links[0], 1500);
+    });
+  });
+</script>

@@ -1,24 +1,42 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 // 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
 const Btn = size === 'mini' ? 'span' : 'button';
 const btnType = size === 'mini' ? undefined : 'button';
-const slides = [
-  { tone: 'sunset', kicker: '海の宿 なぎさ', title: '波の音で目覚める朝', sub: '全室オーシャンビュー' },
-  { tone: 'day', kicker: 'ROOM', title: '海が見える和室', sub: '8畳＋広縁・2〜4名' },
-  { tone: 'night', kicker: 'DINNER', title: '地魚の炭火焼き', sub: '夕食は個室でゆっくり' },
-] as const;
+const tones = ['sunset', 'day', 'night'] as const;
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'スクロールスナップ', focus: '1画面ずつ止まる', brand: 'なぎさ',
+    slides: [
+      { kicker: '海の宿 なぎさ', title: '波の音で目覚める朝', sub: '全室オーシャンビュー' },
+      { kicker: 'ROOM', title: '海が見える和室', sub: '8畳＋広縁・2〜4名' },
+      { kicker: 'DINNER', title: '地魚の炭火焼き', sub: '夕食は個室でゆっくり' },
+    ],
+    price: '1泊2食 18,000円〜', cta: '空室を見る',
+  },
+  en: {
+    name: 'Scroll snap', focus: 'Snaps one screen at a time', brand: 'Nagisa',
+    slides: [
+      { kicker: 'NAGISA SEASIDE INN', title: 'Wake up to the waves', sub: 'Every room faces the ocean' },
+      { kicker: 'ROOMS', title: 'Ocean-view suites', sub: 'Sleeps 2–4 · Private balcony' },
+      { kicker: 'DINNER', title: 'Fresh catch, grilled', sub: 'Served in a private dining room' },
+    ],
+    price: 'From $160 / night, meals included', cta: 'Check dates',
+  },
+}[lang as 'ja' | 'en'];
+const slides = L.slides.map((s, i) => ({ ...s, tone: tones[i] }));
 const total = slides.length + 1;
 ---
 
-<UgFrame mode="scroll" size={size} label="スクロールスナップ">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site sn" data-demo="scroll-snap">
     {slides.map((s, i) => (
-      <section class="slide" data-ug-focus="1画面ずつ止まる">
+      <section class="slide" data-ug-focus={L.focus}>
         <Scene tone={s.tone} />
-        <span class="brand ug-logo">なぎさ</span>
+        <span class="brand ug-logo">{L.brand}</span>
         <div class="copy">
           <p class="count">{String(i + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</p>
           <p class="kicker">{s.kicker}</p>
@@ -30,13 +48,13 @@ const total = slides.length + 1;
         </ol>
       </section>
     ))}
-    <section class="slide last" data-ug-focus="1画面ずつ止まる">
-      <span class="brand ug-logo">なぎさ</span>
+    <section class="slide last" data-ug-focus={L.focus}>
+      <span class="brand ug-logo">{L.brand}</span>
       <div class="copy">
         <p class="count">{String(total).padStart(2, '0')} / {String(total).padStart(2, '0')}</p>
         <p class="kicker">RESERVE</p>
-        <h3 class="title">1泊2食 18,000円〜</h3>
-        <Btn type={btnType} class="ug-btn-site cta">空室を見る</Btn>
+        <h3 class="title">{L.price}</h3>
+        <Btn type={btnType} class="ug-btn-site cta">{L.cta}</Btn>
       </div>
       <ol class="dots" aria-hidden="true">
         {Array.from({ length: total }, (_, j) => <li class:list={{ 'is-on': j === total - 1 }}></li>)}
@@ -46,23 +64,24 @@ const total = slides.length + 1;
 </UgFrame>
 
 <style>
-  /* これが演出の本体（1）: スクロールする箱に「縦方向で必ず止まる」を指定
+  /* これが演出の本体（1）: スクロールする箱に「縦方向で止まる」を指定。強さはつまみ（--t-snap）
      （見本では枠の中の箱。本番のページなら html に付ける） */
   :global(.ug-view:has(.sn)) {
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: y var(--t-snap, mandatory);
   }
-  /* 自動再生で動かしている間だけ外す（途中の位置に吸い付かないように） */
-  :global(.ug-view.is-programmatic:has(.sn)) {
+  /* 自動再生の間は外し、台本の側で吸い付きを再現する（途中の位置に勝手に吸い付かないように） */
+  :global(.ug-view.is-programmatic:has(.sn)),
+  :global(.is-touring .ug-view:has(.sn)) {
     scroll-snap-type: none;
   }
   .slide {
     position: relative;
-    height: var(--vh, 420px);
+    height: var(--slide-h, 420px);
     overflow: hidden;
     display: flex;
     align-items: flex-end;
-    /* これが演出の本体（2）: 各画面の上端で止まる。止まる途中で飛ばさない */
-    scroll-snap-align: start;
+    /* これが演出の本体（2）: 各画面の上端（か真ん中）で止まる。止まる途中で飛ばさない */
+    scroll-snap-align: var(--t-align, start);
     scroll-snap-stop: always;
     background: var(--ug-navy);
     color: #fff;
@@ -124,26 +143,55 @@ const total = slides.length + 1;
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, onTune, tuneNum, tuneStr } from '../../../lib/ugoki/runtime';
 
   document.querySelectorAll<HTMLElement>('[data-demo="scroll-snap"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
     if (!view) return;
-    // 1画面の高さ＝枠の高さ
-    const fit = () => root.style.setProperty('--vh', `${view.clientHeight}px`);
+    const slides = [...root.querySelectorAll<HTMLElement>('.slide')];
+    // 1枚の高さ＝枠の高さ×つまみの割合
+    const fit = () => {
+      const pct = tuneNum(root, 'size', 100);
+      root.style.setProperty('--slide-h', `${Math.round((view.clientHeight * pct) / 100)}px`);
+    };
     new ResizeObserver(fit).observe(view);
+    onTune(view, fit);
     fit();
 
-    // 自動再生: 少し送って指を離す → ピタッと次の画面に止まる、を繰り返す
+    // 各スライドで止まる位置（scroll-snap-align が start なら上端、center なら真ん中）
+    const stops = () => {
+      const h = view.clientHeight;
+      const max = view.scrollHeight - h;
+      const center = tuneStr(root, 'align', 'start') === 'center';
+      const base = view.getBoundingClientRect().top - view.scrollTop;
+      const list = slides.map((s) => {
+        const r = s.getBoundingClientRect();
+        const top = r.top - base;
+        return Math.max(0, Math.min(max, center ? top + r.height / 2 - h / 2 : top));
+      });
+      return list.filter((y, i) => i === 0 || Math.abs(y - list[i - 1]) > 2);
+    };
+
+    // 自動再生: 少し送って指を離す → 吸い付く、を繰り返す。
+    // 吸い付きの強さ（mandatory / proximity）による違いも、台本で同じように再現する
     onTour(root, async (t) => {
       t.showCursor(false);
-      const n = root.querySelectorAll('.slide').length;
       const h = t.view.clientHeight;
-      if (t.view.scrollTop > 0) await t.scrollTo(0, 500);
+      const ys = stops();
+      if (Math.abs(t.view.scrollTop - ys[0]) > 2) await t.scrollTo(ys[0], 500);
       await t.sleep(1200);
-      for (let i = 1; i < n; i++) {
-        await t.scrollTo((i - 0.65) * h, 450);
-        await t.scrollTo(i * h, 300);
+      for (let i = 1; i < ys.length; i++) {
+        const from = t.view.scrollTop;
+        const to = ys[i];
+        // 次の区切りへ半分ちょっと進めたところで手を離す
+        const release = from + (to - from) * 0.55;
+        await t.scrollTo(release, 450);
+        if (tuneStr(root, 'snap', 'mandatory') === 'proximity' && Math.abs(to - release) > h * 0.3) {
+          // proximity: 区切りから遠いので吸い付かず、その場で止まる。もう一度送ると吸い付く
+          await t.sleep(1300);
+          await t.scrollTo(to - (to - release) * 0.25, 400);
+        }
+        await t.scrollTo(to, 280);
         await t.sleep(1300);
       }
       await t.scrollTo(0, 800);

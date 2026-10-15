@@ -1,39 +1,59 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 // 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
 const Btn = size === 'mini' ? 'span' : 'button';
 const btnType = size === 'mini' ? undefined : 'button';
-const works = [
-  { tone: 'day', title: '古民家の再生', place: '長野県・2025年' },
-  { tone: 'sunset', title: '海辺のカフェ', place: '静岡県・2025年' },
-  { tone: 'night', title: '山小屋のホテル', place: '岐阜県・2024年' },
-  { tone: 'day', title: '駅前の図書館', place: '富山県・2024年' },
-  { tone: 'sunset', title: '湖畔のサウナ', place: '山梨県・2023年' },
-] as const;
+const tones = ['day', 'sunset', 'night', 'day', 'sunset'] as const;
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: '横スクロール', nav: ['事例', '会社概要'], cta: '相談する',
+    about: '建物から、町の時間をつくる', works: '施工事例', contact: 'ご相談はお気軽に', apply: '相談を申し込む',
+    items: [
+      ['古民家の再生', '長野県・2025年'],
+      ['海辺のカフェ', '静岡県・2025年'],
+      ['山小屋のホテル', '岐阜県・2024年'],
+      ['駅前の図書館', '富山県・2024年'],
+      ['湖畔のサウナ', '山梨県・2023年'],
+    ],
+  },
+  en: {
+    name: 'Horizontal scroll', nav: ['Work', 'Studio'], cta: 'Contact',
+    about: 'Buildings that shape how a town feels', works: 'Selected work', contact: 'Start a project', apply: 'Get in touch',
+    items: [
+      ['Farmhouse restoration', 'Vermont · 2025'],
+      ['Beach cafe', 'Santa Cruz, CA · 2025'],
+      ['Mountain hotel', 'Jackson, WY · 2024'],
+      ['Town library', 'Portland, ME · 2024'],
+      ['Lakeside sauna', 'Duluth, MN · 2023'],
+    ],
+  },
+}[lang as 'ja' | 'en'];
+const works = L.items.map(([title, place], i) => ({ title, place, tone: tones[i] }));
 ---
 
-<UgFrame mode="scroll" size={size} label="横スクロール">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site hs" data-demo="horizontal-scroll">
     <header class="ug-nav">
       <span class="ug-logo">ARCHI LAB</span>
-      <span>事例</span><span>会社概要</span>
-      <span class="ug-cta">相談する</span>
+      {L.nav.map((n) => <span>{n}</span>)}
+      <span class="ug-cta">{L.cta}</span>
     </header>
 
     <section class="ug-sec intro">
       <p class="ug-label">ABOUT</p>
-      <h3 class="ug-h">建物から、町の時間をつくる</h3>
+      <h3 class="ug-h">{L.about}</h3>
       <div class="ug-lines"><i></i><i></i></div>
     </section>
 
     <!-- この区間の高さ＝横に流す距離。区間にいる間だけ、縦スクロールが横の動きに変わる -->
     <section class="hs-sec">
-      <div class="hs-pin" data-ug-focus="横スクロール">
+      <div class="hs-pin" data-ug-focus={L.name}>
         <div class="hs-head">
           <p class="ug-label">WORKS</p>
-          <h3 class="ug-h">施工事例</h3>
+          <h3 class="ug-h">{L.works}</h3>
         </div>
         <div class="hs-track">
           {works.map((w, i) => (
@@ -53,9 +73,9 @@ const works = [
 
     <section class="ug-sec">
       <p class="ug-label">CONTACT</p>
-      <h3 class="ug-h">ご相談はお気軽に</h3>
+      <h3 class="ug-h">{L.contact}</h3>
       <div class="ug-lines"><i></i><i></i><i></i></div>
-      <Btn type={btnType} class="ug-btn-site more">相談を申し込む</Btn>
+      <Btn type={btnType} class="ug-btn-site more">{L.apply}</Btn>
     </section>
   </div>
 </UgFrame>
@@ -78,12 +98,12 @@ const works = [
   /* これが演出の本体（2）: 横一列のカードを、縦スクロール量に合わせて左へずらす */
   .hs-track {
     display: flex;
-    gap: 16px;
+    gap: var(--t-gap);
     width: max-content;
     padding: 0 24px;
     will-change: transform;
   }
-  .work { flex: none; width: 240px; }
+  .work { flex: none; width: var(--t-card); }
   .work .ug-card-body { font-size: 13px; }
   .work small { display: block; font-size: 10px; font-weight: 400; color: var(--ug-ink-2); }
   .work-no { margin-right: 6px; color: var(--ug-orange); font-variant-numeric: tabular-nums; }
@@ -93,8 +113,8 @@ const works = [
 
   @container (max-width: 520px) {
     .hs-head { padding: 0 16px; }
-    .hs-track { gap: 12px; padding: 0 16px; }
-    .work { width: 200px; }
+    .hs-track { gap: calc(var(--t-gap) * 0.75); padding: 0 16px; }
+    .work { width: calc(var(--t-card) * 0.72); }
     .hs-bar { margin: 0 16px; }
   }
   /* 一覧の小さな枠: 前置きを省き、パネルから見せる */
@@ -102,7 +122,8 @@ const works = [
   :global(.is-mini) .hs-pin { gap: 8px; }
   :global(.is-mini) .hs-head .ug-label { display: none; }
   :global(.is-mini) .hs-head .ug-h { font-size: 14px; margin: 0; }
-  :global(.is-mini) .work { width: 124px; }
+  :global(.is-mini) .work { width: calc(var(--t-card) * 0.46); }
+  :global(.is-mini) .hs-track { gap: calc(var(--t-gap) * 0.6); }
   :global(.is-mini) .work .ug-card-body { padding: 4px 8px 6px; font-size: 10px; }
   :global(.is-mini) .work small { display: none; }
 
@@ -116,7 +137,7 @@ const works = [
 </style>
 
 <script>
-  import { onTour } from '../../../lib/ugoki/runtime';
+  import { onTour, tuneNum, onTune } from '../../../lib/ugoki/runtime';
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   document.querySelectorAll<HTMLElement>('[data-demo="horizontal-scroll"]').forEach((root) => {
@@ -126,25 +147,29 @@ const works = [
     const pin = root.querySelector<HTMLElement>('.hs-pin')!;
     const track = root.querySelector<HTMLElement>('.hs-track')!;
     let dist = 0;
+    let speed = 1;
 
-    // 区間の高さ＝枠の高さ＋横に流す距離（流し終わったら次へ進む）
+    // 区間の高さ＝枠の高さ＋横に流す距離÷速さ（流し終わったら次へ進む）
     const fit = () => {
       root.style.setProperty('--vh', `${view.clientHeight}px`);
+      speed = tuneNum(root, 'speed', 1) || 1;
       dist = Math.max(0, track.scrollWidth - pin.clientWidth);
-      sec.style.height = reduce.matches ? '' : `${view.clientHeight + dist}px`;
+      sec.style.height = reduce.matches ? '' : `${view.clientHeight + dist / speed}px`;
       update();
     };
 
     const update = () => {
       if (reduce.matches) return;
       const top = sec.getBoundingClientRect().top - view.getBoundingClientRect().top;
-      const p = dist ? Math.min(1, Math.max(0, -top / dist)) : 0;
+      // 縦に1px進むと、横に speed px 動く
+      const p = dist ? Math.min(1, Math.max(0, (-top * speed) / dist)) : 0;
       track.style.transform = `translate3d(${-p * dist}px, 0, 0)`;
       pin.style.setProperty('--p', String(p));
     };
 
     new ResizeObserver(fit).observe(view);
     view.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+    onTune(view, fit);
     fit();
 
     // 自動再生: 区間に入ったら、ゆっくり横へ流し切る
@@ -155,9 +180,12 @@ const works = [
       const start = sec.getBoundingClientRect().top - t.view.getBoundingClientRect().top + t.view.scrollTop;
       await t.scrollTo(start, 800);
       await t.sleep(700);
-      await t.scrollTo(start + dist * 0.5, 1600);
+      // 縦に進む量は 横の距離÷速さ。進む速さ（px/秒）は一定なので、速さを上げるほど短い時間で流れ切る
+      const len = dist / speed;
+      const ms = Math.max(400, (len / 2) * 4.5);
+      await t.scrollTo(start + len * 0.5, ms);
       await t.sleep(500);
-      await t.scrollTo(start + dist, 1600);
+      await t.scrollTo(start + len, ms);
       await t.sleep(900);
       await t.scrollTo(t.view.scrollHeight, 1000);
       await t.sleep(900);

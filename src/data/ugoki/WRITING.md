@@ -82,7 +82,7 @@ const { size = 'full' } = Astro.props;
 - **サイト共通の global.css にあるクラス名（logo, cards, field, range, btn, chip, panel, num, result, steps など）を見本の中で使わない**（外側のCSSが効いて崩れる）。`node scripts/check-zukan.mjs` で確認する（sr-only は可）。
 - 画像ファイル・外部ライブラリ・Webフォント追加は使わない。絵文字は使わない。アイコンはインラインSVG。
 - 文字は本物らしい日本語（「山の宿」「1泊 12,000円〜」「お申し込み」）。「テスト」「Lorem ipsum」「aaa」は禁止。
-- **演出の主役に `data-ug-focus="名前"` を付ける**（点線と名札が出る）。主役は position が static 以外であること（relative / sticky / absolute）。名札が中身に被るなら `data-ug-focus-at="below"`（下にぶら下げる）か `"left"`。overflow: hidden の要素だと名札が切れるので、その外側に付ける。
+- **演出の主役に `data-ug-focus="名前"` を付ける**（点線と名札が出る）。主役は position が static 以外であること（relative / sticky / absolute）。名札が中身に被るなら `data-ug-focus-at="below"`（下にぶら下げる）・`"left"`・`"bottom"`（内側の下の隅。縦いっぱいの板向け）。overflow: hidden の要素だと名札が切れるので、その外側に付ける。
 - **一覧の小さな見本（size === 'mini'）には押せる要素を置かない。** カード全体が `<a>` の中に入るため、`<a>`・`<button>`・`<input>`・`<details>` は不正なHTMLになる。mini のときは span/div に差し替える（お手本: demos/hover-lift.astro の `Card`）。tabindex も付けない。
 - 2つの大きさで必ず成立させる: 一覧の小さな枠（幅およそ260〜320px・高さ196px・触れない）と、詳細ページの枠（幅〜720px・高さ420px、スマホは幅約340px・高さ380px）。**小さな枠の最初の196pxで、何の演出か分かる**ようにする。狭いときは `@container (max-width: 340px)` で間引く（`.ug-view` が container）。
 - 詳細ページの枠の高さ420pxに対して、中身が半分しかなく下が空く、という見本にしない（scroll系は420pxの2.5〜4倍の長さ、それ以外は枠を埋める配置）。
@@ -157,7 +157,7 @@ npx astro build --config astro.config.agentX.mjs   # X は担当の記号。エ�
 
 記事に `tune`（2〜4個）を書くと、見本の下につまみが出る。動かすと**見本・コード・AIへの指示文が一緒に変わる**。
 - 型は `src/data/ugoki/types.ts` の `TuneParam`（range / color / select）。
-- 見本には CSS 変数 `--t-<key>` で届く（初期値も外側から入る）。見本の CSS は `var(--t-dur)` のように**つまみの変数を直接使う**（数値を見本の中に二重に書かない）。JavaScript で使うときは `tuneNum(el, 'key')`・`tuneStr(el, 'key')`、変わった瞬間に知りたければ `onTune(view, fn)`（いずれも runtime.ts）。
+- 見本には CSS 変数 `--t-<key>` で届く（初期値も外側から入る）。見本の CSS は `var(--t-dur)` のように**つまみの変数を直接使う**（数値を見本の中に二重に書かない）。JavaScript で使うときは `tuneNum(el, 'key')`・`tuneStr(el, 'key')`、変わった瞬間に知りたければ `onTune(view, fn)`（ドラッグ中は何度も届く）、動かし終えたときだけなら `onTuneEnd(view, fn)`（いずれも runtime.ts）。撮影などの作業ファイルは作業フォルダの中の自分専用フォルダ（shots-<担当記号>/）に置く。
 - `code` と `prompt` の中に差し込み口を書く: `{{key}}`（CSSに書く形 0.2s）・`{{key:n}}`（数だけ 0.2）・`{{key:t}}`（文章の形。日本語 0.2秒・英語 0.2s）。
 - 選ぶつまみは**その演出・部品の見た目と気持ちよさを決める数値**（速さ・距離・大きさ・濃さ・遅れ・強さ・色）。意味のない数値は足さない。範囲は「やりすぎ」まで少し触れる程度に（例: 速さ 0.1〜0.8秒）。初期値は記事が勧める値。
 - つまみの key・範囲・初期値・単位は日本語版と英語版で同じ（label だけ訳す）。
@@ -207,6 +207,23 @@ npx astro build --config astro.config.agentX.mjs   # X は担当の記号。エ�
 動きの図鑑と重なる部品（アコーディオン accordion・トースト toast・タブ tab-indicator・上に戻る back-to-top・スケルトン skeleton）は**UI部品の図鑑には作らない**。`similar` で `book: 'ugoki'` を付けて指す。
 
 UI部品の記事は「どんな部品？」（`what`）で**似た部品との違い**と**決まりごと**（開け方・閉じ方・キーボード操作・読み上げ）を必ず書く。部品は名前ごとに「こう振る舞うのが普通」という約束があり、それを知ることが利用者の価値。HTMLにもともとある部品（dialog・details・input type=range/date・select・popover属性）があれば、まずそれを土台にしたコードにする。
+
+## 撮影のコツ（担当から集めた知見）
+
+- ヘッドレスChromeの `--window-size` は狙った幅にならないことがある。幅は CDP の `Emulation.setDeviceMetricsOverride` で指定する。
+- 切り抜き座標は「ページ全体の座標」（スクロール量を足す）。撮る前にページのなめらかスクロールを切る。
+- ヘッドレスでは本物のマウスを乗せても `:hover` が効かない。撮影では要素に `.is-hover` を付けて代用する。
+- 撮影ファイルとスクリプトは作業フォルダの中の自分専用フォルダに置く（他の担当と共有しない）。
+- 共通の撮影スクリプト: `node scripts/shoot-zukan.mjs <出力フォルダ> <jobs.json> [ポート]`（job は { url, w, h, name, tune: 'min'|'max'|null, wait, clip: 'demo'|'tuner'|セレクタ, js }。担当ごとにポートを変える）。
+
+- 自動再生を止めて開くには URL に `?ugstill` を付ける（撮影が速くなる）。
+
+## 書き方の落とし穴（担当から集めた知見）
+
+- `@container (max-width: 340px)` は一覧の小さな見本とスマホの詳細ページの**両方**に効く。一覧だけに効かせたいときは `:global(.ug-frame.is-mini) .xxx { … }` で書く。
+- JavaScript で後から入れた要素には、Astro が閉じ込めたCSS（`<style>`）が効かない。その要素の見た目は `:global(.xxx)` で書く。
+- 「見どころ」の名札は主役の要素の `::after` を使う。主役の要素の `::after` を線などに使わない（使うなら data-ug-focus を外側の要素に付ける）。
+- `<dialog>` の暗幕クリックで閉じる判定（`e.target === dialog`）を使うなら、dialog 自体の padding は0にして中身を内箱で包む（余白を押しても閉じてしまうため）。
 
 ## 確かめ方（第2弾）
 

@@ -1,0 +1,270 @@
+---
+// UI部品の見本: ステップ表示（ステッパー）
+// 予約フォームの4つの段階を、番号の丸と線で上に並べる。終わった段はチェック、今の段は aria-current="step"。
+import UgFrame from '../UgFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: 'ステッパー',
+    aria: '予約の手順',
+    steps: ['日付・人数', 'お客さま情報', '内容の確認', '完了'],
+    of: 'ステップ {n} / 4 ・ {label}',
+    done: '（完了）',
+    panels: [
+      [['チェックイン', '11月3日（月）'], ['泊数', '1泊'], ['人数', '大人2名']],
+      [['お名前', '佐藤 みのり'], ['メール', 'minori@example.com'], ['電話', '090-1234-5678']],
+      [['宿', '山の宿 ひかり'], ['日付', '11月3日（月）から1泊・大人2名'], ['合計', '24,000円']],
+    ],
+    doneH: '予約が完了しました',
+    doneP: '確認メールを minori@example.com に送りました。',
+    back: '戻る',
+    next: '次へ',
+    confirm: '予約を確定する',
+    again: '最初から',
+  },
+  en: {
+    name: 'Stepper',
+    aria: 'Booking steps',
+    steps: ['Dates', 'Your details', 'Review', 'Done'],
+    of: 'Step {n} of 4: {label}',
+    done: ' (completed)',
+    panels: [
+      [['Check-in', 'Mon, Nov 3'], ['Nights', '1'], ['Guests', '2 adults']],
+      [['Name', 'Jamie Parker'], ['Email', 'jamie@example.com'], ['Phone', '(555) 012-3456']],
+      [['Stay', 'Aspen Ridge Lodge'], ['Dates', 'Nov 3 · 1 night · 2 adults'], ['Total', '$360']],
+    ],
+    doneH: 'You’re booked',
+    doneP: 'We sent a confirmation to jamie@example.com.',
+    back: 'Back',
+    next: 'Continue',
+    confirm: 'Confirm booking',
+    again: 'Start over',
+  },
+}[lang as 'ja' | 'en'];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site sp-site" data-demo="stepper" data-of={L.of} data-next={L.next} data-confirm={L.confirm}>
+    <header class="ug-nav sp-head"><span class="ug-logo">SAMPLE</span></header>
+    <section class="ug-sec sp-body">
+      <!-- これが部品の本体: 段階の一覧。順番に意味があるので <ol> で書く -->
+      <ol class="sp-steps" aria-label={L.aria} data-ug-focus={L.name} data-ug-focus-at="below">
+        {L.steps.map((s, i) => (
+          <li class="sp-step" data-sp-step={i}>
+            <span class="sp-dot" aria-hidden="true">
+              <span class="sp-num">{i + 1}</span>
+              <svg class="sp-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+            </span>
+            <span class="sp-label">{s}<span class="sr-only" data-sp-done hidden>{L.done}</span></span>
+          </li>
+        ))}
+      </ol>
+
+      <div class="sp-card">
+        <h4 class="sp-h" data-sp-h tabindex="-1"></h4>
+        {L.panels.map((rows, i) => (
+          <dl class="sp-panel" data-sp-panel={i} hidden={i !== 0}>
+            {rows.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+          </dl>
+        ))}
+        <div class="sp-panel sp-done" data-sp-panel="3" hidden>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1f7a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M7.5 12.5l3 3 6-6.5" /></svg>
+          <p><b>{L.doneH}</b><br />{L.doneP}</p>
+        </div>
+        <div class="sp-actions">
+          <Btn class="sp-back" {...btn} data-sp-back>{L.back}</Btn>
+          <Btn class="ug-btn-site sp-next" {...btn} data-sp-next>{L.next}</Btn>
+          <Btn class="sp-back" {...btn} data-sp-again hidden>{L.again}</Btn>
+        </div>
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .sp-site { min-height: 100%; display: flex; flex-direction: column; background: var(--ug-bg); }
+  .sp-body { flex: 1; display: grid; align-content: start; gap: 16px; }
+
+  /* 段の並び。丸の大きさ・線の太さ・進む速さはつまみ（--t-size・--t-line・--t-dur）から */
+  .sp-steps { position: relative; display: flex; list-style: none; padding-bottom: 4px; }
+  .sp-step {
+    position: relative;
+    flex: 1;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+  /* 前の段とのあいだの線（灰色の下地＋色が伸びる上塗り） */
+  .sp-step + .sp-step::before,
+  .sp-step + .sp-step::after {
+    content: '';
+    position: absolute;
+    top: calc(var(--t-size) / 2 - var(--t-line) / 2);
+    left: calc(-50% + var(--t-size) / 2 + 6px);
+    right: calc(50% + var(--t-size) / 2 + 6px);
+    height: var(--t-line);
+    border-radius: 99px;
+    background: var(--ug-line);
+  }
+  .sp-step + .sp-step::after {
+    background: var(--ug-blue);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--t-dur) ease-out;
+  }
+  .sp-step.is-done + .sp-step::after,
+  .sp-step.is-done + .sp-step.is-current::after { transform: scaleX(1); }
+  .sp-dot {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--t-size);
+    height: var(--t-size);
+    border: 2px solid #c9c6be;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--ug-ink-2);
+    font-size: calc(var(--t-size) * 0.45);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    transition: background-color var(--t-dur) ease-out, border-color var(--t-dur) ease-out, color var(--t-dur) ease-out, box-shadow var(--t-dur) ease-out;
+  }
+  .sp-check { position: absolute; width: 55%; height: 55%; opacity: 0; transform: scale(0.6); transition: opacity var(--t-dur) ease-out, transform var(--t-dur) ease-out; }
+  .sp-label { font-size: 11px; font-weight: 700; line-height: 1.3; color: var(--ug-ink-2); }
+  /* 今の段: 青い縁と淡い輪で目立たせ、名前を濃く */
+  .sp-step.is-current .sp-dot { border-color: var(--ug-blue); color: var(--ug-blue); box-shadow: 0 0 0 4px rgba(79, 115, 217, 0.16); }
+  .sp-step.is-current .sp-label { color: var(--ug-ink); }
+  /* 終わった段: 塗りつぶしてチェック */
+  .sp-step.is-done .sp-dot { border-color: var(--ug-blue); background: var(--ug-blue); color: #fff; }
+  .sp-step.is-done .sp-num { opacity: 0; }
+  .sp-step.is-done .sp-check { opacity: 1; transform: none; }
+
+  .sp-card { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--ug-line); border-radius: 12px; background: #fff; }
+  .sp-h { font-size: 15px; font-weight: 800; outline: none; }
+  .sp-panel { display: grid; gap: 8px; font-size: 12px; }
+  .sp-panel div { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--ug-line); }
+  .sp-panel dt { color: var(--ug-ink-2); }
+  .sp-panel dd { margin: 0; font-weight: 700; text-align: right; overflow-wrap: anywhere; }
+  .sp-panel.is-in { animation: sp-in var(--t-dur) ease-out; }
+  @keyframes sp-in { from { opacity: 0; transform: translateX(12px); } }
+  .sp-done { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+  .sp-done[hidden] { display: none; }
+  .sp-actions { display: flex; justify-content: space-between; gap: 8px; }
+  .sp-actions > :only-child, .sp-actions [data-sp-again] { margin-left: auto; }
+  .sp-back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--ug-line);
+    border-radius: 999px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ug-ink);
+    cursor: pointer;
+  }
+  .sp-back[aria-disabled='true'] { visibility: hidden; }
+  .sp-next { min-height: 44px; }
+  .sp-next:hover, .sp-next.is-hover { filter: brightness(0.94); }
+  .sp-back:hover, .sp-back.is-hover { background: var(--ug-bg); }
+
+  /* 狭い枠: 今の段だけ名前を出す（ほかは丸だけ） */
+  @container (max-width: 420px) {
+    .sp-label { font-size: 10px; }
+    .sp-step:not(.is-current) .sp-label { opacity: 0; }
+  }
+  @container (max-width: 340px) {
+    .sp-body { padding: 12px; gap: 12px; }
+    .sp-card { padding: 12px; gap: 8px; }
+  }
+  :global(.is-mini) .sp-head { display: none; }
+  :global(.is-mini) .sp-panel div:nth-child(3) { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .sp-step + .sp-step::after, .sp-dot, .sp-check { transition: none; }
+    .sp-panel.is-in { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="stepper"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const mini = root.closest<HTMLElement>('[data-ug-frame]')!.dataset.size === 'mini';
+    const steps = [...root.querySelectorAll<HTMLElement>('[data-sp-step]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-sp-panel]')];
+    const heading = root.querySelector<HTMLElement>('[data-sp-h]')!;
+    const back = root.querySelector<HTMLElement>('[data-sp-back]')!;
+    const next = root.querySelector<HTMLElement>('[data-sp-next]')!;
+    const again = root.querySelector<HTMLElement>('[data-sp-again]')!;
+    const LAST = steps.length - 1;
+    let cur = 0;
+
+    const render = (animate = false, real = false) => {
+      steps.forEach((s, i) => {
+        s.classList.toggle('is-done', i < cur || cur === LAST);
+        s.classList.toggle('is-current', i === cur);
+        if (i === cur) s.setAttribute('aria-current', 'step');
+        else s.removeAttribute('aria-current');
+        s.querySelector<HTMLElement>('[data-sp-done]')!.hidden = !(i < cur || cur === LAST);
+      });
+      panels.forEach((p, i) => {
+        p.hidden = i !== cur;
+        p.classList.toggle('is-in', i === cur && animate);
+      });
+      const label = steps[cur].querySelector('.sp-label')!.firstChild!.textContent;
+      heading.textContent = root.dataset.of!.replace('{n}', String(cur + 1)).replace('{label}', label ?? '');
+      back.hidden = cur === LAST;
+      back.setAttribute('aria-disabled', String(cur === 0));
+      next.hidden = cur === LAST;
+      next.textContent = cur === LAST - 1 ? root.dataset.confirm! : root.dataset.next!;
+      again.hidden = cur !== LAST;
+      // 本物の操作では、段が変わったら見出しへ焦点を移す（読み上げで今の段が分かる）
+      if (real && !mini) heading.focus({ preventScroll: true });
+    };
+    const go = (to: number, real = false) => {
+      if (to < 0 || to > LAST || to === cur) return;
+      cur = to;
+      render(true, real);
+    };
+
+    const on = (el: HTMLElement, fn: (real: boolean) => void) => {
+      el.addEventListener('click', () => fn(true));
+      el.addEventListener('ug:click', () => fn(false));
+    };
+    on(next, (real) => go(cur + 1, real));
+    on(back, (real) => back.getAttribute('aria-disabled') !== 'true' && go(cur - 1, real));
+    on(again, (real) => go(0, real));
+    view.addEventListener('ug:reset', () => {
+      cur = 0;
+      render();
+    });
+    render();
+
+    onTour(root, async (t) => {
+      cur = 0;
+      render();
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.4 }, 10);
+      await t.sleep(800);
+      const press = async (el: HTMLElement, wait = 1300) => {
+        await t.move(el, 650);
+        t.hover(el);
+        await t.sleep(250);
+        await t.click(el);
+        t.hover(null);
+        await t.sleep(wait);
+      };
+      await press(next);
+      await press(next);
+      await press(back);
+      await press(next);
+      await press(next, 2200);
+    });
+  });
+</script>

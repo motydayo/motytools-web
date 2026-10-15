@@ -1,29 +1,64 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 const mini = size === 'mini';
 const Btn = mini ? 'span' : 'button';
 const type = mini ? undefined : 'button';
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: '離脱防止ポップアップ',
+    nav: ['客室', '料金'],
+    cta: '予約する',
+    plan: '秋の朝食つきプラン',
+    price: '1泊 12,000円〜',
+    room: '客室のご案内',
+    access: 'アクセス',
+    note: '表示ずみ：このページではもう出ません',
+    k: 'お帰りの前に',
+    h: '初回限定 10%OFF クーポン',
+    t: '今日のご予約から使えます。会員登録はいりません。',
+    go: 'クーポンを受け取る',
+    later: '今はいらない',
+    close: '閉じる',
+  },
+  en: {
+    name: 'Exit-intent popup',
+    nav: ['Rooms', 'Rates'],
+    cta: 'Book',
+    plan: 'Fall bed & breakfast package',
+    price: 'From $89 / night',
+    room: 'Our rooms',
+    access: 'Getting here',
+    note: 'Shown once: it will not appear again',
+    k: 'Before you go',
+    h: '10% off your first stay',
+    t: 'Valid on bookings made today. No account needed.',
+    go: 'Get my code',
+    later: 'No thanks',
+    close: 'Close',
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="script" size={size} label="離脱防止ポップアップ">
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
   <div class="ug-site page" data-demo="exit-intent">
-    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>客室</span><span>料金</span><span class="ug-cta">予約する</span></header>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}<span class="ug-cta">{L.cta}</span></header>
     <section class="ug-sec">
       <p class="ug-label">PLAN</p>
-      <h3 class="ug-h hd">秋の朝食つきプラン</h3>
+      <h3 class="ug-h hd">{L.plan}</h3>
       <div class="plan">
         <div class="pic"><Scene tone="sunset" /></div>
         <div>
-          <p class="price">1泊 12,000円〜</p>
+          <p class="price">{L.price}</p>
           <div class="ug-lines"><i></i><i></i><i></i></div>
         </div>
       </div>
     </section>
     <section class="ug-sec">
       <p class="ug-label">ROOM</p>
-      <h3 class="ug-h">客室のご案内</h3>
+      <h3 class="ug-h">{L.room}</h3>
       <div class="ug-grid">
         <div class="ug-card"><Scene tone="day" /></div>
         <div class="ug-card"><Scene tone="night" /></div>
@@ -33,24 +68,24 @@ const type = mini ? undefined : 'button';
     </section>
     <section class="ug-sec">
       <p class="ug-label">ACCESS</p>
-      <h3 class="ug-h">アクセス</h3>
+      <h3 class="ug-h">{L.access}</h3>
       <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i></div>
     </section>
 
     <!-- 「1回出したら、もう出さない」ことを見本で分かるようにする印 -->
-    <p class="note" aria-live="polite"><span>表示ずみ：このページではもう出ません</span></p>
+    <p class="note" aria-live="polite"><span>{L.note}</span></p>
 
     <!-- これが演出の本体: 画面の上端からマウスが出たら1回だけ出す小窓 -->
     <div class="dim" hidden>
-      <dialog class="pop" aria-label="お帰りの前に" data-ug-focus="離脱防止ポップアップ" data-ug-focus-at="below">
-        <Btn class="x" type={type} aria-label="閉じる" data-close>
+      <dialog class="pop" aria-label={L.k} data-ug-focus={L.name} data-ug-focus-at="below">
+        <Btn class="x" type={type} aria-label={L.close} data-close>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </Btn>
-        <p class="pop-k">お帰りの前に</p>
-        <p class="pop-h">初回限定 10%OFF クーポン</p>
-        <p class="pop-t">今日のご予約から使えます。会員登録はいりません。</p>
-        <Btn class="ug-btn-site pop-go" type={type} data-close>クーポンを受け取る</Btn>
-        <Btn class="later" type={type} data-close>今はいらない</Btn>
+        <p class="pop-k">{L.k}</p>
+        <p class="pop-h">{L.h}</p>
+        <p class="pop-t">{L.t}</p>
+        <Btn class="ug-btn-site pop-go" type={type} data-close>{L.go}</Btn>
+        <Btn class="later" type={type} data-close>{L.later}</Btn>
       </dialog>
     </div>
   </div>
@@ -71,8 +106,9 @@ const type = mini ? undefined : 'button';
     display: grid;
     place-items: center;
     padding: 16px;
-    background: rgba(29, 37, 65, 0.45);
-    animation: ug-exit-fade 0.25s ease-out;
+    /* 暗幕の濃さ・出る速さ・浮かび上がる距離はつまみ（--t-dim・--t-dur・--t-rise）から */
+    background: rgba(29, 37, 65, var(--t-dim));
+    animation: ug-exit-fade var(--t-dur) ease-out;
   }
   .dim[hidden] { display: none; }
   .pop {
@@ -88,7 +124,7 @@ const type = mini ? undefined : 'button';
     text-align: center;
     box-shadow: 0 24px 48px -16px rgba(29, 37, 65, 0.5);
     /* 出るときは小さめ・透明から、減速しながら */
-    animation: ug-exit-pop 0.3s ease-out;
+    animation: ug-exit-pop var(--t-dur) ease-out;
   }
   .x {
     position: absolute;
@@ -149,7 +185,7 @@ const type = mini ? undefined : 'button';
   .note.is-on span { opacity: 1; }
 
   @keyframes ug-exit-fade { from { opacity: 0; } }
-  @keyframes ug-exit-pop { from { opacity: 0; transform: translateY(8px) scale(0.96); } }
+  @keyframes ug-exit-pop { from { opacity: 0; transform: translateY(var(--t-rise)) scale(0.96); } }
   /* 一覧の小さな見本では、小窓を詰めて見出しとボタンだけにする */
   :global(.is-mini) .dim { padding: 10px; }
   :global(.is-mini) .pop { padding: 12px 14px 10px; border-radius: 12px; }
@@ -163,7 +199,7 @@ const type = mini ? undefined : 'button';
 </style>
 
 <script>
-  import { onTour, onPointer } from '../../../lib/ugoki/runtime';
+  import { onTour, onPointer, onTune } from '../../../lib/ugoki/runtime';
 
   document.querySelectorAll<HTMLElement>('[data-demo="exit-intent"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
@@ -242,6 +278,21 @@ const type = mini ? undefined : 'button';
       if (e.key === 'Escape' && !dim.hidden) close();
     });
     view.addEventListener('ug:reset', reset);
+    // つまみを動かしたら、小窓をもう一度出して「出方」を見せる（動かし終わってから少し待って）
+    let tuneTimer = 0;
+    onTune(view, () => {
+      clearTimeout(tuneTimer);
+      tuneTimer = window.setTimeout(() => {
+        if (!dim.hidden) {
+          pop.removeAttribute('open');
+          dim.hidden = true;
+          view.style.overflow = '';
+        }
+        shown = false;
+        note.classList.remove('is-on');
+        open(false);
+      }, 180);
+    });
 
     onTour(root, async (t) => {
       reset();

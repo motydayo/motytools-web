@@ -10,7 +10,7 @@ export default {
   mode: 'script',
   title: 'モーダルとは？ダイアログとの違いと<dialog>での作り方【見本つき】',
   description:
-    'モーダル（モーダルウィンドウ）を触れる見本で解説。ポップアップやドロワーとの違い、HTMLの<dialog>とshowModal()で作る方法、Escで閉じる・後ろを触らせない・閉じたら元の場所に戻るといった決まりごと、AIに頼むときの指示文までまとめました。',
+    'モーダル（モーダルウィンドウ）を触れる見本で解説。ポップアップやドロワーとの違い、<dialog>とshowModal()での作り方、Escで閉じる・後ろを触らせない・焦点を元に戻すといった決まりごと、AIへの指示文までまとめました。',
   oneLine: '画面の真ん中に小窓が出て、閉じるまで後ろは触れない。',
   what: [
     '今の画面の上に小窓を重ね、後ろを暗くして「まずこれに答えてください」と伝える部品です。見本では「予約内容を確認する」を押すと確認の小窓が出て、「予約する」か「やめる」を選ぶまで後ろのページは押せません。',
@@ -39,7 +39,7 @@ export default {
       code: `<button type="button" class="open-btn">予約内容を確認する</button>
 
 <dialog class="modal" aria-labelledby="modal-title">
-  <form method="dialog">
+  <form method="dialog" class="modal-body">
     <button class="modal-x" value="cancel" aria-label="閉じる">×</button>
     <h2 id="modal-title">この内容で予約しますか？</h2>
     <p>11月3日（月）から1泊・大人2名・合計30,000円</p>
@@ -53,7 +53,7 @@ export default {
       label: 'CSS',
       code: `.modal {
   width: min(90vw, 360px);
-  padding: 24px;
+  padding: 0; /* 余白は内側の箱に（暗幕を押したかの判定を正しくするため） */
   border: 0;
   border-radius: 16px;
   /* 開閉の動き（出るときは減速） */
@@ -68,6 +68,9 @@ export default {
 @starting-style {
   .modal[open] { opacity: 0; transform: scale({{scale:n}}); }
 }
+
+/* 中身の余白はここに */
+.modal-body { padding: 24px; }
 
 /* 後ろの暗幕 */
 .modal::backdrop {
@@ -89,7 +92,7 @@ const openBtn = document.querySelector('.open-btn');
 
 openBtn.addEventListener('click', () => dialog.showModal());
 
-// 暗幕（小窓の外）を押したら閉じる
+// 暗幕を押したら閉じる（dialog 自体に余白が無いので、ここに届くのは暗幕だけ）
 dialog.addEventListener('click', (e) => {
   if (e.target === dialog) dialog.close('cancel');
 });

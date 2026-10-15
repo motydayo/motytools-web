@@ -1,22 +1,39 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
 // 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
 const Btn = size === 'mini' ? 'span' : 'button';
 const btnType = size === 'mini' ? undefined : 'button';
+// 見本の中の文字（日英）
+const L = {
+  ja: {
+    name: 'パララックススクロール', focus: 'パララックス', focusBand: '背景だけゆっくり',
+    logo: '山の宿 ひかり', nav: ['お部屋', 'アクセス'], cta: '空室を見る',
+    kicker: '標高1,200mの小さな宿', h1: '静かな朝を、', h2: '山の上で。', hint: 'スクロール',
+    rooms: 'お部屋', roomNames: ['和室 8畳', '洋室ツイン', '離れの客室'], band: '夕暮れの露天風呂',
+    access: 'アクセス', plan: '1泊 12,000円〜',
+  },
+  en: {
+    name: 'Parallax scrolling', focus: 'Parallax', focusBand: 'Slower background',
+    logo: 'Hikari Lodge', nav: ['Rooms', 'Getting here'], cta: 'Check dates',
+    kicker: 'A small lodge at 3,900 ft', h1: 'Quiet mornings', h2: 'above the valley.', hint: 'SCROLL',
+    rooms: 'Rooms', roomNames: ['Garden room', 'Twin room', 'Private cabin'], band: 'Hot spring at sunset',
+    access: 'Getting here', plan: 'From $95 / night',
+  },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="scroll" size={size} label="パララックススクロール">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site px" data-demo="parallax">
     <header class="ug-nav">
-      <span class="ug-logo">山の宿 ひかり</span>
-      <span>お部屋</span><span>アクセス</span>
-      <span class="ug-cta">空室を見る</span>
+      <span class="ug-logo">{L.logo}</span>
+      {L.nav.map((n) => <span>{n}</span>)}
+      <span class="ug-cta">{L.cta}</span>
     </header>
 
     <!-- 重なった絵の層を、奥ほどゆっくり動かす -->
-    <section class="hero" data-ug-focus="パララックス">
+    <section class="hero" data-ug-focus={L.focus}>
       <svg class="layer" data-speed="0.75" viewBox="0 0 320 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <circle cx="236" cy="62" r="22" fill="#f06a35" />
       </svg>
@@ -24,8 +41,8 @@ const btnType = size === 'mini' ? undefined : 'button';
         <path d="M0 150 L70 86 L130 136 L190 74 L260 128 L320 98 V260 H0Z" fill="#8fa9ec" />
       </svg>
       <div class="hero-text layer" data-speed="0.35">
-        <p class="hero-kicker">標高1,200mの小さな宿</p>
-        <h3 class="hero-h">静かな朝を、<br />山の上で。</h3>
+        <p class="hero-kicker">{L.kicker}</p>
+        <h3 class="hero-h">{L.h1}<br />{L.h2}</h3>
       </div>
       <svg class="layer" data-speed="0.15" viewBox="0 0 320 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <path d="M0 260 V164 L90 116 L170 176 L250 124 L320 168 V260Z" fill="#4f73d9" />
@@ -35,37 +52,37 @@ const btnType = size === 'mini' ? undefined : 'button';
       </svg>
       <span class="hint" aria-hidden="true">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
-        スクロール
+        {L.hint}
       </span>
     </section>
 
     <section class="ug-sec">
       <p class="ug-label">ROOMS</p>
-      <h3 class="ug-h">お部屋</h3>
+      <h3 class="ug-h">{L.rooms}</h3>
       <div class="ug-grid">
-        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">和室 8畳</div></div>
-        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">洋室ツイン</div></div>
-        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">離れの客室</div></div>
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.roomNames[0]}</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">{L.roomNames[1]}</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.roomNames[2]}</div></div>
       </div>
       <div class="ug-lines"><i></i><i></i></div>
     </section>
 
     <!-- 帯の中の絵だけ、本文よりゆっくり動かす -->
-    <section class="band" data-ug-focus="背景だけゆっくり" data-ug-focus-at="left">
-      <div class="band-bg" data-band-speed="0.25"><Scene tone="sunset" wide /></div>
-      <p class="band-text">夕暮れの露天風呂</p>
+    <section class="band" data-ug-focus={L.focusBand} data-ug-focus-at="left">
+      <div class="band-bg"><Scene tone="sunset" wide /></div>
+      <p class="band-text">{L.band}</p>
     </section>
 
     <section class="ug-sec">
       <p class="ug-label">ACCESS</p>
-      <h3 class="ug-h">アクセス</h3>
+      <h3 class="ug-h">{L.access}</h3>
       <div class="ug-lines"><i></i><i></i><i></i><i></i></div>
     </section>
     <section class="ug-sec">
       <p class="ug-label">PLAN</p>
-      <h3 class="ug-h">1泊 12,000円〜</h3>
+      <h3 class="ug-h">{L.plan}</h3>
       <div class="ug-lines"><i></i><i></i><i></i></div>
-      <Btn type={btnType} class="ug-btn-site more">空室を見る</Btn>
+      <Btn type={btnType} class="ug-btn-site more">{L.cta}</Btn>
     </section>
   </div>
 </UgFrame>
@@ -152,13 +169,14 @@ const btnType = size === 'mini' ? undefined : 'button';
 </style>
 
 <script>
+  import { tuneNum, onTune } from '../../../lib/ugoki/runtime';
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   document.querySelectorAll<HTMLElement>('[data-demo="parallax"]').forEach((root) => {
     const view = root.closest<HTMLElement>('[data-ug-view]');
     if (!view) return;
     const layers = [...root.querySelectorAll<HTMLElement>('[data-speed]')];
-    const bands = [...root.querySelectorAll<HTMLElement>('[data-band-speed]')];
+    const bands = [...root.querySelectorAll<HTMLElement>('.band-bg')];
 
     // 1画面目の高さ＝枠の高さ（ナビの分を引く）
     const fit = () => root.style.setProperty('--vh', `${view.clientHeight - 48}px`);
@@ -170,16 +188,19 @@ const btnType = size === 'mini' ? undefined : 'button';
       ticking = false;
       if (reduce.matches) return;
       const y = view.scrollTop;
+      // つまみの値: 視差の強さ（全層の係数にかける）と、帯の中の絵のずれ方
+      const depth = tuneNum(root, 'depth', 1);
+      const band = tuneNum(root, 'band', 0.25);
       // 奥の層ほど、スクロールと同じ向きに少しずらす＝ゆっくり動いて見える
       layers.forEach((el) => {
-        el.style.transform = `translate3d(0, ${y * Number(el.dataset.speed)}px, 0)`;
+        el.style.transform = `translate3d(0, ${y * Number(el.dataset.speed) * depth}px, 0)`;
       });
       // 帯は「画面の中央からどれだけ離れているか」で中の絵をずらす
       const vr = view.getBoundingClientRect();
       bands.forEach((el) => {
         const r = el.parentElement!.getBoundingClientRect();
         const off = r.top + r.height / 2 - (vr.top + vr.height / 2);
-        const shift = Math.max(-56, Math.min(56, -off * Number(el.dataset.bandSpeed)));
+        const shift = Math.max(-56, Math.min(56, -off * band));
         el.style.transform = `translate3d(0, ${shift}px, 0)`;
       });
     };
@@ -194,5 +215,6 @@ const btnType = size === 'mini' ? undefined : 'button';
       { passive: true }
     );
     update();
+    onTune(view, update);
   });
 </script>

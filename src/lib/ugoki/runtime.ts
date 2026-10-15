@@ -72,6 +72,11 @@ export function onTune(view: HTMLElement, fn: () => void) {
   view.addEventListener('ug:tune', fn);
 }
 
+/** つまみを動かし終えた（指を離した・最初の値に戻した）ときだけ呼ばれる */
+export function onTuneEnd(view: HTMLElement, fn: () => void) {
+  view.addEventListener('ug:tune-end', fn);
+}
+
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 function setup(frame: HTMLElement) {
@@ -85,8 +90,9 @@ function setup(frame: HTMLElement) {
   const restartBtn = frame.querySelector<HTMLButtonElement>('[data-ug-restart]');
 
   let visible = false;
-  let paused = !mini && reduceMotion(); // 動きを減らす設定なら、詳細ページでは止めた状態から
-  if (mini && reduceMotion()) paused = true;
+  let paused = reduceMotion(); // 動きを減らす設定なら止めた状態から
+  // 確認・撮影用: URL に ?ugstill を付けると自動再生しない
+  if (new URLSearchParams(location.search).has('ugstill')) paused = true;
   let userBusy = false;
   let idleTimer = 0;
   let ctrl: AbortController | null = null;

@@ -1,0 +1,330 @@
+---
+// UI部品の見本: ライトボックス
+// 小さな写真を押すと、その場所から拡大して暗い背景の上に大きく出る。←→で前後、Escで閉じる。
+// 枠の中に収めるため、見本は div[role=dialog] を absolute で出す。記事のコードは <dialog> と showModal() を使う。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const Link = mini ? 'span' : 'a';
+const L = {
+  ja: {
+    name: 'ライトボックス',
+    nav: ['お部屋', '料金', 'アクセス'],
+    label: 'GALLERY',
+    h: 'お部屋と景色の写真',
+    note: '写真を押すと大きく見られます',
+    dialog: '写真',
+    open: '拡大して見る',
+    close: '閉じる',
+    prev: '前の写真',
+    next: '次の写真',
+    caps: ['客室からの眺め（朝）', '露天風呂から見る夕日', '中庭の夜', '展望テラスの昼', '夕暮れの山並み', '星がよく見える夜', '朝の散歩道', '窓から見る夕焼け', '夜の展望テラス'],
+  },
+  en: {
+    name: 'Lightbox',
+    nav: ['Rooms', 'Rates', 'Location'],
+    label: 'GALLERY',
+    h: 'Rooms and views',
+    note: 'Tap a photo to see it larger',
+    dialog: 'Photo viewer',
+    open: 'View larger',
+    close: 'Close',
+    prev: 'Previous photo',
+    next: 'Next photo',
+    caps: ['Morning view from the room', 'Sunset from the open-air bath', 'The courtyard at night', 'Lookout terrace at noon', 'Mountains at dusk', 'A clear night for stargazing', 'The morning trail', 'Sunset from the window', 'The terrace after dark'],
+  },
+}[lang as 'ja' | 'en'];
+const tones = ['day', 'sunset', 'night', 'day', 'sunset', 'night', 'day', 'sunset', 'night'] as const;
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site lb-site" data-demo="lightbox">
+    <div class="lb-page" data-lb-page>
+      <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+      <section class="ug-sec lb-body">
+        <p class="ug-label">{L.label}</p>
+        <h3 class="ug-h">{L.h}</h3>
+        <p class="lb-note">{L.note}</p>
+        <div class="lb-grid">
+          {tones.map((tone, i) => (
+            <Link class="lb-thumb" href={mini ? undefined : '#'} aria-label={mini ? undefined : `${L.open}: ${L.caps[i]}`} data-lb-thumb={i}>
+              <Scene tone={tone} />
+            </Link>
+          ))}
+        </div>
+      </section>
+    </div>
+
+    <!-- これが部品の本体: 暗い背景の上に写真を大きく出す -->
+    <div class="lb-box" role="dialog" aria-modal="true" aria-label={L.dialog} data-lb-box data-ug-focus={L.name} data-ug-focus-at="left">
+      <div class="lb-top">
+        <span class="lb-count" aria-live="polite" data-lb-count>1 / 9</span>
+        <Btn class="lb-icon" {...btn} aria-label={L.close} data-lb-close>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </Btn>
+      </div>
+      <div class="lb-stage" data-lb-stage>
+        <figure class="lb-fig" data-lb-fig>
+          {tones.map((tone, i) => (
+            <div class="lb-slide" data-lb-slide={i} data-cap={L.caps[i]} hidden={i !== 0}>
+              <Scene tone={tone} />
+            </div>
+          ))}
+          <figcaption class="lb-cap" data-lb-cap>{L.caps[0]}</figcaption>
+        </figure>
+        <Btn class="lb-icon lb-nav lb-prev" {...btn} aria-label={L.prev} data-lb-prev>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+        </Btn>
+        <Btn class="lb-icon lb-nav lb-next" {...btn} aria-label={L.next} data-lb-next>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+        </Btn>
+      </div>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .lb-site { position: relative; min-height: 100%; }
+  .lb-body { padding-bottom: 24px; }
+  .lb-body { display: grid; gap: 2px; }
+  .lb-note { font-size: 12px; color: var(--ug-ink-2); }
+  .lb-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .lb-thumb {
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: zoom-in;
+    transition: filter 0.15s ease-out;
+  }
+  .lb-thumb :global(.ug-scene) { transition: transform 0.2s ease-out; }
+  .lb-thumb:hover :global(.ug-scene), .lb-thumb.is-hover :global(.ug-scene) { transform: scale(1.04); }
+  .lb-thumb:focus-visible { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+
+  /* 暗い背景。濃さと速さはつまみ（--t-dim・--t-dur）から */
+  /* 枠の中で今見えている範囲に重ねる（top と height は開くときに JavaScript で合わせる） */
+  .lb-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    background: rgba(10, 12, 20, var(--t-dim));
+    color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity calc(var(--t-dur) * 0.8) ease-in, visibility 0s linear calc(var(--t-dur) * 0.8);
+  }
+  .lb-site.is-open .lb-box { opacity: 1; visibility: visible; transition: opacity var(--t-dur) ease-out, visibility 0s; }
+  .lb-top { position: relative; display: flex; align-items: center; justify-content: flex-end; height: 48px; padding: 0 4px; }
+  /* 枚数は真ん中に（左上は見どころの名札が来る） */
+  .lb-count { position: absolute; left: 50%; translate: -50% 0; }
+  .lb-count { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+  .lb-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+  }
+  .lb-icon:hover, .lb-icon.is-hover { background: rgba(255, 255, 255, 0.16); }
+  .lb-icon:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .lb-stage {
+    position: relative;
+    flex: 1;
+    display: grid;
+    place-items: center;
+    padding: 0 16px 16px;
+    container-type: size;
+    touch-action: pan-y;
+  }
+  /* 写真の大きさ（画面に対する割合）はつまみ（--t-size）から。縦にはみ出さないよう高さでも抑える */
+  .lb-fig {
+    width: min(var(--t-size), calc((100cqh - 28px) * 1.6));
+    margin: 0;
+    transform-origin: top left;
+  }
+  .lb-slide :global(.ug-scene) { border-radius: 4px; }
+  .lb-cap { margin-top: 6px; font-size: 12px; text-align: center; opacity: 0.9; }
+  .lb-nav { position: absolute; top: 50%; margin-top: -30px; background: rgba(0, 0, 0, 0.35); }
+  .lb-prev { left: 8px; }
+  .lb-next { right: 8px; }
+
+  @container (max-width: 340px) {
+    .lb-note { display: none; }
+    .lb-grid { gap: 6px; margin-top: 6px; }
+    .lb-top { height: 36px; }
+    .lb-nav { width: 36px; height: 36px; margin-top: -18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lb-box, .lb-site.is-open .lb-box { transition-duration: 0.01s; }
+    .lb-thumb :global(.ug-scene) { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour, tuneNum } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="lightbox"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const frame = root.closest<HTMLElement>('[data-ug-frame]')!;
+    const mini = frame.dataset.size === 'mini';
+    const page = root.querySelector<HTMLElement>('[data-lb-page]')!;
+    const box = root.querySelector<HTMLElement>('[data-lb-box]')!;
+    const stage = root.querySelector<HTMLElement>('[data-lb-stage]')!;
+    const fig = root.querySelector<HTMLElement>('[data-lb-fig]')!;
+    const cap = root.querySelector<HTMLElement>('[data-lb-cap]')!;
+    const count = root.querySelector<HTMLElement>('[data-lb-count]')!;
+    const thumbs = [...root.querySelectorAll<HTMLElement>('[data-lb-thumb]')];
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-lb-slide]')];
+    const prevBtn = root.querySelector<HTMLElement>('[data-lb-prev]')!;
+    const nextBtn = root.querySelector<HTMLElement>('[data-lb-next]')!;
+    const closeBtn = root.querySelector<HTMLElement>('[data-lb-close]')!;
+    const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const dur = () => tuneNum(root, 'dur', 0.3) * 1000;
+    let cur = 0;
+    let busy = false;
+    const isOpen = () => root.classList.contains('is-open');
+
+    const show = (i: number, dir = 0) => {
+      cur = (i + slides.length) % slides.length;
+      slides.forEach((s, k) => (s.hidden = k !== cur));
+      cap.textContent = slides[cur].dataset.cap ?? '';
+      count.textContent = `${cur + 1} / ${slides.length}`;
+      // 前後に送るときは、送った向きから少しだけ滑り込ませる
+      if (dir && !reduce()) {
+        slides[cur].animate([{ opacity: 0, transform: `translateX(${dir * 24}px)` }, { opacity: 1, transform: 'none' }], { duration: 200, easing: 'ease-out' });
+      }
+    };
+    // 小さな写真の位置と大きさから、大きな写真の位置へ（FLIP: 最初と最後の差だけを動かす）
+    const zoom = (from: HTMLElement, reverse: boolean) => {
+      if (reduce()) return Promise.resolve();
+      const a = from.getBoundingClientRect();
+      const b = slides[cur].getBoundingClientRect();
+      if (!b.width) return Promise.resolve();
+      const start = `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width})`;
+      const kf = [{ transform: start }, { transform: 'none' }];
+      const anim = fig.animate(reverse ? kf.reverse() : kf, { duration: dur() * (reverse ? 0.8 : 1), easing: reverse ? 'ease-in' : 'ease-out' });
+      return anim.finished.catch(() => undefined);
+    };
+
+    // real: 本物の操作のときだけ焦点を動かす（自動再生では動かさない）
+    const open = async (i: number, real = false) => {
+      if (isOpen() || busy) return;
+      show(i);
+      // 本番の body スクロール固定の代わりに、枠の中のスクロールを止めて今見えている範囲に重ねる
+      box.style.top = `${view.scrollTop}px`;
+      box.style.height = `${view.clientHeight}px`;
+      view.style.overflow = 'hidden';
+      root.classList.add('is-open');
+      page.setAttribute('inert', '');
+      if (real && !mini) closeBtn.focus({ preventScroll: true });
+      busy = true;
+      await zoom(thumbs[cur], false);
+      busy = false;
+    };
+    const close = async (real = false) => {
+      if (!isOpen() || busy) return;
+      busy = true;
+      const back = zoom(thumbs[cur], true);
+      root.classList.remove('is-open');
+      await back;
+      busy = false;
+      page.removeAttribute('inert');
+      view.style.overflow = '';
+      // 焦点は、今見ていた写真の小さな版へ戻す
+      if (real && !mini) thumbs[cur].focus({ preventScroll: true });
+    };
+
+    thumbs.forEach((th, i) => {
+      th.addEventListener('click', (e) => {
+        e.preventDefault();
+        open(i, true);
+      });
+      th.addEventListener('ug:click', () => open(i));
+    });
+    const prev = () => show(cur - 1, -1);
+    const next = () => show(cur + 1, 1);
+    prevBtn.addEventListener('click', prev);
+    prevBtn.addEventListener('ug:click', prev);
+    nextBtn.addEventListener('click', next);
+    nextBtn.addEventListener('ug:click', next);
+    closeBtn.addEventListener('click', () => close(true));
+    closeBtn.addEventListener('ug:click', () => close());
+    // 写真の外（暗い背景）を押したら閉じる
+    stage.addEventListener('click', (e) => {
+      if (e.target === stage && swipeDx === 0) close(true);
+    });
+    view.addEventListener('keydown', (e) => {
+      if (!isOpen()) return;
+      if (e.key === 'Escape') close(true);
+      else if (e.key === 'ArrowLeft') prev();
+      else if (e.key === 'ArrowRight') next();
+      else if (e.key === 'Tab') {
+        // 中で Tab が外へ出ないようにする
+        const f = [closeBtn, prevBtn, nextBtn];
+        const i = f.indexOf(document.activeElement as HTMLElement);
+        f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+      } else return;
+      e.preventDefault();
+    });
+    // 左右にスワイプして前後へ
+    let sx = 0;
+    let swipeDx = 0;
+    stage.addEventListener('pointerdown', (e) => {
+      sx = e.clientX;
+      swipeDx = 0;
+    });
+    stage.addEventListener('pointerup', (e) => {
+      swipeDx = e.clientX - sx;
+      if (Math.abs(swipeDx) > 40) (swipeDx < 0 ? next : prev)();
+      else swipeDx = 0;
+    });
+
+    const reset = () => {
+      fig.getAnimations().forEach((a) => a.cancel());
+      root.classList.remove('is-open');
+      page.removeAttribute('inert');
+      view.style.overflow = '';
+      busy = false;
+      show(0);
+    };
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      reset();
+      if (t.view.scrollTop > 0) await t.scrollTo(0, 400);
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.85 }, 10);
+      await t.sleep(600);
+      await t.move(thumbs[1], 800);
+      t.hover(thumbs[1]);
+      await t.sleep(300);
+      await t.click(thumbs[1]);
+      t.hover(null);
+      await t.sleep(1300);
+      await t.move(nextBtn, 700);
+      t.hover(nextBtn);
+      await t.sleep(200);
+      await t.click(nextBtn);
+      await t.sleep(1000);
+      await t.click(nextBtn);
+      t.hover(null);
+      await t.sleep(1100);
+      await t.move(closeBtn, 700);
+      t.hover(closeBtn);
+      await t.sleep(250);
+      await t.click(closeBtn);
+      t.hover(null);
+      await t.sleep(1600);
+    });
+  });
+</script>

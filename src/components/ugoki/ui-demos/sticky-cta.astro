@@ -1,0 +1,193 @@
+---
+// UI部品の見本: 追従CTAバー（画面下に付いてくる申し込みの帯）
+// 最初のボタンを通り過ぎたら下から出て、最後の申し込み欄が見えたら引っ込む。
+// 枠の中に収めるため position: sticky の台に乗せる。記事のコードは position: fixed。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: '追従CTAバー',
+    nav: ['お部屋', '料金'],
+    title: '山の宿 ひかり',
+    sub: '露天風呂つき客室で、静かな週末を。',
+    price: '1泊2食 15,000円〜',
+    cta: '空室を見る',
+    barNote: '大人1名・税込',
+    secs: [
+      { label: 'ROOM', h: 'お部屋' },
+      { label: 'DINNER', h: 'お食事' },
+      { label: 'VOICE', h: 'お客さまの声' },
+      { label: 'ACCESS', h: 'アクセス' },
+    ],
+    rooms: ['和室', '露天風呂つき', '離れ'],
+    finalH: 'ご予約はこちら',
+    finalP: '前日までキャンセル無料。お支払いは宿で。',
+  },
+  en: {
+    name: 'Sticky CTA bar',
+    nav: ['Rooms', 'Rates'],
+    title: 'Hikari Mountain Lodge',
+    sub: 'A quiet weekend with your own hot-spring bath.',
+    price: 'From $110 / night',
+    cta: 'Check availability',
+    barNote: 'Per person, taxes incl.',
+    secs: [
+      { label: 'ROOMS', h: 'Rooms' },
+      { label: 'DINING', h: 'Dining' },
+      { label: 'REVIEWS', h: 'What guests say' },
+      { label: 'LOCATION', h: 'Getting here' },
+    ],
+    rooms: ['Classic', 'Private bath', 'Villa'],
+    finalH: 'Ready to book?',
+    finalP: 'Free cancellation until the day before. Pay at the lodge.',
+  },
+}[lang as 'ja' | 'en'];
+---
+
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
+  <div class="ug-site sc-site" data-demo="sticky-cta">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((x) => <span>{x}</span>)}</header>
+    <section class="sc-hero">
+      <Scene tone="sunset" wide />
+      <div class="sc-hero-body">
+        <h3 class="ug-h sc-title">{L.title}</h3>
+        <p class="sc-sub">{L.sub}</p>
+        <p class="sc-price">{L.price}</p>
+        <Btn class="ug-btn-site" {...btn}>{L.cta}</Btn>
+      </div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">{L.secs[0].label}</p>
+      <h3 class="ug-h">{L.secs[0].h}</h3>
+      <div class="ug-grid">
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.rooms[0]}</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">{L.rooms[1]}</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.rooms[2]}</div></div>
+      </div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">{L.secs[1].label}</p>
+      <h3 class="ug-h">{L.secs[1].h}</h3>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i></div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">{L.secs[2].label}</p>
+      <h3 class="ug-h">{L.secs[2].h}</h3>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i></div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">{L.secs[3].label}</p>
+      <h3 class="ug-h">{L.secs[3].h}</h3>
+      <div class="sc-map"><Scene tone="day" wide /></div>
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+    </section>
+    <!-- 最後の申し込み欄。ここが見えている間は、帯を引っ込める（同じボタンが2つ並ばないように） -->
+    <section class="ug-sec sc-final" data-sc-final>
+      <h3 class="ug-h">{L.finalH}</h3>
+      <p class="sc-sub">{L.finalP}</p>
+      <Btn class="ug-btn-site" {...btn}>{L.cta}</Btn>
+    </section>
+
+    <!-- これが部品の本体: 画面の下に付いてくる帯。本物のサイトでは position: fixed で画面の下に置く -->
+    <div class="sc-dock">
+      <div class="sc-bar" data-sc-bar data-ug-focus={L.name}>
+        <p class="sc-bar-txt"><b>{L.price}</b><small>{L.barNote}</small></p>
+        <Btn class="ug-btn-site sc-bar-btn" {...btn} tabindex={mini ? undefined : -1}>{L.cta}</Btn>
+      </div>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .sc-hero :global(.ug-scene) { display: block; }
+  .sc-hero-body { display: grid; justify-items: start; gap: 4px; padding: 16px 16px 24px; }
+  .sc-title { margin: 0; }
+  .sc-sub { font-size: 12px; color: var(--ug-ink-2); }
+  .sc-price { font-size: 15px; font-weight: 800; margin-bottom: 8px; }
+  .sc-map { margin: 8px 0; border-radius: 10px; overflow: hidden; }
+  .sc-final { display: grid; justify-items: start; gap: 6px; padding-bottom: 32px; background: var(--ug-bg); }
+
+  /* sticky + bottom: 0 で、枠の下端に居続ける高さ0の台 */
+  .sc-dock { position: sticky; bottom: 0; height: 0; z-index: 20; }
+  .sc-bar {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.96);
+    border-top: 1px solid var(--ug-line);
+    box-shadow: 0 -8px 20px -12px rgba(29, 37, 65, 0.35);
+    /* 隠れているとき: 帯の高さぶん下へ。速さはつまみ（--t-dur）から。消えるときは加速 */
+    transform: translateY(100%);
+    visibility: hidden;
+    transition: transform var(--t-dur) ease-in, visibility 0s linear var(--t-dur);
+  }
+  .sc-bar.is-shown {
+    transform: none;
+    visibility: visible;
+    transition: transform var(--t-dur) ease-out, visibility 0s;
+  }
+  /* 名札は帯の上に出す（帯の中の文字に被らないように） */
+  :global(.ug-frame.show-focus) .sc-bar[data-ug-focus]::after { top: auto; bottom: calc(100% + 6px); }
+  .sc-bar-txt { display: grid; line-height: 1.35; }
+  .sc-bar-txt b { font-size: 14px; font-weight: 800; }
+  .sc-bar-txt small { font-size: 10px; color: var(--ug-ink-2); }
+  .sc-bar-btn { flex: none; min-height: 44px; }
+  .sc-bar-btn:hover, .sc-bar-btn.is-hover { filter: brightness(0.94); }
+
+  @container (max-width: 340px) {
+    .sc-bar { padding: 8px 12px; }
+    .sc-bar-btn { padding: 0 14px; font-size: 12px; }
+  }
+  :global(.is-mini) .sc-hero-body { padding: 10px 12px; gap: 2px; }
+  :global(.is-mini) .sc-hero-body .ug-btn-site { display: none; }
+  :global(.is-mini) .sc-sub { display: none; }
+  :global(.is-mini) .sc-title { font-size: 14px; }
+  :global(.is-mini) .sc-price { font-size: 12px; }
+  :global(.is-mini) .sc-bar { padding: 6px 10px; }
+  :global(.is-mini) .sc-bar-txt b { font-size: 12px; }
+  :global(.is-mini) .sc-bar-btn { min-height: 30px; padding: 0 12px; font-size: 11px; }
+  @media (prefers-reduced-motion: reduce) {
+    .sc-bar, .sc-bar.is-shown { transition-duration: 0.01s; }
+  }
+</style>
+
+<script>
+  import { tuneNum, onTune } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="sticky-cta"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const bar = root.querySelector<HTMLElement>('[data-sc-bar]');
+    const final = root.querySelector<HTMLElement>('[data-sc-final]');
+    if (!view || !bar || !final) return;
+    const mini = root.closest<HTMLElement>('[data-ug-frame]')?.dataset.size === 'mini';
+    const barBtn = bar.querySelector<HTMLElement>('.sc-bar-btn');
+    let finalInView = false;
+
+    // 決めた位置（つまみ --t-show）より下へスクロールしたら出す。最後の申し込み欄が見えたら引っ込める。
+    // 一覧の小さな見本は、最初から帯が見えるようにする
+    const sync = () => {
+      const past = mini || view.scrollTop > tuneNum(root, 'show', 400);
+      const show = past && !finalInView;
+      bar.classList.toggle('is-shown', show);
+      // 隠れている帯のボタンにはキーボードの焦点が行かないように
+      if (barBtn && !mini) barBtn.tabIndex = show ? 0 : -1;
+    };
+    new IntersectionObserver(([e]) => {
+      finalInView = e.isIntersecting;
+      sync();
+    }, { root: view }).observe(final);
+    view.addEventListener('scroll', sync, { passive: true });
+    onTune(view, sync);
+    sync();
+  });
+</script>

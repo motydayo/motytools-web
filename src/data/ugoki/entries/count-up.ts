@@ -28,7 +28,7 @@ export default {
     '根拠のはっきりしない数字（動かして目立たせるほど、問い合わせや不信の元になる）',
   ],
   prompt:
-    '実績の数字を「カウントアップ（count-up animation）」にしてください。数字が画面に6割見えたら、0から目標の値まで1.6秒で数え上げ、最初は速く最後はゆっくり止まる動き（ease-out）にしてください。IntersectionObserver で見えたかを調べ、動かすのは1回だけ、ライブラリは使わないでください。数字には font-variant-numeric: tabular-nums を指定し、最後の値の幅を先に確保して横にガタつかないようにしてください。3桁ごとのカンマと小数点1桁にも対応し、HTMLには最初から最後の値を書いておくこと。読み上げソフトには最後の値だけを渡し、動きを減らす設定の人には最初から最後の値を表示してください。',
+    '実績の数字を「カウントアップ（count-up animation）」にしてください。数字が画面に6割見えたら、0から目標の値まで{{dur:t}}で数え上げ、最初は速く最後はゆっくり止まる動き（ease-out。進み具合 k に 1 - (1 - k)^{{ease:n}} を掛けるカーブ）にしてください。横に並んだ数字は{{stagger:t}}ずつずらして始めます。IntersectionObserver で見えたかを調べ、動かすのは1回だけ、ライブラリは使わないでください。数字には font-variant-numeric: tabular-nums を指定し、最後の値の幅を先に確保して横にガタつかないようにしてください。3桁ごとのカンマと小数点1桁にも対応し、HTMLには最初から最後の値を書いておくこと。読み上げソフトには最後の値だけを渡し、動きを減らす設定の人には最初から最後の値を表示してください。',
   howTo: [
     'HTMLには最初から「1,280」のように最後の値を書いておきます。JavaScriptが動かない環境や検索エンジンにも正しい数字が届くからです。JavaScriptでは、まず最後の値を表示した状態で横幅を測って確保し、それから0に戻します。こうすると数字の桁が増えても、単位や周りの文字が動きません。',
     '数字が画面に入ったかは IntersectionObserver（要素が画面に入ったかを教えてくれる仕組み）で調べ、入ったら requestAnimationFrame（画面の書き換えに合わせて処理を呼ぶ仕組み）で少しずつ値を増やします。増え方に減速のカーブを掛けると、最後がゆっくり止まります。',
@@ -83,24 +83,25 @@ export default {
       code: `const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fmt = (v, dec) =>
   v.toLocaleString('ja-JP', { minimumFractionDigits: dec, maximumFractionDigits: dec });
-const easeOut = (k) => 1 - Math.pow(1 - k, 3); // 最後はゆっくり止まる
+// 最後はゆっくり止まる（数が大きいほど緩急が強い。1なら等速）
+const easeOut = (k) => 1 - Math.pow(1 - k, {{ease:n}});
 
-function countUp(el) {
+function countUp(el, delay) {
   const to = Number(el.dataset.to);
   const dec = Number(el.dataset.dec || 0);
-  const ms = 1600;
-  const start = performance.now();
+  const ms = {{dur:n}} * 1000;
+  const start = performance.now() + delay;
   const tick = (now) => {
-    const k = Math.min(1, (now - start) / ms);
+    const k = Math.max(0, Math.min(1, (now - start) / ms));
     el.textContent = fmt(to * easeOut(k), dec);
     if (k < 1) requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
 }
 
-const counts = document.querySelectorAll('.count');
+const groups = document.querySelectorAll('.stats');
 if (!reduce) {
-  counts.forEach((el) => {
+  document.querySelectorAll('.count').forEach((el) => {
     // 最後の値の幅を先に確保してから0に戻す
     el.style.minWidth = el.getBoundingClientRect().width + 'px';
     el.textContent = fmt(0, Number(el.dataset.dec || 0));
@@ -108,13 +109,19 @@ if (!reduce) {
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (!e.isIntersecting) return;
-      countUp(e.target);
+      // 並んだ数字は少しずつずらして始める
+      e.target.querySelectorAll('.count').forEach((el, i) => countUp(el, i * {{stagger:n}} * 1000));
       io.unobserve(e.target); // 1回だけ
     });
   }, { threshold: 0.6 });
-  counts.forEach((el) => io.observe(el));
+  groups.forEach((g) => io.observe(g));
 }`,
     },
+  ],
+  tune: [
+    { key: 'dur', label: '数え上げる時間', min: 0.4, max: 3, step: 0.1, value: 1.6, unit: 's' },
+    { key: 'ease', label: '緩急の強さ（1で等速）', min: 1, max: 6, step: 1, value: 3, unit: '' },
+    { key: 'stagger', label: '数字ごとのずれ', min: 0, max: 0.4, step: 0.05, value: 0.1, unit: 's' },
   ],
   cautions: [
     '数字に font-variant-numeric: tabular-nums を付けないと、「1」と「8」の幅の違いで数えている間ずっと文字が左右に揺れます。使う書体に等幅数字が入っていない場合もあるので、実際の書体で確かめてください。',

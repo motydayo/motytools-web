@@ -106,6 +106,7 @@ export const GET: APIRoute = async () => {
     ...APPS.map((a) => ({ loc: a.lpPath, lastmod: gitDate(a.lpPath, toolsDate), priority: '0.8' })),
   ];
 
+  urls.push({ loc: '/en/', lastmod: '2026-10-15', priority: '0.8' });
   // 図鑑（動き・UI部品 × 日本語・英語。src/data/ugoki|ui/entries(-en)/ から自動で載る）
   for (const pair of Object.values(BOOKS)) {
     for (const b of Object.values(pair)) {
