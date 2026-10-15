@@ -1,14 +1,26 @@
 ---
-// slug から見本（demos/<slug>.astro）を探して出す
-const demos = import.meta.glob<{ default: any }>('./demos/*.astro', { eager: true });
+// 本（動き・UI部品）と slug から見本を探して出す。
+// つまみの初期値は外側の箱に CSS 変数（--t-<key>）として置き、枠の中へ受け継がせる。
+import { tuneVars } from '../../lib/zukan/tune';
+import type { TuneParam } from '../../data/ugoki/types';
+
+const motion = import.meta.glob<{ default: any }>('./demos/*.astro', { eager: true });
+const ui = import.meta.glob<{ default: any }>('./ui-demos/*.astro', { eager: true });
+
 interface Props {
   slug: string;
+  book?: 'ugoki' | 'ui';
   size?: 'mini' | 'full';
+  lang?: 'ja' | 'en';
+  tune?: TuneParam[];
 }
-const { slug, size = 'full' } = Astro.props;
-const mod = demos[`./demos/${slug}.astro`];
-if (!mod) throw new Error(`見本 demos/${slug}.astro がありません`);
+const { slug, book = 'ugoki', size = 'full', lang = 'ja', tune } = Astro.props;
+const mod = book === 'ui' ? ui[`./ui-demos/${slug}.astro`] : motion[`./demos/${slug}.astro`];
+if (!mod) throw new Error(`見本 ${book === 'ui' ? 'ui-demos' : 'demos'}/${slug}.astro がありません`);
 const Comp = mod.default;
+const vars = tuneVars(tune);
 ---
 
-<Comp size={size} />
+<div class="zk-demo" style={vars} data-zk-demo={slug}>
+  <Comp size={size} lang={lang} />
+</div>

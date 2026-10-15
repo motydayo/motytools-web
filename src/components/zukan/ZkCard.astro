@@ -1,23 +1,23 @@
 ---
 // 一覧のカード: 小さな見本（自動で動く）＋番号・名前・一言
-import Demo from './Demo.astro';
-import type { Ugoki } from '../../data/ugoki';
+import Demo from '../ugoki/Demo.astro';
+import type { Book, Ugoki } from '../../data/zukan';
 interface Props {
   u: Ugoki;
+  book: Book;
 }
-const { u } = Astro.props;
+const { u, book } = Astro.props;
 const search = [u.name, u.en, ...u.aka, u.oneLine].join(' ').toLowerCase();
 ---
 
-<a href={`/ugoki/${u.slug}/`} class="ug-card-link" data-search={search} data-cat={u.category}>
-  <Demo slug={u.slug} size="mini" />
+<a href={`${book.base}${u.slug}/`} class="ug-card-link" data-search={search} data-cat={u.category}>
+  <Demo slug={u.slug} book={book.id} size="mini" lang={book.lang} tune={u.tune} />
   <span class="ug-card-meta">
     <span class="ug-card-name"><b>{String(u.no).padStart(2, '0')}</b>{u.name}</span>
     <span class="ug-card-en">{u.en}</span>
     <span class="ug-card-one">{u.oneLine}</span>
   </span>
 </a>
-
 <style is:global>
   .ug-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5) var(--sp-4); }
   @media (max-width: 900px) { .ug-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

@@ -1,0 +1,377 @@
+---
+// 図鑑の1項目のページ（動き・UI部品 × 日本語・英語で共通）
+import { codeToHtml } from 'shiki';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Demo from '../ugoki/Demo.astro';
+import ZkCard from './ZkCard.astro';
+import Tuner from './Tuner.astro';
+import CopyButton from '../ugoki/CopyButton.astro';
+import { SITE } from '../../config';
+import { BOOKS, T, hasAlt, otherBook, type Book, type Ugoki } from '../../data/zukan';
+import { fillHtml, fillText, formatTune, toSentinel, SENTINEL, type Fmt } from '../../lib/zukan/tune';
+
+interface Props {
+  book: Book;
+  u: Ugoki;
+}
+const { book, u } = Astro.props;
+const lang = book.lang;
+const t = T[lang];
+const path = `${book.base}${u.slug}/`;
+const url = `${SITE.url}${path}`;
+const altPath = hasAlt(book, u.slug) ? `${book.altBase}${u.slug}/` : undefined;
+const alternates = altPath ? (lang === 'ja' ? { ja: path, en: altPath } : { ja: altPath, en: path }) : undefined;
+const cat = book.categories.find((c) => c.id === u.category)!;
+const list = book.entries;
+const idx = list.findIndex((x) => x.slug === u.slug);
+const prev = list[idx - 1];
+const next = list[idx + 1];
+const sameCat = list.filter((x) => x.category === u.category && x.slug !== u.slug).slice(0, 6);
+const similar = u.similar
+  .map((s) => {
+    const b = BOOKS[s.book ?? book.id][lang];
+    return { ...s, b, x: b.entries.find((e) => e.slug === s.slug) };
+  })
+  .filter((s): s is typeof s & { x: Ugoki } => Boolean(s.x));
+const no = String(u.no).padStart(2, '0');
+const updated = u.updatedAt ?? u.publishedAt;
+const tune = u.tune ?? [];
+const langName = { html: 'html', css: 'css', js: 'javascript' } as const;
+
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const promptHtml = fillHtml(u.prompt, tune, lang, esc);
+const promptPlain = fillText(u.prompt, tune, lang);
+
+// コードは色付けしてから、差し込み口の目印をつまみ連動の札に戻す
+const codes = await Promise.all(
+  u.code.map(async (c) => {
+    let html = await codeToHtml(toSentinel(c.code), {
+      lang: langName[c.lang],
+      themes: { light: 'github-light', dark: 'github-dark' },
+      defaultColor: 'light',
+    });
+    html = html.replace(SENTINEL, (_, key: string, f: Fmt) => {
+      const p = tune.find((x) => x.key === key);
+      if (!p) throw new Error(`${u.slug}: コードの差し込み口 ${key} に対応するつまみがありません`);
+      return `<span class="zk-tv" data-t="${key}" data-f="${f}">${esc(formatTune(p, p.value, f, lang))}</span>`;
+    });
+    if (html.includes('TUNE')) throw new Error(`${u.slug}: コードの差し込み口が色付けで分断されました`);
+    return { ...c, html };
+  })
+);
+
+const jsonLd: object[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: u.title,
+    description: u.description,
+    inLanguage: lang,
+    datePublished: u.publishedAt,
+    dateModified: updated,
+    image: `${SITE.url}/og/${book.id}${lang === 'en' ? '-en' : ''}/${u.slug}.png`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    author: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+    publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url, logo: { '@type': 'ImageObject', url: `${SITE.url}/favicon.svg` } },
+    about: [u.name, u.en, ...u.aka],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: t.home, item: lang === 'en' ? `${SITE.url}${book.base}` : `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: book.name, item: `${SITE.url}${book.base}` },
+      { '@type': 'ListItem', position: 3, name: u.name, item: url },
+    ],
+  },
+];
+if (u.faq.length > 0) {
+  jsonLd.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: u.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  });
+}
+const otherB = BOOKS[otherBook(book.id)][lang];
+---
+
+<BaseLayout
+  title={u.title}
+  description={u.description}
+  path={path}
+  ogImage={`/og/${book.id}${lang === 'en' ? '-en' : ''}/${u.slug}.png`}
+  ogType="article"
+  jsonLd={jsonLd}
+  lang={lang}
+  alternates={alternates}
+>
+  <div class="container ugd" data-zk-article>
+    <nav class="breadcrumb" aria-label={lang === 'en' ? 'Breadcrumb' : 'パンくずリスト'}>
+      <ol>
+        {lang === 'ja' && <li><a href="/">{t.home}</a></li>}
+        <li><a href={book.base}>{book.name}</a></li>
+        <li aria-current="page">{u.name}</li>
+      </ol>
+    </nav>
+
+    <article>
+      <header class="ugd-head">
+        <p class="ugd-kicker">
+          <span class="ugd-no">No.{no}</span>
+          <a href={`${book.base}#${u.category}`}>{cat.name}</a>
+          {altPath && (
+            <a class="ugd-lang" href={altPath} hreflang={lang === 'ja' ? 'en' : 'ja'} lang={lang === 'ja' ? 'en' : 'ja'}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z" /></svg>
+              {lang === 'ja' ? t.english : t.other}
+            </a>
+          )}
+        </p>
+        <h1>{u.name}<span class="ugd-en" lang={lang === 'ja' ? 'en' : 'ja'}>{u.en}</span></h1>
+        <p class="ugd-one">{u.oneLine}</p>
+      </header>
+
+      <div class="ugd-demo">
+        <Demo slug={u.slug} book={book.id} lang={lang} tune={tune} />
+      </div>
+
+      {tune.length > 0 && <Tuner params={tune} lang={lang} />}
+
+      <dl class="ugd-names">
+        <div><dt>{t.nameEn}</dt><dd lang={lang === 'ja' ? 'en' : 'ja'}>{u.en}</dd></div>
+        {u.aka.length > 0 && <div><dt>{t.nameOther}</dt><dd>{u.aka.join(lang === 'ja' ? '、' : ', ')}</dd></div>}
+      </dl>
+
+      <div class="ugd-body">
+        <section aria-labelledby="what">
+          <h2 id="what">{t.what[book.id]}</h2>
+          {u.what.map((p) => <p>{p}</p>)}
+        </section>
+
+        <section aria-labelledby="when">
+          <h2 id="when">{t.usage}</h2>
+          <div class="ugd-fit">
+            <div class="ugd-fit-col is-yes">
+              <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                {t.when}
+              </h3>
+              <ul>{u.when.map((w) => <li>{w}</li>)}</ul>
+            </div>
+            <div class="ugd-fit-col is-no">
+              <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                {t.avoid}
+              </h3>
+              <ul>{u.avoid.map((w) => <li>{w}</li>)}</ul>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="prompt">
+          <h2 id="prompt">{t.prompt}</h2>
+          <p>{t.promptLead}</p>
+          <div class="ugd-prompt" data-copy-scope>
+            <p class="ugd-prompt-text" data-prompt set:html={promptHtml} />
+            <CopyButton from="[data-prompt]" text={promptPlain} label={t.promptCopy} doneLabel={lang === 'en' ? 'Copied' : undefined} failLabel={lang === 'en' ? 'Could not copy. Select the text and copy it manually.' : undefined} />
+          </div>
+        </section>
+
+        <section aria-labelledby="howto">
+          <h2 id="howto">{t.howto}</h2>
+          {u.howTo.map((p) => <p>{p}</p>)}
+          {tune.length > 0 && <p class="ugd-tuned">{t.tunedNote}</p>}
+          {codes.map((c) => (
+            <div class="ugd-code" data-copy-scope>
+              <div class="ugd-code-head">
+                <span>{c.label}</span>
+                <CopyButton from="pre" label={t.copy} small doneLabel={lang === 'en' ? 'Copied' : undefined} failLabel={lang === 'en' ? 'Could not copy' : undefined} />
+              </div>
+              <Fragment set:html={c.html} />
+            </div>
+          ))}
+        </section>
+
+        <section aria-labelledby="caution">
+          <h2 id="caution">{t.cautions}</h2>
+          <ul class="ugd-list">{u.cautions.map((c) => <li>{c}</li>)}</ul>
+        </section>
+
+        {similar.length > 0 && (
+          <section aria-labelledby="similar">
+            <h2 id="similar">{t.similar}</h2>
+            <ul class="ugd-similar">
+              {similar.map((s) => (
+                <li>
+                  <a href={`${s.b.base}${s.x.slug}/`}>
+                    <span class="ugd-similar-name">{s.x.name}<small>{s.b.id !== book.id ? s.b.name : s.x.en}</small></span>
+                    <span class="ugd-similar-diff">{s.diff}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {u.faq.length > 0 && (
+          <section aria-labelledby="faq-heading">
+            <h2 id="faq-heading">{t.faq}</h2>
+            <div class="faq">
+              {u.faq.map((f) => (
+                <details>
+                  <summary>{f.q}</summary>
+                  <p class="faq-a">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <p class="ugd-date"><time datetime={updated}>{t.updated(updated)}</time></p>
+      </div>
+    </article>
+
+    <nav class="ugd-pager" aria-label={lang === 'en' ? 'Previous and next' : '前後の項目'}>
+      {prev ? (
+        <a href={`${book.base}${prev.slug}/`} class="is-prev">
+          <small>{t.prev}</small>
+          <span>No.{String(prev.no).padStart(2, '0')} {prev.name}</span>
+        </a>
+      ) : <span />}
+      {next ? (
+        <a href={`${book.base}${next.slug}/`} class="is-next">
+          <small>{t.next}</small>
+          <span>No.{String(next.no).padStart(2, '0')} {next.name}</span>
+        </a>
+      ) : <span />}
+    </nav>
+
+    {sameCat.length > 0 && (
+      <section class="ugd-more" aria-labelledby="more-heading">
+        <div class="section-heading">
+          <h2 id="more-heading">{t.more(cat.name)}</h2>
+          <a href={book.base} class="ugd-all">{t.all(list.length)}</a>
+        </div>
+        <div class="ug-cards">
+          {sameCat.map((x) => <ZkCard u={x} book={book} />)}
+        </div>
+      </section>
+    )}
+
+    {otherB.entries.length > 0 && (
+      <p class="ugd-otherbook"><a href={otherB.base}>{t.otherBook[book.id]}<span aria-hidden="true">&nbsp;→</span></a></p>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .ugd { padding-bottom: var(--sp-8); }
+  .ugd article { max-width: var(--article); margin: 0 auto; }
+  .ugd-head { margin: var(--sp-4) 0 var(--sp-5); }
+  .ugd-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1) var(--sp-3); font-size: var(--fs-sm); color: var(--text-2); }
+  .ugd-kicker a { color: var(--text-2); }
+  .ugd-no { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--accent); letter-spacing: 0.04em; }
+  .ugd-lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-full);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .ugd-lang:hover { border-color: var(--border-strong); color: var(--text) !important; }
+  .ugd-head h1 { margin-top: var(--sp-2); font-size: clamp(28px, 5vw, 36px); line-height: 1.25; font-weight: 800; letter-spacing: 0.01em; }
+  .ugd-en { display: block; margin-top: var(--sp-1); font-size: var(--fs-md); font-weight: 600; color: var(--text-3); letter-spacing: 0.02em; }
+  .ugd-one { margin-top: var(--sp-3); font-size: var(--fs-md); color: var(--text-2); }
+  .ugd-demo { margin-bottom: var(--sp-3); }
+  .ugd-names { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-5); margin-top: var(--sp-4); font-size: var(--fs-sm); color: var(--text-2); }
+  .ugd-names div { display: flex; gap: var(--sp-2); }
+  .ugd-names dt { color: var(--text-3); }
+  .ugd-body section { margin-top: var(--sp-7); }
+  .ugd-body h2 { font-size: var(--fs-lg); font-weight: 800; margin-bottom: var(--sp-3); scroll-margin-top: 72px; }
+  .ugd-body p { margin-top: var(--sp-3); line-height: 1.85; }
+  .ugd-body h2 + p { margin-top: 0; }
+  .ugd-tuned { font-size: var(--fs-sm); color: var(--text-2); }
+
+  .ugd-fit { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+  @media (max-width: 640px) { .ugd-fit { grid-template-columns: 1fr; } }
+  .ugd-fit-col { padding: var(--sp-4); border-radius: var(--r-md); border: 1px solid var(--border); background: var(--surface); }
+  .ugd-fit-col h3 { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-base); font-weight: 800; margin-bottom: var(--sp-2); }
+  .ugd-fit-col.is-yes h3 { color: var(--success); }
+  .ugd-fit-col.is-no h3 { color: var(--danger); }
+  .ugd-fit-col ul { padding-left: 1.2em; display: grid; gap: var(--sp-2); font-size: var(--fs-sm); line-height: 1.75; }
+
+  .ugd-prompt { margin-top: var(--sp-4); padding: var(--sp-4); border-radius: var(--r-md); background: var(--accent-soft); border: 1px solid var(--accent-border); }
+  .ugd-prompt-text { margin: 0 0 var(--sp-3) !important; font-size: var(--fs-sm); line-height: 1.85; }
+
+  .ugd-code { margin-top: var(--sp-4); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; background: var(--surface); }
+  .ugd-code-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--sp-2) 0 var(--sp-4);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--text-2);
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .ugd-code :global(pre) { margin: 0; padding: var(--sp-4); font-size: 13px; line-height: 1.7; overflow-x: auto; }
+
+  .ugd-list { padding-left: 1.2em; display: grid; gap: var(--sp-2); line-height: 1.8; }
+
+  .ugd-similar { list-style: none; display: grid; gap: var(--sp-2); }
+  .ugd-similar a {
+    display: grid;
+    gap: var(--sp-1);
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+  .ugd-similar a:hover { border-color: var(--border-strong); }
+  .ugd-similar a:active { transform: scale(0.99); }
+  .ugd-similar-name { font-weight: 800; }
+  .ugd-similar-name small { margin-left: var(--sp-2); font-weight: 500; color: var(--text-3); font-size: var(--fs-xs); }
+  .ugd-similar-diff { font-size: var(--fs-sm); color: var(--text-2); line-height: 1.75; }
+
+  .ugd-date { margin-top: var(--sp-6) !important; font-size: var(--fs-xs); color: var(--text-3); }
+
+  .ugd-pager { max-width: var(--article); margin: var(--sp-7) auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+  .ugd-pager a {
+    display: grid;
+    gap: 2px;
+    min-height: 64px;
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: var(--fs-sm);
+  }
+  .ugd-pager a:hover { border-color: var(--border-strong); }
+  .ugd-pager small { color: var(--text-3); font-weight: 500; font-size: var(--fs-xs); }
+  .ugd-pager .is-next { text-align: right; }
+  .ugd-more { margin-top: var(--sp-8); }
+  .ugd-all { font-size: var(--fs-sm); font-weight: 700; color: var(--accent); }
+  .ugd-otherbook { margin-top: var(--sp-6); text-align: center; }
+  .ugd-otherbook a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: var(--accent); }
+</style>
+
+<style is:global>
+  /* コードの色: ダーク表示のときは github-dark に切り替える */
+  [data-theme='dark'] .ugd-code .shiki,
+  [data-theme='dark'] .ugd-code .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+  [data-theme='dark'] .ugd-code .zk-tv { background-color: transparent; }
+</style>

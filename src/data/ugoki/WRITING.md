@@ -1,4 +1,4 @@
-# 動きの図鑑（/ugoki/）の作り方
+# 図鑑（動きの図鑑 /ugoki/・UI部品の図鑑 /ui/・英語版 /en/motion/・/en/ui/）の作り方
 
 LP・Webサイトでよく使う「動きの演出」を、**動く見本＋名前＋使いどころ＋作り方＋AIへの頼み方**で引ける図鑑。
 1演出＝1ページ（/ugoki/<slug>/）。検索から来た人が「この動き、何て名前？どう作る？いつ使う？」を1ページで解決できることがゴール。
@@ -79,7 +79,7 @@ const { size = 'full' } = Astro.props;
 
 ### 見た目
 - 枠の中は「よくある明るいWebサイト」。共通部品を使ってそろえる: `.ug-site` `.ug-nav`（`.ug-logo` `.ug-cta`）`.ug-sec` `.ug-label` `.ug-h` `.ug-lines`（灰色の文章の代わり）`.ug-grid` `.ug-card` `.ug-card-body` `.ug-btn-site`、絵は `<Scene tone="day|sunset|night" wide />`。色は `--ug-orange` `--ug-blue` `--ug-navy` `--ug-sky` `--ug-ink` `--ug-ink-2` `--ug-line` `--ug-paper` `--ug-bg`。
-- **サイト共通の global.css にあるクラス名（logo, cards, field, range, btn, chip, panel, num, result, steps など）を見本の中で使わない**（外側のCSSが効いて崩れる）。`node scripts/check-ugoki.mjs` で確認する（sr-only は可）。
+- **サイト共通の global.css にあるクラス名（logo, cards, field, range, btn, chip, panel, num, result, steps など）を見本の中で使わない**（外側のCSSが効いて崩れる）。`node scripts/check-zukan.mjs` で確認する（sr-only は可）。
 - 画像ファイル・外部ライブラリ・Webフォント追加は使わない。絵文字は使わない。アイコンはインラインSVG。
 - 文字は本物らしい日本語（「山の宿」「1泊 12,000円〜」「お申し込み」）。「テスト」「Lorem ipsum」「aaa」は禁止。
 - **演出の主役に `data-ug-focus="名前"` を付ける**（点線と名札が出る）。主役は position が static 以外であること（relative / sticky / absolute）。名札が中身に被るなら `data-ug-focus-at="below"`（下にぶら下げる）か `"left"`。overflow: hidden の要素だと名札が切れるので、その外側に付ける。
@@ -141,3 +141,75 @@ npx astro build --config astro.config.agentX.mjs   # X は担当の記号。エ�
 - 見た目の確認: `npx astro preview --config astro.config.agentX.mjs --port 49NN` を裏で起動し、
   `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --window-size=1100,1400 --screenshot=/path/out.png --virtual-time-budget=4000 http://localhost:49NN/ugoki/<slug>/` で撮って Read で目視する。スマホ幅は `--window-size=390,1400`。一覧 `/ugoki/` も撮って小さな見本を確認する。終わったら preview を止める。
 - `dist/`・他担当の slug のファイル・runtime.ts・UgFrame.astro・Scene.astro・types.ts・ページ（src/pages/ugoki/）は触らない。共通部分に足りないものがあれば、自分の見本の中で作るか、報告に書く。
+
+
+---
+
+# 第2弾（2026-10-15〜）: つまみ・英語版・UI部品の図鑑
+
+ページのひな形は `src/components/zukan/`（ZukanArticle・ZukanIndex・ZkCard・Tuner）、本の設定は `src/data/zukan.ts`。**触らない。**
+一覧ページの文章は `src/data/ugoki/hub.ts`・`src/data/ui/hub.ts`（Claude本体が書く。触らない）。
+お手本（必ず全部読む）:
+- 動き: `src/data/ugoki/entries/sticky-header.ts`・`entries-en/sticky-header.ts`・`src/components/ugoki/demos/sticky-header.astro`
+- UI部品: `src/data/ui/entries/modal.ts`・`entries-en/modal.ts`・`src/components/ugoki/ui-demos/modal.astro`
+
+## つまみ（数値を変えて試す）
+
+記事に `tune`（2〜4個）を書くと、見本の下につまみが出る。動かすと**見本・コード・AIへの指示文が一緒に変わる**。
+- 型は `src/data/ugoki/types.ts` の `TuneParam`（range / color / select）。
+- 見本には CSS 変数 `--t-<key>` で届く（初期値も外側から入る）。見本の CSS は `var(--t-dur)` のように**つまみの変数を直接使う**（数値を見本の中に二重に書かない）。JavaScript で使うときは `tuneNum(el, 'key')`・`tuneStr(el, 'key')`、変わった瞬間に知りたければ `onTune(view, fn)`（いずれも runtime.ts）。
+- `code` と `prompt` の中に差し込み口を書く: `{{key}}`（CSSに書く形 0.2s）・`{{key:n}}`（数だけ 0.2）・`{{key:t}}`（文章の形。日本語 0.2秒・英語 0.2s）。
+- 選ぶつまみは**その演出・部品の見た目と気持ちよさを決める数値**（速さ・距離・大きさ・濃さ・遅れ・強さ・色）。意味のない数値は足さない。範囲は「やりすぎ」まで少し触れる程度に（例: 速さ 0.1〜0.8秒）。初期値は記事が勧める値。
+- つまみの key・範囲・初期値・単位は日本語版と英語版で同じ（label だけ訳す）。
+
+## 英語版
+
+- `src/data/<ugoki|ui>/entries-en/<slug>.ts`。同じ型・同じ slug・no・category・mode・tune。`name` が英語名、`en` に日本語名を入れる（画面では「In Japanese」として出る）。
+- **翻訳ではなく、英語圏の検索に向けて書き直す。** 英語で実際に検索される呼び名（例 sticky header / fixed header / sticky navbar）を title・aka に。title は 50〜65字、description は 140〜160字目安。米国英語。自然で簡潔なネイティブの文。コードのコメント・見本の中の文字も英語。
+- 見本は `lang` を受け取り（`const { size = 'full', lang = 'ja' } = Astro.props;`）、`<UgFrame ... lang={lang}>` に渡し、中の文字を日英の辞書 `L` で切り替える（お手本の書き方）。英語版の見本の中身は英語圏のサイトらしく（通貨はドル、日付は Nov 3）。
+- 日本語版にしかない事情（日本語の組版など）は英語版では英語圏の事情に置き換える。
+
+## UI部品の図鑑（/ui/）の30種（番号・slug・名前は変えない）
+
+| No | slug | 日本語名 | 英語名 | category | mode の目安 |
+|---|---|---|---|---|---|
+| 1 | modal | モーダル | Modal dialog | overlay | script（作成済み） |
+| 2 | drawer | ドロワー | Navigation drawer | overlay | script |
+| 3 | bottom-sheet | ボトムシート | Bottom sheet | overlay | script |
+| 4 | tooltip | ツールチップ | Tooltip | overlay | pointer |
+| 5 | popover | ポップオーバー | Popover | overlay | script |
+| 6 | dropdown-menu | ドロップダウンメニュー | Dropdown menu | overlay | script |
+| 7 | lightbox | ライトボックス | Lightbox | overlay | script |
+| 8 | hamburger-menu | ハンバーガーメニュー | Hamburger menu | nav | script |
+| 9 | breadcrumb | パンくずリスト | Breadcrumbs | nav | pointer |
+| 10 | pagination | ページネーション | Pagination | nav | script |
+| 11 | bottom-nav | タブバー（ボトムナビゲーション） | Bottom navigation bar | nav | script |
+| 12 | stepper | ステップ表示（ステッパー） | Stepper (progress steps) | nav | script |
+| 13 | mega-menu | メガメニュー | Mega menu | nav | pointer |
+| 14 | fab | フローティングアクションボタン | Floating action button (FAB) | nav | script |
+| 15 | sidebar | サイドバー | Sidebar navigation | nav | script |
+| 16 | toggle-switch | トグルスイッチ | Toggle switch | input | script |
+| 17 | segmented-control | セグメントコントロール | Segmented control | input | script |
+| 18 | range-slider | スライダー | Range slider | input | script |
+| 19 | chips | チップ | Chips (filter chips) | input | script |
+| 20 | autocomplete | オートコンプリート | Autocomplete (combobox) | input | script |
+| 21 | date-picker | デートピッカー | Date picker | input | script |
+| 22 | quantity-stepper | 数量ステッパー | Quantity stepper | input | script |
+| 23 | star-rating | 星評価 | Star rating | input | script |
+| 24 | carousel | カルーセル | Carousel (slider) | display | script |
+| 25 | badge | バッジ | Badge | display | script |
+| 26 | empty-state | 空状態（エンプティステート） | Empty state | display | script |
+| 27 | pricing-table | 料金表 | Pricing table | display | pointer |
+| 28 | timeline | タイムライン | Timeline | display | scroll |
+| 29 | sticky-cta | 追従CTAバー | Sticky CTA bar | display | scroll |
+| 30 | cookie-banner | Cookie同意バナー | Cookie consent banner | display | script |
+
+動きの図鑑と重なる部品（アコーディオン accordion・トースト toast・タブ tab-indicator・上に戻る back-to-top・スケルトン skeleton）は**UI部品の図鑑には作らない**。`similar` で `book: 'ugoki'` を付けて指す。
+
+UI部品の記事は「どんな部品？」（`what`）で**似た部品との違い**と**決まりごと**（開け方・閉じ方・キーボード操作・読み上げ）を必ず書く。部品は名前ごとに「こう振る舞うのが普通」という約束があり、それを知ることが利用者の価値。HTMLにもともとある部品（dialog・details・input type=range/date・select・popover属性）があれば、まずそれを土台にしたコードにする。
+
+## 確かめ方（第2弾）
+
+- `node scripts/check-zukan.mjs <自分のslug...>` が「問題なし」。
+- `npx astro build --config astro.config.agentX.mjs` がエラー0。
+- 目視: 日本語ページ・英語ページの両方、PC幅とスマホ幅、一覧（/ugoki/・/en/motion/・/ui/・/en/ui/）の小さな見本。**つまみを端から端まで動かして**見本が崩れないこと、コードと指示文の数値が変わることを確かめる。

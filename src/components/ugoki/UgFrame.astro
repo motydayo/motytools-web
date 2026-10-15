@@ -7,24 +7,38 @@ interface Props {
   /** 見本の名前（読み上げ用） */
   label: string;
   url?: string;
+  lang?: 'ja' | 'en';
 }
-const { mode, size = 'full', label, url = 'example.com' } = Astro.props;
-const hint =
-  mode === 'scroll'
-    ? '枠の中をスクロールして試せます'
-    : mode === 'pointer'
-      ? 'マウスを乗せたり押したりして試せます'
-      : mode === 'loop'
-        ? '動き続ける演出です'
-        : '枠の中を操作して試せます';
+const { mode, size = 'full', label, url = 'example.com', lang = 'ja' } = Astro.props;
+const L = {
+  ja: {
+    hint: { scroll: '枠の中をスクロールして試せます', pointer: 'マウスを乗せたり押したりして試せます', loop: '動き続ける演出です', script: '枠の中を操作して試せます' },
+    region: `${label}の見本`,
+    focus: '見どころ',
+    focusTitle: '動いている部分を点線で囲みます',
+    pause: '一時停止',
+    play: '自動再生',
+    restart: '最初から',
+  },
+  en: {
+    hint: { scroll: 'Scroll inside the frame to try it', pointer: 'Hover or click inside the frame to try it', loop: 'This one runs on its own', script: 'Interact inside the frame to try it' },
+    region: `${label} demo`,
+    focus: 'Highlight',
+    focusTitle: 'Outline the part that moves',
+    pause: 'Pause',
+    play: 'Autoplay',
+    restart: 'Restart',
+  },
+}[lang];
+const hint = L.hint[mode];
 ---
 
-<figure class:list={['ug-frame', `is-${size}`, 'show-focus']} data-ug-frame data-mode={mode} data-size={size}>
+<figure class:list={['ug-frame', `is-${size}`, 'show-focus']} lang={lang} data-ug-frame data-label-play={L.play} data-label-pause={L.pause} data-mode={mode} data-size={size}>
   <div class="ug-bar" aria-hidden="true">
     <span class="ug-dots"><i></i><i></i><i></i></span>
     <span class="ug-url">{url}</span>
   </div>
-  <div class="ug-view" data-ug-view tabindex={size === 'full' ? 0 : -1} role="region" aria-label={`${label}の見本`}>
+  <div class="ug-view" data-ug-view tabindex={size === 'full' ? 0 : -1} role="region" aria-label={L.region}>
     <slot />
   </div>
   {(mode === 'pointer' || mode === 'script') && (
@@ -36,18 +50,18 @@ const hint =
     <figcaption class="ug-ctrl">
       <span class="ug-hint">{hint}</span>
       <span class="ug-btns">
-        <button type="button" class="ug-btn" data-ug-focus-toggle aria-pressed="true" title="動いている部分を点線で囲みます">
+        <button type="button" class="ug-btn" data-ug-focus-toggle aria-pressed="true" title={L.focusTitle}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 3" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3" /></svg>
-          見どころ
+          {L.focus}
         </button>
         <button type="button" class="ug-btn" data-ug-play aria-pressed="true">
           <svg class="i-pause" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 5v14M15 5v14" /></svg>
           <svg class="i-play" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" /></svg>
-          <span data-label>一時停止</span>
+          <span data-label>{L.pause}</span>
         </button>
         <button type="button" class="ug-btn" data-ug-restart>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /></svg>
-          最初から
+          {L.restart}
         </button>
       </span>
     </figcaption>

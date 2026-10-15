@@ -1,0 +1,136 @@
+---
+// つまみ: 動かすと、見本（CSS変数 --t-<key>）・コード・指示文の中の数値（.zk-tv）が一緒に変わる。
+// 範囲は同じ記事（[data-zk-article]）の中だけ。
+import type { Lang, TuneParam } from '../../data/ugoki/types';
+import { formatTune } from '../../lib/zukan/tune';
+import { T } from '../../data/zukan';
+
+interface Props {
+  params: TuneParam[];
+  lang: Lang;
+}
+const { params, lang } = Astro.props;
+const t = T[lang];
+---
+
+<section class="zk-tuner" data-zk-tuner data-lang={lang} data-params={JSON.stringify(params)} aria-labelledby="zk-tune-h">
+  <div class="zk-tuner-head">
+    <h2 id="zk-tune-h">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" /><circle cx="16" cy="6" r="2" /><circle cx="10" cy="12" r="2" /><circle cx="18" cy="18" r="2" /></svg>
+      {t.tuneHeading}
+    </h2>
+    <button type="button" class="zk-tuner-reset" data-zk-reset>{t.tuneReset}</button>
+  </div>
+  <p class="zk-tuner-lead">{t.tuneLead}</p>
+  <div class="zk-tuner-grid">
+    {params.map((p) => (
+      <label class="zk-knob">
+        <span class="zk-knob-top">
+          <span class="zk-knob-label">{p.label}</span>
+          <output class="zk-knob-val" data-out={p.key}>{formatTune(p, p.value, 't', lang)}</output>
+        </span>
+        {p.type === 'color' ? (
+          <input type="color" value={p.value} data-key={p.key} />
+        ) : p.type === 'select' ? (
+          <select data-key={p.key}>
+            {p.options.map((o) => <option value={o.value} selected={o.value === p.value}>{o.label}</option>)}
+          </select>
+        ) : (
+          <input type="range" min={p.min} max={p.max} step={p.step} value={p.value} data-key={p.key} />
+        )}
+      </label>
+    ))}
+  </div>
+</section>
+
+<script>
+  import { formatTune, type Fmt } from '../../lib/zukan/tune';
+  import type { TuneParam, Lang } from '../../data/ugoki/types';
+
+  document.querySelectorAll<HTMLElement>('[data-zk-tuner]').forEach((tuner) => {
+    const params: TuneParam[] = JSON.parse(tuner.dataset.params ?? '[]');
+    const lang = (tuner.dataset.lang ?? 'ja') as Lang;
+    const scope = tuner.closest<HTMLElement>('[data-zk-article]') ?? document.body;
+    const demo = scope.querySelector<HTMLElement>('.zk-demo');
+    const inputs = [...tuner.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-key]')];
+    let raf = 0;
+
+    const apply = () => {
+      for (const el of inputs) {
+        const p = params.find((x) => x.key === el.dataset.key)!;
+        const v = el.value;
+        demo?.style.setProperty(`--t-${p.key}`, formatTune(p, v, 'css', lang));
+        const out = tuner.querySelector(`[data-out="${p.key}"]`);
+        if (out) out.textContent = formatTune(p, v, 't', lang);
+        scope.querySelectorAll<HTMLElement>(`.zk-tv[data-t="${p.key}"]`).forEach((s) => {
+          s.textContent = formatTune(p, v, (s.dataset.f ?? 'css') as Fmt, lang);
+          s.classList.remove('is-changed');
+          void s.offsetWidth;
+          s.classList.add('is-changed');
+        });
+      }
+      demo?.querySelectorAll<HTMLElement>('[data-ug-view]').forEach((v) => v.dispatchEvent(new CustomEvent('ug:tune')));
+    };
+    const schedule = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(apply);
+    };
+    inputs.forEach((el) => el.addEventListener('input', schedule));
+    tuner.querySelector('[data-zk-reset]')?.addEventListener('click', () => {
+      for (const el of inputs) {
+        const p = params.find((x) => x.key === el.dataset.key)!;
+        el.value = String(p.value);
+      }
+      apply();
+    });
+  });
+</script>
+
+<style>
+  .zk-tuner {
+    margin-top: var(--sp-4);
+    padding: var(--sp-4);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+  }
+  .zk-tuner-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); }
+  .zk-tuner-head h2 { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-md); font-weight: 800; margin: 0; }
+  .zk-tuner-reset {
+    min-height: 44px;
+    padding: 0 var(--sp-3);
+    font: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--text-2);
+    background: transparent;
+    border: 0;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+  }
+  .zk-tuner-reset:hover { background: var(--surface-2); color: var(--text); }
+  .zk-tuner-reset:active { transform: scale(0.97); }
+  .zk-tuner-lead { margin: 2px 0 var(--sp-3); font-size: var(--fs-sm); color: var(--text-2); line-height: 1.7; }
+  .zk-tuner-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3) var(--sp-5); }
+  @media (max-width: 560px) { .zk-tuner-grid { grid-template-columns: 1fr; } }
+  .zk-knob { display: grid; gap: 4px; }
+  .zk-knob-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-2); font-size: var(--fs-sm); }
+  .zk-knob-label { font-weight: 700; }
+  .zk-knob-val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
+  .zk-knob input[type='range'] { width: 100%; min-height: 32px; accent-color: var(--accent); cursor: pointer; }
+  .zk-knob input[type='color'] { width: 100%; height: 40px; padding: 2px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); cursor: pointer; }
+  .zk-knob select { min-height: 44px; padding: 0 var(--sp-3); font: inherit; font-size: 16px; color: var(--text); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--r-sm); }
+</style>
+
+<style is:global>
+  /* コード・指示文の中で、つまみに連動する数値 */
+  .zk-tv { border-radius: 4px; transition: background-color 0.6s ease-out; }
+  .zk-tv.is-changed { animation: zk-tv-flash 0.9s ease-out; }
+  @keyframes zk-tv-flash {
+    from { background-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+    to { background-color: transparent; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .zk-tv.is-changed { animation: none; }
+  }
+</style>

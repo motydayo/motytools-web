@@ -1,0 +1,256 @@
+---
+// UI部品の見本: モーダル（モーダルダイアログ）
+// 枠の中に収めるため、見本は div[role=dialog] で出す。記事のコードは <dialog> と showModal() を使う。
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const btn = mini ? {} : { type: 'button' };
+const L = {
+  ja: {
+    name: 'モーダル',
+    nav: ['お部屋', '料金'],
+    title: '海の宿 ひかり',
+    meta: '1泊 15,000円〜 ・ 夕朝食つき',
+    open: '予約内容を確認する',
+    dlgTitle: 'この内容で予約しますか？',
+    rows: [['日付', '11月3日（月）から1泊'], ['人数', '大人2名'], ['合計', '30,000円']],
+    note: '予約後もキャンセルは無料です（前日まで）。',
+    ok: '予約する',
+    cancel: 'やめる',
+    close: '閉じる',
+    done: '予約しました',
+  },
+  en: {
+    name: 'Modal',
+    nav: ['Rooms', 'Rates'],
+    title: 'Hikari Seaside Inn',
+    meta: 'From $110 / night · Dinner & breakfast',
+    open: 'Review booking',
+    dlgTitle: 'Confirm this booking?',
+    rows: [['Dates', 'Nov 3, 1 night'], ['Guests', '2 adults'], ['Total', '$220']],
+    note: 'Free cancellation until the day before.',
+    ok: 'Book now',
+    cancel: 'Cancel',
+    close: 'Close',
+    done: 'Booked',
+  },
+}[lang as 'ja' | 'en'];
+---
+
+<UgFrame mode="script" size={size} label={L.name} lang={lang}>
+  <div class="ug-site md-site" data-demo="modal">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span>{L.nav.map((n) => <span>{n}</span>)}</header>
+    <section class="ug-sec md-page" data-md-page>
+      <Scene tone="sunset" wide />
+      <h3 class="ug-h md-title">{L.title}</h3>
+      <p class="md-meta">{L.meta}</p>
+      <Btn class="ug-btn-site md-open" {...btn} data-md-open aria-haspopup="dialog">{L.open}</Btn>
+      <p class="md-toast" data-md-toast hidden>{L.done}</p>
+    </section>
+
+    <!-- これが部品の本体: 画面の上に重なる小窓。後ろは暗くして操作できなくする -->
+    <div class="md-backdrop" data-md-backdrop hidden>
+      <div class="md-dialog" role="dialog" aria-modal="true" aria-labelledby="" data-md-dialog data-ug-focus={L.name} data-ug-focus-at="below">
+        <Btn class="md-x" {...btn} aria-label={L.close} data-md-close>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </Btn>
+        <h4 class="md-h" data-md-h>{L.dlgTitle}</h4>
+        <dl class="md-rows">
+          {L.rows.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+        </dl>
+        <p class="md-note">{L.note}</p>
+        <div class="md-actions">
+          <Btn class="md-cancel" {...btn} data-md-close>{L.cancel}</Btn>
+          <Btn class="ug-btn-site md-ok" {...btn} data-md-ok>{L.ok}</Btn>
+        </div>
+      </div>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .md-site { position: relative; min-height: 100%; }
+  .md-page { display: grid; gap: 6px; justify-items: start; }
+  .md-page :global(.ug-scene) { border-radius: 10px; }
+  .md-title { margin-top: 8px; }
+  .md-meta { font-size: 12px; color: var(--ug-ink-2); }
+  .md-open { margin-top: 8px; }
+  .md-toast { margin-top: 6px; font-size: 12px; font-weight: 700; color: #1f7a4d; }
+
+  /* 後ろの暗幕。濃さと出る速さはつまみ（--t-dim・--t-dur）から */
+  .md-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(20, 24, 40, var(--t-dim));
+    animation: md-fade var(--t-dur) ease-out;
+  }
+  .md-dialog {
+    position: relative;
+    width: min(100%, 340px);
+    padding: 20px 18px 16px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 24px 48px -16px rgba(20, 24, 40, 0.5);
+    /* 出るときは少し小さく・透明から、減速しながら */
+    animation: md-pop var(--t-dur) ease-out;
+  }
+  .md-backdrop.is-closing { animation: md-fade-out calc(var(--t-dur) * 0.7) ease-in forwards; }
+  .md-backdrop.is-closing .md-dialog { animation: md-pop-out calc(var(--t-dur) * 0.7) ease-in forwards; }
+  @keyframes md-fade { from { opacity: 0; } }
+  @keyframes md-pop { from { opacity: 0; transform: scale(var(--t-scale)); } }
+  @keyframes md-fade-out { to { opacity: 0; } }
+  @keyframes md-pop-out { to { opacity: 0; transform: scale(var(--t-scale)); } }
+  .md-x {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ug-ink-2);
+    cursor: pointer;
+  }
+  .md-x:hover, .md-x.is-hover { background: var(--ug-bg); }
+  .md-h { padding-right: 36px; font-size: 16px; font-weight: 800; }
+  .md-rows { margin: 12px 0 8px; display: grid; gap: 6px; font-size: 12px; }
+  .md-rows div { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--ug-line); }
+  .md-rows dt { color: var(--ug-ink-2); }
+  .md-rows dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .md-note { font-size: 11px; color: var(--ug-ink-2); }
+  .md-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+  .md-cancel {
+    min-height: 40px;
+    padding: 0 16px;
+    border: 1px solid var(--ug-line);
+    border-radius: 999px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ug-ink);
+    cursor: pointer;
+  }
+  .md-ok.is-hover, .md-ok:hover, .md-open:hover, .md-open.is-hover { filter: brightness(0.94); }
+  .md-cancel:hover, .md-cancel.is-hover { background: var(--ug-bg); }
+  @container (max-width: 340px) {
+    .md-page :global(.ug-scene) { display: none; }
+    .md-dialog { padding: 14px 14px 12px; }
+    .md-rows { margin: 8px 0 4px; }
+    .md-note { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .md-backdrop, .md-dialog, .md-backdrop.is-closing, .md-backdrop.is-closing .md-dialog { animation-duration: 0.01s; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="modal"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]')!;
+    const frame = root.closest<HTMLElement>('[data-ug-frame]')!;
+    const mini = frame.dataset.size === 'mini';
+    const backdrop = root.querySelector<HTMLElement>('[data-md-backdrop]')!;
+    const dialog = root.querySelector<HTMLElement>('[data-md-dialog]')!;
+    const openBtn = root.querySelector<HTMLElement>('[data-md-open]')!;
+    const okBtn = root.querySelector<HTMLElement>('[data-md-ok]')!;
+    const toast = root.querySelector<HTMLElement>('[data-md-toast]')!;
+    const page = root.querySelector<HTMLElement>('[data-md-page]')!;
+    const dur = () => parseFloat(getComputedStyle(root).getPropertyValue('--t-dur')) * 1000 || 250;
+    let lastFocus: HTMLElement | null = null;
+
+    // 見出しと結びつける（id は使わず、ページ内で重ならない名前を作る）
+    const hid = `md-h-${Math.random().toString(36).slice(2, 8)}`;
+    root.querySelector('[data-md-h]')!.id = hid;
+    dialog.setAttribute('aria-labelledby', hid);
+
+    const open = () => {
+      backdrop.classList.remove('is-closing');
+      backdrop.hidden = false;
+      toast.hidden = true;
+      page.setAttribute('inert', '');
+      if (!mini) {
+        lastFocus = document.activeElement as HTMLElement;
+        dialog.querySelector<HTMLElement>('[data-md-close]')?.focus({ preventScroll: true });
+      }
+    };
+    const close = (booked = false) => {
+      if (backdrop.hidden) return;
+      backdrop.classList.add('is-closing');
+      window.setTimeout(() => {
+        backdrop.hidden = true;
+        backdrop.classList.remove('is-closing');
+        page.removeAttribute('inert');
+        toast.hidden = !booked;
+        if (!mini && lastFocus && view.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
+      }, dur() * 0.7);
+    };
+
+    openBtn.addEventListener('click', open);
+    openBtn.addEventListener('ug:click', open);
+    okBtn.addEventListener('click', () => close(true));
+    okBtn.addEventListener('ug:click', () => close(true));
+    root.querySelectorAll<HTMLElement>('[data-md-close]').forEach((b) => {
+      b.addEventListener('click', () => close());
+      b.addEventListener('ug:click', () => close());
+    });
+    // 暗幕を押す・Esc でも閉じる
+    backdrop.addEventListener('click', (e) => e.target === backdrop && close());
+    view.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !backdrop.hidden) {
+        e.preventDefault();
+        close();
+      }
+    });
+    // 小窓の中で Tab が外へ出ないようにする（フォーカストラップ）
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const items = [...dialog.querySelectorAll<HTMLElement>('button')];
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+    view.addEventListener('ug:reset', () => {
+      backdrop.hidden = true;
+      toast.hidden = true;
+      page.removeAttribute('inert');
+    });
+
+    onTour(root, async (t) => {
+      backdrop.hidden = true;
+      toast.hidden = true;
+      page.removeAttribute('inert');
+      await t.move({ x: t.view.clientWidth * 0.7, y: t.view.clientHeight * 0.85 }, 10);
+      await t.sleep(600);
+      await t.move(openBtn, 800);
+      t.hover(openBtn);
+      await t.sleep(300);
+      await t.click(openBtn);
+      t.hover(null);
+      await t.sleep(1600);
+      const okEl = dialog.querySelector<HTMLElement>('[data-md-ok]')!;
+      await t.move(okEl, 800);
+      t.hover(okEl);
+      await t.sleep(400);
+      await t.click(okEl);
+      t.hover(null);
+      await t.sleep(1800);
+    });
+  });
+</script>

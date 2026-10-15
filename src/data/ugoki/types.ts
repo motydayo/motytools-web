@@ -1,49 +1,77 @@
-// 動きの図鑑（/ugoki/）の1項目。1演出＝1ファイル（src/data/ugoki/entries/<slug>.ts）。
-// 見本は src/components/ugoki/demos/<slug>.astro（ファイル名＝slug）。
+// 図鑑（動きの図鑑 /ugoki/・UI部品の図鑑 /ui/、英語版 /en/motion/・/en/ui/）の1項目。
+// 1項目＝1ファイル。日本語は entries/<slug>.ts、英語は entries-en/<slug>.ts（同じ slug・同じ型）。
+// 見本は src/components/ugoki/demos/<slug>.astro（動き）か ui-demos/<slug>.astro（UI部品）。
 
+export type Lang = 'ja' | 'en';
 export type UgokiCategory = 'scroll' | 'pointer' | 'load' | 'inform';
+export type UiCategory = 'overlay' | 'nav' | 'input' | 'display';
 
 export interface CodeBlock {
   lang: 'html' | 'css' | 'js';
   /** 見出し（例:「HTML」「CSS」「JavaScript（30行）」） */
   label: string;
+  /** {{key}} などの差し込み口を書ける（下の TuneParam を参照） */
   code: string;
 }
+
+/**
+ * つまみ（数値を変えて試す）。見本には CSS 変数 --t-<key> として渡る（例: --t-dur: 0.2s）。
+ * code と prompt の中の差し込み口:
+ *   {{key}}    → CSSに書く形（値＋単位。例 0.2s / 6px / #f06a35）
+ *   {{key:n}}  → 数だけ（例 0.2。JavaScript の中で使う）
+ *   {{key:t}}  → 文章に書く形（日本語なら 0.2秒、英語なら 0.2s。色・選択肢は表示名）
+ */
+export type TuneParam =
+  | {
+      key: string;
+      type?: 'range';
+      label: string;
+      min: number;
+      max: number;
+      step: number;
+      value: number;
+      /** CSS の単位（'' なら単位なし） */
+      unit: 's' | 'ms' | 'px' | '%' | 'deg' | 'em' | '';
+    }
+  | { key: string; type: 'color'; label: string; value: string }
+  | { key: string; type: 'select'; label: string; value: string; options: { value: string; label: string }[] };
 
 export interface Ugoki {
   slug: string;
   /** 図鑑の通し番号（1〜） */
   no: number;
-  category: UgokiCategory;
-  /** 日本語の呼び名（いちばん通じる言い方） */
+  category: UgokiCategory | UiCategory;
+  /** いちばん通じる呼び名（日本語版は日本語、英語版は英語） */
   name: string;
-  /** 英語の呼び名（AIや海外の資料で通じる言い方） */
+  /** もう一方の言語での呼び名（日本語版には英語名、英語版には日本語名） */
   en: string;
   /** ほかの呼び方（検索・一覧の絞り込みにも使う） */
   aka: string[];
   /** 見本の動かし方（UgFrame の mode） */
   mode: 'scroll' | 'pointer' | 'loop' | 'script';
-  /** <title>（検索結果に出る。32〜40字目安。「〜とは」「作り方」など検索される語を前に） */
+  /** <title>（検索結果に出る） */
   title: string;
-  /** meta description（80〜120字） */
+  /** meta description */
   description: string;
-  /** 一言でいうと（40字以内。一覧カードにも出る） */
+  /** 一言でいうと（一覧カードにも出る） */
   oneLine: string;
-  /** どんな動きか（見本の補足。2〜3文の段落を1〜3個） */
+  /** どんな動き・部品か */
   what: string[];
-  /** こんなときに使う（具体的な場面。3〜5個） */
+  /** こんなときに使う */
   when: string[];
-  /** 使わない方がいいとき（2〜4個） */
+  /** 使わない方がいいとき */
   avoid: string[];
-  /** AIへの頼み方（そのまま貼れる指示文） */
+  /** AIへの頼み方（そのまま貼れる指示文。{{key:t}} を書ける） */
   prompt: string;
-  /** 作り方の説明（コードの前に置く1〜2段落） */
+  /** 作り方の説明 */
   howTo: string[];
   code: CodeBlock[];
-  /** 気をつけること（表示速度・スマホ・読み上げ・動きを減らす設定など。3〜5個） */
+  /** つまみ（2〜4個。無い項目もある） */
+  tune?: TuneParam[];
+  /** 気をつけること */
   cautions: string[];
-  /** 似ている演出との違い */
-  similar: { slug: string; diff: string }[];
+  /** 似ている項目との違い。book を書けばもう一方の図鑑を指せる */
+  similar: { slug: string; diff: string; book?: 'ugoki' | 'ui' }[];
   faq: { q: string; a: string }[];
   publishedAt: string;
   updatedAt?: string;

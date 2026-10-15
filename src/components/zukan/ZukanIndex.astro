@@ -1,0 +1,270 @@
+---
+// 図鑑の一覧ページ（動き・UI部品 × 日本語・英語で共通）
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ZkCard from './ZkCard.astro';
+import CopyButton from '../ugoki/CopyButton.astro';
+import { SITE } from '../../config';
+import { BOOKS, T, hasAlt, otherBook, type Book } from '../../data/zukan';
+
+interface Props {
+  book: Book;
+}
+const { book } = Astro.props;
+const lang = book.lang;
+const t = T[lang];
+const h = book.hub;
+const list = book.entries;
+const total = list.length;
+const n = (s: string) => s.replaceAll('{n}', String(total));
+const title = n(h.title);
+const description = n(h.description);
+const path = book.base;
+const alternates = hasAlt(book) ? (lang === 'ja' ? { ja: book.base, en: book.altBase } : { ja: book.altBase, en: book.base }) : undefined;
+const otherB = BOOKS[otherBook(book.id)][lang];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: title,
+    description,
+    url: `${SITE.url}${path}`,
+    inLanguage: lang,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: total,
+      itemListElement: list.map((u, i) => ({ '@type': 'ListItem', position: i + 1, name: `${u.name} (${u.en})`, url: `${SITE.url}${book.base}${u.slug}/` })),
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement:
+      lang === 'ja'
+        ? [
+            { '@type': 'ListItem', position: 1, name: 'ホーム', item: `${SITE.url}/` },
+            { '@type': 'ListItem', position: 2, name: book.name, item: `${SITE.url}${path}` },
+          ]
+        : [{ '@type': 'ListItem', position: 1, name: book.name, item: `${SITE.url}${path}` }],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: h.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+
+<BaseLayout title={title} description={description} path={path} ogImage={`/og/${book.id}${lang === 'en' ? '-en' : ''}/index.png`} jsonLd={jsonLd} lang={lang} alternates={alternates}>
+  <div class="container ugi">
+    <nav class="breadcrumb" aria-label={lang === 'en' ? 'Breadcrumb' : 'パンくずリスト'}>
+      <ol>
+        {lang === 'ja' && <li><a href="/">ホーム</a></li>}
+        <li aria-current="page">{book.name}</li>
+      </ol>
+    </nav>
+
+    <header class="ugi-head">
+      <h1>{h.h1}</h1>
+      <p>{n(h.lead)}</p>
+      <p class="ugi-links">
+        {otherB.entries.length > 0 && <a href={otherB.base}>{t.otherBook[book.id]}<span aria-hidden="true">&nbsp;→</span></a>}
+        {alternates && (
+          <a href={book.altBase} hreflang={lang === 'ja' ? 'en' : 'ja'} lang={lang === 'ja' ? 'en' : 'ja'}>{lang === 'ja' ? 'English' : '日本語'}</a>
+        )}
+      </p>
+    </header>
+
+    <div class="ugi-tools" role="search">
+      <label class="ugi-search">
+        <span class="sr-only">{h.searchLabel}</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M16.5 16.5L21 21" /></svg>
+        <input type="search" id="ugi-q" placeholder={h.searchPlaceholder} autocomplete="off" />
+      </label>
+      <div class="ugi-chips" role="group" aria-label={lang === 'en' ? 'Filter by type' : '種類で絞り込む'}>
+        <button type="button" class="ugi-chip" data-cat="" aria-pressed="true">{h.all}<span>{total}</span></button>
+        {book.categories.map((c) => (
+          <button type="button" class="ugi-chip" data-cat={c.id} aria-pressed="false">
+            {c.short}<span>{list.filter((u) => u.category === c.id).length}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {book.categories.map((c) => {
+      const items = list.filter((u) => u.category === c.id);
+      if (items.length === 0) return null;
+      return (
+        <section class="ugi-sec" id={c.id} data-sec={c.id} aria-labelledby={`h-${c.id}`}>
+          <div class="ugi-sec-head">
+            <h2 id={`h-${c.id}`}>{c.name}</h2>
+            <p>{c.desc}</p>
+          </div>
+          <div class="ug-cards">
+            {items.map((u) => <ZkCard u={u} book={book} />)}
+          </div>
+        </section>
+      );
+    })}
+
+    <p class="ugi-empty" id="ugi-empty" hidden>
+      {h.empty} <button type="button" id="ugi-clear">{h.clear}</button>
+    </p>
+
+    <section class="ugi-guide" aria-labelledby="guide">
+      <h2 id="guide">{h.guide.heading}</h2>
+      {h.guide.paragraphs.map((p) => <p>{p}</p>)}
+      <ol class="ugi-steps">
+        {h.guide.steps.map((s) => <li><b>{s.b}</b><span>{s.s}</span></li>)}
+      </ol>
+      <p>{h.guide.exampleLead}</p>
+      <div class="ugi-combo">
+        <pre>{h.guide.example}</pre>
+        <CopyButton text={h.guide.example} label={h.guide.copyLabel} doneLabel={lang === 'en' ? 'Copied' : undefined} failLabel={lang === 'en' ? 'Could not copy' : undefined} />
+      </div>
+    </section>
+
+    <section class="ugi-faq" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">{t.faq}</h2>
+      <div class="faq">
+        {h.faq.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p class="faq-a">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  const q = document.getElementById('ugi-q') as HTMLInputElement;
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('.ugi-chip')];
+  const cards = [...document.querySelectorAll<HTMLElement>('.ug-card-link')];
+  const secs = [...document.querySelectorAll<HTMLElement>('[data-sec]')];
+  const empty = document.getElementById('ugi-empty')!;
+  let cat = '';
+
+  const norm = (s: string) => s.toLowerCase().normalize('NFKC').replace(/\s+/g, '');
+  const apply = () => {
+    const words = q.value.toLowerCase().normalize('NFKC').split(/\s+/).filter(Boolean);
+    let shown = 0;
+    for (const c of cards) {
+      const hay = norm(c.dataset.search ?? '');
+      const ok = (!cat || c.dataset.cat === cat) && words.every((w) => hay.includes(norm(w)));
+      c.hidden = !ok;
+      if (ok) shown++;
+    }
+    for (const s of secs) s.hidden = !s.querySelector('.ug-card-link:not([hidden])');
+    empty.hidden = shown > 0;
+  };
+
+  q.addEventListener('input', apply);
+  chips.forEach((b) =>
+    b.addEventListener('click', () => {
+      cat = b.dataset.cat ?? '';
+      chips.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      apply();
+    })
+  );
+  document.getElementById('ugi-clear')!.addEventListener('click', () => {
+    q.value = '';
+    cat = '';
+    chips.forEach((x, i) => x.setAttribute('aria-pressed', String(i === 0)));
+    apply();
+    q.focus();
+  });
+</script>
+
+<style>
+  .ugi { padding-bottom: var(--sp-8); }
+  .ugi-head { margin: var(--sp-4) 0 var(--sp-5); max-width: var(--article); }
+  .ugi-head h1 { font-size: clamp(28px, 5vw, 36px); font-weight: 800; line-height: 1.25; }
+  .ugi-head p { margin-top: var(--sp-3); color: var(--text-2); font-size: var(--fs-md); line-height: 1.8; }
+  .ugi-links { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-5); font-size: var(--fs-sm) !important; }
+  .ugi-links a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: var(--accent); }
+
+  .ugi-tools {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3);
+    margin: 0 calc(var(--sp-4) * -1);
+    padding: var(--sp-3) var(--sp-4);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .ugi-search {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    flex: 1 1 240px;
+    max-width: 360px;
+    min-height: 44px;
+    padding: 0 var(--sp-3);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-full);
+    background: var(--surface);
+    color: var(--text-3);
+  }
+  .ugi-search:focus-within { border-color: var(--accent); }
+  .ugi-search input { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 16px; color: var(--text); outline: none; }
+  .ugi-chips { display: flex; gap: var(--sp-2); overflow-x: auto; scrollbar-width: none; }
+  .ugi-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 14px;
+    white-space: nowrap;
+    font: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--text-2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-full);
+    cursor: pointer;
+  }
+  .ugi-chip span { font-size: var(--fs-xs); color: var(--text-3); font-variant-numeric: tabular-nums; }
+  .ugi-chip:hover { border-color: var(--border-strong); }
+  .ugi-chip:active { transform: scale(0.97); }
+  .ugi-chip[aria-pressed='true'] { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .ugi-chip[aria-pressed='true'] span { color: inherit; opacity: 0.7; }
+
+  .ugi-sec { margin-top: var(--sp-7); scroll-margin-top: 80px; }
+  .ugi-sec-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--sp-1) var(--sp-3); margin-bottom: var(--sp-4); }
+  .ugi-sec-head h2 { font-size: var(--fs-xl); font-weight: 800; }
+  .ugi-sec-head p { color: var(--text-3); font-size: var(--fs-sm); }
+
+  .ugi-empty { margin-top: var(--sp-7); color: var(--text-2); }
+  .ugi-empty button { font: inherit; color: var(--accent); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 0; min-height: 44px; }
+
+  .ugi-guide, .ugi-faq { max-width: var(--article); margin-top: var(--sp-8); }
+  .ugi-guide h2, .ugi-faq h2 { font-size: var(--fs-xl); font-weight: 800; margin-bottom: var(--sp-3); }
+  .ugi-guide p { line-height: 1.85; margin-top: var(--sp-3); }
+  .ugi-steps { list-style: none; counter-reset: s; display: grid; gap: var(--sp-3); margin-top: var(--sp-4); }
+  .ugi-steps li { counter-increment: s; display: grid; grid-template-columns: 32px 1fr; column-gap: var(--sp-3); }
+  .ugi-steps li::before {
+    content: counter(s);
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 800;
+  }
+  .ugi-steps b { font-weight: 800; }
+  .ugi-steps span { color: var(--text-2); font-size: var(--fs-sm); line-height: 1.75; }
+  .ugi-combo { margin-top: var(--sp-3); padding: var(--sp-4); border-radius: var(--r-md); background: var(--accent-soft); border: 1px solid var(--accent-border); }
+  .ugi-combo pre { margin: 0 0 var(--sp-3); white-space: pre-wrap; font: inherit; font-size: var(--fs-sm); line-height: 1.85; }
+</style>

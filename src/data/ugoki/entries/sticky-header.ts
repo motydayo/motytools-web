@@ -28,7 +28,7 @@ export default {
     '画面いっぱいの写真や動画を見せたいページ（帯が絵の上に被り続ける）',
   ],
   prompt:
-    'ヘッダーを「追従ヘッダー（sticky header）」にしてください。画面上端への固定はCSSの position: sticky; top: 0; だけで行い、JavaScriptでスクロール量を監視して position: fixed に切り替える古い作り方はしないでください。少しでもスクロールしたら、ヘッダーの下に薄い影（box-shadow）を0.2秒かけて付けて、本文の上に浮いていることが分かるようにしてください（影の付け外しだけは短いJavaScriptで構いません）。ヘッダーの高さはスマホで56px以内に収め、z-indexは本文より上にしてください。ページ内リンクで飛んだ見出しがヘッダーの下に隠れないよう、scroll-margin-top も設定してください。影の付け外しは小さな変化なので、動きを減らす設定（prefers-reduced-motion）の人にもそのままで構いません。',
+    'ヘッダーを「追従ヘッダー（sticky header）」にしてください。画面上端への固定はCSSの position: sticky; top: 0; だけで行い、JavaScriptでスクロール量を監視して position: fixed に切り替える古い作り方はしないでください。少しでもスクロールしたら、ヘッダーの下に薄い影（box-shadow、濃さ {{shadow:t}}）を{{fade:t}}かけて付けて、本文の上に浮いていることが分かるようにしてください（影の付け外しだけは短いJavaScriptで構いません）。ヘッダーの高さは{{height:t}}にし、z-indexは本文より上にしてください。ページ内リンクで飛んだ見出しがヘッダーの下に隠れないよう、scroll-margin-top も設定してください。影の付け外しは小さな変化なので、動きを減らす設定（prefers-reduced-motion）の人にもそのままで構いません。',
   howTo: [
     '作り方はCSSの2行だけです。ヘッダーに position: sticky と top: 0 を指定すると、スクロールしてヘッダーが画面の上端に来たところで止まり、そこから先はくっついて動かなくなります。昔は JavaScript でスクロール量を見張って position: fixed に切り替えていましたが、今はその必要がありません。',
     '影は「くっついたあと」だけに付けたいので、ここだけ短いJavaScriptを使います。スクロール量が0より大きいかどうかでクラスを付け外しし、CSSの transition で影をふわっと出します。',
@@ -54,20 +54,20 @@ export default {
   position: sticky; /* 上端に来たらくっつく */
   top: 0;
   z-index: 10;      /* 本文より手前に出す */
-  height: 56px;
+  height: {{height}};
   background: #fff;
-  transition: box-shadow 0.2s ease-out;
+  transition: box-shadow {{fade}} ease-out;
 }
 
 /* スクロールしたら影を付けて「浮いている」ことを見せる */
 .site-header.is-stuck {
-  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, {{shadow:n}});
 }
 
 /* ページ内リンクで飛んだ見出しがヘッダーに隠れないように */
 :target,
 h2[id] {
-  scroll-margin-top: 72px;
+  scroll-margin-top: calc({{height}} + 16px);
 }`,
     },
     {
@@ -78,6 +78,11 @@ const sync = () => header.classList.toggle('is-stuck', window.scrollY > 4);
 window.addEventListener('scroll', sync, { passive: true });
 sync();`,
     },
+  ],
+  tune: [
+    { key: 'height', label: 'ヘッダーの高さ', min: 44, max: 80, step: 4, value: 56, unit: 'px' },
+    { key: 'shadow', label: '影の濃さ', min: 0, max: 0.6, step: 0.05, value: 0.3, unit: '' },
+    { key: 'fade', label: '影が出る速さ', min: 0, max: 0.6, step: 0.05, value: 0.2, unit: 's' },
   ],
   cautions: [
     '親要素に overflow: hidden が付いていると、position: sticky は効きません。「くっつかない」ときはまず親を疑ってください。',

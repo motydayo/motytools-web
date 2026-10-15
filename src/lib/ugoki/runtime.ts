@@ -56,6 +56,22 @@ export function onPointer(view: HTMLElement, fn: (p: Point, real: boolean) => vo
   view.addEventListener('ug:move', (e) => fn((e as CustomEvent<Point>).detail, false));
 }
 
+/** つまみの値（CSS変数 --t-<key>）を数として読む。見本の JavaScript で使う */
+export function tuneNum(el: Element, key: string, fallback = 0): number {
+  const v = parseFloat(getComputedStyle(el).getPropertyValue(`--t-${key}`));
+  return Number.isFinite(v) ? v : fallback;
+}
+
+/** つまみの値（CSS変数 --t-<key>）を文字のまま読む（色・選択肢） */
+export function tuneStr(el: Element, key: string, fallback = ''): string {
+  return getComputedStyle(el).getPropertyValue(`--t-${key}`).trim() || fallback;
+}
+
+/** つまみが動いたら呼ばれる（view にイベント ug:tune が飛ぶ） */
+export function onTune(view: HTMLElement, fn: () => void) {
+  view.addEventListener('ug:tune', fn);
+}
+
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 function setup(frame: HTMLElement) {
@@ -82,7 +98,7 @@ function setup(frame: HTMLElement) {
     frame.classList.toggle('is-touring', running);
     if (playBtn) {
       playBtn.setAttribute('aria-pressed', String(!paused));
-      playBtn.querySelector('[data-label]')!.textContent = paused ? '自動再生' : '一時停止';
+      playBtn.querySelector('[data-label]')!.textContent = paused ? (frame.dataset.labelPlay ?? '自動再生') : (frame.dataset.labelPause ?? '一時停止');
     }
   };
 

@@ -1,33 +1,38 @@
 ---
 import UgFrame from '../UgFrame.astro';
 import Scene from '../Scene.astro';
-const { size = 'full' } = Astro.props;
+const { size = 'full', lang = 'ja' } = Astro.props;
+// 見本の中の文字（日英）
+const L = {
+  ja: { name: '追従ヘッダー', nav: ['特長', '料金', 'FAQ'], cta: '無料で試す', popular: '人気のコース', stays: ['山の宿', '海の宿', '星の宿'], price: '料金プラン', voice: 'お客さまの声', faq: 'よくある質問' },
+  en: { name: 'Sticky header', nav: ['Features', 'Pricing', 'FAQ'], cta: 'Try free', popular: 'Popular stays', stays: ['Mountain lodge', 'Seaside inn', 'Stargazer cabin'], price: 'Plans & pricing', voice: 'What guests say', faq: 'Questions' },
+}[lang as 'ja' | 'en'];
 ---
 
-<UgFrame mode="scroll" size={size} label="追従ヘッダー">
+<UgFrame mode="scroll" size={size} label={L.name} lang={lang}>
   <div class="ug-site">
-    <header class="ug-nav hdr" data-ug-focus="追従ヘッダー" data-ug-focus-at="below">
+    <header class="ug-nav hdr" data-ug-focus={L.name} data-ug-focus-at="below">
       <span class="ug-logo">SAMPLE</span>
-      <span>特長</span><span>料金</span><span>FAQ</span>
-      <span class="ug-cta">無料で試す</span>
+      {L.nav.map((n) => <span>{n}</span>)}
+      <span class="ug-cta">{L.cta}</span>
     </header>
     <section class="ug-sec">
       <p class="ug-label">FEATURE</p>
-      <h3 class="ug-h">人気のコース</h3>
+      <h3 class="ug-h">{L.popular}</h3>
       <div class="ug-grid">
-        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">山の宿</div></div>
-        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">海の宿</div></div>
-        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">星の宿</div></div>
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">{L.stays[0]}</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">{L.stays[1]}</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">{L.stays[2]}</div></div>
       </div>
     </section>
     <section class="ug-sec">
       <p class="ug-label">PRICE</p>
-      <h3 class="ug-h">料金プラン</h3>
+      <h3 class="ug-h">{L.price}</h3>
       <div class="ug-lines"><i></i><i></i><i></i><i></i></div>
     </section>
     <section class="ug-sec">
       <p class="ug-label">VOICE</p>
-      <h3 class="ug-h">お客さまの声</h3>
+      <h3 class="ug-h">{L.voice}</h3>
       <div class="ug-grid">
         <div class="ug-card"><Scene tone="sunset" /></div>
         <div class="ug-card"><Scene tone="night" /></div>
@@ -37,23 +42,24 @@ const { size = 'full' } = Astro.props;
     </section>
     <section class="ug-sec">
       <p class="ug-label">FAQ</p>
-      <h3 class="ug-h">よくある質問</h3>
+      <h3 class="ug-h">{L.faq}</h3>
       <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </section>
   </div>
 </UgFrame>
 
 <style>
-  /* これが演出の本体: スクロールしても上端にくっつく */
+  /* これが演出の本体: スクロールしても上端にくっつく。数値はつまみ（--t-*）から */
   .hdr {
     position: sticky;
     top: 0;
     z-index: 10;
-    transition: box-shadow 0.2s ease-out;
+    height: var(--t-height);
+    transition: box-shadow var(--t-fade) ease-out;
   }
   /* 少しでもスクロールしたら影を付けて「浮いている」ことを見せる */
   .hdr.is-stuck {
-    box-shadow: 0 6px 16px -8px rgba(29, 37, 65, 0.35);
+    box-shadow: 0 6px 16px -8px rgba(29, 37, 65, var(--t-shadow));
   }
 </style>
 

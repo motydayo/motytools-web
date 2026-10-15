@@ -1,13 +1,19 @@
 ---
 interface Props {
-  text: string;
+  /** コピーする文字。from を使うときは不要 */
+  text?: string;
+  /** 近くの [data-copy-scope] の中から、この要素の文字をコピーする（つまみで中身が変わる所） */
+  from?: string;
   label: string;
   small?: boolean;
+  /** 押したあとの表示（英語ページ用） */
+  doneLabel?: string;
+  failLabel?: string;
 }
-const { text, label, small = false } = Astro.props;
+const { text = '', from, label, small = false, doneLabel = 'コピーしました', failLabel = 'コピーできませんでした。長押しで選んでください' } = Astro.props;
 ---
 
-<button type="button" class:list={['ug-copy', { 'is-small': small }]} data-ug-copy={text}>
+<button type="button" class:list={['ug-copy', { 'is-small': small }]} data-ug-copy={text} data-copy-from={from} data-done={doneLabel} data-fail={failLabel}>
   <svg class="i-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2" /><path d="M5 15V5a2 2 0 0 1 2-2h10" /></svg>
   <svg class="i-done" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
   <span data-copy-label>{label}</span>
@@ -19,7 +25,10 @@ const { text, label, small = false } = Astro.props;
     const original = labelEl.textContent;
     let timer = 0;
     btn.addEventListener('click', async () => {
-      const text = btn.dataset.ugCopy ?? '';
+      const from = btn.dataset.copyFrom;
+      const text = from
+        ? (btn.closest('[data-copy-scope]')?.querySelector(from)?.textContent ?? '')
+        : (btn.dataset.ugCopy ?? '');
       let ok = false;
       try {
         await navigator.clipboard.writeText(text);
@@ -36,7 +45,7 @@ const { text, label, small = false } = Astro.props;
         ok = document.execCommand('copy');
         ta.remove();
       }
-      labelEl.textContent = ok ? 'コピーしました' : 'コピーできませんでした。長押しで選んでください';
+      labelEl.textContent = ok ? (btn.dataset.done ?? '') : (btn.dataset.fail ?? '');
       btn.classList.toggle('is-done', ok);
       clearTimeout(timer);
       timer = window.setTimeout(() => {

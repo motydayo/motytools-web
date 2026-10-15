@@ -1,0 +1,12 @@
+---
+import ZukanArticle from '../../../components/zukan/ZukanArticle.astro';
+import { book } from '../../../data/zukan';
+
+export function getStaticPaths() {
+  const b = book('ugoki', 'en');
+  return b.entries.map((u) => ({ params: { slug: u.slug }, props: { u } }));
+}
+const { u } = Astro.props;
+---
+
+<ZukanArticle book={book('ugoki', 'en')} u={u} />
