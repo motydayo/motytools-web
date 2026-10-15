@@ -56,3 +56,13 @@
 - 本番反映済み（vercel CLI。サンドボックス内だとアップロードが途中で切れることがあり、外で実行して通った）。本番で33ページ200・ヘッダー5種・機微パス404を確認。
 - 10/15 Search Console: sitemap.xml を再送信（読み込み235件・成功）。登録リクエストは /ugoki/・/ugoki/parallax/・/ugoki/sticky-header/・/ugoki/fade-in/ の4本（残り29本はサイトマップ経由で待つ）。
 - 次の一手: 10/29ごろに表示回数と検索語を見て、題名の言い回しを調整。
+
+## 2026-10-15 図鑑の第2弾: つまみ・英語版・UI部品の図鑑
+- 4冊を同じ型で運用: 動き /ugoki/・/en/motion/（32種）、UI部品 /ui/・/en/ui/（30種）、英語の入口 /en/。本の設定は `src/data/zukan.ts`、ページのひな形は `src/components/zukan/`（ZukanArticle・ZukanIndex・ZkCard・Tuner）、入口ページは src/pages/{ugoki,ui,en/motion,en/ui}/ の薄いファイル。
+- 記事: `src/data/{ugoki,ui}/entries/<slug>.ts`（日本語）・`entries-en/<slug>.ts`（英語。翻訳ではなく英語圏の検索向けに書き直し）。見本: `src/components/ugoki/demos/`（動き）・`ui-demos/`（UI部品）。一覧ページの文章は `src/data/{ugoki,ui}/hub.ts`。
+- つまみ: 記事の `tune` を書くと見本の下に出る。見本には CSS 変数 `--t-<key>`、code・prompt の `{{key}}`/`{{key:n}}`/`{{key:t}}` が一緒に変わる（`src/lib/zukan/tune.ts`）。
+- 英語ページは BaseLayout の `lang="en"`（英語ヘッダー・フッター）、日英は hreflang（x-default は英語）で対応付け。
+- 決まりと落とし穴は `src/data/ugoki/WRITING.md`（第2弾・撮影のコツ・書き方の落とし穴）。検査 `node scripts/check-zukan.mjs`、撮影 `node scripts/shoot-zukan.mjs`、OG画像 `node scripts/gen-og-ugoki.mjs`（4冊128枚）。URL に `?ugstill` で自動再生を止められる。
+- 校閲: 日本語UI30本・英語動き32本・英語UI30本を別担当が技術と文章の両面で点検済み。
+- 本番反映済み（vercel CLI をサンドボックス外で実行）。本番で4冊の129ページ＋/en/ が200、ヘッダー5種、hreflang、OG画像を確認。Search Console はサイトマップ再送信（331件読み込み）、登録リクエストは /en/・/en/motion/・/ui/・/en/ui/。
+- 次の一手: 10/29ごろに日英それぞれの表示回数と検索語を見て題名を調整。英語版の被リンク・紹介（英語圏のデザイン系コミュニティ）を検討。
