@@ -1,0 +1,117 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+// 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
+const Btn = size === 'mini' ? 'span' : 'button';
+const btnType = size === 'mini' ? undefined : 'button';
+---
+
+<UgFrame mode="scroll" size={size} label="スクロールでフェードイン">
+  <div class="ug-site fi" data-demo="fade-in">
+    <header class="ug-nav">
+      <span class="ug-logo">SAMPLE</span>
+      <span>特長</span><span>料金</span><span>FAQ</span>
+      <span class="ug-cta">無料で試す</span>
+    </header>
+
+    <section class="ug-sec intro">
+      <p class="ug-label reveal">FEATURE</p>
+      <h3 class="ug-h reveal">選ばれる3つの理由</h3>
+      <div class="ug-lines reveal"><i></i><i></i></div>
+    </section>
+
+    <section class="ug-sec">
+      <div class="ug-grid fi-cards" data-ug-focus="フェードイン" data-ug-focus-at="below">
+        <div class="ug-card reveal"><Scene tone="day" /><div class="ug-card-body">朝食つき</div></div>
+        <div class="ug-card reveal"><Scene tone="sunset" /><div class="ug-card-body">駅から5分</div></div>
+        <div class="ug-card reveal"><Scene tone="night" /><div class="ug-card-body">星がきれい</div></div>
+      </div>
+    </section>
+
+    <section class="ug-sec">
+      <p class="ug-label reveal">VOICE</p>
+      <h3 class="ug-h reveal">お客さまの声</h3>
+      <ul class="voices">
+        <li class="voice reveal"><b>40代・ご夫婦</b><span class="ug-lines"><i></i><i></i></span></li>
+        <li class="voice reveal"><b>20代・友人と</b><span class="ug-lines"><i></i><i></i></span></li>
+        <li class="voice reveal"><b>30代・家族4人</b><span class="ug-lines"><i></i><i></i></span></li>
+      </ul>
+    </section>
+
+    <section class="ug-sec">
+      <p class="ug-label reveal">GALLERY</p>
+      <h3 class="ug-h reveal">季節ごとの景色</h3>
+      <div class="ug-grid fi-cards">
+        <div class="ug-card reveal"><Scene tone="sunset" /><div class="ug-card-body">秋の夕暮れ</div></div>
+        <div class="ug-card reveal"><Scene tone="night" /><div class="ug-card-body">冬の星空</div></div>
+        <div class="ug-card reveal"><Scene tone="day" /><div class="ug-card-body">春の朝</div></div>
+      </div>
+    </section>
+
+    <section class="ug-sec">
+      <p class="ug-label reveal">PRICE</p>
+      <h3 class="ug-h reveal">1泊 12,000円〜</h3>
+      <div class="ug-lines reveal"><i></i><i></i><i></i></div>
+      <Btn type={btnType} class="ug-btn-site reveal">お申し込み</Btn>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .intro { padding-bottom: 8px; }
+  .fi-cards { position: relative; }
+  .voices { display: grid; gap: 10px; margin-top: 10px; padding: 0; list-style: none; }
+  .voice { padding: 12px; border: 1px solid var(--ug-line); border-radius: 10px; background: var(--ug-bg); font-size: 11px; }
+  .voice .ug-lines { margin-top: 4px; }
+  .ug-btn-site { margin-top: 16px; }
+
+  /* これが演出の本体: 最初は透明で16px下。見えたら0.5秒で元の位置へ */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.5s ease-out,
+      transform 0.5s ease-out;
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+  /* 横に並んだカードは少しずつ遅らせて、順番に出す */
+  .fi-cards .reveal:nth-child(2) { transition-delay: 0.1s; }
+  .fi-cards .reveal:nth-child(3) { transition-delay: 0.2s; }
+
+  @container (max-width: 340px) {
+    .ug-sec { padding: 16px 12px; }
+  }
+  /* 小さな枠では、カードが早めに見えるよう前置きを短く */
+  :global(.is-mini) .intro .ug-lines { display: none; }
+
+  /* 端末で「動きを減らす」設定なら、最初から表示する */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-demo="fade-in"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-in');
+          } else if (e.boundingClientRect.top > (e.rootBounds?.bottom ?? 0)) {
+            // 見本では何度でも見られるよう、画面の下へ戻ったら隠し直す（本番では1回だけでよい）
+            e.target.classList.remove('is-in');
+          }
+        });
+      },
+      // 枠の下から10%入ったところで出す
+      { root: view, rootMargin: '0px 0px -10% 0px', threshold: 0 }
+    );
+    root.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+  });
+</script>

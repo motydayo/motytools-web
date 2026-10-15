@@ -1,0 +1,239 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const mini = size === 'mini';
+// 一覧の小さな見本は外側がリンクなので、中に押せる要素を置かない（span で代用）
+const Link = mini ? 'span' : 'a';
+const Btn = mini ? 'span' : 'button';
+const btnAttrs = mini ? {} : { type: 'button' };
+const stays = [
+  { tone: 'day', name: '山の宿', slug: 'yama', price: '1泊 12,000円〜', note: '標高1,200mの静かな高原。朝は雲海が見えます。' },
+  { tone: 'sunset', name: '海の宿', slug: 'umi', price: '1泊 15,000円〜', note: '全室オーシャンビュー。夕日の時間がいちばん人気です。' },
+  { tone: 'night', name: '星の宿', slug: 'hoshi', price: '1泊 9,800円〜', note: '街の明かりが届かない丘の上。晴れた夜は天の川も。' },
+] as const;
+---
+
+<UgFrame mode="script" size={size} label="ページ遷移アニメーション" url="tabi-yado.jp/stay/">
+  <div class="ug-site pt-site" data-demo="page-transition">
+    <header class="ug-nav"><span class="ug-logo">たびやど</span><span>宿をさがす</span><span>特集</span><span class="ug-cta">予約する</span></header>
+    <!-- これが演出の本体: 一覧と詳細の「2ページ」を切り替えるときに、なめらかにつなぐ -->
+    <div class="pt-stage" data-pt-stage data-ug-focus="ページ遷移">
+      <section class="pt-page pt-list" data-pt-page="list">
+        <p class="ug-label">STAY</p>
+        <h3 class="ug-h">今週のおすすめの宿</h3>
+        <div class="ug-grid pt-cards">
+          {stays.map((s, i) => (
+            <Link class="ug-card pt-card" href={mini ? undefined : `#${s.slug}`} data-pt-go={i}>
+              <Scene tone={s.tone} />
+              <span class="ug-card-body">{s.name}<small>{s.price}</small></span>
+            </Link>
+          ))}
+        </div>
+        <div class="ug-lines pt-lines"><i></i><i></i></div>
+      </section>
+
+      <section class="pt-page pt-detail" data-pt-page="detail" hidden>
+        <Btn {...btnAttrs} class="pt-back" data-pt-back>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+          一覧へ戻る
+        </Btn>
+        <div class="pt-hero">
+          {stays.map((s, i) => <span data-pt-hero={i} hidden={i !== 0}><Scene tone={s.tone} wide /></span>)}
+        </div>
+        <div class="pt-body">
+          <div class="pt-row">
+            <h3 class="ug-h" data-pt-name>{stays[0].name}</h3>
+            <span class="pt-price" data-pt-price>{stays[0].price}</span>
+          </div>
+          <p class="pt-note" data-pt-note>{stays[0].note}</p>
+          <span class="ug-btn-site pt-book">空室を見る</span>
+        </div>
+      </section>
+    </div>
+  </div>
+</UgFrame>
+
+<script is:inline type="application/json" data-pt-data set:html={JSON.stringify(stays)} />
+
+<style>
+  .pt-site { display: flex; flex-direction: column; height: 100%; }
+  .pt-stage { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+  /* 3px 内側に置くのは「見どころ」の点線を画面で隠さないため */
+  .pt-page { position: absolute; inset: 3px; padding: 17px 13px; background: var(--ug-paper); }
+  .pt-page[hidden] { display: none; }
+  .pt-cards { margin-top: 12px; }
+  .pt-card { display: block; color: inherit; text-decoration: none; cursor: pointer; transition: transform 0.15s ease-out, box-shadow 0.15s ease-out; }
+  .pt-card:hover, .pt-card.is-hover { transform: translateY(-3px); box-shadow: 0 10px 20px -12px rgba(29, 37, 65, 0.45); }
+  .pt-card small { display: block; font-weight: 400; color: var(--ug-ink-2); font-size: 10px; }
+  .pt-lines { margin-top: 16px; }
+
+  .pt-detail { padding-top: 9px; }
+  .pt-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 32px;
+    padding: 0 12px 0 8px;
+    margin-bottom: 8px;
+    border: 1px solid var(--ug-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ug-ink);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .pt-back:hover, .pt-back.is-hover { border-color: var(--ug-ink-2); }
+  .pt-hero { border-radius: 10px; overflow: hidden; }
+  .pt-hero [hidden] { display: none; }
+  .pt-hero :global(.ug-scene) { height: 150px; aspect-ratio: auto; }
+  .pt-body { padding-top: 12px; }
+  .pt-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .pt-price { font-size: 12px; font-weight: 700; color: var(--ug-orange); white-space: nowrap; }
+  .pt-note { font-size: 12px; color: var(--ug-ink-2); }
+  .pt-book { margin-top: 12px; min-height: 36px; }
+
+  /* ── 使えないブラウザ向けの代わり（と自動再生）: 同じ動きをCSSアニメーションで ── */
+  .pt-page.is-leaving { animation: pt-out 0.2s ease-in both; z-index: 0; }
+  .pt-page.is-entering { animation: pt-in 0.3s ease-out both; z-index: 1; }
+  .pt-page.is-entering.is-back { animation-name: pt-in-back; }
+
+  @container (max-width: 340px) {
+    .pt-page { padding: 9px; }
+    .pt-detail { padding-top: 5px; }
+    .pt-hero :global(.ug-scene) { height: 128px; }
+    .pt-back { min-height: 26px; margin-bottom: 6px; }
+    .pt-lines { display: none; }
+  }
+  :global(.ug-frame.is-mini) .pt-hero :global(.ug-scene) { height: 84px; }
+  @media (prefers-reduced-motion: reduce) {
+    .pt-page.is-leaving, .pt-page.is-entering { animation: none; }
+  }
+</style>
+
+<style is:global>
+  /* 新しい画面は右から少し入り、古い画面はすっと消える（戻るときは左から） */
+  @keyframes pt-in { from { opacity: 0; transform: translateX(24px); } }
+  @keyframes pt-in-back { from { opacity: 0; transform: translateX(-24px); } }
+  @keyframes pt-out { to { opacity: 0; } }
+
+  /* ── View Transitions API で切り替えるとき ── */
+  /* 見本の外（記事のページ全体）は写し取らず、見本の画面だけを動かす */
+  :root.ug-pt-vt { view-transition-name: none; }
+  ::view-transition-group(ug-page) { overflow: clip; animation-duration: 0.3s; }
+  ::view-transition-old(ug-page) { animation: pt-out 0.2s ease-in both; }
+  ::view-transition-new(ug-page) { animation: pt-in 0.3s ease-out both; }
+  :root.ug-pt-back::view-transition-new(ug-page) { animation-name: pt-in-back; }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  type Stay = { name: string; slug: string; price: string; note: string };
+  const stays: Stay[] = JSON.parse(document.querySelector('[data-pt-data]')?.textContent ?? '[]');
+  const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-demo="page-transition"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const frame = root.closest<HTMLElement>('[data-ug-frame]');
+    const stage = root.querySelector<HTMLElement>('[data-pt-stage]');
+    const list = root.querySelector<HTMLElement>('[data-pt-page="list"]');
+    const detail = root.querySelector<HTMLElement>('[data-pt-page="detail"]');
+    const back = root.querySelector<HTMLElement>('[data-pt-back]');
+    const url = frame?.querySelector<HTMLElement>('.ug-url');
+    if (!view || !stage || !list || !detail || !back) return;
+    const cards = [...root.querySelectorAll<HTMLElement>('[data-pt-go]')];
+    const heroes = [...root.querySelectorAll<HTMLElement>('[data-pt-hero]')];
+    let timer = 0;
+
+    // 画面の中身を入れ替える（ここは演出なしの「ページ移動」そのもの）
+    const swap = (to: 'list' | 'detail', i: number) => {
+      if (to === 'detail') {
+        const s = stays[i];
+        heroes.forEach((h, n) => (h.hidden = n !== i));
+        root.querySelector('[data-pt-name]')!.textContent = s.name;
+        root.querySelector('[data-pt-price]')!.textContent = s.price;
+        root.querySelector('[data-pt-note]')!.textContent = s.note;
+      }
+      list.hidden = to !== 'list';
+      detail.hidden = to !== 'detail';
+      if (url) url.textContent = to === 'list' ? 'tabi-yado.jp/stay/' : `tabi-yado.jp/stay/${stays[i].slug}/`;
+    };
+
+    // useApi: 本物のクリックのときは View Transitions API を使う。使えなければCSSアニメーションで代わりに動かす
+    const go = (to: 'list' | 'detail', i: number, useApi: boolean) => {
+      const isBack = to === 'list';
+      const from = isBack ? detail : list;
+      const next = isBack ? list : detail;
+      clearTimeout(timer);
+      [list, detail].forEach((p) => p.classList.remove('is-leaving', 'is-entering', 'is-back'));
+
+      if (reduce()) return swap(to, i);
+
+      if (useApi && 'startViewTransition' in document) {
+        const de = document.documentElement;
+        stage.style.setProperty('view-transition-name', 'ug-page');
+        de.classList.add('ug-pt-vt');
+        de.classList.toggle('ug-pt-back', isBack);
+        const vt = document.startViewTransition(() => swap(to, i));
+        vt.ready.catch(() => {}); // 画面が裏にあるときなどは演出なしで切り替わる（エラーにしない）
+        vt.finished.finally(() => {
+          stage.style.removeProperty('view-transition-name');
+          de.classList.remove('ug-pt-vt', 'ug-pt-back');
+        });
+        return;
+      }
+
+      // 代わりの動き: 古い画面を重ねたまま消し、新しい画面を入れる
+      swap(to, i);
+      from.hidden = false;
+      from.classList.add('is-leaving');
+      next.classList.add('is-entering');
+      next.classList.toggle('is-back', isBack);
+      timer = window.setTimeout(() => {
+        from.hidden = true;
+        from.classList.remove('is-leaving');
+        next.classList.remove('is-entering', 'is-back');
+      }, 320);
+    };
+
+    cards.forEach((card, i) => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        go('detail', i, true);
+      });
+      card.addEventListener('ug:click', () => go('detail', i, false));
+    });
+    back.addEventListener('click', () => go('list', 0, true));
+    back.addEventListener('ug:click', () => go('list', 0, false));
+
+    const reset = () => {
+      clearTimeout(timer);
+      [list, detail].forEach((p) => p.classList.remove('is-leaving', 'is-entering', 'is-back'));
+      swap('list', 0);
+    };
+    view.addEventListener('ug:reset', reset);
+
+    let n = 0;
+    onTour(root, async (t) => {
+      reset();
+      const card = cards[n % cards.length];
+      n++;
+      await t.sleep(700);
+      await t.move(card, 700);
+      t.hover(card);
+      await t.sleep(300);
+      await t.click(card);
+      t.hover(null);
+      await t.sleep(2200);
+      await t.move(back, 700);
+      t.hover(back);
+      await t.sleep(250);
+      await t.click(back);
+      t.hover(null);
+      await t.sleep(900);
+    });
+  });
+</script>

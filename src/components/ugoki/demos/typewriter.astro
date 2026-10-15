@@ -1,0 +1,116 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const Btn = size === 'mini' ? 'span' : 'button';
+const words = ['もっと手軽に。', 'スマホひとつで。', '24時間いつでも。'];
+---
+
+<UgFrame mode="script" size={size} label="タイプライター">
+  <div class="ug-site tw" data-demo="typewriter" data-words={JSON.stringify(words)}>
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>宿をさがす</span><span>特集</span><span class="ug-cta">ログイン</span></header>
+    <section class="hero">
+      <div class="bg" aria-hidden="true"><Scene tone="night" wide /></div>
+      <div class="copy">
+        <p class="ug-label kicker">ONSEN BOOKING</p>
+        <h2 class="ttl" data-ug-focus="タイプライター" data-ug-focus-at="below">
+          <span class="sr-only">旅の予約を、{words.join('')}</span>
+          <span aria-hidden="true">旅の予約を、<br /><span class="typed">{words[0]}</span></span>
+        </h2>
+        <p class="sub">全国1,200軒の温泉宿から、空いている部屋をすぐに探せます。</p>
+        <Btn class="ug-btn-site" type={size === 'mini' ? undefined : 'button'}>空室をさがす</Btn>
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .tw { display: flex; flex-direction: column; height: 100%; }
+  .hero { position: relative; flex: 1; display: grid; align-items: end; overflow: hidden; }
+  .bg { position: absolute; inset: 0; }
+  .bg :global(svg) { width: 100%; height: 100%; aspect-ratio: auto; }
+  /* 文字を読みやすくするため、絵の上に暗い幕をかける */
+  .bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(20, 26, 48, 0.85) 35%, rgba(20, 26, 48, 0.1)); }
+  .copy { position: relative; padding: 24px; color: #fff; }
+  .kicker { color: var(--ug-orange-2); }
+  .ttl { position: relative; margin: 4px 0 8px !important; font-size: 30px; font-weight: 800; line-height: 1.35; min-height: 2.7em; }
+  .typed { color: var(--ug-orange-2); white-space: nowrap; }
+  /* 打っている位置を示す縦棒（キャレット）。止まっている間だけ点滅させる */
+  .typed::after {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 0.95em;
+    margin-left: 4px;
+    vertical-align: -0.1em;
+    background: currentColor;
+    animation: tw-blink 1s steps(1) infinite;
+  }
+  .typed.is-typing::after { animation: none; }
+  @keyframes tw-blink {
+    50% { opacity: 0; }
+  }
+  .sub { margin: 28px 0 16px; font-size: 13px; color: #dfe3f0; max-width: 32em; }
+  @container (max-width: 340px) {
+    .copy { padding: 16px; }
+    .ttl { font-size: 22px; }
+    .sub { font-size: 12px; }
+  }
+  :global(.is-mini) .sub, :global(.is-mini) .ug-btn-site { display: none; }
+  :global(.is-mini) .copy { padding: 8px 16px 12px; }
+  :global(.is-mini) .kicker { display: none; }
+  :global(.is-mini) .ttl { margin-bottom: 24px !important; }
+  @media (prefers-reduced-motion: reduce) {
+    .typed::after { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="typewriter"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const typed = root.querySelector<HTMLElement>('.typed');
+    if (!view || !typed) return;
+    const words: string[] = JSON.parse(root.dataset.words ?? '[]');
+    // 絵文字や結合文字でも1文字ずつ正しく区切る
+    const chars = (s: string) => [...s];
+
+    const reset = () => {
+      typed.textContent = words[0];
+      typed.classList.remove('is-typing');
+    };
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      t.showCursor(false);
+      reset();
+      typed.textContent = '';
+      await t.sleep(400);
+      try {
+        for (const w of words) {
+          // 打つ（1文字 0.11秒）
+          typed.classList.add('is-typing');
+          const cs = chars(w);
+          for (let i = 1; i <= cs.length; i++) {
+            typed.textContent = cs.slice(0, i).join('');
+            await t.sleep(110);
+          }
+          typed.classList.remove('is-typing');
+          await t.sleep(1700);
+          // 消す（1文字 0.045秒）
+          typed.classList.add('is-typing');
+          for (let i = cs.length - 1; i >= 0; i--) {
+            typed.textContent = cs.slice(0, i).join('');
+            await t.sleep(45);
+          }
+          typed.classList.remove('is-typing');
+          await t.sleep(300);
+        }
+      } finally {
+        // 途中で止まっても、文が欠けたまま残らないようにする
+        if (t.signal.aborted) reset();
+      }
+    });
+  });
+</script>

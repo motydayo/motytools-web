@@ -1,0 +1,86 @@
+---
+import UgFrame from '../UgFrame.astro';
+const { size = 'full' } = Astro.props;
+const words = ['WEB DESIGN', 'BRANDING', 'MOTION', 'APP UI'];
+const clients = ['山の宿', 'まちの本屋', 'みなと珈琲', '森のパン工房', 'ひかり歯科', 'そら不動産'];
+---
+
+<UgFrame mode="loop" size={size} label="マーキー">
+  <div class="ug-site mq-site">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>実績</span><span>会社概要</span><span class="ug-cta">相談する</span></header>
+    <section class="mq-intro">
+      <p class="ug-label">SERVICE</p>
+      <h3 class="ug-h">わたしたちにできること</h3>
+      <div class="ug-lines mq-lines"><i></i><i></i></div>
+    </section>
+    <!-- これが演出の本体: 同じ並びを2回並べ、半分だけ左へ動かしてから最初に戻すと、つなぎ目が見えない -->
+    <div class="band ug-pausable" data-ug-focus="マーキー">
+      <div class="track">
+        {[0, 1].map((n) => (
+          <div class="set" aria-hidden={n === 1 ? 'true' : undefined}>
+            {words.map((w) => (
+              <span class="w">{w}<i class="dot"></i></span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+    <section class="mq-clients">
+      <p class="mq-cap">導入いただいたお店・会社</p>
+      <div class="mq-logos ug-pausable">
+        <div class="track is-slow is-reverse">
+          {[0, 1].map((n) => (
+            <div class="set" aria-hidden={n === 1 ? 'true' : undefined}>
+              {clients.map((c) => (
+                <span class="mq-logo"><i></i>{c}</span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+    <section class="ug-sec mq-rest">
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .mq-intro { padding: 20px 16px 16px; }
+  .band { position: relative; overflow: hidden; background: var(--ug-navy); color: #fff; padding: 14px 0; }
+  .track {
+    display: flex;
+    width: max-content;
+    /* 一定の速さで左へ流し続ける（流し続ける動きだけは等速） */
+    animation: ug-marquee 14s linear infinite;
+  }
+  .track.is-slow { animation-duration: 24s; }
+  .track.is-reverse { animation-direction: reverse; }
+  /* マウスを乗せたら止めて、読めるようにする */
+  .band:hover .track,
+  .mq-logos:hover .track { animation-play-state: paused; }
+  .set { display: flex; }
+  .w { display: inline-flex; align-items: center; gap: 24px; padding-right: 24px; font-size: 20px; font-weight: 800; letter-spacing: 0.06em; white-space: nowrap; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ug-orange); }
+  @keyframes ug-marquee {
+    to { transform: translateX(-50%); }
+  }
+
+  .mq-clients { padding: 20px 0 8px; }
+  .mq-cap { padding: 0 16px 8px; font-size: 11px; font-weight: 700; color: var(--ug-ink-2); }
+  .mq-logos { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+  .mq-logo { display: inline-flex; align-items: center; gap: 8px; margin-right: 12px; padding: 8px 16px; border: 1px solid var(--ug-line); border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--ug-ink-2); white-space: nowrap; }
+  .mq-logo i { width: 14px; height: 14px; border-radius: 50%; background: var(--ug-sky); }
+  .mq-rest { border-top: 0; }
+
+  @container (max-width: 340px) {
+    .mq-intro { padding: 12px 12px 10px; }
+    .mq-lines { display: none; }
+    .band { padding: 10px 0; }
+    .w { font-size: 16px; gap: 16px; padding-right: 16px; }
+  }
+  /* 端末で「動きを減らす」設定なら止める（並びの先頭が読める状態で止まる） */
+  @media (prefers-reduced-motion: reduce) {
+    .track { animation: none; }
+  }
+</style>

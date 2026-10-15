@@ -1,0 +1,212 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const tones = ['day', 'sunset', 'night'] as const;
+const posts = [
+  '紅葉が見ごろの露天風呂 5選',
+  '日帰りで行ける高原の牧場',
+  '雨の日でも楽しめる港町の歩き方',
+  '星がよく見える山小屋の泊まり方',
+  '朝市で買いたい海の幸ガイド',
+  '子ども連れで行く渓谷キャンプ',
+  'ローカル線で巡る温泉街',
+  '冬の岬で見る日の出',
+  'ひとり旅に向いた湖畔の宿',
+  '地元の人に聞いた棚田の撮り方',
+  '吊り橋と滝をめぐる半日コース',
+  '夕日がきれいな海辺のカフェ',
+  '雪見風呂のある小さな宿',
+  '秋祭りに合わせて泊まる城下町',
+  '森の中のサウナ付きコテージ',
+  '灯台のある島へ船で渡る',
+  '週末に行ける山のパン屋さん',
+];
+const FIRST = 5; // 最初に表示する件数
+---
+
+<UgFrame mode="scroll" size={size} label="無限スクロール">
+  <div class="ug-site" data-demo="infinite-scroll" data-first={FIRST} data-step="4">
+    <header class="ug-nav"><span class="ug-logo">旅のよみもの</span><span>特集</span><span>地域</span><span class="ug-cta">会員登録</span></header>
+    <div class="is-head">
+      <h3 class="is-title">新着記事</h3>
+      <span class="is-count">表示中 <b data-is-count>{FIRST}</b>件</span>
+    </div>
+    <ul class="is-list">
+      {posts.map((title, i) => (
+        <li class="is-item" data-is-item hidden={i >= FIRST}>
+          <Scene tone={tones[i % 3]} class="is-thumb" />
+          <span class="is-text">
+            <span class="is-name">{title}</span>
+            <span class="is-meta">10月{15 - (i % 14)}日・{3 + (i % 4)}分で読めます</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+    <!-- これが演出の本体: 下端の見張り役。見えたら続きを読み込んで足す -->
+    <div class="is-more" data-is-sentinel data-ug-focus="無限スクロール">
+      <span class="is-loading" data-is-loading>
+        <span class="is-spin" aria-hidden="true"></span>
+        続きを読み込み中
+      </span>
+      <span class="is-end" data-is-end>すべての記事を表示しました</span>
+    </div>
+    <footer class="is-foot" data-is-foot>
+      <span class="ug-logo">旅のよみもの</span>
+      <span class="is-foot-links"><span>運営会社</span><span>お問い合わせ</span><span>プライバシー</span></span>
+    </footer>
+  </div>
+</UgFrame>
+
+<style>
+  .is-head {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.94);
+    border-bottom: 1px solid var(--ug-line);
+  }
+  .is-title { font-size: 15px; font-weight: 800; }
+  .is-count { font-size: 11px; color: var(--ug-ink-2); font-variant-numeric: tabular-nums; }
+  .is-count b { color: var(--ug-orange); font-size: 13px; }
+  .is-list { list-style: none; margin: 0; padding: 0 16px; }
+  .is-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--ug-line); }
+  .is-item[hidden] { display: none; }
+  .is-item :global(.is-thumb) { flex: none; width: 72px; height: 48px; border-radius: 6px; aspect-ratio: auto; }
+  .is-text { display: grid; gap: 2px; min-width: 0; }
+  .is-name { font-size: 13px; font-weight: 700; line-height: 1.45; }
+  .is-meta { font-size: 10px; color: var(--ug-ink-2); }
+  /* 足された記事は、下から少し持ち上げて出す */
+  .is-item.is-new { animation: is-in 0.35s ease-out both; }
+  @keyframes is-in { from { opacity: 0; transform: translateY(12px); } }
+
+  .is-more {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 72px;
+    padding: 16px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ug-ink-2);
+  }
+  .is-loading, .is-end { display: none; align-items: center; gap: 8px; }
+  .is-more.is-busy .is-loading { display: inline-flex; }
+  .is-more.is-done .is-end { display: inline-flex; }
+  .is-spin {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--ug-line);
+    border-top-color: var(--ug-orange);
+    border-radius: 50%;
+    animation: is-spin 0.8s linear infinite;
+  }
+  @keyframes is-spin { to { transform: rotate(1turn); } }
+
+  /* フッターは「最後まで読み込んだあと」でないと届かない */
+  .is-foot { display: none; align-items: center; justify-content: space-between; gap: 12px; padding: 24px 16px 32px; background: var(--ug-navy); color: #fff; font-size: 11px; }
+  .is-foot .ug-logo { margin-right: 0; }
+  .is-foot-links { display: inline-flex; gap: 12px; color: rgba(255, 255, 255, 0.7); }
+  .is-foot.is-shown { display: flex; }
+
+  @container (max-width: 340px) {
+    .is-head { padding: 8px 12px; }
+    .is-list { padding: 0 12px; }
+    .is-item { gap: 8px; padding: 8px 0; }
+    .is-item :global(.is-thumb) { width: 56px; height: 40px; }
+    .is-name { font-size: 12px; }
+    .is-foot-links span:nth-child(n + 2) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .is-item.is-new { animation: none; }
+    .is-spin { animation-duration: 2.4s; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="infinite-scroll"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const sentinel = root.querySelector<HTMLElement>('[data-is-sentinel]');
+    const count = root.querySelector<HTMLElement>('[data-is-count]');
+    const foot = root.querySelector<HTMLElement>('[data-is-foot]');
+    if (!view || !sentinel || !count || !foot) return;
+    const items = [...root.querySelectorAll<HTMLElement>('[data-is-item]')];
+    const first = Number(root.dataset.first);
+    const step = Number(root.dataset.step);
+    let shown = first;
+    let busy = false;
+    let timer = 0;
+
+    const done = () => shown >= items.length;
+
+    // 続きを読み込む（見本では通信に0.9秒かかる想定で、隠しておいた記事を4件ずつ出す）
+    const loadMore = () => {
+      if (busy || done()) return;
+      busy = true;
+      sentinel.classList.add('is-busy');
+      timer = window.setTimeout(() => {
+        items.slice(shown, shown + step).forEach((el) => {
+          el.hidden = false;
+          el.classList.add('is-new');
+        });
+        shown = Math.min(items.length, shown + step);
+        count.textContent = String(shown);
+        busy = false;
+        sentinel.classList.remove('is-busy');
+        if (done()) {
+          io.disconnect();
+          sentinel.classList.add('is-done');
+          foot.classList.add('is-shown');
+        } else {
+          // 足したあとも見張り役が見えたままなら、もう一度読み込む
+          io.unobserve(sentinel);
+          io.observe(sentinel);
+        }
+      }, 900);
+    };
+
+    const io = new IntersectionObserver((entries) => entries[0].isIntersecting && loadMore(), {
+      root: view,
+      rootMargin: '0px 0px 40px 0px',
+    });
+
+    const reset = () => {
+      clearTimeout(timer);
+      busy = false;
+      shown = first;
+      items.forEach((el, i) => {
+        el.hidden = i >= first;
+        el.classList.remove('is-new');
+      });
+      count.textContent = String(first);
+      sentinel.classList.remove('is-busy', 'is-done');
+      foot.classList.remove('is-shown');
+      io.disconnect();
+      io.observe(sentinel);
+    };
+    reset();
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      t.showCursor(false);
+      t.view.scrollTop = 0;
+      reset();
+      await t.sleep(1000);
+      while (!done()) {
+        await t.scrollTo(t.view.scrollHeight - t.view.clientHeight, 1100);
+        await t.sleep(1700); // 「読み込み中」→ 記事が足されるのを見せる
+      }
+      await t.scrollTo(t.view.scrollHeight - t.view.clientHeight, 900);
+      await t.sleep(1600);
+      await t.scrollTo(0, 1000);
+      await t.sleep(500);
+    });
+  });
+</script>

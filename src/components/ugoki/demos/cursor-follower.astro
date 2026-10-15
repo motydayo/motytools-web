@@ -1,0 +1,131 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const Btn = size === 'mini' ? 'span' : 'button';
+---
+
+<UgFrame mode="script" size={size} label="マウスストーカー">
+  <div class="ug-site page" data-demo="cursor-follower">
+    <header class="ug-nav nav"><span class="ug-logo">STUDIO</span><span>実績</span><span>会社概要</span><span class="ug-cta">相談する</span></header>
+    <section class="hero">
+      <div class="copy">
+        <p class="ug-label">CREATIVE STUDIO</p>
+        <h3 class="title">動きで、<br />心をつかむ。</h3>
+        <p class="lead">Webサイトと映像の制作会社です。</p>
+        <Btn class="ug-btn-site go" type={size === 'mini' ? undefined : 'button'} data-hot>実績を見る</Btn>
+      </div>
+      <div class="pic" data-hot><Scene tone="night" /></div>
+    </section>
+    <!-- これが演出の本体: マウスを少し遅れて追いかける輪（pointer-events: none で邪魔をしない） -->
+    <div class="stalker" aria-hidden="true" data-ug-focus="マウスストーカー" data-ug-focus-at="below"><i></i></div>
+  </div>
+</UgFrame>
+
+<style>
+  .page { position: relative; min-height: 100%; display: flex; flex-direction: column; overflow: hidden; background: #fbfaf7; }
+  .hero { flex: 1; display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 24px; padding: 24px 24px 32px; }
+  .title { font-size: 28px; font-weight: 800; line-height: 1.3; margin: 4px 0 8px; }
+  .lead { font-size: 12px; color: var(--ug-ink-2); margin-bottom: 16px; }
+  .pic { border-radius: 12px; overflow: hidden; }
+  .stalker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+    will-change: transform;
+  }
+  .stalker.is-on { opacity: 1; }
+  .stalker i {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--ug-orange);
+    border-radius: 50%;
+    /* リンクやボタンに乗ったら、輪を大きくして「押せる」ことを知らせる */
+    transition: transform 0.2s ease-out, background-color 0.2s ease-out;
+  }
+  .stalker.is-big i { transform: scale(1.8); background: rgba(240, 106, 53, 0.16); }
+  @container (max-width: 340px) {
+    .hero { grid-template-columns: 1fr 0.8fr; gap: 12px; padding: 16px; }
+    .title { font-size: 20px; }
+  }
+  :global(.is-mini) .nav, :global(.is-mini) .lead { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .stalker i { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour, onPointer, type Point } from '../../../lib/ugoki/runtime';
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-demo="cursor-follower"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const stalker = root.querySelector<HTMLElement>('.stalker');
+    if (!view || !stalker) return;
+    const hots = [...root.querySelectorAll<HTMLElement>('[data-hot]')];
+
+    // 目標（マウスの位置）と、今いる位置。毎フレーム少しずつ目標へ寄せると「遅れてついてくる」
+    let goal: Point = { x: view.clientWidth * 0.7, y: view.clientHeight * 0.5 };
+    let now: Point = { ...goal };
+    let raf = 0;
+    stalker.style.transform = `translate(${now.x}px, ${now.y}px)`;
+    const tick = () => {
+      const k = reduce ? 1 : 0.16; // 1回に縮める割合。小さいほどゆっくり追う
+      now.x += (goal.x - now.x) * k;
+      now.y += (goal.y - now.y) * k;
+      stalker.style.transform = `translate(${now.x}px, ${now.y}px)`;
+      raf = Math.abs(goal.x - now.x) + Math.abs(goal.y - now.y) > 0.3 ? requestAnimationFrame(tick) : 0;
+    };
+    const follow = (p: Point) => {
+      goal = p;
+      stalker.classList.add('is-on');
+      // 押せる部分の上かどうか（枠の中の座標で判定）
+      const v = view.getBoundingClientRect();
+      const over = hots.some((el) => {
+        const r = el.getBoundingClientRect();
+        const x = r.left - v.left;
+        const y = r.top - v.top + view.scrollTop;
+        return p.x >= x && p.x <= x + r.width && p.y >= y && p.y <= y + r.height;
+      });
+      stalker.classList.toggle('is-big', over);
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    onPointer(view, (p) => follow(p));
+    // タップでも、その場所へ追いかけてくる
+    view.addEventListener('pointerdown', (e) => {
+      const r = view.getBoundingClientRect();
+      follow({ x: e.clientX - r.left, y: e.clientY - r.top + view.scrollTop });
+    });
+    view.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse') stalker.classList.remove('is-on', 'is-big');
+    });
+    view.addEventListener('ug:reset', () => stalker.classList.remove('is-on', 'is-big'));
+
+    onTour(root, async (t) => {
+      const w = t.view.clientWidth;
+      const h = t.view.clientHeight;
+      const title = root.querySelector('.title')!;
+      const go = root.querySelector('.go')!;
+      const pic = root.querySelector('.pic')!;
+      await t.move({ x: w * 0.3, y: h * 0.75 }, 500);
+      await t.move(title, 900);
+      await t.sleep(300);
+      await t.move({ x: w * 0.45, y: h * 0.3 }, 700);
+      await t.move(go, 800);
+      await t.sleep(900);
+      await t.move(pic, 900);
+      await t.sleep(700);
+      await t.move({ x: w * 0.55, y: h * 0.82 }, 700);
+      await t.move({ x: w * 0.2, y: h * 0.55 }, 900);
+      await t.sleep(600);
+    });
+  });
+</script>

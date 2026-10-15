@@ -1,0 +1,268 @@
+---
+// 動きの見本を入れる「ブラウザの枠」。中身（slot）は見本ごとの小さなWebページ。
+// size="mini" は一覧用（触れない・自動再生だけ）、size="full" は詳細ページ用（触れる・操作ボタンあり）。
+interface Props {
+  mode: 'scroll' | 'pointer' | 'loop' | 'script';
+  size?: 'mini' | 'full';
+  /** 見本の名前（読み上げ用） */
+  label: string;
+  url?: string;
+}
+const { mode, size = 'full', label, url = 'example.com' } = Astro.props;
+const hint =
+  mode === 'scroll'
+    ? '枠の中をスクロールして試せます'
+    : mode === 'pointer'
+      ? 'マウスを乗せたり押したりして試せます'
+      : mode === 'loop'
+        ? '動き続ける演出です'
+        : '枠の中を操作して試せます';
+---
+
+<figure class:list={['ug-frame', `is-${size}`, 'show-focus']} data-ug-frame data-mode={mode} data-size={size}>
+  <div class="ug-bar" aria-hidden="true">
+    <span class="ug-dots"><i></i><i></i><i></i></span>
+    <span class="ug-url">{url}</span>
+  </div>
+  <div class="ug-view" data-ug-view tabindex={size === 'full' ? 0 : -1} role="region" aria-label={`${label}の見本`}>
+    <slot />
+  </div>
+  {(mode === 'pointer' || mode === 'script') && (
+    <div class="ug-cursor" data-ug-cursor aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 3l14 7.5-6.2 1.7L10 18.5z" fill="#1c1c1e" stroke="#fff" stroke-width="1.6" stroke-linejoin="round" /></svg>
+    </div>
+  )}
+  {size === 'full' && (
+    <figcaption class="ug-ctrl">
+      <span class="ug-hint">{hint}</span>
+      <span class="ug-btns">
+        <button type="button" class="ug-btn" data-ug-focus-toggle aria-pressed="true" title="動いている部分を点線で囲みます">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 3" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3" /></svg>
+          見どころ
+        </button>
+        <button type="button" class="ug-btn" data-ug-play aria-pressed="true">
+          <svg class="i-pause" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 5v14M15 5v14" /></svg>
+          <svg class="i-play" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" /></svg>
+          <span data-label>一時停止</span>
+        </button>
+        <button type="button" class="ug-btn" data-ug-restart>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /></svg>
+          最初から
+        </button>
+      </span>
+    </figcaption>
+  )}
+</figure>
+
+<script>
+  import { initFrames } from '../../lib/ugoki/runtime';
+  initFrames();
+</script>
+
+<style is:global>
+  /* 枠の中は「よくあるWebサイト」の見た目で固定する（サイトのダーク表示に引きずられない） */
+  .ug-frame {
+    --ug-bg: #f7f6f2;
+    --ug-paper: #ffffff;
+    --ug-ink: #1f2433;
+    --ug-ink-2: #5d6272;
+    --ug-line: #e4e2dc;
+    --ug-orange: #f06a35;
+    --ug-orange-2: #ffb08e;
+    --ug-blue: #4f73d9;
+    --ug-sky: #c9d8f7;
+    --ug-navy: #1d2541;
+    position: relative;
+    margin: 0;
+    background: var(--ug-paper);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    color: var(--ug-ink);
+    font-feature-settings: 'palt';
+    isolation: isolate;
+  }
+  .ug-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 32px;
+    padding: 0 12px;
+    background: #efede7;
+    border-bottom: 1px solid var(--ug-line);
+  }
+  .ug-dots { display: inline-flex; gap: 5px; }
+  .ug-dots i { width: 8px; height: 8px; border-radius: 50%; background: #d3d0c8; }
+  .ug-url {
+    flex: 1;
+    max-width: 240px;
+    margin: 0 auto;
+    padding: 2px 10px;
+    font-size: 11px;
+    line-height: 18px;
+    color: #8a877f;
+    text-align: center;
+    background: #fff;
+    border-radius: 999px;
+  }
+  .ug-view {
+    position: relative;
+    height: 420px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: var(--ug-paper);
+    scrollbar-width: thin;
+    outline: none;
+    container-type: inline-size;
+  }
+  /* 自動再生でスクロールしている間はスナップを外す（途中で吸い付かないように） */
+  .ug-view.is-programmatic { scroll-snap-type: none !important; }
+  .ug-view:focus-visible { box-shadow: inset 0 0 0 3px var(--accent); }
+  .ug-frame.is-mini .ug-view { height: 196px; pointer-events: none; overflow: hidden; scrollbar-width: none; }
+  @media (max-width: 640px) {
+    .ug-view { height: 380px; }
+  }
+  /* 見えていないとき・一時停止中は、CSSで動き続ける見本も止める */
+  .ug-frame:not(.is-playing) .ug-view.ug-pausable *,
+  .ug-frame:not(.is-playing) .ug-view .ug-pausable,
+  .ug-frame:not(.is-playing) .ug-view .ug-pausable * {
+    animation-play-state: paused !important;
+  }
+
+  .ug-cursor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 30;
+    width: 22px;
+    height: 22px;
+    margin: -3px 0 0 -5px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    will-change: transform;
+  }
+  .ug-cursor svg { transition: transform 0.12s ease-out; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25)); }
+  .ug-cursor.is-shown { opacity: 1; }
+  .ug-cursor.is-down svg { transform: scale(0.82); }
+
+  .ug-ctrl {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 4px 8px 4px 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    color: var(--text-2);
+  }
+  .ug-hint { font-size: var(--fs-sm); }
+  .ug-btns { display: inline-flex; gap: 4px; }
+  .ug-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 12px;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--text);
+    background: transparent;
+    border: 0;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+  }
+  .ug-btn:hover { background: var(--surface-2); }
+  .ug-btn:active { transform: scale(0.96); }
+  .ug-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .ug-btn[data-ug-focus-toggle][aria-pressed='false'] { color: var(--text-3); }
+  .ug-btn .i-play { display: none; }
+
+  /* 見どころ: 演出の主役（data-ug-focus="名前"）を点線で囲み、名札を付ける。
+     主役の要素は position が static 以外（relative / sticky / absolute）であること */
+  .ug-frame.show-focus [data-ug-focus] { outline: 2px dashed var(--ug-blue); outline-offset: -3px; }
+  .ug-frame.show-focus [data-ug-focus]::after {
+    content: attr(data-ug-focus);
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 25;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--ug-blue);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  /* 名札が中身に被るときは data-ug-focus-at="below" で枠の下にぶら下げる */
+  .ug-frame.show-focus [data-ug-focus-at='below']::after { top: calc(100% + 4px); }
+  .ug-frame.show-focus [data-ug-focus-at='left']::after { right: auto; left: 4px; }
+  .ug-frame.is-mini.show-focus [data-ug-focus]::after { font-size: 9px; line-height: 16px; padding: 0 6px; }
+  .ug-btn[aria-pressed='false'] .i-play { display: block; }
+  .ug-btn[aria-pressed='false'] .i-pause { display: none; }
+
+  /* ── 見本の中で使う共通部品（小さなWebサイトの材料） ── */
+  .ug-site { font-size: 13px; line-height: 1.7; color: var(--ug-ink); }
+  .ug-site h3, .ug-site h4 { margin: 0; line-height: 1.35; }
+  .ug-nav {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 48px;
+    padding: 0 16px;
+    background: #fff;
+    border-bottom: 1px solid var(--ug-line);
+    font-size: 12px;
+  }
+  .ug-logo { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; letter-spacing: 0.04em; margin-right: auto; }
+  .ug-logo::before { content: ''; width: 12px; height: 12px; border-radius: 3px; background: var(--ug-orange); }
+  .ug-nav a, .ug-nav span { color: var(--ug-ink-2); text-decoration: none; white-space: nowrap; }
+  /* 枠が狭いとき（一覧の小さな見本・スマホ）はメニューを間引く */
+  @container (max-width: 340px) {
+    .ug-nav { gap: 10px; padding: 0 12px; }
+    .ug-nav > span:not(.ug-logo):not(.ug-cta):nth-of-type(n + 3) { display: none; }
+  }
+  .ug-cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--ug-orange);
+    color: #fff !important;
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .ug-sec { padding: 20px 16px; }
+  .ug-sec + .ug-sec { border-top: 1px solid var(--ug-line); }
+  .ug-label { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; color: var(--ug-orange); }
+  .ug-h { font-size: 17px; font-weight: 800; margin: 2px 0 6px; }
+  .ug-lines { display: grid; gap: 7px; margin-top: 8px; }
+  .ug-lines i { display: block; height: 7px; border-radius: 4px; background: #e9e7e1; }
+  .ug-lines i:nth-child(3n) { width: 72%; }
+  .ug-lines i:nth-child(3n + 2) { width: 88%; }
+  .ug-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .ug-card { background: #fff; border: 1px solid var(--ug-line); border-radius: 10px; overflow: hidden; }
+  .ug-card-body { padding: 8px 10px 10px; font-size: 11px; font-weight: 700; }
+  .ug-scene { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; }
+  .ug-scene--wide { aspect-ratio: 16 / 7; }
+  .ug-btn-site {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ug-orange);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+  }
+</style>

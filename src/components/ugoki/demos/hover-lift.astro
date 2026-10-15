@@ -1,0 +1,79 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+// 一覧の小さな見本は、外側がリンクなので中にリンクを入れない（span で代用）
+const Card = size === 'mini' ? 'span' : 'a';
+const stays = [
+  { tone: 'day', name: '山の宿', price: '1泊 12,000円〜' },
+  { tone: 'sunset', name: '海の宿', price: '1泊 15,000円〜' },
+  { tone: 'night', name: '星の宿', price: '1泊 9,800円〜' },
+] as const;
+---
+
+<UgFrame mode="pointer" size={size} label="ホバーで浮き上がる">
+  <div class="ug-site page">
+    <header class="ug-nav nav"><span class="ug-logo">SAMPLE</span><span>宿をさがす</span><span>特集</span><span class="ug-cta">予約する</span></header>
+    <section class="ug-sec body">
+      <div class="area" data-ug-focus="浮き上がるカード">
+        <p class="ug-label">STAY</p>
+        <h3 class="ug-h">泊まれる場所を選ぶ</h3>
+        <div class="ug-grid lift-grid">
+          {stays.map((s) => (
+            <Card class="ug-card lift" href={size === 'mini' ? undefined : '#'} data-ug-target>
+              <Scene tone={s.tone} />
+              <span class="ug-card-body">{s.name}<small>{s.price}</small></span>
+            </Card>
+          ))}
+        </div>
+      </div>
+      <p class="more">ほかに 24 件の宿があります</p>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .page { min-height: 100%; display: flex; flex-direction: column; }
+  .body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+  .area { position: relative; margin: 0 -8px; padding: 8px 8px 12px; }
+  .lift-grid { margin-top: 12px; }
+  .lift {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    /* これが演出の本体: 浮き上がり＋影を、出るときは減速で */
+    transition:
+      transform 0.2s ease-out,
+      box-shadow 0.2s ease-out;
+  }
+  .lift.is-hover,
+  .lift:focus-visible {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 24px -12px rgba(29, 37, 65, 0.45);
+  }
+  /* マウスのある端末だけ、乗せたときに浮かせる */
+  @media (hover: hover) {
+    .lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 24px -12px rgba(29, 37, 65, 0.45);
+    }
+  }
+  /* 押した瞬間は少し沈める（スマホのタップにも反応が出る） */
+  .lift:active { transform: translateY(-2px); transition-duration: 0.1s; }
+  .lift:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+  .lift small { display: block; font-weight: 400; color: var(--ug-ink-2); font-size: 10px; }
+  .more { font-size: 11px; color: var(--ug-ink-2); }
+  /* 一覧の小さな見本では、カードだけを見せる */
+  :global(.is-mini) .nav, :global(.is-mini) .more { display: none; }
+  :global(.is-mini) .body { padding-top: 14px; }
+  @media (prefers-reduced-motion: reduce) {
+    .lift { transition: box-shadow 0.2s ease-out; }
+    .lift.is-hover, .lift:hover, .lift:focus-visible, .lift:active { transform: none; }
+  }
+</style>
+
+<script>
+  // 見本の中のリンクで本当にページが移動しないようにする
+  document.querySelectorAll<HTMLAnchorElement>('a.lift').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+</script>

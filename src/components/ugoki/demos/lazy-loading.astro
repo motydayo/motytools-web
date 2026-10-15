@@ -1,0 +1,162 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const photos = [
+  { tone: 'day', name: '朝の湖' },
+  { tone: 'sunset', name: '夕焼けの尾根' },
+  { tone: 'night', name: '星空の展望台' },
+  { tone: 'day', name: '高原の牧場' },
+  { tone: 'sunset', name: '岬の灯台' },
+  { tone: 'night', name: '夜の温泉街' },
+  { tone: 'day', name: '渓谷の吊り橋' },
+  { tone: 'sunset', name: '棚田の夕暮れ' },
+  { tone: 'night', name: '雪の山小屋' },
+  { tone: 'day', name: '海辺の朝市' },
+  { tone: 'sunset', name: '港の夕日' },
+  { tone: 'night', name: '森のキャンプ場' },
+] as const;
+---
+
+<UgFrame mode="scroll" size={size} label="遅延読み込み">
+  <div class="ug-site" data-demo="lazy-loading">
+    <header class="ug-nav"><span class="ug-logo">旅の写真帖</span><span>地域</span><span>季節</span><span class="ug-cta">投稿する</span></header>
+    <section class="ll-intro">
+      <p class="ug-label">GALLERY</p>
+      <h3 class="ug-h">今月の旅の写真</h3>
+    </section>
+    <!-- これが演出の本体: 写真は枠に近づいてから読み込む。それまでは灰色の場所取り -->
+    <div class="ll-grid" data-ug-focus="遅延読み込み">
+      {photos.map((p) => (
+        <figure class="ll-item">
+          <span class="ll-ph" data-ll>
+            <svg class="ll-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M21 16l-5-5-9 9" /></svg>
+            <Scene tone={p.tone} class="ll-img" />
+          </span>
+          <figcaption>{p.name}</figcaption>
+        </figure>
+      ))}
+    </div>
+    <p class="ll-count" aria-live="polite">読み込んだ写真 <b data-ll-count>0</b> / {photos.length}枚</p>
+  </div>
+</UgFrame>
+
+<style>
+  .ll-intro { padding: 16px 16px 8px; }
+  .ll-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 12px;
+    padding: 8px 16px 24px;
+  }
+  .ll-item { margin: 0; }
+  .ll-item figcaption { margin-top: 4px; font-size: 11px; font-weight: 700; color: var(--ug-ink-2); }
+  /* 灰色の場所取り: 絵と同じ縦横比で先に場所を空けておく（読み込み後にガタッとずれない） */
+  .ll-ph {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 10;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #e9e7e1;
+    color: #b9b5ab;
+  }
+  .ll-ph :global(.ll-img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    /* 読み込みが終わるまで隠し、終わったらふわっと出す */
+    opacity: 0;
+    transform: scale(1.03);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+  }
+  .ll-ph.is-loaded :global(.ll-img) { opacity: 1; transform: none; }
+  .ll-count {
+    position: sticky;
+    bottom: 12px;
+    z-index: 5;
+    width: max-content;
+    margin: 0 auto 12px;
+    padding: 4px 14px;
+    border-radius: 999px;
+    background: var(--ug-navy);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 6px 16px -8px rgba(29, 37, 65, 0.5);
+  }
+  .ll-count b { color: var(--ug-orange-2); }
+
+  @container (max-width: 340px) {
+    .ll-intro { padding: 12px 12px 4px; }
+    .ll-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 8px; padding: 8px 12px 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ll-ph :global(.ll-img) { transform: none; transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="lazy-loading"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const count = root.querySelector<HTMLElement>('[data-ll-count]');
+    if (!view || !count) return;
+    const items = [...root.querySelectorAll<HTMLElement>('[data-ll]')];
+    const timers = new Set<number>();
+
+    const sync = () => (count.textContent = String(items.filter((i) => i.classList.contains('is-loaded')).length));
+
+    // 枠の下端から40px手前に来たら読み込みを始める（見本では通信に0.6秒かかる想定）
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const el = e.target as HTMLElement;
+          io.unobserve(el);
+          const id = window.setTimeout(() => {
+            timers.delete(id);
+            el.classList.add('is-loaded');
+            sync();
+          }, 600);
+          timers.add(id);
+        });
+      },
+      { root: view, rootMargin: '0px 0px 40px 0px' }
+    );
+
+    const reset = () => {
+      timers.forEach((id) => clearTimeout(id));
+      timers.clear();
+      items.forEach((el) => {
+        el.classList.remove('is-loaded');
+        io.unobserve(el);
+        io.observe(el);
+      });
+      sync();
+    };
+    reset();
+    view.addEventListener('ug:reset', reset);
+
+    // 自動再生: 先頭に戻ったら「まだ読み込んでいない」状態から見せ直す
+    onTour(root, async (t) => {
+      t.showCursor(false);
+      t.view.scrollTop = 0;
+      reset();
+      await t.sleep(1500);
+      const step = t.view.clientHeight * 0.6;
+      while (t.view.scrollTop + t.view.clientHeight < t.view.scrollHeight - 2) {
+        await t.scrollTo(t.view.scrollTop + step, 1000);
+        await t.sleep(1300);
+      }
+      await t.sleep(800);
+      await t.scrollTo(0, 900);
+      await t.sleep(500);
+    });
+  });
+</script>

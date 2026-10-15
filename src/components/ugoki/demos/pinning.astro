@@ -1,0 +1,214 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+// 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
+const Btn = size === 'mini' ? 'span' : 'button';
+const btnType = size === 'mini' ? undefined : 'button';
+const steps = [
+  { no: '01', title: '日にちを選ぶ', text: 'カレンダーから空いている日を選びます。', tone: 'day' as const },
+  { no: '02', title: 'お部屋を選ぶ', text: '人数に合うお部屋とプランを選びます。', tone: 'sunset' as const },
+  { no: '03', title: '予約を確定', text: '確認メールが届いたら完了です。', tone: 'night' as const },
+];
+---
+
+<UgFrame mode="scroll" size={size} label="ピン留め">
+  <div class="ug-site pn" data-demo="pinning">
+    <header class="ug-nav">
+      <span class="ug-logo">山の宿 ひかり</span>
+      <span>お部屋</span><span>料金</span>
+      <span class="ug-cta">予約する</span>
+    </header>
+
+    <section class="ug-sec intro">
+      <p class="ug-label">HOW TO</p>
+      <h3 class="ug-h">ご予約は3ステップ</h3>
+    </section>
+
+    <!-- この区間（枠の3画面ぶん）のあいだだけ、中のパネルが止まる -->
+    <section class="pin-sec">
+      <div class="pin" data-ug-focus="ピン留め">
+        <ol class="rail" aria-hidden="true">
+          {steps.map((s, i) => <li class:list={['dot', { 'is-on': i === 0 }]}>{s.no}</li>)}
+        </ol>
+        <div class="stage">
+          {steps.map((s, i) => (
+            <div class:list={['step', { 'is-on': i === 0 }]} aria-hidden={i === 0 ? undefined : 'true'}>
+              <div class="step-text">
+                <p class="step-no"><small>STEP</small>{s.no}</p>
+                <h4 class="step-h">{s.title}</h4>
+                <p class="step-p">{s.text}</p>
+              </div>
+              <div class="step-pic"><Scene tone={s.tone} /></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="ug-sec">
+      <p class="ug-label">FAQ</p>
+      <h3 class="ug-h">よくある質問</h3>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i></div>
+    </section>
+    <section class="ug-sec">
+      <div class="ug-lines"><i></i><i></i></div>
+      <Btn type={btnType} class="ug-btn-site more">空室を見る</Btn>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  /* 区間の長さ＝止めておきたいスクロール量（ここでは3画面ぶん） */
+  .pin-sec { height: calc(var(--vh, 420px) * 3); }
+  /* これが演出の本体: 区間の中にいる間だけ、上端に止まる */
+  .pin {
+    position: sticky;
+    top: 0;
+    height: var(--vh, 420px);
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 16px;
+    padding: 24px 24px 24px 16px;
+    background: var(--ug-bg);
+    border-top: 1px solid var(--ug-line);
+    border-bottom: 1px solid var(--ug-line);
+  }
+
+  /* 左の目盛り: いま何番目か */
+  .rail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 8px 0;
+    list-style: none;
+  }
+  .rail::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    bottom: 16px;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--ug-line);
+  }
+  .dot {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--ug-line);
+    color: var(--ug-ink-2);
+    font-size: 10px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    transition: background-color 0.2s ease-out, border-color 0.2s ease-out, color 0.2s ease-out;
+  }
+  .dot.is-on { background: var(--ug-orange); border-color: var(--ug-orange); color: #fff; }
+
+  .stage { position: relative; }
+  .step {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 24px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+  .step.is-on { opacity: 1; transform: none; }
+  .step.is-past { transform: translateY(-16px); }
+  .step-no { display: flex; align-items: baseline; gap: 6px; font-size: 44px; font-weight: 800; line-height: 1; color: var(--ug-orange); font-variant-numeric: tabular-nums; }
+  .step-no small { font-size: 12px; letter-spacing: 0.12em; }
+  .step-h { margin-top: 12px !important; font-size: 22px; font-weight: 800; }
+  .step-p { margin-top: 8px; color: var(--ug-ink-2); }
+  .step-pic { border-radius: 12px; overflow: hidden; box-shadow: 0 12px 24px -16px rgba(29, 37, 65, 0.5); }
+  .step-pic :global(.ug-scene) { display: block; }
+  .more { margin-top: 16px; }
+
+  /* スマホ幅: 文字の下に絵 */
+  @container (max-width: 520px) {
+    .pin { grid-template-columns: 28px 1fr; gap: 12px; padding: 16px 16px 16px 12px; }
+    .dot { width: 24px; height: 24px; font-size: 9px; }
+    .step { grid-template-columns: 1fr; align-content: center; gap: 16px; }
+    .step-no { font-size: 36px; }
+    .step-h { font-size: 19px; }
+    .step-pic { max-width: 260px; }
+  }
+  /* 一覧の小さな枠: 前置きを省き、文字と絵を横並びに */
+  :global(.is-mini) .intro { display: none; }
+  :global(.is-mini) .pin { padding: 12px 12px 12px 8px; gap: 8px; }
+  :global(.is-mini) .rail { padding: 4px 0; }
+  :global(.is-mini) .rail::before { top: 12px; bottom: 12px; }
+  :global(.is-mini) .step { grid-template-columns: 1fr 96px; gap: 12px; }
+  :global(.is-mini) .step-no { font-size: 30px; }
+  :global(.is-mini) .step-h { margin-top: 6px !important; font-size: 15px; }
+  :global(.is-mini) .step-p { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .step, .step.is-past { transform: none; transition: opacity 0.15s linear; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="pinning"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    const sec = root.querySelector<HTMLElement>('.pin-sec')!;
+    const steps = [...root.querySelectorAll<HTMLElement>('.step')];
+    const dots = [...root.querySelectorAll<HTMLElement>('.dot')];
+
+    // パネルの高さ＝枠の高さ
+    const fit = () => root.style.setProperty('--vh', `${view.clientHeight}px`);
+    new ResizeObserver(fit).observe(view);
+    fit();
+
+    let current = -1;
+    const update = () => {
+      // 区間をどこまで進んだか（0〜1）で、表示するステップを決める
+      const top = sec.getBoundingClientRect().top - view.getBoundingClientRect().top;
+      const p = Math.min(1, Math.max(0, -top / (sec.offsetHeight - view.clientHeight)));
+      const idx = Math.min(steps.length - 1, Math.floor(p * steps.length));
+      if (idx === current) return;
+      current = idx;
+      steps.forEach((s, i) => {
+        s.classList.toggle('is-on', i === idx);
+        s.classList.toggle('is-past', i < idx);
+        s.setAttribute('aria-hidden', String(i !== idx));
+      });
+      dots.forEach((d, i) => d.classList.toggle('is-on', i <= idx));
+    };
+    view.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+    update();
+
+    // 自動再生: 区間に入ったら、1ステップずつ止まりながら進む
+    onTour(root, async (t) => {
+      t.showCursor(false);
+      if (t.view.scrollTop > 0) await t.scrollTo(0, 600);
+      await t.sleep(900);
+      const start = sec.getBoundingClientRect().top - t.view.getBoundingClientRect().top + t.view.scrollTop;
+      const dist = sec.offsetHeight - t.view.clientHeight;
+      await t.scrollTo(start, 800);
+      await t.sleep(1100);
+      await t.scrollTo(start + dist * 0.5, 1000);
+      await t.sleep(1300);
+      await t.scrollTo(start + dist, 1000);
+      await t.sleep(1300);
+      await t.scrollTo(t.view.scrollHeight, 1000);
+      await t.sleep(900);
+      await t.scrollTo(0, 900);
+      await t.sleep(400);
+    });
+  });
+</script>

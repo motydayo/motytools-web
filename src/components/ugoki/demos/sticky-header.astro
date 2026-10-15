@@ -1,0 +1,68 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+---
+
+<UgFrame mode="scroll" size={size} label="追従ヘッダー">
+  <div class="ug-site">
+    <header class="ug-nav hdr" data-ug-focus="追従ヘッダー" data-ug-focus-at="below">
+      <span class="ug-logo">SAMPLE</span>
+      <span>特長</span><span>料金</span><span>FAQ</span>
+      <span class="ug-cta">無料で試す</span>
+    </header>
+    <section class="ug-sec">
+      <p class="ug-label">FEATURE</p>
+      <h3 class="ug-h">人気のコース</h3>
+      <div class="ug-grid">
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">山の宿</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">海の宿</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">星の宿</div></div>
+      </div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">PRICE</p>
+      <h3 class="ug-h">料金プラン</h3>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i></div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">VOICE</p>
+      <h3 class="ug-h">お客さまの声</h3>
+      <div class="ug-grid">
+        <div class="ug-card"><Scene tone="sunset" /></div>
+        <div class="ug-card"><Scene tone="night" /></div>
+        <div class="ug-card"><Scene tone="day" /></div>
+      </div>
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">FAQ</p>
+      <h3 class="ug-h">よくある質問</h3>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  /* これが演出の本体: スクロールしても上端にくっつく */
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    transition: box-shadow 0.2s ease-out;
+  }
+  /* 少しでもスクロールしたら影を付けて「浮いている」ことを見せる */
+  .hdr.is-stuck {
+    box-shadow: 0 6px 16px -8px rgba(29, 37, 65, 0.35);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.hdr').forEach((hdr) => {
+    const view = hdr.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    const sync = () => hdr.classList.toggle('is-stuck', view.scrollTop > 4);
+    view.addEventListener('scroll', sync, { passive: true });
+    sync();
+  });
+</script>

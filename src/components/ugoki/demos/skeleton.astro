@@ -1,0 +1,155 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const Btn = size === 'mini' ? 'span' : 'button';
+const items = [
+  { tone: 'day', name: '山の宿 はなれ', meta: '長野県・露天風呂つき', price: '1泊 12,000円〜' },
+  { tone: 'sunset', name: '海の宿 しおさい', meta: '静岡県・海が見える部屋', price: '1泊 15,000円〜' },
+  { tone: 'night', name: '星の宿 そらの', meta: '岐阜県・天体観測つき', price: '1泊 9,800円〜' },
+  { tone: 'day', name: '森の宿 こもれび', meta: '群馬県・ペット可', price: '1泊 11,500円〜' },
+] as const;
+---
+
+<UgFrame mode="script" size={size} label="スケルトンスクリーン">
+  <div class="ug-site sk" data-demo="skeleton">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>宿をさがす</span><span>特集</span><span class="ug-cta">ログイン</span></header>
+    <section class="body">
+      <div class="head">
+        <h3 class="ug-h">今週のおすすめ</h3>
+        <Btn class="reload" type={size === 'mini' ? undefined : 'button'} aria-label={size === 'mini' ? undefined : 'もう一度読み込む'}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 4v5h-5" /></svg>
+          <span>更新</span>
+        </Btn>
+      </div>
+      <!-- 読み込み中は is-loading。同じ部品を灰色の骨組みとして見せるので、差し替わっても位置がずれない -->
+      <ul class="list is-loading" aria-busy="true" data-ug-focus="スケルトンスクリーン" data-ug-focus-at="below">
+        {items.map((it) => (
+          <li class="item">
+            <div class="thumb"><Scene tone={it.tone} /></div>
+            <div class="txt">
+              <p class="t">{it.name}</p>
+              <p class="m">{it.meta}</p>
+              <p class="p">{it.price}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="sr-only" role="status" data-status>おすすめの宿を読み込んでいます</p>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .body { padding: 16px; }
+  .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .head .ug-h { margin: 0; }
+  .reload {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--ug-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ug-ink-2);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s, transform 0.15s;
+  }
+  .reload:hover, .reload.is-hover { background: var(--ug-bg); }
+  .reload:active { transform: scale(0.96); }
+  .reload:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+
+  .list { position: relative; list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .item { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: center; }
+  .thumb { border-radius: 8px; overflow: hidden; aspect-ratio: 16 / 10; }
+  .txt { display: grid; gap: 4px; min-width: 0; }
+  .txt p { margin: 0; line-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .t { font-weight: 800; font-size: 14px; }
+  .m { font-size: 11px; color: var(--ug-ink-2); }
+  .p { font-size: 12px; font-weight: 700; color: var(--ug-orange); }
+
+  /* ── 読み込み中: 文字と絵を透明にして、同じ場所を灰色の帯にする ── */
+  .is-loading .thumb,
+  .is-loading .txt p {
+    color: transparent;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #ecebe7 0%, #ecebe7 40%, #f7f6f3 50%, #ecebe7 60%, #ecebe7 100%);
+    background-size: 300% 100%;
+    /* 光の帯が左から右へ流れて「読み込み中」と伝える */
+    animation: sk-shimmer 1.4s linear infinite;
+  }
+  .is-loading .thumb > :global(*) { opacity: 0; }
+  .is-loading .t { width: 72%; }
+  .is-loading .m { width: 52%; }
+  .is-loading .p { width: 34%; }
+  @keyframes sk-shimmer {
+    from { background-position: 100% 0; }
+    to { background-position: 0 0; }
+  }
+  /* ── 読み込み完了: 中身をふわっと出す（少しずつ遅らせる） ── */
+  .list:not(.is-loading) .item > * { animation: sk-in 0.3s ease-out both; }
+  .list:not(.is-loading) .item:nth-child(2) > * { animation-delay: 0.06s; }
+  .list:not(.is-loading) .item:nth-child(3) > * { animation-delay: 0.12s; }
+  .list:not(.is-loading) .item:nth-child(4) > * { animation-delay: 0.18s; }
+  @keyframes sk-in {
+    from { opacity: 0; }
+  }
+  @container (max-width: 340px) {
+    .item { grid-template-columns: 80px 1fr; }
+    .reload span { display: none; }
+  }
+  :global(.is-mini) .body { padding: 12px 16px; }
+  :global(.is-mini) .list { gap: 8px; }
+  @media (prefers-reduced-motion: reduce) {
+    .is-loading .thumb, .is-loading .txt p { animation: none; }
+    .list:not(.is-loading) .item > * { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="skeleton"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const list = root.querySelector<HTMLElement>('.list');
+    const reload = root.querySelector<HTMLElement>('.reload');
+    const status = root.querySelector<HTMLElement>('[data-status]');
+    if (!view || !list || !reload || !status) return;
+    let timer = 0;
+
+    const setLoading = (on: boolean) => {
+      list.classList.toggle('is-loading', on);
+      list.setAttribute('aria-busy', String(on));
+      status.textContent = on ? 'おすすめの宿を読み込んでいます' : 'おすすめの宿を4件表示しました';
+    };
+    // 本物のサイトでは、ここで fetch してから中身を入れる。見本は1.6秒待つだけ
+    const load = () => {
+      clearTimeout(timer);
+      setLoading(true);
+      timer = window.setTimeout(() => setLoading(false), 1600);
+    };
+
+    reload.addEventListener('click', load);
+    reload.addEventListener('ug:click', load);
+    view.addEventListener('ug:reset', load);
+    load();
+
+    onTour(root, async (t) => {
+      load();
+      t.showCursor(false);
+      await t.sleep(3800);
+      await t.move(reload, 700);
+      t.hover(reload);
+      await t.sleep(200);
+      await t.click(reload);
+      t.hover(null);
+      await t.move({ x: t.view.clientWidth * 0.7, y: t.view.clientHeight * 0.92 }, 600);
+      await t.sleep(3600);
+    });
+  });
+</script>

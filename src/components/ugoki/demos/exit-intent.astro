@@ -1,0 +1,270 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const type = mini ? undefined : 'button';
+---
+
+<UgFrame mode="script" size={size} label="離脱防止ポップアップ">
+  <div class="ug-site page" data-demo="exit-intent">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>客室</span><span>料金</span><span class="ug-cta">予約する</span></header>
+    <section class="ug-sec">
+      <p class="ug-label">PLAN</p>
+      <h3 class="ug-h hd">秋の朝食つきプラン</h3>
+      <div class="plan">
+        <div class="pic"><Scene tone="sunset" /></div>
+        <div>
+          <p class="price">1泊 12,000円〜</p>
+          <div class="ug-lines"><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">ROOM</p>
+      <h3 class="ug-h">客室のご案内</h3>
+      <div class="ug-grid">
+        <div class="ug-card"><Scene tone="day" /></div>
+        <div class="ug-card"><Scene tone="night" /></div>
+        <div class="ug-card"><Scene tone="sunset" /></div>
+      </div>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i></div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">ACCESS</p>
+      <h3 class="ug-h">アクセス</h3>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i></div>
+    </section>
+
+    <!-- 「1回出したら、もう出さない」ことを見本で分かるようにする印 -->
+    <p class="note" aria-live="polite"><span>表示ずみ：このページではもう出ません</span></p>
+
+    <!-- これが演出の本体: 画面の上端からマウスが出たら1回だけ出す小窓 -->
+    <div class="dim" hidden>
+      <dialog class="pop" aria-label="お帰りの前に" data-ug-focus="離脱防止ポップアップ" data-ug-focus-at="below">
+        <Btn class="x" type={type} aria-label="閉じる" data-close>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </Btn>
+        <p class="pop-k">お帰りの前に</p>
+        <p class="pop-h">初回限定 10%OFF クーポン</p>
+        <p class="pop-t">今日のご予約から使えます。会員登録はいりません。</p>
+        <Btn class="ug-btn-site pop-go" type={type} data-close>クーポンを受け取る</Btn>
+        <Btn class="later" type={type} data-close>今はいらない</Btn>
+      </dialog>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .page { position: relative; }
+  .plan { display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px; align-items: center; margin-top: 8px; }
+  .pic { border-radius: 10px; overflow: hidden; }
+  .price { font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; }
+
+  .dim {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(29, 37, 65, 0.45);
+    animation: ug-exit-fade 0.25s ease-out;
+  }
+  .dim[hidden] { display: none; }
+  .pop {
+    position: relative;
+    inset: auto;
+    width: min(100%, 320px);
+    margin: 0;
+    padding: 24px 20px 12px;
+    border: 0;
+    border-radius: 16px;
+    background: #fff;
+    color: var(--ug-ink);
+    text-align: center;
+    box-shadow: 0 24px 48px -16px rgba(29, 37, 65, 0.5);
+    /* 出るときは小さめ・透明から、減速しながら */
+    animation: ug-exit-pop 0.3s ease-out;
+  }
+  .x {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ug-ink-2);
+    cursor: pointer;
+  }
+  .x:hover { background: var(--ug-bg); }
+  .pop-k { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; color: var(--ug-orange); }
+  .pop-h { margin-top: 4px; font-size: 18px; font-weight: 800; line-height: 1.4; }
+  .pop-t { margin: 6px 0 14px; font-size: 12px; color: var(--ug-ink-2); }
+  .pop-go { width: 100%; min-height: 44px; }
+  .later {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 0;
+    background: none;
+    color: var(--ug-ink-2);
+    font: inherit;
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .x:focus-visible, .pop-go:focus-visible, .later:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+
+  .note {
+    position: sticky;
+    bottom: 12px;
+    z-index: 15;
+    display: flex;
+    justify-content: center;
+    height: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .note span {
+    transform: translateY(-100%);
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--ug-navy);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.25s ease-out;
+  }
+  .note.is-on span { opacity: 1; }
+
+  @keyframes ug-exit-fade { from { opacity: 0; } }
+  @keyframes ug-exit-pop { from { opacity: 0; transform: translateY(8px) scale(0.96); } }
+  /* 一覧の小さな見本では、小窓を詰めて見出しとボタンだけにする */
+  :global(.is-mini) .dim { padding: 10px; }
+  :global(.is-mini) .pop { padding: 12px 14px 10px; border-radius: 12px; }
+  :global(.is-mini) .x { width: 28px; height: 28px; top: 4px; left: 4px; }
+  :global(.is-mini) .pop-k, :global(.is-mini) .pop-t, :global(.is-mini) .later { display: none; }
+  :global(.is-mini) .pop-h { font-size: 14px; margin: 0 0 8px; }
+  :global(.is-mini) .pop-go { min-height: 34px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) {
+    .dim, .pop { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour, onPointer } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="exit-intent"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const dim = root.querySelector<HTMLElement>('.dim');
+    const pop = root.querySelector<HTMLDialogElement>('.pop');
+    const note = root.querySelector<HTMLElement>('.note');
+    if (!view || !dim || !pop || !note) return;
+
+    let shown = false; // 1回出したら true。もう出さない
+    let lastFocus: Element | null = null;
+
+    const open = (real: boolean) => {
+      if (shown) return;
+      shown = true;
+      // 枠の中のいま見えている範囲に、暗幕をぴったり重ねる
+      dim.style.top = `${view.scrollTop}px`;
+      dim.style.height = `${view.clientHeight}px`;
+      view.style.overflow = 'hidden';
+      dim.hidden = false;
+      // 見本は枠の中に収めるため open 属性で出す（実際のサイトでは showModal() を使う）
+      pop.setAttribute('open', '');
+      if (real) {
+        lastFocus = document.activeElement;
+        root.querySelector<HTMLElement>('button.x')?.focus({ preventScroll: true });
+      }
+    };
+    const close = () => {
+      if (dim.hidden) return;
+      pop.removeAttribute('open');
+      dim.hidden = true;
+      view.style.overflow = '';
+      note.classList.add('is-on');
+      if (lastFocus instanceof HTMLElement) lastFocus.focus({ preventScroll: true });
+      lastFocus = null;
+    };
+    const reset = () => {
+      close();
+      shown = false;
+      note.classList.remove('is-on');
+      ignoreUntil = performance.now() + 400;
+      lastT = 0;
+      view.scrollTop = 0;
+    };
+
+    // パソコン: マウスが枠の上端から外へ出たら
+    view.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse' && e.clientY <= view.getBoundingClientRect().top + 4) open(true);
+    });
+    // 自動再生の偽物の矢印が上端より上へ出たら
+    onPointer(view, (p, real) => {
+      if (!real && p.y < view.scrollTop - 4) open(false);
+    });
+    // スマホ: 下まで読んだあと、勢いよく上へ戻したら
+    let lastY = 0;
+    let lastT = 0;
+    let ignoreUntil = 0; // 「最初から」で上へ戻したときは数えない
+    view.addEventListener('scroll', () => {
+      const now = performance.now();
+      const y = view.scrollTop;
+      const speed = (lastY - y) / Math.max(1, now - lastT); // 上向きの速さ（px/ms）
+      const touring = root.closest('[data-ug-frame]')?.classList.contains('is-touring');
+      if (!touring && now > ignoreUntil && lastT && speed > 1.5 && y > 60) open(true);
+      lastY = y;
+      lastT = now;
+    }, { passive: true });
+
+    // 閉じる: ×・「今はいらない」・ボタン・暗幕・Esc
+    root.querySelectorAll<HTMLElement>('[data-close]').forEach((b) => {
+      b.addEventListener('click', close);
+      b.addEventListener('ug:click', close);
+    });
+    dim.addEventListener('click', (e) => {
+      if (e.target === dim) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !dim.hidden) close();
+    });
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      reset();
+      const w = t.view.clientWidth;
+      const h = t.view.clientHeight;
+      await t.move({ x: w * 0.4, y: h * 0.85 }, 300);
+      await t.sleep(300);
+      await t.move(root.querySelector('.hd')!, 800);
+      await t.sleep(400);
+      await t.move(root.querySelector('.price')!, 700);
+      await t.sleep(500);
+      // タブを閉じようと、上端の外へ勢いよく出ていく
+      await t.move({ x: w * 0.82, y: -14 }, 650);
+      await t.sleep(1700);
+      await t.move(root.querySelector('.x')!, 800);
+      await t.sleep(250);
+      await t.click(root.querySelector('.x'));
+      await t.sleep(900);
+      // もう一度上端から出ても、2回目は出ない
+      await t.move({ x: w * 0.6, y: -14 }, 700);
+      await t.sleep(1400);
+      await t.move({ x: w * 0.5, y: h * 0.7 }, 700);
+      await t.sleep(800);
+    });
+  });
+</script>

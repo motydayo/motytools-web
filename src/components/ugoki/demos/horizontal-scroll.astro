@@ -1,0 +1,168 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+// 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
+const Btn = size === 'mini' ? 'span' : 'button';
+const btnType = size === 'mini' ? undefined : 'button';
+const works = [
+  { tone: 'day', title: '古民家の再生', place: '長野県・2025年' },
+  { tone: 'sunset', title: '海辺のカフェ', place: '静岡県・2025年' },
+  { tone: 'night', title: '山小屋のホテル', place: '岐阜県・2024年' },
+  { tone: 'day', title: '駅前の図書館', place: '富山県・2024年' },
+  { tone: 'sunset', title: '湖畔のサウナ', place: '山梨県・2023年' },
+] as const;
+---
+
+<UgFrame mode="scroll" size={size} label="横スクロール">
+  <div class="ug-site hs" data-demo="horizontal-scroll">
+    <header class="ug-nav">
+      <span class="ug-logo">ARCHI LAB</span>
+      <span>事例</span><span>会社概要</span>
+      <span class="ug-cta">相談する</span>
+    </header>
+
+    <section class="ug-sec intro">
+      <p class="ug-label">ABOUT</p>
+      <h3 class="ug-h">建物から、町の時間をつくる</h3>
+      <div class="ug-lines"><i></i><i></i></div>
+    </section>
+
+    <!-- この区間の高さ＝横に流す距離。区間にいる間だけ、縦スクロールが横の動きに変わる -->
+    <section class="hs-sec">
+      <div class="hs-pin" data-ug-focus="横スクロール">
+        <div class="hs-head">
+          <p class="ug-label">WORKS</p>
+          <h3 class="ug-h">施工事例</h3>
+        </div>
+        <div class="hs-track">
+          {works.map((w, i) => (
+            <div class="ug-card work">
+              <Scene tone={w.tone} />
+              <div class="ug-card-body">
+                <span class="work-no">{String(i + 1).padStart(2, '0')}</span>
+                {w.title}
+                <small>{w.place}</small>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="hs-bar" aria-hidden="true"><i></i></div>
+      </div>
+    </section>
+
+    <section class="ug-sec">
+      <p class="ug-label">CONTACT</p>
+      <h3 class="ug-h">ご相談はお気軽に</h3>
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+      <Btn type={btnType} class="ug-btn-site more">相談を申し込む</Btn>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .hs-sec { position: relative; }
+  /* これが演出の本体（1）: 区間の中にいる間、枠いっぱいのパネルを上端に止める */
+  .hs-pin {
+    position: sticky;
+    top: 0;
+    height: var(--vh, 420px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    overflow: hidden;
+    background: var(--ug-bg);
+  }
+  .hs-head { padding: 0 24px; }
+  /* これが演出の本体（2）: 横一列のカードを、縦スクロール量に合わせて左へずらす */
+  .hs-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+    padding: 0 24px;
+    will-change: transform;
+  }
+  .work { flex: none; width: 240px; }
+  .work .ug-card-body { font-size: 13px; }
+  .work small { display: block; font-size: 10px; font-weight: 400; color: var(--ug-ink-2); }
+  .work-no { margin-right: 6px; color: var(--ug-orange); font-variant-numeric: tabular-nums; }
+  .hs-bar { height: 3px; margin: 0 24px; border-radius: 2px; background: var(--ug-line); overflow: hidden; }
+  .hs-bar i { display: block; height: 100%; background: var(--ug-orange); transform: scaleX(var(--p, 0)); transform-origin: left; }
+  .more { margin-top: 16px; }
+
+  @container (max-width: 520px) {
+    .hs-head { padding: 0 16px; }
+    .hs-track { gap: 12px; padding: 0 16px; }
+    .work { width: 200px; }
+    .hs-bar { margin: 0 16px; }
+  }
+  /* 一覧の小さな枠: 前置きを省き、パネルから見せる */
+  :global(.is-mini) .intro { display: none; }
+  :global(.is-mini) .hs-pin { gap: 8px; }
+  :global(.is-mini) .hs-head .ug-label { display: none; }
+  :global(.is-mini) .hs-head .ug-h { font-size: 14px; margin: 0; }
+  :global(.is-mini) .work { width: 124px; }
+  :global(.is-mini) .work .ug-card-body { padding: 4px 8px 6px; font-size: 10px; }
+  :global(.is-mini) .work small { display: none; }
+
+  /* 端末で「動きを減らす」設定なら、止めずに普通の横スクロール（指やバーで動かす）にする */
+  @media (prefers-reduced-motion: reduce) {
+    .hs-sec { height: auto !important; }
+    .hs-pin { position: relative; height: auto; padding: 24px 0; overflow: visible; }
+    .hs-track { width: auto; overflow-x: auto; transform: none !important; }
+    .hs-bar { display: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('[data-demo="horizontal-scroll"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    const sec = root.querySelector<HTMLElement>('.hs-sec')!;
+    const pin = root.querySelector<HTMLElement>('.hs-pin')!;
+    const track = root.querySelector<HTMLElement>('.hs-track')!;
+    let dist = 0;
+
+    // 区間の高さ＝枠の高さ＋横に流す距離（流し終わったら次へ進む）
+    const fit = () => {
+      root.style.setProperty('--vh', `${view.clientHeight}px`);
+      dist = Math.max(0, track.scrollWidth - pin.clientWidth);
+      sec.style.height = reduce.matches ? '' : `${view.clientHeight + dist}px`;
+      update();
+    };
+
+    const update = () => {
+      if (reduce.matches) return;
+      const top = sec.getBoundingClientRect().top - view.getBoundingClientRect().top;
+      const p = dist ? Math.min(1, Math.max(0, -top / dist)) : 0;
+      track.style.transform = `translate3d(${-p * dist}px, 0, 0)`;
+      pin.style.setProperty('--p', String(p));
+    };
+
+    new ResizeObserver(fit).observe(view);
+    view.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+    fit();
+
+    // 自動再生: 区間に入ったら、ゆっくり横へ流し切る
+    onTour(root, async (t) => {
+      t.showCursor(false);
+      if (t.view.scrollTop > 0) await t.scrollTo(0, 600);
+      await t.sleep(900);
+      const start = sec.getBoundingClientRect().top - t.view.getBoundingClientRect().top + t.view.scrollTop;
+      await t.scrollTo(start, 800);
+      await t.sleep(700);
+      await t.scrollTo(start + dist * 0.5, 1600);
+      await t.sleep(500);
+      await t.scrollTo(start + dist, 1600);
+      await t.sleep(900);
+      await t.scrollTo(t.view.scrollHeight, 1000);
+      await t.sleep(900);
+      await t.scrollTo(0, 900);
+      await t.sleep(400);
+    });
+  });
+</script>

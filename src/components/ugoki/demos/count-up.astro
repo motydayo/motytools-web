@@ -1,0 +1,179 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+// 数字は最初から「最後の値」で書いておく（JSが動かない環境でも正しい数字が読める）
+const top = [
+  { to: 1280, dec: 0, unit: '社', cap: '導入企業' },
+  { to: 98.2, dec: 1, unit: '%', cap: '継続率' },
+  { to: 4.6, dec: 1, unit: '時間', cap: '1日の削減時間' },
+];
+const band = [
+  { to: 32400, dec: 0, unit: '人', cap: '年間の利用者' },
+  { to: 4.8, dec: 1, unit: '点', cap: '満足度（5点満点）' },
+  { to: 63, dec: 0, unit: '%', cap: 'リピート率' },
+];
+const fmt = (v: number, dec: number) => v.toLocaleString('ja-JP', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+---
+
+<UgFrame mode="script" size={size} label="カウントアップ">
+  <div class="ug-site cu" data-demo="count-up">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>導入事例</span><span>料金</span><span class="ug-cta">資料請求</span></header>
+    <section class="stats" data-count-group data-ug-focus="カウントアップ" data-ug-focus-at="below">
+      {top.map((s) => (
+        <div class="stat">
+          <span class="sr-only">{s.cap} {fmt(s.to, s.dec)}{s.unit}</span>
+          <span class="cu-num" aria-hidden="true"><b class="count" data-to={s.to} data-dec={s.dec}>{fmt(s.to, s.dec)}</b><small>{s.unit}</small></span>
+          <span class="cap" aria-hidden="true">{s.cap}</span>
+        </div>
+      ))}
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">CASE</p>
+      <h3 class="ug-h">導入した会社の声</h3>
+      <div class="ug-grid">
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">山の宿</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">海辺の食堂</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">星の村</div></div>
+      </div>
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+    </section>
+    <section class="stats is-dark" data-count-group>
+      {band.map((s) => (
+        <div class="stat">
+          <span class="sr-only">{s.cap} {fmt(s.to, s.dec)}{s.unit}</span>
+          <span class="cu-num" aria-hidden="true"><b class="count" data-to={s.to} data-dec={s.dec}>{fmt(s.to, s.dec)}</b><small>{s.unit}</small></span>
+          <span class="cap" aria-hidden="true">{s.cap}</span>
+        </div>
+      ))}
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">PRICE</p>
+      <h3 class="ug-h">料金プラン</h3>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i></div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .stats {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 24px 16px;
+    background: #fff7f2;
+    text-align: center;
+  }
+  .stats.is-dark { background: var(--ug-navy); color: #fff; }
+  .stat { display: grid; gap: 4px; justify-items: center; }
+  .cu-num { display: inline-flex; align-items: baseline; gap: 2px; white-space: nowrap; }
+  .count {
+    display: inline-block;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--ug-orange);
+    /* これが大事: 数字の幅をそろえて、数えている途中で横に揺れないようにする */
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .is-dark .count { color: #fff; }
+  .cu-num small { font-size: 12px; font-weight: 700; }
+  .cap { font-size: 11px; color: var(--ug-ink-2); }
+  .is-dark .cap { color: #c7cce0; }
+  @container (max-width: 340px) {
+    .stats { padding: 20px 8px; gap: 4px; }
+    .count { font-size: 22px; }
+    .cu-num small { font-size: 10px; }
+    .cap { font-size: 10px; line-height: 1.4; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = (v: number, dec: number) =>
+    v.toLocaleString('ja-JP', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  // 出るときは減速（最初は速く、最後はゆっくり止まる）
+  const easeOut = (k: number) => 1 - Math.pow(1 - k, 3);
+
+  document.querySelectorAll<HTMLElement>('[data-demo="count-up"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    const groups = [...root.querySelectorAll<HTMLElement>('[data-count-group]')];
+    let token = 0;
+
+    // 最後の値を表示した状態で幅を測り、その幅を確保しておく（桁が増えても周りが動かない）
+    root.querySelectorAll<HTMLElement>('.count').forEach((el) => {
+      el.style.minWidth = `${Math.ceil(el.getBoundingClientRect().width)}px`;
+    });
+
+    const setZero = (g: HTMLElement) =>
+      g.querySelectorAll<HTMLElement>('.count').forEach((el) => (el.textContent = fmt(0, Number(el.dataset.dec))));
+
+    const play = (g: HTMLElement) => {
+      g.dataset.done = '1';
+      const my = token;
+      g.querySelectorAll<HTMLElement>('.count').forEach((el) => {
+        const to = Number(el.dataset.to);
+        const dec = Number(el.dataset.dec);
+        if (reduce()) {
+          el.textContent = fmt(to, dec);
+          return;
+        }
+        const t0 = performance.now();
+        const ms = 1600;
+        const tick = (now: number) => {
+          if (my !== token) return; // 「最初から」で止める
+          const k = Math.min(1, (now - t0) / ms);
+          el.textContent = fmt(to * easeOut(k), dec);
+          if (k < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    };
+
+    const reset = () => {
+      token++;
+      groups.forEach((g) => {
+        delete g.dataset.done;
+        if (!reduce()) setZero(g);
+      });
+    };
+
+    // 画面（枠）に入ったら1回だけ数える
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          const g = e.target as HTMLElement;
+          if (e.isIntersecting && !g.dataset.done) play(g);
+        });
+      },
+      { root: view, threshold: 0.6 }
+    );
+    reset();
+    groups.forEach((g) => io.observe(g));
+
+    view.addEventListener('ug:reset', () => {
+      reset();
+      requestAnimationFrame(() => play(groups[0]));
+    });
+
+    onTour(root, async (t) => {
+      t.showCursor(false);
+      reset();
+      t.view.scrollTop = 0;
+      await t.sleep(500);
+      play(groups[0]);
+      await t.sleep(2600);
+      const g = groups[1];
+      const top = g.getBoundingClientRect().top - t.view.getBoundingClientRect().top + t.view.scrollTop;
+      await t.scrollTo(top - (t.view.clientHeight - g.offsetHeight) / 2, 1000);
+      await t.sleep(2800);
+      await t.scrollTo(0, 800);
+      await t.sleep(400);
+    });
+  });
+</script>

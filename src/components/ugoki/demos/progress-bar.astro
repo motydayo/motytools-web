@@ -1,0 +1,108 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const points = ['靴は足首まで守るものを', '雨具は上下に分かれた形を', '水は1時間に250mlが目安', '地図は紙とスマホの両方で'];
+---
+
+<UgFrame mode="scroll" size={size} label="スクロールプログレスバー">
+  <div class="ug-site pb" data-demo="progress-bar">
+    <header class="top">
+      <div class="ug-nav">
+        <span class="ug-logo">やまある記</span>
+        <span>記事一覧</span><span>道具</span>
+        <b class="pct" aria-hidden="true">0%</b>
+      </div>
+      <!-- これが演出の本体: 読んだ割合だけ左から伸びる帯 -->
+      <div class="bar" role="progressbar" aria-label="記事を読んだ割合" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-ug-focus="読んだ割合" data-ug-focus-at="below">
+        <i></i>
+      </div>
+    </header>
+
+    <article class="post">
+      <p class="ug-label">GUIDE・読了まで約5分</p>
+      <h3 class="post-h">はじめての山歩き、準備で外せない4つのこと</h3>
+      <Scene tone="day" wide />
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+      {points.map((p, i) => (
+        <section class="pt">
+          <h4 class="pt-h"><span>{i + 1}</span>{p}</h4>
+          <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i></div>
+        </section>
+      ))}
+      <section class="pt">
+        <h4 class="pt-h">まとめ</h4>
+        <div class="ug-lines"><i></i><i></i><i></i></div>
+      </section>
+    </article>
+  </div>
+</UgFrame>
+
+<style>
+  .top { position: sticky; top: 0; z-index: 10; background: #fff; }
+  .top .ug-nav { border-bottom: 0; }
+  .pct { min-width: 3em; text-align: right; font-weight: 800; color: var(--ug-orange) !important; font-variant-numeric: tabular-nums; }
+  .bar { position: relative; height: 4px; background: var(--ug-line); }
+  .bar i {
+    display: block;
+    height: 100%;
+    background: var(--ug-orange);
+    /* 幅ではなく横の伸び縮み（scaleX）で動かすと、表示が軽い */
+    transform: scaleX(var(--p, 0));
+    transform-origin: left center;
+  }
+  .post { padding: 24px 20px 48px; }
+  .post-h { margin: 4px 0 16px !important; font-size: 20px; font-weight: 800; }
+  .post :global(.ug-scene) { border-radius: 10px; }
+  .pt { margin-top: 24px; }
+  .pt-h { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 800; }
+  .pt-h span {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--ug-navy);
+    color: #fff;
+    font-size: 11px;
+  }
+
+  @container (max-width: 340px) {
+    .post { padding: 20px 16px 40px; }
+    .post-h { font-size: 17px; }
+  }
+  :global(.is-mini) .bar { height: 5px; }
+  :global(.is-mini) .post { padding-top: 16px; }
+  :global(.is-mini) .post-h { font-size: 15px; margin-bottom: 8px !important; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-demo="progress-bar"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    const bar = root.querySelector<HTMLElement>('.bar')!;
+    const pct = root.querySelector<HTMLElement>('.pct')!;
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      // 読んだ割合＝スクロール量 ÷ スクロールできる最大量
+      const max = view.scrollHeight - view.clientHeight;
+      const p = max > 0 ? Math.min(1, view.scrollTop / max) : 0;
+      bar.style.setProperty('--p', String(p));
+      const n = Math.round(p * 100);
+      bar.setAttribute('aria-valuenow', String(n));
+      pct.textContent = `${n}%`;
+    };
+    view.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    update();
+  });
+</script>

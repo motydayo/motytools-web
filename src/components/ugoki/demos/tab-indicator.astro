@@ -1,0 +1,192 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const mini = size === 'mini';
+const Tab = mini ? 'span' : 'button';
+// 同じページに見本が複数あるので、id は見本ごとに変える
+const uid = Math.random().toString(36).slice(2, 8);
+const tabs = [
+  { label: '宿泊', tone: 'day', title: '1泊2食つきプラン', price: '1泊 12,000円〜', note: '夕食は地元の野菜を使った会席。朝食は和食か洋食を選べます。' },
+  { label: '日帰り', tone: 'sunset', title: '日帰り入浴とランチ', price: '2,800円', note: '11時〜16時。露天風呂と、そばのランチがセットです。' },
+  { label: '貸切風呂', tone: 'night', title: '貸切露天風呂 50分', price: '3,300円', note: '家族や友人だけで入れます。前日までに予約してください。' },
+  { label: '体験', tone: 'day', title: 'そば打ち体験', price: '2,200円', note: '打ったそばはその場でゆでて食べられます。所要約90分。' },
+] as const;
+---
+
+<UgFrame mode="script" size={size} label="タブの下線スライド">
+  <div class="ug-site ti" data-demo="tab-indicator">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>お部屋</span><span>アクセス</span><span class="ug-cta">予約する</span></header>
+    <section class="body">
+      <p class="ug-label">PLAN</p>
+      <h3 class="ug-h">プランを選ぶ</h3>
+      <div class="tabs" role={mini ? undefined : 'tablist'} aria-label={mini ? undefined : 'プランの種類'} data-ug-focus="下線スライド" data-ug-focus-at="below">
+        {tabs.map((t, i) => (
+          <Tab
+            class:list={['tab', { 'is-sel': i === 0 }]}
+            type={mini ? undefined : 'button'}
+            role={mini ? undefined : 'tab'}
+            id={mini ? undefined : `tab-${uid}-${i}`}
+            aria-selected={mini ? undefined : String(i === 0)}
+            aria-controls={mini ? undefined : `panel-${uid}-${i}`}
+            tabindex={mini ? undefined : i === 0 ? '0' : '-1'}
+          >{t.label}</Tab>
+        ))}
+        <!-- 下線は1本だけ。選んだタブの位置と幅に合わせて動かす -->
+        <i class="bar" aria-hidden="true"></i>
+      </div>
+      {tabs.map((t, i) => (
+        <div
+          class="tpanel"
+          role={mini ? undefined : 'tabpanel'}
+          id={mini ? undefined : `panel-${uid}-${i}`}
+          aria-labelledby={mini ? undefined : `tab-${uid}-${i}`}
+          hidden={i !== 0}
+        >
+          <div class="pic"><Scene tone={t.tone} /></div>
+          <div class="info">
+            <b class="pt">{t.title}</b>
+            <span class="pp">{t.price}</span>
+            <p class="pn">{t.note}</p>
+            <div class="ug-lines"><i></i><i></i></div>
+          </div>
+        </div>
+      ))}
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .body { padding: 20px 16px; }
+  .tabs { position: relative; display: flex; border-bottom: 1px solid var(--ug-line); margin-top: 8px; }
+  .tab {
+    flex: 1;
+    min-height: 44px;
+    padding: 0 8px;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ug-ink-2);
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease-out, background-color 0.15s;
+  }
+  .tab:hover, .tab.is-hover { color: var(--ug-ink); background: var(--ug-bg); }
+  .tab.is-sel { color: var(--ug-orange); }
+  .tab:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: -2px; border-radius: 6px; }
+  .bar {
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 0;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background: var(--ug-orange);
+  }
+  /* これが演出の本体: 位置（transform）と幅を0.25秒でなめらかに変える */
+  .tabs.is-ready .bar { transition: transform 0.25s ease-out, width 0.25s ease-out; }
+
+  .tpanel { display: grid; grid-template-columns: 44% 1fr; gap: 16px; padding-top: 16px; animation: ti-in 0.25s ease-out; }
+  .tpanel[hidden] { display: none; }
+  @keyframes ti-in {
+    from { opacity: 0; }
+  }
+  .pic { border-radius: 10px; overflow: hidden; align-self: start; }
+  .info { display: grid; gap: 4px; align-content: start; }
+  .pt { font-size: 15px; }
+  .pp { font-size: 13px; font-weight: 800; color: var(--ug-orange); }
+  .pn { margin: 4px 0 0; font-size: 12px; color: var(--ug-ink-2); }
+  @container (max-width: 340px) {
+    .tab { font-size: 12px; padding: 0 4px; }
+    .tpanel { grid-template-columns: 1fr; gap: 8px; }
+    .pic { aspect-ratio: 16 / 7; }
+    .pic :global(svg) { height: 100%; aspect-ratio: auto; }
+  }
+  :global(.is-mini) .body { padding: 12px 16px; }
+  :global(.is-mini) .ug-label { display: none; }
+  :global(.is-mini) .ug-h { font-size: 15px; }
+  :global(.is-mini) .tab { min-height: 36px; }
+  :global(.is-mini) .tpanel { grid-template-columns: 40% 1fr; gap: 12px; padding-top: 12px; }
+  :global(.is-mini) .pic { aspect-ratio: auto; }
+  :global(.is-mini) .pn, :global(.is-mini) .ug-lines { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .tabs.is-ready .bar { transition: none; }
+    .tpanel { animation: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="tab-indicator"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const list = root.querySelector<HTMLElement>('.tabs');
+    const bar = root.querySelector<HTMLElement>('.bar');
+    if (!view || !list || !bar) return;
+    const tabs = [...list.querySelectorAll<HTMLElement>('.tab')];
+    const panels = [...root.querySelectorAll<HTMLElement>('.tpanel')];
+    let cur = 0;
+
+    // 下線を選んだタブの真下へ（左の位置と幅をタブに合わせる）
+    const moveBar = () => {
+      const t = tabs[cur];
+      bar.style.transform = `translateX(${t.offsetLeft}px)`;
+      bar.style.width = `${t.offsetWidth}px`;
+    };
+
+    const select = (i: number, focus = false) => {
+      cur = i;
+      tabs.forEach((t, j) => {
+        const on = i === j;
+        t.classList.toggle('is-sel', on);
+        if (t.tagName === 'BUTTON') {
+          t.setAttribute('aria-selected', String(on));
+          t.tabIndex = on ? 0 : -1; // 矢印キーで動く「1つだけTabで入れる」並び
+        }
+      });
+      panels.forEach((p, j) => (p.hidden = i !== j));
+      moveBar();
+      if (focus) tabs[i].focus();
+    };
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('ug:click', () => select(i));
+    });
+    // 左右キーで隣のタブへ。Home / End で端へ
+    list.addEventListener('keydown', (e) => {
+      const n = tabs.length;
+      const next = { ArrowRight: cur + 1, ArrowLeft: cur - 1, Home: 0, End: n - 1 }[e.key];
+      if (next === undefined) return;
+      e.preventDefault();
+      select((next + n) % n, true);
+    });
+
+    // 枠の幅が変わったら下線を付け直す（このときは動かさない）
+    new ResizeObserver(() => {
+      list.classList.remove('is-ready');
+      moveBar();
+      requestAnimationFrame(() => list.classList.add('is-ready'));
+    }).observe(list);
+
+    view.addEventListener('ug:reset', () => select(0));
+
+    onTour(root, async (t) => {
+      select(0);
+      await t.sleep(500);
+      for (const i of [2, 1, 3, 0]) {
+        await t.move(tabs[i], 650);
+        t.hover(tabs[i]);
+        await t.sleep(200);
+        await t.click(tabs[i]);
+        await t.sleep(1300);
+        t.hover(null);
+      }
+    });
+  });
+</script>

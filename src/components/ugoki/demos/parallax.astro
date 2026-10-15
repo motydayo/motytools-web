@@ -1,0 +1,198 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+// 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
+const Btn = size === 'mini' ? 'span' : 'button';
+const btnType = size === 'mini' ? undefined : 'button';
+---
+
+<UgFrame mode="scroll" size={size} label="パララックススクロール">
+  <div class="ug-site px" data-demo="parallax">
+    <header class="ug-nav">
+      <span class="ug-logo">山の宿 ひかり</span>
+      <span>お部屋</span><span>アクセス</span>
+      <span class="ug-cta">空室を見る</span>
+    </header>
+
+    <!-- 重なった絵の層を、奥ほどゆっくり動かす -->
+    <section class="hero" data-ug-focus="パララックス">
+      <svg class="layer" data-speed="0.75" viewBox="0 0 320 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <circle cx="236" cy="62" r="22" fill="#f06a35" />
+      </svg>
+      <svg class="layer" data-speed="0.5" viewBox="0 0 320 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <path d="M0 150 L70 86 L130 136 L190 74 L260 128 L320 98 V260 H0Z" fill="#8fa9ec" />
+      </svg>
+      <div class="hero-text layer" data-speed="0.35">
+        <p class="hero-kicker">標高1,200mの小さな宿</p>
+        <h3 class="hero-h">静かな朝を、<br />山の上で。</h3>
+      </div>
+      <svg class="layer" data-speed="0.15" viewBox="0 0 320 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <path d="M0 260 V164 L90 116 L170 176 L250 124 L320 168 V260Z" fill="#4f73d9" />
+      </svg>
+      <svg class="layer" data-speed="0" viewBox="0 0 320 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <path d="M0 200 V186 L40 176 L60 186 L110 170 L150 190 L210 174 L260 188 L320 178 V200Z" fill="#1d2541" />
+      </svg>
+      <span class="hint" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+        スクロール
+      </span>
+    </section>
+
+    <section class="ug-sec">
+      <p class="ug-label">ROOMS</p>
+      <h3 class="ug-h">お部屋</h3>
+      <div class="ug-grid">
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">和室 8畳</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">洋室ツイン</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">離れの客室</div></div>
+      </div>
+      <div class="ug-lines"><i></i><i></i></div>
+    </section>
+
+    <!-- 帯の中の絵だけ、本文よりゆっくり動かす -->
+    <section class="band" data-ug-focus="背景だけゆっくり" data-ug-focus-at="left">
+      <div class="band-bg" data-band-speed="0.25"><Scene tone="sunset" wide /></div>
+      <p class="band-text">夕暮れの露天風呂</p>
+    </section>
+
+    <section class="ug-sec">
+      <p class="ug-label">ACCESS</p>
+      <h3 class="ug-h">アクセス</h3>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i></div>
+    </section>
+    <section class="ug-sec">
+      <p class="ug-label">PLAN</p>
+      <h3 class="ug-h">1泊 12,000円〜</h3>
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+      <Btn type={btnType} class="ug-btn-site more">空室を見る</Btn>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .hero {
+    position: relative;
+    height: var(--vh, 372px);
+    overflow: hidden;
+    background: linear-gradient(#dfe8fb, #f3f6fd);
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+  }
+  .hero-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 28px 20px 0;
+    height: auto;
+    bottom: auto;
+  }
+  .hero-kicker { font-size: 11px; font-weight: 700; color: var(--ug-blue); letter-spacing: 0.06em; }
+  .hero-h { font-size: 26px; font-weight: 800; line-height: 1.3; color: var(--ug-navy); }
+  .hint {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.08em;
+  }
+  .band {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+  .band-bg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -60px;
+    bottom: -60px;
+    will-change: transform;
+  }
+  .band-bg :global(.ug-scene) { width: 100%; height: 100%; aspect-ratio: auto; }
+  .band-text {
+    position: relative;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: rgba(29, 37, 65, 0.72);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+  .more { margin-top: 16px; }
+
+  /* 小さな枠では1画面目を絵で埋める */
+  :global(.is-mini) .hero-text { padding-top: 16px; }
+  :global(.is-mini) .hero-h { font-size: 19px; }
+  :global(.is-mini) .hint { display: none; }
+  @container (max-width: 340px) {
+    .hero-h { font-size: 21px; }
+    .hero-text { padding: 20px 16px 0; }
+  }
+
+  /* 端末で「動きを減らす」設定なら、層をずらさない */
+  @media (prefers-reduced-motion: reduce) {
+    .layer, .band-bg { transform: none !important; }
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('[data-demo="parallax"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    const layers = [...root.querySelectorAll<HTMLElement>('[data-speed]')];
+    const bands = [...root.querySelectorAll<HTMLElement>('[data-band-speed]')];
+
+    // 1画面目の高さ＝枠の高さ（ナビの分を引く）
+    const fit = () => root.style.setProperty('--vh', `${view.clientHeight - 48}px`);
+    new ResizeObserver(fit).observe(view);
+    fit();
+
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      if (reduce.matches) return;
+      const y = view.scrollTop;
+      // 奥の層ほど、スクロールと同じ向きに少しずらす＝ゆっくり動いて見える
+      layers.forEach((el) => {
+        el.style.transform = `translate3d(0, ${y * Number(el.dataset.speed)}px, 0)`;
+      });
+      // 帯は「画面の中央からどれだけ離れているか」で中の絵をずらす
+      const vr = view.getBoundingClientRect();
+      bands.forEach((el) => {
+        const r = el.parentElement!.getBoundingClientRect();
+        const off = r.top + r.height / 2 - (vr.top + vr.height / 2);
+        const shift = Math.max(-56, Math.min(56, -off * Number(el.dataset.bandSpeed)));
+        el.style.transform = `translate3d(0, ${shift}px, 0)`;
+      });
+    };
+    view.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    update();
+  });
+</script>

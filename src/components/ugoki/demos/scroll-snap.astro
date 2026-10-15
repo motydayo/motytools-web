@@ -1,0 +1,153 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+// 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
+const Btn = size === 'mini' ? 'span' : 'button';
+const btnType = size === 'mini' ? undefined : 'button';
+const slides = [
+  { tone: 'sunset', kicker: '海の宿 なぎさ', title: '波の音で目覚める朝', sub: '全室オーシャンビュー' },
+  { tone: 'day', kicker: 'ROOM', title: '海が見える和室', sub: '8畳＋広縁・2〜4名' },
+  { tone: 'night', kicker: 'DINNER', title: '地魚の炭火焼き', sub: '夕食は個室でゆっくり' },
+] as const;
+const total = slides.length + 1;
+---
+
+<UgFrame mode="scroll" size={size} label="スクロールスナップ">
+  <div class="ug-site sn" data-demo="scroll-snap">
+    {slides.map((s, i) => (
+      <section class="slide" data-ug-focus="1画面ずつ止まる">
+        <Scene tone={s.tone} />
+        <span class="brand ug-logo">なぎさ</span>
+        <div class="copy">
+          <p class="count">{String(i + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</p>
+          <p class="kicker">{s.kicker}</p>
+          <h3 class="title">{s.title}</h3>
+          <p class="sub">{s.sub}</p>
+        </div>
+        <ol class="dots" aria-hidden="true">
+          {Array.from({ length: total }, (_, j) => <li class:list={{ 'is-on': j === i }}></li>)}
+        </ol>
+      </section>
+    ))}
+    <section class="slide last" data-ug-focus="1画面ずつ止まる">
+      <span class="brand ug-logo">なぎさ</span>
+      <div class="copy">
+        <p class="count">{String(total).padStart(2, '0')} / {String(total).padStart(2, '0')}</p>
+        <p class="kicker">RESERVE</p>
+        <h3 class="title">1泊2食 18,000円〜</h3>
+        <Btn type={btnType} class="ug-btn-site cta">空室を見る</Btn>
+      </div>
+      <ol class="dots" aria-hidden="true">
+        {Array.from({ length: total }, (_, j) => <li class:list={{ 'is-on': j === total - 1 }}></li>)}
+      </ol>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  /* これが演出の本体（1）: スクロールする箱に「縦方向で必ず止まる」を指定
+     （見本では枠の中の箱。本番のページなら html に付ける） */
+  :global(.ug-view:has(.sn)) {
+    scroll-snap-type: y mandatory;
+  }
+  /* 自動再生で動かしている間だけ外す（途中の位置に吸い付かないように） */
+  :global(.ug-view.is-programmatic:has(.sn)) {
+    scroll-snap-type: none;
+  }
+  .slide {
+    position: relative;
+    height: var(--vh, 420px);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    /* これが演出の本体（2）: 各画面の上端で止まる。止まる途中で飛ばさない */
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    background: var(--ug-navy);
+    color: #fff;
+  }
+  .slide :global(.ug-scene) { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; }
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to top, rgba(29, 37, 65, 0.78), rgba(29, 37, 65, 0) 62%);
+  }
+  .brand { position: absolute; top: 16px; left: 20px; z-index: 2; padding: 4px 12px 4px 10px; border-radius: 999px; background: rgba(29, 37, 65, 0.6); color: #fff; font-size: 12px; }
+  .copy { position: relative; z-index: 2; padding: 0 56px 28px 24px; }
+  .count { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; font-variant-numeric: tabular-nums; opacity: 0.85; }
+  .kicker { margin-top: 8px; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; color: var(--ug-orange-2); }
+  .title { font-size: 26px; font-weight: 800; }
+  .sub { margin-top: 4px; font-size: 13px; opacity: 0.9; }
+  .last { align-items: center; background: linear-gradient(160deg, var(--ug-navy), #34406b); }
+  .last::before { display: none; }
+  .cta { margin-top: 16px; }
+
+  .dots {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    z-index: 2;
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 8px 6px;
+    border-radius: 999px;
+    background: rgba(29, 37, 65, 0.45);
+    list-style: none;
+    transform: translateY(-50%);
+  }
+  .dots li { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.45); }
+  .dots li.is-on { height: 20px; border-radius: 4px; background: #fff; }
+
+  @container (max-width: 520px) {
+    .copy { padding: 0 44px 24px 16px; }
+    .brand { left: 16px; }
+    .title { font-size: 22px; }
+  }
+  /* 端末で「動きを減らす」設定なら、吸い付きを弱める */
+  @media (prefers-reduced-motion: reduce) {
+    :global(.ug-view:has(.sn)) { scroll-snap-type: y proximity; }
+  }
+  :global(.is-mini) .brand { top: 8px; left: 8px; padding: 2px 8px 2px 6px; font-size: 10px; }
+  :global(.is-mini) .copy { padding: 0 36px 14px 14px; }
+  :global(.is-mini) .count { display: none; }
+  :global(.is-mini) .kicker { margin-top: 0; font-size: 9px; }
+  :global(.is-mini) .title { font-size: 17px; }
+  :global(.is-mini) .sub { font-size: 11px; }
+  :global(.is-mini) .cta { margin-top: 8px; min-height: 30px; font-size: 11px; }
+  :global(.is-mini) .dots { right: 8px; gap: 6px; padding: 6px 4px; }
+  :global(.is-mini) .dots li { width: 6px; height: 6px; }
+  :global(.is-mini) .dots li.is-on { height: 14px; }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="scroll-snap"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    // 1画面の高さ＝枠の高さ
+    const fit = () => root.style.setProperty('--vh', `${view.clientHeight}px`);
+    new ResizeObserver(fit).observe(view);
+    fit();
+
+    // 自動再生: 少し送って指を離す → ピタッと次の画面に止まる、を繰り返す
+    onTour(root, async (t) => {
+      t.showCursor(false);
+      const n = root.querySelectorAll('.slide').length;
+      const h = t.view.clientHeight;
+      if (t.view.scrollTop > 0) await t.scrollTo(0, 500);
+      await t.sleep(1200);
+      for (let i = 1; i < n; i++) {
+        await t.scrollTo((i - 0.65) * h, 450);
+        await t.scrollTo(i * h, 300);
+        await t.sleep(1300);
+      }
+      await t.scrollTo(0, 800);
+      await t.sleep(300);
+    });
+  });
+</script>

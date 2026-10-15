@@ -1,0 +1,114 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+// 一覧の小さな見本はカード全体がリンクなので、押せる要素を置かない
+const Btn = size === 'mini' ? 'span' : 'button';
+const btnType = size === 'mini' ? undefined : 'button';
+---
+
+<UgFrame mode="scroll" size={size} label="マーカーアニメーション">
+  <div class="ug-site hl" data-demo="highlighter">
+    <header class="ug-nav">
+      <span class="ug-logo">山の宿 ひかり</span>
+      <span>お部屋</span><span>料金</span>
+      <span class="ug-cta">予約する</span>
+    </header>
+
+    <section class="ug-sec hero" data-ug-focus="マーカー">
+      <p class="ug-label">FOR BEGINNERS</p>
+      <h3 class="lead"><mark class="mk">はじめての方も、1泊から</mark>気軽に。</h3>
+      <p class="txt">山の宿 ひかりは、<mark class="mk">全室に温泉がついた</mark>8部屋だけの小さな宿です。</p>
+    </section>
+
+    <section class="ug-sec">
+      <div class="ug-grid">
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">和室 8畳</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">露天風呂</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">星空テラス</div></div>
+      </div>
+      <p class="txt">夕食はお部屋へお運びします。<mark class="mk">小さなお子さま連れでも、周りを気にせず</mark>ゆっくり召し上がれます。</p>
+      <div class="ug-lines"><i></i><i></i></div>
+    </section>
+
+    <section class="ug-sec">
+      <p class="ug-label">VOICE</p>
+      <h3 class="ug-h">お客さまの声</h3>
+      <p class="txt voice">「露天風呂から見た朝焼けが忘れられません。<mark class="mk">スタッフの方の気づかいがうれしかった</mark>です」（40代・ご夫婦）</p>
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+    </section>
+
+    <section class="ug-sec">
+      <p class="ug-label">CANCEL</p>
+      <h3 class="ug-h"><mark class="mk">前日まで、キャンセル料は無料</mark></h3>
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+    </section>
+
+    <section class="ug-sec">
+      <p class="ug-label">PRICE</p>
+      <h3 class="ug-h">1泊2食つき <mark class="mk">12,000円〜</mark></h3>
+      <div class="ug-lines"><i></i><i></i></div>
+      <Btn type={btnType} class="ug-btn-site more">空室を見る</Btn>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .hero { position: relative; }
+  .lead { margin: 4px 0 8px !important; font-size: 22px; font-weight: 800; line-height: 1.5; }
+  .txt { margin-top: 12px; font-size: 13px; line-height: 1.9; }
+  .more { margin-top: 16px; }
+  .voice { padding: 12px 16px; border-left: 3px solid var(--ug-line); background: var(--ug-bg); border-radius: 0 8px 8px 0; }
+
+  /* これが演出の本体: 文字の下40%に蛍光ペンの帯。最初は幅0、見えたら左から100%まで伸ばす */
+  .mk {
+    color: inherit;
+    background-color: transparent;
+    background-image: linear-gradient(transparent 55%, #ffdf6b 55%);
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 0% 100%;
+    transition: background-size 0.5s cubic-bezier(0.3, 0.6, 0.3, 1);
+    padding: 0 2px;
+  }
+  .mk.is-on { background-size: 100% 100%; }
+
+  @container (max-width: 340px) {
+    .lead { font-size: 18px; }
+  }
+  :global(.is-mini) .lead { font-size: 17px; }
+  :global(.is-mini) .hero .txt { font-size: 12px; line-height: 1.8; }
+
+  /* 端末で「動きを減らす」設定なら、最初から引いた状態で出す */
+  @media (prefers-reduced-motion: reduce) {
+    .mk { background-size: 100% 100%; transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-demo="highlighter"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        let n = 0;
+        entries.forEach((e) => {
+          const el = e.target as HTMLElement;
+          if (e.isIntersecting) {
+            // 同じ画面に複数あるときは、上から順に0.3秒ずつ遅らせて引く
+            el.style.transitionDelay = `${0.15 + n * 0.3}s`;
+            n += 1;
+            el.classList.add('is-on');
+          } else {
+            // 見本では何度でも見られるよう、画面から出たら消し直す（本番では1回だけでよい）
+            el.style.transitionDelay = '0s';
+            el.classList.remove('is-on');
+          }
+        });
+      },
+      // 文字がすべて見えて、枠の下から15%以上入ったところで引く
+      { root: view, rootMargin: '0px 0px -15% 0px', threshold: 1 }
+    );
+    root.querySelectorAll('.mk').forEach((el) => io.observe(el));
+  });
+</script>

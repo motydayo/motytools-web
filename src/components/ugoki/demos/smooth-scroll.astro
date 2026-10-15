@@ -1,0 +1,241 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const mini = size === 'mini';
+// 一覧の小さな見本は外側がリンクなので、中に押せる要素を置かない（span で代用）
+const Link = mini ? 'span' : 'a';
+const toc = [
+  { key: 'feature', name: '特長' },
+  { key: 'price', name: '料金' },
+  { key: 'access', name: 'アクセス' },
+  { key: 'faq', name: 'FAQ' },
+];
+---
+
+<UgFrame mode="script" size={size} label="スムーススクロール" url="kohan-no-yado.jp">
+  <div class="ug-site ss-site" data-demo="smooth-scroll">
+    <!-- 目次リンク。押すと、枠の中がなめらかに該当の見出しまで移動する -->
+    <nav class="ss-nav" data-ug-focus="スムーススクロール" data-ug-focus-at="below" aria-label="ページ内の目次">
+      <Link class="ss-logo" href={mini ? undefined : '#top'} data-ss-link="top">湖畔の宿</Link>
+      {toc.map((x) => (
+        <Link class="ss-link" href={mini ? undefined : `#${x.key}`} data-ss-link={x.key}>{x.name}</Link>
+      ))}
+    </nav>
+
+    <section class="ss-hero" data-ss-target="top">
+      <Scene tone="day" wide />
+      <div class="ss-hero-copy">
+        <p class="ug-label">LAKESIDE STAY</p>
+        <h3 class="ug-h">湖まで徒歩1分の、小さな宿。</h3>
+        <div class="ug-lines"><i></i><i></i></div>
+      </div>
+    </section>
+
+    <section class="ug-sec ss-sec">
+      <h3 class="ss-h" data-ss-target="feature"><span>特長</span></h3>
+      <div class="ug-grid">
+        <div class="ug-card"><Scene tone="day" /><div class="ug-card-body">湖が見える客室</div></div>
+        <div class="ug-card"><Scene tone="sunset" /><div class="ug-card-body">夕食は地元の魚</div></div>
+        <div class="ug-card"><Scene tone="night" /><div class="ug-card-body">星空のデッキ</div></div>
+      </div>
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+    </section>
+
+    <section class="ug-sec ss-sec">
+      <h3 class="ss-h" data-ss-target="price"><span>料金</span></h3>
+      <dl class="ss-price">
+        <div><dt>素泊まり</dt><dd>1泊 8,800円〜</dd></div>
+        <div><dt>朝食付き</dt><dd>1泊 10,500円〜</dd></div>
+        <div><dt>1泊2食付き</dt><dd>1泊 14,000円〜</dd></div>
+      </dl>
+      <div class="ug-lines"><i></i><i></i></div>
+    </section>
+
+    <section class="ug-sec ss-sec">
+      <h3 class="ss-h" data-ss-target="access"><span>アクセス</span></h3>
+      <div class="ss-map"><Scene tone="sunset" wide /></div>
+      <div class="ug-lines"><i></i><i></i><i></i></div>
+    </section>
+
+    <section class="ug-sec ss-sec">
+      <h3 class="ss-h" data-ss-target="faq"><span>よくある質問</span></h3>
+      <div class="ug-lines"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </section>
+
+    {!mini && (
+      <button type="button" class="ss-toggle" data-ss-toggle aria-pressed="true">
+        <span class="ss-switch" aria-hidden="true"></span>
+        なめらかに動かす
+      </button>
+    )}
+  </div>
+</UgFrame>
+
+<style>
+  /* これが演出の本体: スクロールする箱に scroll-behavior: smooth を指定するだけ。
+     見本ではスクロールする箱が枠（.ug-view）なので、そこに指定する */
+  :global(.ug-view:has(> [data-demo='smooth-scroll'])) { scroll-behavior: smooth; }
+  :global(.ug-view.ss-off:has(> [data-demo='smooth-scroll'])) { scroll-behavior: auto; }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.ug-view:has(> [data-demo='smooth-scroll'])) { scroll-behavior: auto; }
+  }
+
+  .ss-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 48px;
+    padding: 0 12px 0 16px;
+    background: #fff;
+    border-bottom: 1px solid var(--ug-line);
+    font-size: 12px;
+  }
+  .ss-logo { display: inline-flex; align-items: center; gap: 6px; margin-right: auto; font-weight: 800; letter-spacing: 0.04em; color: var(--ug-ink); text-decoration: none; cursor: pointer; }
+  .ss-logo::before { content: ''; width: 12px; height: 12px; border-radius: 3px; background: var(--ug-orange); }
+  .ss-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 10px;
+    border-radius: 999px;
+    color: var(--ug-ink-2);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out;
+  }
+  .ss-link:hover, .ss-link.is-hover { background: var(--ug-bg); color: var(--ug-ink); }
+  .ss-link.is-current { background: var(--ug-navy); color: #fff; }
+
+  .ss-hero { position: relative; }
+  .ss-hero :global(.ug-scene) { height: 150px; aspect-ratio: auto; }
+  .ss-hero-copy { padding: 16px; }
+  .ss-sec { min-height: 260px; }
+  /* 追従ヘッダーの下に見出しが隠れないよう、止まる位置を48px下げる */
+  .ss-h { scroll-margin-top: 56px; margin-bottom: 12px !important; font-size: 17px; font-weight: 800; }
+  .ss-h span { padding: 0 2px; }
+  /* 着いた見出しに、少しの間だけ印を付ける */
+  .ss-h.is-arrived span { background: linear-gradient(transparent 58%, var(--ug-orange-2) 58%); }
+  .ss-price { display: grid; gap: 8px; margin: 0; }
+  .ss-price div { display: flex; justify-content: space-between; padding: 10px 12px; border: 1px solid var(--ug-line); border-radius: 8px; }
+  .ss-price dt { font-weight: 700; }
+  .ss-price dd { margin: 0; font-weight: 700; color: var(--ug-orange); font-variant-numeric: tabular-nums; }
+  .ss-map { border-radius: 10px; overflow: hidden; }
+
+  .ss-toggle {
+    position: sticky;
+    bottom: 12px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    margin: 0 12px 12px auto;
+    padding: 0 14px 0 8px;
+    border: 1px solid var(--ug-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ug-ink);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow: 0 6px 16px -8px rgba(29, 37, 65, 0.35);
+    cursor: pointer;
+  }
+  .ss-switch { position: relative; width: 28px; height: 16px; border-radius: 999px; background: #c9c6be; transition: background-color 0.15s ease-out; }
+  .ss-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; transition: transform 0.15s ease-out; }
+  .ss-toggle[aria-pressed='true'] .ss-switch { background: var(--ug-blue); }
+  .ss-toggle[aria-pressed='true'] .ss-switch::after { transform: translateX(12px); }
+
+  @container (max-width: 340px) {
+    .ss-nav { padding: 0 8px 0 12px; gap: 0; }
+    .ss-link { padding: 0 7px; }
+    .ss-link[data-ss-link='faq'] { display: none; }
+    .ss-hero :global(.ug-scene) { height: 96px; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="smooth-scroll"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    const links = [...root.querySelectorAll<HTMLElement>('[data-ss-link]')];
+    const targetOf = (key: string) => root.querySelector<HTMLElement>(`[data-ss-target="${key}"]`);
+    const toggle = root.querySelector<HTMLElement>('[data-ss-toggle]');
+    let markTimer = 0;
+
+    const mark = (key: string) => {
+      links.forEach((l) => l.classList.toggle('is-current', l.dataset.ssLink === key && key !== 'top'));
+      root.querySelectorAll('.is-arrived').forEach((n) => n.classList.remove('is-arrived'));
+      const h = targetOf(key);
+      if (!h || key === 'top') return;
+      // 止まったら見出しに印を付ける（scrollend が無いブラウザは0.7秒後）
+      const arrive = () => {
+        h.classList.add('is-arrived');
+        clearTimeout(markTimer);
+        markTimer = window.setTimeout(() => h.classList.remove('is-arrived'), 1600);
+      };
+      if ('onscrollend' in view) view.addEventListener('scrollend', arrive, { once: true });
+      else window.setTimeout(arrive, 700);
+    };
+
+    // 本物のページなら <a href="#price"> と CSS だけで動く。
+    // 見本は記事ページの中にあるので、ページ全体が動かないよう「枠の中だけ」を動かす
+    const jump = (key: string) => {
+      const h = targetOf(key);
+      if (!h) return;
+      const margin = parseFloat(getComputedStyle(h).scrollMarginTop) || 0;
+      const top = key === 'top' ? 0 : h.getBoundingClientRect().top - view.getBoundingClientRect().top + view.scrollTop - margin;
+      mark(key);
+      view.scrollTo({ top }); // behavior を書かなければ、CSS の scroll-behavior: smooth に従う
+      if (Math.abs(view.scrollTop - top) < 2) h.classList.add('is-arrived');
+    };
+
+    links.forEach((l) => {
+      const key = l.dataset.ssLink!;
+      l.addEventListener('click', (e) => {
+        e.preventDefault();
+        jump(key);
+      });
+      l.addEventListener('ug:click', () => jump(key));
+    });
+
+    toggle?.addEventListener('click', () => {
+      const on = toggle.getAttribute('aria-pressed') !== 'true';
+      toggle.setAttribute('aria-pressed', String(on));
+      view.classList.toggle('ss-off', !on);
+    });
+
+    const reset = () => {
+      view.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      links.forEach((l) => l.classList.remove('is-current'));
+      root.querySelectorAll('.is-arrived').forEach((n) => n.classList.remove('is-arrived'));
+    };
+    view.addEventListener('ug:reset', reset);
+
+    const linkOf = (key: string) => links.find((l) => l.dataset.ssLink === key)!;
+    onTour(root, async (t) => {
+      reset();
+      await t.sleep(600);
+      // スクロールで中身が動いても矢印の位置がずれないよう、押したリンクに矢印を置き直してから次へ
+      let last: HTMLElement | null = null;
+      for (const key of ['price', 'access', 'feature', 'top']) {
+        const link = linkOf(key);
+        if (last) await t.move(last, 1);
+        await t.move(link, 650);
+        t.hover(link);
+        await t.sleep(200);
+        await t.click(link);
+        t.hover(null);
+        last = link;
+        await t.sleep(1900);
+      }
+    });
+  });
+</script>

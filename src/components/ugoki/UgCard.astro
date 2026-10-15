@@ -1,0 +1,35 @@
+---
+// 一覧のカード: 小さな見本（自動で動く）＋番号・名前・一言
+import Demo from './Demo.astro';
+import type { Ugoki } from '../../data/ugoki';
+interface Props {
+  u: Ugoki;
+}
+const { u } = Astro.props;
+const search = [u.name, u.en, ...u.aka, u.oneLine].join(' ').toLowerCase();
+---
+
+<a href={`/ugoki/${u.slug}/`} class="ug-card-link" data-search={search} data-cat={u.category}>
+  <Demo slug={u.slug} size="mini" />
+  <span class="ug-card-meta">
+    <span class="ug-card-name"><b>{String(u.no).padStart(2, '0')}</b>{u.name}</span>
+    <span class="ug-card-en">{u.en}</span>
+    <span class="ug-card-one">{u.oneLine}</span>
+  </span>
+</a>
+
+<style is:global>
+  .ug-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-5) var(--sp-4); }
+  @media (max-width: 900px) { .ug-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .ug-cards { grid-template-columns: 1fr; } }
+  .ug-card-link { display: grid; align-content: start; gap: var(--sp-3); color: var(--text); text-decoration: none; border-radius: var(--r-lg); }
+  .ug-card-link .ug-frame { transition: border-color 0.15s, box-shadow 0.2s ease-out, transform 0.2s ease-out; }
+  .ug-card-link:hover .ug-frame { border-color: var(--border-strong); box-shadow: 0 12px 28px -14px rgba(24, 24, 27, 0.35); transform: translateY(-2px); }
+  .ug-card-link:active .ug-frame { transform: translateY(0); }
+  .ug-card-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  .ug-card-meta { display: grid; gap: 2px; padding: 0 var(--sp-1); }
+  .ug-card-name { display: flex; align-items: baseline; gap: var(--sp-2); font-size: var(--fs-md); font-weight: 800; line-height: 1.4; }
+  .ug-card-name b { font-size: var(--fs-sm); color: var(--accent); font-variant-numeric: tabular-nums; }
+  .ug-card-en { font-size: var(--fs-xs); color: var(--text-3); letter-spacing: 0.02em; }
+  .ug-card-one { margin-top: 2px; font-size: var(--fs-sm); color: var(--text-2); line-height: 1.6; }
+</style>

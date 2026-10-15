@@ -1,0 +1,165 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const mini = size === 'mini';
+---
+
+<UgFrame mode="script" size={size} label="ビフォーアフタースライダー">
+  <div class="ug-site page" data-demo="before-after">
+    <header class="ug-nav nav"><span class="ug-logo">SAMPLE</span><span>施工事例</span><span>料金</span><span class="ug-cta">見積もり</span></header>
+    <section class="body">
+      <div class="head">
+        <p class="ug-label">CASE 01</p>
+        <h3 class="ug-h">写真の色補正、ここまで変わります</h3>
+      </div>
+      <div class="ba" style="--pos: 50%" data-ug-focus="左右に動かして比べる">
+        <!-- 下に「後」、上に「前」を重ね、前の右側を切り取って見せる -->
+        <div class="layer after"><Scene tone="day" wide /><span class="tag tag-r">AFTER</span></div>
+        <div class="layer before"><Scene tone="day" wide /><span class="tag tag-l">BEFORE</span></div>
+        <div class="handle" aria-hidden="true">
+          <span class="knob">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" /></svg>
+          </span>
+        </div>
+        {!mini && <input class="ba-range" type="range" min="0" max="100" value="50" aria-label="補正前と補正後の境目" />}
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .page { min-height: 100%; display: flex; flex-direction: column; }
+  .body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 20px 16px; }
+  .ba { position: relative; flex: 1; min-height: 180px; border-radius: 12px; overflow: hidden; user-select: none; }
+  .layer { position: absolute; inset: 0; }
+  .layer :global(.ug-scene) { width: 100%; height: 100%; aspect-ratio: auto; }
+  /* 「前」はくすんだ写真に見せる */
+  .before :global(.ug-scene) { filter: grayscale(0.85) brightness(0.88) contrast(0.85); }
+  /* これが演出の本体: 「前」の右側を --pos の位置から切り取る */
+  .before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 3px;
+    margin-left: -1.5px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(29, 37, 65, 0.15);
+    pointer-events: none;
+  }
+  .knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--ug-navy);
+    box-shadow: 0 4px 14px -4px rgba(29, 37, 65, 0.45);
+    transition: transform 0.15s ease-out;
+  }
+  .ba.is-drag .knob { transform: scale(1.1); }
+  .tag {
+    position: absolute;
+    bottom: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(29, 37, 65, 0.72);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+  .tag-l { left: 10px; }
+  .tag-r { right: 10px; }
+  /* 本物の操作は、全面に重ねた透明のスライダー（input type="range"）で受ける。
+     ドラッグ・タップ・キーボードの左右キーがそのまま使える */
+  .ba-range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    appearance: none; /* つまみの形を変えるのに必要 */
+    background: transparent;
+    opacity: 0;
+    cursor: ew-resize;
+    touch-action: pan-y; /* 縦のスクロールはページに任せる */
+  }
+  .ba-range::-webkit-slider-thumb { appearance: none; width: 44px; height: 100%; }
+  .ba-range::-moz-range-thumb { width: 44px; height: 100%; border: 0; }
+  .ba:has(.ba-range:focus-visible) .knob { outline: 3px solid var(--ug-blue); outline-offset: 2px; }
+  :global(.is-mini) .nav, :global(.is-mini) .ug-label { display: none; }
+  :global(.is-mini) .body { padding: 12px; gap: 8px; }
+  :global(.is-mini) .ug-h { font-size: 13px; margin: 0; }
+  :global(.is-mini) .ba { min-height: 0; }
+  :global(.is-mini) .knob { width: 34px; height: 34px; margin: -17px 0 0 -17px; }
+</style>
+
+<script>
+  import { onTour, onPointer, type Point } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="before-after"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const ba = root.querySelector<HTMLElement>('.ba');
+    if (!view || !ba) return;
+    const range = ba.querySelector<HTMLInputElement>('.ba-range');
+
+    const setPos = (v: number) => {
+      const n = Math.max(0, Math.min(100, v));
+      ba.style.setProperty('--pos', `${n}%`);
+      if (range) range.value = String(n);
+    };
+    // 本物の操作: ドラッグ・タップ・左右キー
+    range?.addEventListener('input', () => setPos(Number(range.value)));
+    range?.addEventListener('pointerdown', () => ba.classList.add('is-drag'));
+    window.addEventListener('pointerup', () => ba.classList.remove('is-drag'));
+
+    // 自動再生: 偽物の矢印でつまみをつかんでいる間だけ、矢印の位置に境目を合わせる
+    let dragging = false;
+    onPointer(view, (p: Point, real) => {
+      if (real || !dragging) return;
+      const v = view.getBoundingClientRect();
+      const r = ba.getBoundingClientRect();
+      setPos(((p.x - (r.left - v.left)) / r.width) * 100);
+    });
+    const reset = () => {
+      dragging = false;
+      ba.classList.remove('is-drag');
+      setPos(50);
+    };
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      reset();
+      const knob = ba.querySelector<HTMLElement>('.knob')!;
+      const v = t.view.getBoundingClientRect();
+      const r = ba.getBoundingClientRect();
+      const y = r.top - v.top + r.height * 0.5 + t.view.scrollTop;
+      const at = (pct: number) => ({ x: r.left - v.left + (r.width * pct) / 100, y });
+      await t.move({ x: t.view.clientWidth * 0.6, y: t.view.clientHeight * 0.95 }, 300);
+      await t.move(knob, 700);
+      await t.sleep(200);
+      dragging = true;
+      ba.classList.add('is-drag');
+      try {
+        await t.move(at(18), 1100);
+        await t.sleep(500);
+        await t.move(at(84), 1500);
+        await t.sleep(500);
+        await t.move(at(50), 900);
+      } finally {
+        dragging = false;
+        ba.classList.remove('is-drag');
+      }
+      await t.move({ x: t.view.clientWidth * 0.75, y: t.view.clientHeight * 0.92 }, 600);
+      await t.sleep(1000);
+    });
+  });
+</script>

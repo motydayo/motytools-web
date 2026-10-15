@@ -1,0 +1,167 @@
+---
+import UgFrame from '../UgFrame.astro';
+const { size = 'full' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const plans = [
+  { name: 'お試しプラン', note: '1か月だけ使う', price: '0円' },
+  { name: 'スタンダード', note: 'いちばん人気', price: '月 980円' },
+  { name: 'まとめ払い', note: '1年分を前払い', price: '年 9,800円' },
+];
+---
+
+<UgFrame mode="pointer" size={size} label="リップルエフェクト">
+  <div class="ug-site page" data-demo="ripple">
+    <header class="ug-nav nav"><span class="ug-logo">SAMPLE</span><span>特長</span><span>料金</span><span>FAQ</span></header>
+    <section class="ug-sec body">
+      <p class="ug-label lb">PLAN</p>
+      <h3 class="ug-h">プランを選ぶ</h3>
+      <div class="list" data-ug-focus="押した所から波紋">
+        {plans.map((p, i) => (
+          <Btn class:list={['row', 'rp', { 'is-on': i === 0 }]} type={mini ? undefined : 'button'} aria-pressed={mini ? undefined : String(i === 0)} data-ug-target={i === 1 ? 'click' : undefined}>
+            <span class="dot" aria-hidden="true"></span>
+            <span class="row-name">{p.name}<small>{p.note}</small></span>
+            <span class="row-price">{p.price}</span>
+          </Btn>
+        ))}
+      </div>
+      <Btn class="ug-btn-site rp go" type={mini ? undefined : 'button'} data-ug-target="click">このプランで申し込む</Btn>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .page { min-height: 100%; display: flex; flex-direction: column; }
+  .body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .list { position: relative; display: grid; gap: 8px; margin: 4px -8px 12px; padding: 24px 8px 8px; }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    padding: 6px 14px;
+    border: 1px solid var(--ug-line);
+    border-radius: 10px;
+    background: #fff;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease-out;
+  }
+  .row.is-on { border-color: var(--ug-blue); }
+  .dot { flex: none; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #c9c6bd; transition: border 0.15s ease-out; }
+  .row.is-on .dot { border: 5px solid var(--ug-blue); }
+  .row-name { flex: 1; font-weight: 700; font-size: 13px; line-height: 1.4; }
+  .row-name small { display: block; font-weight: 400; font-size: 10px; color: var(--ug-ink-2); }
+  .row-price { font-weight: 700; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .go { align-self: stretch; min-height: 48px; }
+  .row:focus-visible, .go:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+
+  /* これが演出の本体: 押した所から広がって消える円 */
+  .rp { position: relative; overflow: hidden; }
+  .rp :global(.ripple) {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(79, 115, 217, 0.28);
+    transform: scale(0);
+    pointer-events: none;
+    animation: ug-ripple 0.5s ease-out forwards;
+  }
+  .go :global(.ripple) { background: rgba(255, 255, 255, 0.5); }
+  @keyframes ug-ripple {
+    to { transform: scale(1); opacity: 0; }
+  }
+  @container (max-width: 420px) {
+    .lb { display: none; }
+  }
+  /* 一覧の小さな見本では、2行とボタンだけを見せる */
+  :global(.is-mini) .nav { display: none; }
+  :global(.is-mini) .body { padding-top: 12px; padding-bottom: 12px; }
+  :global(.is-mini) .list { margin: 0 -8px 6px; padding: 20px 8px 6px; gap: 6px; }
+  :global(.is-mini) .row { min-height: 40px; padding: 4px 12px; }
+  :global(.is-mini) .row:nth-child(3) { display: none; }
+  :global(.is-mini) .go { min-height: 36px; }
+  /* 動きを減らす設定では、波紋はJS側で出さない。選んだ印の切り替えも一瞬で */
+  @media (prefers-reduced-motion: reduce) {
+    .row, .dot { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="ripple"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+
+    // x, y は押した要素の左上からの位置
+    const ripple = (el: HTMLElement, x: number, y: number) => {
+      // 動きを減らす設定なら、波紋を出さない
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const r = el.getBoundingClientRect();
+      // 押した所から、いちばん遠い角まで届く大きさにする
+      const size = Math.hypot(Math.max(x, r.width - x), Math.max(y, r.height - y)) * 2;
+      const dot = document.createElement('span');
+      dot.className = 'ripple';
+      dot.style.cssText = `width:${size}px;height:${size}px;left:${x - size / 2}px;top:${y - size / 2}px`;
+      el.appendChild(dot);
+      dot.addEventListener('animationend', () => dot.remove());
+    };
+    const choose = (el: HTMLElement) => {
+      if (!el.classList.contains('row')) return;
+      root.querySelectorAll('.row').forEach((r) => {
+        r.classList.toggle('is-on', r === el);
+        if (r.tagName === 'BUTTON') r.setAttribute('aria-pressed', String(r === el));
+      });
+    };
+
+    root.querySelectorAll<HTMLElement>('.rp').forEach((el) => {
+      // 本物のマウス・タップ
+      el.addEventListener('pointerdown', (e) => {
+        const r = el.getBoundingClientRect();
+        ripple(el, e.clientX - r.left, e.clientY - r.top);
+      });
+      // キーボード（Enter・スペース）は真ん中から
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') ripple(el, el.offsetWidth / 2, el.offsetHeight / 2);
+      });
+      el.addEventListener('click', () => choose(el));
+      // 自動再生の偽物の矢印（detail は枠の中の座標）
+      el.addEventListener('ug:click', (e) => {
+        const p = (e as CustomEvent<{ x: number; y: number }>).detail;
+        const r = el.getBoundingClientRect();
+        const v = view.getBoundingClientRect();
+        ripple(el, p.x - (r.left - v.left), p.y - view.scrollTop - (r.top - v.top));
+        choose(el);
+      });
+    });
+    view.addEventListener('ug:reset', () => choose(root.querySelector<HTMLElement>('.row')!));
+
+    // 自動再生: 真ん中ではなく、端の方を押して「押した所から広がる」ことを見せる
+    onTour(root, async (t) => {
+      const rows = [...root.querySelectorAll<HTMLElement>('.row')];
+      const go = root.querySelector<HTMLElement>('.go')!;
+      choose(rows[0]);
+      const at = (el: HTMLElement, fx: number, fy = 0.5) => {
+        const r = el.getBoundingClientRect();
+        const v = t.view.getBoundingClientRect();
+        return { x: r.left - v.left + r.width * fx, y: r.top - v.top + r.height * fy + t.view.scrollTop };
+      };
+      await t.move({ x: t.view.clientWidth * 0.5, y: t.view.clientHeight * 0.95 }, 300);
+      await t.move(at(rows[1], 0.22), 800);
+      await t.sleep(250);
+      await t.click(rows[1]);
+      await t.sleep(1000);
+      await t.move(at(go, 0.8, 0.6), 700);
+      await t.sleep(250);
+      await t.click(go);
+      await t.sleep(1000);
+      await t.move(at(rows[0], 0.7), 700);
+      await t.sleep(250);
+      await t.click(rows[0]);
+      await t.sleep(1200);
+    });
+  });
+</script>

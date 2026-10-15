@@ -1,0 +1,166 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const Btn = size === 'mini' ? 'span' : 'button';
+const secs = [
+  { title: 'チェックイン', tone: 'day', lines: 4 },
+  { title: 'お部屋', tone: 'sunset', lines: 5 },
+  { title: 'お食事', tone: 'night', lines: 4 },
+  { title: '温泉', tone: 'day', lines: 5 },
+  { title: 'アクセス', tone: 'sunset', lines: 6 },
+] as const;
+---
+
+<UgFrame mode="scroll" size={size} label="スクロールスパイ">
+  <div class="ug-site sp" data-demo="scrollspy">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>お部屋</span><span>料金</span><span class="ug-cta">予約する</span></header>
+    <div class="layout">
+      <nav class="spy-toc" aria-label={size === 'mini' ? undefined : 'このページの目次'} data-ug-focus="目次の現在地" data-ug-focus-at="below">
+        <p class="spy-toc-h">目次</p>
+        <ol class="spy-toc-list">
+          {secs.map((s, i) => (
+            <li><Btn class:list={['spy-toc-i', { 'is-active': i === 0 }]} type={size === 'mini' ? undefined : 'button'} data-i={i} aria-current={i === 0 ? 'true' : undefined}>{s.title}</Btn></li>
+          ))}
+        </ol>
+      </nav>
+      <div class="main">
+        <h2 class="page-h">山の宿 ご利用ガイド</h2>
+        {secs.map((s, i) => (
+          <section class="sec" data-sec={i}>
+            <p class="ug-label">{String(i + 1).padStart(2, '0')}</p>
+            <h3 class="ug-h">{s.title}</h3>
+            {i % 2 === 0 && <div class="pic"><Scene tone={s.tone} wide /></div>}
+            <div class="ug-lines">{Array.from({ length: s.lines }, () => <i />)}</div>
+          </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .layout { display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: 24px; padding: 0 16px 24px; }
+  .spy-toc { position: sticky; top: 0; align-self: start; padding-top: 20px; z-index: 5; }
+  .spy-toc-h { margin: 0 0 8px; font-size: 10px; font-weight: 800; letter-spacing: 0.12em; color: var(--ug-ink-2); }
+  .spy-toc-list { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--ug-line); }
+  .spy-toc-i {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
+    color: var(--ug-ink-2);
+    cursor: pointer;
+    transition: color 0.2s ease-out;
+  }
+  /* 今いる場所の印: 左の線をオレンジにして、文字も濃くする */
+  .spy-toc-i::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--ug-orange);
+    transform: scaleY(0);
+    transition: transform 0.2s ease-out;
+  }
+  .spy-toc-i.is-active { color: var(--ug-ink); font-weight: 800; }
+  .spy-toc-i.is-active::before { transform: scaleY(1); }
+  .spy-toc-i:hover { color: var(--ug-ink); }
+  .spy-toc-i:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: -2px; }
+  .page-h { margin: 20px 0 0 !important; font-size: 20px; font-weight: 800; outline: none; }
+  .sec { padding: 20px 0 28px; border-bottom: 1px solid var(--ug-line); }
+  .sec:last-child { min-height: 300px; border-bottom: 0; }
+  .pic { margin: 8px 0; border-radius: 10px; overflow: hidden; }
+
+  /* 狭い枠（スマホ・一覧）: 目次は上にくっつく横並びの帯にする */
+  @container (max-width: 480px) {
+    .layout { display: block; padding: 0; }
+    .spy-toc {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: #fff;
+      border-bottom: 1px solid var(--ug-line);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .spy-toc-h { display: none; }
+    .spy-toc-list { display: flex; gap: 6px; border: 0; }
+    .spy-toc-i {
+      width: auto;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--ug-bg);
+      white-space: nowrap;
+      transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    }
+    .spy-toc-i::before { display: none; }
+    .spy-toc-i.is-active { background: var(--ug-navy); color: #fff; }
+    .main { padding: 0 16px 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spy-toc-i, .spy-toc-i::before { transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-demo="scrollspy"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const toc = root.querySelector<HTMLElement>('.spy-toc');
+    if (!view || !toc) return;
+    const links = [...root.querySelectorAll<HTMLElement>('.spy-toc-i')];
+    const secs = [...root.querySelectorAll<HTMLElement>('[data-sec]')];
+    const inBand = new Set<Element>();
+    const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const setActive = (i: number) => {
+      links.forEach((a, j) => {
+        a.classList.toggle('is-active', i === j);
+        if (i === j) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+      // 横並びの帯のときは、今の項目が見える位置まで帯を横に送る
+      const a = links[i];
+      if (toc.scrollWidth > toc.clientWidth) {
+        toc.scrollTo({ left: a.offsetLeft - (toc.clientWidth - a.offsetWidth) / 2, behavior: reduce() ? 'auto' : 'smooth' });
+      }
+    };
+
+    // 枠の上から35%の帯に入っている見出しの区画のうち、いちばん下のものを「今いる場所」にする
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => (e.isIntersecting ? inBand.add(e.target) : inBand.delete(e.target)));
+        const hit = secs.filter((s) => inBand.has(s));
+        if (hit.length) setActive(secs.indexOf(hit[hit.length - 1]));
+      },
+      { root: view, rootMargin: '0px 0px -65% 0px', threshold: 0 }
+    );
+    secs.forEach((s) => io.observe(s));
+    // いちばん下までスクロールしたら最後の項目にする（最後の区画が短くても届くように）
+    view.addEventListener(
+      'scroll',
+      () => {
+        if (view.scrollTop + view.clientHeight >= view.scrollHeight - 2) setActive(secs.length - 1);
+      },
+      { passive: true }
+    );
+
+    // 目次を押したら、その区画までなめらかに移動
+    links.forEach((a, i) =>
+      a.addEventListener('click', () => {
+        const top = secs[i].getBoundingClientRect().top - view.getBoundingClientRect().top + view.scrollTop;
+        const offset = getComputedStyle(root.querySelector('.layout')!).display === 'block' ? toc.offsetHeight : 0;
+        view.scrollTo({ top: top - offset, behavior: reduce() ? 'auto' : 'smooth' });
+      })
+    );
+    view.addEventListener('ug:reset', () => setActive(0));
+  });
+</script>

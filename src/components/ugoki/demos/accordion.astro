@@ -1,0 +1,138 @@
+---
+import UgFrame from '../UgFrame.astro';
+const { size = 'full' } = Astro.props;
+const mini = size === 'mini';
+// 一覧の小さな見本は外側がリンクなので、details/summary の代わりに div で同じ見た目を作る
+const Item = mini ? 'div' : 'details';
+const Sum = mini ? 'div' : 'summary';
+// name をそろえると「1つ開くとほかが閉じる」。同じページに見本が複数あるので見本ごとに変える
+const group = `faq-${Math.random().toString(36).slice(2, 8)}`;
+const faqs = [
+  { q: 'チェックインは何時からですか？', a: '15時から19時までです。19時を過ぎる場合は、当日のお昼までにお電話ください。' },
+  { q: '駐車場はありますか？', a: '宿の正面に12台ぶんの無料駐車場があります。予約はいりません。' },
+  { q: 'キャンセル料はいつからかかりますか？', a: '宿泊日の3日前から宿泊料金の30%、前日は50%、当日は100%をいただきます。' },
+  { q: '子ども連れでも泊まれますか？', a: 'はい。添い寝のお子さまは無料です。ベビーベッドの貸し出しもあります（要予約）。' },
+];
+---
+
+<UgFrame mode="script" size={size} label="アコーディオン">
+  <div class="ug-site ac" data-demo="accordion">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>お部屋</span><span>アクセス</span><span class="ug-cta">予約する</span></header>
+    <section class="body">
+      <p class="ug-label">FAQ</p>
+      <h3 class="ug-h">よくある質問</h3>
+      <div class="qa-list" data-ug-focus="アコーディオン" data-ug-focus-at="below">
+        {faqs.map((f, i) => (
+          <Item class:list={['det', { 'is-open': mini && i === 0 }]} name={mini ? undefined : group} open={!mini && i === 0}>
+            <Sum class="sum">
+              <span>{f.q}</span>
+              <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+            </Sum>
+            {mini ? (
+              <div class="mini-wrap"><div class="mini-in"><p class="ans">{f.a}</p></div></div>
+            ) : (
+              <p class="ans">{f.a}</p>
+            )}
+          </Item>
+        ))}
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .body { padding: 16px; }
+  .qa-list {
+    position: relative;
+    border-top: 1px solid var(--ug-line);
+    /* これが大事: height: auto までなめらかに動かせるようにする（Chrome・Edge 131以降。未対応なら一瞬で開閉するだけ） */
+    interpolate-size: allow-keywords;
+  }
+  .det { border-bottom: 1px solid var(--ug-line); }
+  .sum {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 48px;
+    padding: 0 8px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none; /* 標準の三角を消す */
+    border-radius: 6px;
+    transition: background-color 0.15s;
+  }
+  .sum::-webkit-details-marker { display: none; }
+  .sum:hover, .sum.is-hover { background: var(--ug-bg); }
+  .sum:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: -2px; }
+  .chev { flex: none; color: var(--ug-ink-2); transition: transform 0.2s ease-out; }
+  details[open] > .sum .chev, .det.is-open .chev { transform: rotate(180deg); }
+  .ans { margin: 0; padding: 0 8px 12px; color: var(--ug-ink-2); font-size: 12px; }
+
+  /* 開閉のなめらかな動き（details の中身の箱 ::details-content の高さを動かす） */
+  details::details-content {
+    height: 0;
+    overflow: clip;
+    transition:
+      height 0.3s ease-out,
+      content-visibility 0.3s allow-discrete;
+  }
+  details[open]::details-content { height: auto; }
+
+  /* 一覧の小さな見本（div版）は grid-template-rows で同じ動きを作る */
+  .mini-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; }
+  .det.is-open .mini-wrap { grid-template-rows: 1fr; }
+  .mini-in { overflow: hidden; min-height: 0; }
+
+  :global(.is-mini) .ac .ug-nav { display: none; }
+  :global(.is-mini) .body { padding: 12px 16px; }
+  :global(.is-mini) .ug-label { display: none; }
+  :global(.is-mini) .ug-h { font-size: 15px; margin-bottom: 6px; }
+  :global(.is-mini) .sum { min-height: 36px; font-size: 12px; }
+  :global(.is-mini) .ans { padding-bottom: 8px; font-size: 11px; line-height: 1.6; }
+
+  @media (prefers-reduced-motion: reduce) {
+    details::details-content, .mini-wrap, .chev { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="accordion"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    if (!view) return;
+    const items = [...root.querySelectorAll<HTMLElement>('.det')];
+    const isOpen = (d: HTMLElement) => (d instanceof HTMLDetailsElement ? d.open : d.classList.contains('is-open'));
+    const setOpen = (d: HTMLElement, on: boolean) => {
+      if (d instanceof HTMLDetailsElement) d.open = on; // name がそろっているので、ほかは自動で閉じる
+      else {
+        if (on) items.forEach((x) => x.classList.remove('is-open'));
+        d.classList.toggle('is-open', on);
+      }
+    };
+    const toggle = (d: HTMLElement) => setOpen(d, !isOpen(d));
+
+    // 偽物の矢印で押されたとき（本物のクリック・Enter・スペースは details が自分で開閉する）
+    items.forEach((d) => d.querySelector('.sum')?.addEventListener('ug:click', () => toggle(d)));
+
+    const reset = () => items.forEach((d, i) => setOpen(d, i === 0));
+    view.addEventListener('ug:reset', reset);
+
+    const mini = !(items[0] instanceof HTMLDetailsElement);
+    onTour(root, async (t) => {
+      reset();
+      await t.sleep(700);
+      const order = mini ? [1, 2, 0] : [1, 2, 3, 0];
+      for (const i of order) {
+        const sum = items[i].querySelector<HTMLElement>('.sum')!;
+        await t.move(sum, 650);
+        t.hover(sum);
+        await t.sleep(200);
+        await t.click(sum);
+        await t.sleep(1500);
+        t.hover(null);
+      }
+    });
+  });
+</script>

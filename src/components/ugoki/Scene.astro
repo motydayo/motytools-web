@@ -1,0 +1,24 @@
+---
+// 見本の中で写真の代わりに使う「山と太陽」の絵。3色（昼・夕方・夜）。
+// 写真を使わないので、読み込みが軽く、どの見本でも同じ絵柄でそろう。
+interface Props {
+  tone?: 'day' | 'sunset' | 'night';
+  wide?: boolean;
+  class?: string;
+}
+const { tone = 'day', wide = false, class: cls } = Astro.props;
+const c = {
+  day: { sky: '#dfe8fb', back: '#8fa9ec', front: '#4f73d9', sun: '#f06a35' },
+  sunset: { sky: '#ffe3d4', back: '#ffb08e', front: '#f06a35', sun: '#fff6ee' },
+  night: { sky: '#26304f', back: '#46578f', front: '#7b93d6', sun: '#f6efe0' },
+}[tone];
+const vb = wide ? '0 0 320 140' : '0 0 320 200';
+const h = wide ? 140 : 200;
+---
+
+<svg class:list={['ug-scene', { 'ug-scene--wide': wide }, cls]} viewBox={vb} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <rect width="320" height={h} fill={c.sky} />
+  <circle cx="232" cy={h * 0.32} r={h * 0.11} fill={c.sun} />
+  <path d={`M0 ${h * 0.78} L70 ${h * 0.42} L130 ${h * 0.7} L190 ${h * 0.36} L260 ${h * 0.66} L320 ${h * 0.5} V${h} H0Z`} fill={c.back} />
+  <path d={`M0 ${h} V${h * 0.8} L90 ${h * 0.55} L170 ${h * 0.86} L250 ${h * 0.6} L320 ${h * 0.82} V${h}Z`} fill={c.front} />
+</svg>

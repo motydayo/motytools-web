@@ -1,0 +1,237 @@
+---
+import UgFrame from '../UgFrame.astro';
+import Scene from '../Scene.astro';
+const { size = 'full' } = Astro.props;
+const mini = size === 'mini';
+const Btn = mini ? 'span' : 'button';
+const favs = [
+  { tone: 'day', name: '山の宿 はなれ', short: '山の宿', price: '1泊 12,000円〜' },
+  { tone: 'sunset', name: '海の宿 しおさい', short: '海の宿', price: '1泊 15,000円〜' },
+  { tone: 'night', name: '星の宿 そらの', short: '星の宿', price: '1泊 9,800円〜' },
+  { tone: 'day', name: '森の宿 こもれび', short: '森の宿', price: '1泊 11,500円〜' },
+] as const;
+---
+
+<UgFrame mode="script" size={size} label="トースト通知">
+  <div class="ug-site ts" data-demo="toast">
+    <header class="ug-nav"><span class="ug-logo">SAMPLE</span><span>宿をさがす</span><span>お気に入り</span><span class="ug-cta">ログイン</span></header>
+    <section class="body">
+      <h3 class="ug-h">お気に入り</h3>
+      <ul class="favs">
+        {favs.map((f) => (
+          <li class="fav" data-short={f.short}>
+            <div class="row">
+              <div class="th"><Scene tone={f.tone} /></div>
+              <div class="tx"><b>{f.name}</b><small>{f.price}</small></div>
+              <Btn class="heart" type={mini ? undefined : 'button'} aria-label={mini ? undefined : `${f.name}をお気に入りから外す`}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 3.9 4 7.4 4c2 0 3.5 1.1 4.6 2.6C13.1 5.1 14.6 4 16.6 4c3.5 0 5.8 3.6 4.6 7.1-1.7 4.8-9.2 9.4-9.2 9.4z" /></svg>
+              </Btn>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+    <!-- 枠の下端にくっつける台（position: sticky; bottom）。本物のサイトでは position: fixed で画面の下に置く -->
+    <div class="dock">
+      <div class="toast" role="status" aria-live="polite" data-ug-focus="トースト通知">
+        <span class="msg"></span>
+        <Btn class="undo" type={mini ? undefined : 'button'}>元に戻す</Btn>
+        <i class="timer" aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
+</UgFrame>
+
+<style>
+  .ts { position: relative; min-height: 100%; }
+  .body { padding: 16px 16px 72px; }
+  .favs { list-style: none; margin: 8px 0 0; padding: 0; }
+  /* 外した項目は高さを0へ縮めて消す（grid-template-rows 1fr → 0fr） */
+  .fav { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.25s ease-out, opacity 0.2s ease-out; }
+  .fav.is-removed { grid-template-rows: 0fr; opacity: 0; }
+  .row { display: flex; align-items: center; gap: 12px; min-height: 0; overflow: hidden; padding: 6px 0; border-bottom: 1px solid var(--ug-line); }
+  .th { flex: none; width: 64px; border-radius: 6px; overflow: hidden; }
+  .tx { flex: 1; display: grid; min-width: 0; }
+  .tx b { font-size: 13px; }
+  .tx small { font-size: 11px; color: var(--ug-ink-2); }
+  .heart {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: #e0475b;
+    cursor: pointer;
+    transition: background-color 0.15s, transform 0.15s;
+  }
+  .heart:hover, .heart.is-hover { background: #fdecee; }
+  .heart:active { transform: scale(0.9); }
+  .heart:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 2px; }
+
+  .dock { position: sticky; bottom: 16px; height: 0; z-index: 20; }
+  .toast {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: max-content;
+    max-width: calc(100% - 32px);
+    padding: 8px 8px 8px 16px;
+    border-radius: 10px;
+    background: var(--ug-navy);
+    color: #fff;
+    font-size: 12px;
+    box-shadow: 0 12px 28px -12px rgba(29, 37, 65, 0.6);
+    /* 隠れているとき: 少し下＋透明。visibility も隠して「元に戻す」に焦点が行かないようにする */
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 16px);
+    transition: opacity 0.2s ease-in, transform 0.2s ease-in, visibility 0s linear 0.2s;
+  }
+  .toast.is-shown {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out, visibility 0s;
+  }
+  .msg { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .undo {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--ug-orange-2);
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+  .undo:hover, .undo.is-hover { background: rgba(255, 255, 255, 0.22); }
+  .undo:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  /* 残り時間の線（5秒で右から縮む）。マウスが乗っている間・焦点がある間は止まる */
+  .timer { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--ug-orange); transform-origin: left; }
+  .toast.is-shown .timer { animation: ts-timer 5s linear forwards; }
+  .toast:hover .timer, .toast:focus-within .timer, .toast.is-paused .timer { animation-play-state: paused; }
+  @keyframes ts-timer {
+    to { transform: scaleX(0); }
+  }
+  /* 名札はトーストの上に出す（中の文字・ボタンに被せない） */
+  :global(.ug-frame.show-focus) .toast[data-ug-focus]::after { top: auto; bottom: calc(100% + 4px); right: 0; }
+  .toast[data-ug-focus] { overflow: visible; }
+  .timer { border-radius: 0 0 0 10px; }
+
+  @container (max-width: 340px) {
+    .toast { gap: 8px; font-size: 11px; padding-left: 12px; }
+  }
+  :global(.is-mini) .ug-nav { display: none; }
+  :global(.is-mini) .body { padding-top: 12px; }
+  :global(.is-mini) .ug-h { font-size: 15px; }
+  :global(.is-mini) .row { padding: 4px 0; }
+  :global(.is-mini) .th { width: 48px; }
+  :global(.is-mini) .heart { width: 32px; height: 32px; }
+  :global(.is-mini) .dock { bottom: 12px; }
+  @media (prefers-reduced-motion: reduce) {
+    .toast, .toast.is-shown { transform: translate(-50%, 0); }
+    .fav { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour } from '../../../lib/ugoki/runtime';
+
+  document.querySelectorAll<HTMLElement>('[data-demo="toast"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const toast = root.querySelector<HTMLElement>('.toast');
+    const msg = root.querySelector<HTMLElement>('.msg');
+    const undo = root.querySelector<HTMLElement>('.undo');
+    const timer = root.querySelector<HTMLElement>('.timer');
+    if (!view || !toast || !msg || !undo || !timer) return;
+    const favs = [...root.querySelectorAll<HTMLElement>('.fav')];
+    let last: HTMLElement | null = null;
+    const mini = Boolean(root.closest('.is-mini'));
+
+    const hide = () => toast.classList.remove('is-shown', 'is-paused');
+    const show = (text: string) => {
+      msg.textContent = text; // role="status" の中の文字が変わると、読み上げソフトが読む
+      toast.classList.remove('is-shown');
+      void toast.offsetWidth; // 残り時間の線を最初から動かし直す
+      toast.classList.add('is-shown');
+    };
+    // 残り時間の線が縮み切ったら消す（止めている間は終わらない）
+    timer.addEventListener('animationend', hide);
+
+    const remove = (li: HTMLElement) => {
+      li.classList.add('is-removed');
+      li.setAttribute('inert', '');
+      last = li;
+      show(mini ? `「${li.dataset.short}」を外しました` : `「${li.dataset.short}」をお気に入りから外しました`);
+    };
+    const restore = (real: boolean) => {
+      if (last) {
+        last.classList.remove('is-removed');
+        last.removeAttribute('inert');
+        // キーボードで押した人の焦点が迷子にならないよう、戻した項目のボタンへ返す
+        if (real) last.querySelector<HTMLElement>('.heart')?.focus();
+        last = null;
+      }
+      hide();
+    };
+
+    favs.forEach((li) => {
+      const heart = li.querySelector<HTMLElement>('.heart')!;
+      heart.addEventListener('click', () => remove(li));
+      heart.addEventListener('ug:click', () => remove(li));
+    });
+    undo.addEventListener('click', () => restore(true));
+    undo.addEventListener('ug:click', () => restore(false));
+
+    const reset = () => {
+      favs.forEach((li) => {
+        li.classList.remove('is-removed');
+        li.removeAttribute('inert');
+      });
+      last = null;
+      hide();
+    };
+    view.addEventListener('ug:reset', reset);
+
+    onTour(root, async (t) => {
+      reset();
+      await t.sleep(600);
+      const h1 = favs[1].querySelector<HTMLElement>('.heart')!;
+      await t.move(h1, 700);
+      t.hover(h1);
+      await t.sleep(200);
+      await t.click(h1);
+      t.hover(null);
+      await t.sleep(1300);
+      // 「元に戻す」に乗せると残り時間が止まる
+      await t.move(undo, 650);
+      t.hover(undo);
+      toast.classList.add('is-paused');
+      await t.sleep(700);
+      await t.click(undo);
+      t.hover(null);
+      await t.sleep(1200);
+      const h2 = favs[2].querySelector<HTMLElement>('.heart')!;
+      await t.move(h2, 700);
+      t.hover(h2);
+      await t.sleep(200);
+      await t.click(h2);
+      t.hover(null);
+      // 何もしなければ5秒で自然に消える
+      await t.move({ x: t.view.clientWidth * 0.3, y: t.view.clientHeight * 0.3 }, 600);
+      t.showCursor(false);
+      await t.sleep(5600);
+    });
+  });
+</script>

@@ -5,6 +5,7 @@ import { SITE } from '../config';
 import { TOOLS } from '../data/tools';
 import { APPS } from '../data/apps';
 import { getGuides, updatedOf, isoDate } from '../lib/guide';
+import { UGOKI } from '../data/ugoki';
 
 // 新ツールはレジストリ（src/data/tools.ts）、アプリは src/data/apps.ts、記事は src/content/guide/ から自動で載る。
 // 旧静的ページ（public/ 配下）はここに手動で列挙する。lastmod はそのファイルの最終コミット日。
@@ -104,6 +105,13 @@ export const GET: APIRoute = async () => {
     // アプリのLP（public/ の静的ページ）
     ...APPS.map((a) => ({ loc: a.lpPath, lastmod: gitDate(a.lpPath, toolsDate), priority: '0.8' })),
   ];
+
+  // 動きの図鑑（src/data/ugoki/entries/ から自動で載る）
+  if (UGOKI.length > 0) {
+    const ugokiDates = UGOKI.map((u) => u.updatedAt ?? u.publishedAt);
+    urls.push({ loc: '/ugoki/', lastmod: maxDate(ugokiDates), priority: '0.9' });
+    for (const u of UGOKI) urls.push({ loc: `/ugoki/${u.slug}/`, lastmod: u.updatedAt ?? u.publishedAt, priority: '0.7' });
+  }
 
   if (guides.length > 0) {
     urls.push({ loc: '/guide/', lastmod: guideIndexDate, priority: '0.8' });

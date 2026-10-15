@@ -1,0 +1,14 @@
+---
+// slug から見本（demos/<slug>.astro）を探して出す
+const demos = import.meta.glob<{ default: any }>('./demos/*.astro', { eager: true });
+interface Props {
+  slug: string;
+  size?: 'mini' | 'full';
+}
+const { slug, size = 'full' } = Astro.props;
+const mod = demos[`./demos/${slug}.astro`];
+if (!mod) throw new Error(`見本 demos/${slug}.astro がありません`);
+const Comp = mod.default;
+---
+
+<Comp size={size} />

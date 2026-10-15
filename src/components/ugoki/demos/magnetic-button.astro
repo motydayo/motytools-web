@@ -1,0 +1,143 @@
+---
+import UgFrame from '../UgFrame.astro';
+const { size = 'full' } = Astro.props;
+const Btn = size === 'mini' ? 'span' : 'button';
+---
+
+<UgFrame mode="script" size={size} label="マグネティックボタン">
+  <div class="ug-site page" data-demo="magnetic-button">
+    <header class="ug-nav nav"><span class="ug-logo">SAMPLE</span><span>特長</span><span>料金</span><span>FAQ</span></header>
+    <section class="cta">
+      <p class="ug-label">CONTACT</p>
+      <h3 class="ug-h">まずは無料で相談する</h3>
+      <p class="lead">オンラインで30分。しつこい営業はしません。</p>
+      <!-- 点線の円 = 吸い寄せが効く範囲（見本で分かりやすくするための印） -->
+      <div class="mag-field" data-ug-focus="吸い寄せる範囲" data-ug-focus-at="below">
+        <Btn class="mag" type={size === 'mini' ? undefined : 'button'}>
+          <span class="mag-text">相談を予約する</span>
+        </Btn>
+      </div>
+    </section>
+  </div>
+</UgFrame>
+
+<style>
+  .page { min-height: 100%; display: flex; flex-direction: column; }
+  .cta { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px 16px 40px; }
+  .lead { font-size: 12px; color: var(--ug-ink-2); }
+  .mag-field {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 220px; /* 吸い寄せが効く範囲（半径110px）と同じ大きさの円 */
+    height: 220px;
+    margin-top: 8px;
+    border-radius: 999px;
+    background: radial-gradient(closest-side, rgba(79, 115, 217, 0.08), transparent);
+  }
+  .mag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 28px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ug-navy);
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    /* これが演出の本体: マウスの方へ少しずれる。戻るときはゆっくり */
+    transition: transform 0.35s ease-out;
+  }
+  .mag.is-pull { transition-duration: 0.15s; }
+  .mag-text { display: block; transition: transform 0.35s ease-out; }
+  .mag.is-pull .mag-text { transition-duration: 0.15s; }
+  .mag:focus-visible { outline: 2px solid var(--ug-blue); outline-offset: 3px; }
+  .mag:active { background: #2b365c; }
+  @container (max-width: 420px) {
+    .lead { display: none; }
+    .cta { padding-bottom: 24px; }
+  }
+  :global(.is-mini) .nav { display: none; }
+  :global(.is-mini) .cta { padding: 12px 16px 24px; }
+  :global(.is-mini) .mag-field { height: 112px; width: 220px; margin-top: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .mag, .mag-text { transition: none; }
+  }
+</style>
+
+<script>
+  import { onTour, onPointer, type Point } from '../../../lib/ugoki/runtime';
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const RANGE = 110; // ボタンの中心からこの距離（px）以内で吸い寄せる
+  const POWER = 0.35; // マウスとのずれの何割だけ寄るか
+
+  document.querySelectorAll<HTMLElement>('[data-demo="magnetic-button"]').forEach((root) => {
+    const view = root.closest<HTMLElement>('[data-ug-view]');
+    const btn = root.querySelector<HTMLElement>('.mag');
+    const text = root.querySelector<HTMLElement>('.mag-text');
+    const field = root.querySelector<HTMLElement>('.mag-field');
+    if (!view || !btn || !text || !field) return;
+
+    const release = () => {
+      btn.classList.remove('is-pull');
+      btn.style.transform = '';
+      text.style.transform = '';
+    };
+    const pull = (p: Point) => {
+      if (reduce) return;
+      // ボタンは動くので、動かない親の箱（点線の範囲）の中心で測る
+      const v = view.getBoundingClientRect();
+      const r = field.getBoundingClientRect();
+      const cx = r.left - v.left + r.width / 2;
+      const cy = r.top - v.top + r.height / 2 + view.scrollTop;
+      const dx = p.x - cx;
+      const dy = p.y - cy;
+      if (Math.hypot(dx, dy) > RANGE) return release();
+      btn.classList.add('is-pull');
+      btn.style.transform = `translate(${dx * POWER}px, ${dy * POWER}px)`;
+      // 中の文字はさらに少しだけ寄せると、立体的に見える
+      text.style.transform = `translate(${dx * 0.15}px, ${dy * 0.15}px)`;
+    };
+    onPointer(view, (p) => pull(p));
+    view.addEventListener('pointerdown', (e) => {
+      const r = view.getBoundingClientRect();
+      pull({ x: e.clientX - r.left, y: e.clientY - r.top + view.scrollTop });
+    });
+    view.addEventListener('pointerup', (e) => {
+      if (e.pointerType !== 'mouse') window.setTimeout(release, 250);
+    });
+    view.addEventListener('pointerleave', release);
+    view.addEventListener('ug:reset', release);
+
+    onTour(root, async (t) => {
+      release();
+      const w = t.view.clientWidth;
+      const h = t.view.clientHeight;
+      const fr = field.getBoundingClientRect();
+      const vr = t.view.getBoundingClientRect();
+      const c = { x: fr.left - vr.left + fr.width / 2, y: fr.top - vr.top + fr.height / 2 };
+      await t.move({ x: w * 0.12, y: h * 0.9 }, 400);
+      await t.sleep(300);
+      // 範囲の外から近づく → 吸い寄せられる
+      await t.move({ x: c.x - 150, y: c.y + 40 }, 700);
+      await t.move({ x: c.x - 70, y: c.y + 30 }, 700);
+      await t.sleep(400);
+      // ボタンのまわりを回る → ついてくる
+      await t.move({ x: c.x - 10, y: c.y - 45 }, 600);
+      await t.move({ x: c.x + 75, y: c.y - 10 }, 600);
+      await t.move({ x: c.x + 30, y: c.y + 45 }, 600);
+      await t.move({ x: c.x + 6, y: c.y + 4 }, 500);
+      await t.sleep(300);
+      await t.click(btn);
+      await t.sleep(500);
+      // 範囲の外へ離れる → 元の位置に戻る
+      await t.move({ x: w * 0.88, y: h * 0.88 }, 800);
+      await t.sleep(900);
+    });
+  });
+</script>
