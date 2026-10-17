@@ -1,0 +1,52 @@
+---
+// 資料レイアウトの見本: 問いかけ型（聞き手への問いを大きく1つだけ置き、考える材料を下に3つ添える）
+// つまみ: --t-accent（色）・data-t-emph（強調のしかた color|marker|none）・--t-size（問いの文字の大きさ。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '問いかけ型',
+    kicker: 'ディスカッション　隣の人と3分、話してください',
+    q: ['問い合わせが2倍になっても、今の6人で', '3日以内', 'に返事できますか？'],
+    hint: '考えるヒント',
+    hints: [
+      ['今の返信にかかる日数', '平均2日'],
+      ['繁忙期の問い合わせ', '月320件'],
+      ['対応するメンバー', '6人'],
+    ],
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={10} lang={lang}>
+  <div class="qs" data-demo="question">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <div class="qs-main">
+      <p class="qs-q" data-sf-in style="--i: 1">{T.q[0]}<span class="qs-em">{T.q[1]}</span>{T.q[2]}</p>
+    </div>
+    <p class="qs-hint" data-sf-in style="--i: 2">{T.hint}</p>
+    <ul class="qs-cards">
+      {T.hints.map(([k, v], i) => (
+        <li data-sf-in style={`--i: ${i + 3}`}><span class="qs-k">{k}</span><span class="qs-v">{v}</span></li>
+      ))}
+    </ul>
+  </div>
+</SlideFrame>
+
+<style>
+  .qs { display: flex; flex-direction: column; height: 100%; }
+  .qs-main { flex: 1; display: flex; align-items: center; }
+  .qs-q { margin: 0; font-size: calc(var(--t-size) * var(--u)); font-weight: 800; line-height: 1.35; letter-spacing: 0.01em; }
+  .qs-em { white-space: nowrap; }
+  .qs-hint { margin: 0 0 calc(10 * var(--u)); font-size: calc(16 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .qs-cards { list-style: none; margin: 0 0 calc(10 * var(--u)); padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(16 * var(--u)); }
+  .qs-cards li { display: flex; flex-direction: column; gap: calc(2 * var(--u)); padding: calc(14 * var(--u)) calc(20 * var(--u)); border-radius: calc(10 * var(--u)); background: var(--sf-soft); }
+  .qs-k { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .qs-v { font-size: calc(28 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+
+  /* 強調のしかた（つまみ: 強調のしかた） */
+  :global([data-t-emph='color']) .qs-em { color: var(--t-accent); }
+  :global([data-t-emph='marker']) .qs-em { background: linear-gradient(transparent 62%, color-mix(in srgb, var(--t-accent) 30%, transparent) 62%); }
+</style>

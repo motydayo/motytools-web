@@ -1,0 +1,88 @@
+---
+// 資料レイアウトの見本: ダンベル比較型（6つの部署の残業時間を導入前・導入後の2つの点と線で結び、差の大きい順に並べる）
+// 点の横の位置 = 時間 ÷ 50 × 600 ＋ 96（目盛りは0〜50時間）。右の列は 導入前 − 導入後。
+// つまみ: --t-accent（色）・data-t-delta（短縮した時間の列 show|hide）・--t-dot（点の大きさ）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const PFX = 'db-';
+const PAGE = 12;
+const ATTRS = ['delta'];
+// 部署ごとの、月間残業時間（時間）。導入前（4月）と導入後（9月）。差の大きい順に並べる。
+const RAW = [['営業', 32, 21], ['開発', 41, 34], ['経理', 28, 18], ['人事', 18, 15], ['総務', 22, 12], ['企画', 26, 22]];
+const rows = RAW.map(([name, a, b]) => ({ name, a, b, d: a - b })).sort((x, y) => y.d - x.d);
+const n10 = rows.filter((r) => r.d >= 10).length;
+const avgA = rows.reduce((s, r) => s + r.a, 0) / rows.length;
+const avgB = rows.reduce((s, r) => s + r.b, 0) / rows.length;
+if (rows.some((r) => r.d <= 0)) throw new Error('dumbbell: 減っていない部署があります（見出しと合いません）');
+const T = {
+  name: 'ダンベル比較型',
+  kicker: '時差出勤・在宅勤務の導入前後の、部署別の月間残業時間（4月と9月）',
+  title: `全部署で残業が減り、${n10}部署は10時間以上の短縮`,
+  note: `※ 部署ごとの月間残業時間の平均（時間）。全部署の単純平均は${avgA.toFixed(1)}時間から${avgB.toFixed(1)}時間へ。`,
+};
+const fmt = (n) => String(Math.round(n * 100) / 100);
+function buildBody(p) {
+  const c = (...n) => n.map((x) => p + x).join(' ');
+  const W = 848, X0 = 96, X1 = 696, MAX = 50, AX = 306, PITCH = 44, CY0 = 62;
+  const x = (v) => fmt(X0 + (v / MAX) * (X1 - X0));
+  let s = `    <svg class="${c('svg')}" viewBox="0 0 ${W} 338" role="img" aria-label="部署ごとの導入前と導入後の残業時間">\n`;
+  for (let k = 0; k <= 5; k++) {
+    s += `      <line class="${c(k === 0 ? 'base' : 'grid')}" x1="${x(k * 10)}" x2="${x(k * 10)}" y1="40" y2="${AX}" />\n`;
+    s += `      <text class="${c('tick')}" x="${x(k * 10)}" y="${AX + 24}" text-anchor="middle">${k * 10}</text>\n`;
+  }
+  s += `      <text class="${c('unit')}" x="${X0 - 12}" y="${AX + 24}" text-anchor="end">（時間）</text>\n`;
+  // 凡例
+  s += `      <circle class="${c('dot', 'before')}" cx="${X0 + 8}" cy="14" r="7" />\n      <text class="${c('legend')}" x="${X0 + 22}" y="20">導入前（4月）</text>\n`;
+  s += `      <circle class="${c('dot', 'after')}" cx="${X0 + 164}" cy="14" r="7" />\n      <text class="${c('legend')}" x="${X0 + 178}" y="20">導入後（9月）</text>\n`;
+  s += `      <text class="${c('head')}" x="${W}" y="20" text-anchor="end">短縮した時間</text>\n`;
+  rows.forEach((r, i) => {
+    const cy = CY0 + i * PITCH;
+    s += `      <text class="${c('name')}" x="0" y="${cy + 6}">${r.name}</text>\n`;
+    s += `      <line class="${c('bar')}" x1="${x(r.b)}" x2="${x(r.a)}" y1="${cy}" y2="${cy}" />\n`;
+    s += `      <circle class="${c('dot', 'before')}" cx="${x(r.a)}" cy="${cy}" r="9" />\n`;
+    s += `      <circle class="${c('dot', 'after')}" cx="${x(r.b)}" cy="${cy}" r="9" />\n`;
+    s += `      <text class="${c('v', 'va')}" x="${fmt(+x(r.b) - 18)}" y="${cy + 6}" text-anchor="end">${r.b}</text>\n`;
+    s += `      <text class="${c('v', 'vb')}" x="${fmt(+x(r.a) + 18)}" y="${cy + 6}">${r.a}</text>\n`;
+    s += `      <text class="${c('dv', r.d >= 10 ? 'big' : 'x')}" x="${W}" y="${cy + 8}" text-anchor="end">−${r.d}</text>\n`;
+  });
+  s += `    </svg>`;
+  return s;
+}
+// 英語版を作るときは T を言語ごとに用意する（今は日本語だけ）
+const body = buildBody('db-');
+---
+
+<SlideFrame size={size} label={T.name} page={PAGE} lang={lang}>
+  <div class="db" data-demo="dumbbell">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="db-body" data-sf-in style="--i: 2" set:html={body} />
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style is:global>
+  .db { display: flex; flex-direction: column; height: 100%; }
+  .db-body { flex: 1; min-height: 0; margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); }
+  /* 横の位置は 時間 ÷ 50 × 600。線の長さがそのまま差になる。座標は幅848×高さ338の中で数字で決めている */
+  
+  .db-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .db-grid { stroke: #e3e5ea; stroke-width: 1; }
+  .db-base { stroke: #8a8f9c; stroke-width: 1.5; }
+  .db-tick { font-size: 14px; fill: #8a8f9c; font-variant-numeric: tabular-nums; }
+  .db-unit { font-size: 14px; fill: #8a8f9c; }
+  .db-legend { font-size: 15px; fill: #5a6070; }
+  .db-head { font-size: 15px; font-weight: 700; fill: #5a6070; }
+  .db-name { font-size: 18px; font-weight: 700; fill: #1f2430; }
+  .db-bar { stroke: #c3c8d2; stroke-width: 5; stroke-linecap: round; }
+  .db-dot { r: calc(var(--t-dot) * 1px); }
+  .db-dot.db-before { fill: #8a8f9c; }
+  .db-dot.db-after { fill: var(--t-accent); }
+  .db-v { font-size: 18px; font-weight: 800; fill: #5a6070; font-variant-numeric: tabular-nums; }
+  .db-v.db-va { fill: var(--t-accent); }
+  .db-dv { font-size: 24px; font-weight: 800; fill: #1f2430; font-variant-numeric: tabular-nums; }
+  .db-dv.db-big { fill: var(--t-accent); }
+  /* 短縮した時間の列（data-delta="hide" で消す） */
+  [data-t-delta='hide'] .db-dv,
+  [data-t-delta='hide'] .db-head { display: none; }
+</style>

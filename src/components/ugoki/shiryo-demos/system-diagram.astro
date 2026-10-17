@@ -1,0 +1,104 @@
+---
+// 資料レイアウトの見本: システム構成型（仕組みの部品と、データの流れを図にする）
+// 左＝利用する人、中央の点線の枠＝自社で運営する部分（サーバーとデータベース）、右＝外部のサービス。矢印はデータの向きで、横の矢印はサーバーの左右の辺に結ぶ。
+// つまみ: --t-accent（色）・data-t-focus（強調する範囲 own|ext|none）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'システム構成型',
+    kicker: '美容室向け予約システムの構成',
+    title: '予約は自社で受け、決済と通知は外部に任せる',
+    note: '※ 矢印はデータの向き。外部のサービスは月額の契約で利用する。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={18} lang={lang}>
+  <div class="sy" data-demo="system-diagram">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="sy-diagram" data-sf-in style="--i: 1">
+      <svg viewBox="0 0 848 340" role="img" aria-label="美容室向け予約システムの構成（利用者・自社の予約サーバーとデータベース・外部の決済とメール配信）">
+        <text class="sy-zone" x="0" y="22">利用する人</text>
+        <text class="sy-zone" x="848" y="22" text-anchor="end">外部のサービス</text>
+        <rect class="sy-own" x="270" y="0" width="320" height="340" rx="16" />
+        <text class="sy-zone sy-own-t" x="288" y="22">自社で運営</text>
+        <path class="sy-arrow" d="M170 92 H290" />
+        <polygon class="sy-tip" points="300,92 290,86 290,98" />
+        <text class="sy-lab" x="220" y="83" text-anchor="middle">予約申込み</text>
+        <path class="sy-arrow" d="M180 168 H300" />
+        <polygon class="sy-tip" points="170,168 180,162 180,174" />
+        <text class="sy-lab" x="220" y="159" text-anchor="middle">予約を確認</text>
+        <path class="sy-arrow" d="M560 92 H668" />
+        <polygon class="sy-tip" points="678,92 668,86 668,98" />
+        <text class="sy-lab" x="634" y="83" text-anchor="middle">決済を依頼</text>
+        <path class="sy-arrow" d="M560 168 H668" />
+        <polygon class="sy-tip" points="678,168 668,162 668,174" />
+        <text class="sy-lab" x="634" y="159" text-anchor="middle">通知を依頼</text>
+        <path class="sy-arrow" d="M430 204 V242" />
+        <polygon class="sy-tip" points="430,194 424,204 436,204" />
+        <polygon class="sy-tip" points="430,244 424,234 436,234" />
+        <text class="sy-lab" x="446" y="228">予約情報を保存</text>
+        <g class="sy-user">
+          <rect x="0" y="64" width="170" height="56" rx="10" />
+          <text class="sy-name" x="85" y="87" text-anchor="middle">お客さま</text>
+          <text class="sy-sub" x="85" y="108" text-anchor="middle">スマートフォン</text>
+        </g>
+        <g class="sy-user">
+          <rect x="0" y="140" width="170" height="56" rx="10" />
+          <text class="sy-name" x="85" y="163" text-anchor="middle">店舗スタッフ</text>
+          <text class="sy-sub" x="85" y="184" text-anchor="middle">タブレット端末</text>
+        </g>
+        <g class="sy-ext">
+          <rect x="678" y="64" width="170" height="56" rx="10" />
+          <text class="sy-name" x="763" y="87" text-anchor="middle">決済サービス</text>
+          <text class="sy-sub" x="763" y="108" text-anchor="middle">カードの支払い</text>
+        </g>
+        <g class="sy-ext">
+          <rect x="678" y="140" width="170" height="56" rx="10" />
+          <text class="sy-name" x="763" y="163" text-anchor="middle">メール配信</text>
+          <text class="sy-sub" x="763" y="184" text-anchor="middle">確認メールの送信</text>
+        </g>
+        <g class="sy-in">
+          <rect x="300" y="44" width="260" height="150" rx="12" />
+          <text class="sy-name sy-big" x="430" y="108" text-anchor="middle">予約サーバー</text>
+          <text class="sy-sub" x="430" y="138" text-anchor="middle">予約の受付と</text>
+          <text class="sy-sub" x="430" y="160" text-anchor="middle">店舗用の管理画面</text>
+        </g>
+        <g class="sy-in sy-db">
+          <path d="M330 266 V310 A100 14 0 0 0 530 310 V266" />
+          <ellipse cx="430" cy="266" rx="100" ry="14" />
+          <text class="sy-name" x="430" y="304" text-anchor="middle">データベース</text>
+        </g>
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .sy { display: flex; flex-direction: column; height: 100%; }
+  .sy-diagram { position: relative; flex: 1; margin: calc(12 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .sy-diagram svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* 図の中の寸法は、viewBox（幅848）の数字そのまま */
+  .sy-zone { font-size: 16px; font-weight: 800; fill: #8a8f9c; }
+  .sy-own { fill: #fafafb; stroke: #c3c8d2; stroke-width: 2; stroke-dasharray: 7 6; }
+  .sy-arrow { fill: none; stroke: #8a8f9c; stroke-width: 2.5; }
+  .sy-tip { fill: #8a8f9c; }
+  .sy-lab { font-size: 16px; fill: #5a6070; }
+  .sy-user rect, .sy-ext rect { fill: #fff; stroke: #8a8f9c; stroke-width: 2; }
+  .sy-name { font-size: 18px; font-weight: 800; fill: #1f2430; }
+  .sy-big { font-size: 24px; }
+  .sy-sub { font-size: 16px; fill: #5a6070; }
+  .sy-in rect, .sy-in path, .sy-in ellipse { fill: #fff; stroke: #8a8f9c; stroke-width: 2; }
+  /* 強調する範囲 */
+  :global([data-t-focus='own']) .sy-own { fill: color-mix(in srgb, var(--t-accent) 7%, #fff); stroke: var(--t-accent); }
+  :global([data-t-focus='own']) .sy-own-t { fill: var(--t-accent); }
+  :global([data-t-focus='own']) .sy-in rect,
+  :global([data-t-focus='own']) .sy-in path,
+  :global([data-t-focus='own']) .sy-in ellipse { stroke: var(--t-accent); stroke-width: 3; }
+  :global([data-t-focus='ext']) .sy-ext rect { fill: color-mix(in srgb, var(--t-accent) 10%, #fff); stroke: var(--t-accent); stroke-width: 3; }
+</style>

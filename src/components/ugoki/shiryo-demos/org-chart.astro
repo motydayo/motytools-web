@@ -1,0 +1,120 @@
+---
+// 資料レイアウトの見本: 組織図型（部署や人の上下の関係を、木の形で見せる）
+// 社長→3本部→8部。人数は部の人数を足して本部、本部を足して全社（132名）。部の箱は本部の下に縦に積み、左の線から短い枝で結ぶ。
+// つまみ: --t-accent（色）・data-t-count（人数 show|hide）・data-t-fill（本部の箱 solid|line）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '組織図型',
+    kicker: '株式会社ミナト食品の組織（2026年10月1日現在）',
+    title: '3本部8部、132名で会社を動かしている',
+    note: '※ 人数は正社員のみ（社長を除く）。本部の人数は配下の部の合計。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={17} lang={lang}>
+  <div class="oc" data-demo="org-chart">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="oc-diagram" data-sf-in style="--i: 1">
+      <svg viewBox="0 0 848 340" role="img" aria-label="株式会社ミナト食品の組織図（社長の下に3つの本部と8つの部）">
+        <g class="oc-lines">
+          <path d="M424 60 V80 M136 80 H712" />
+          <path d="M136 80 V100" />
+          <path d="M18 148 V280 M18 188 H32 M18 234 H32 M18 280 H32" />
+          <path d="M424 80 V100" />
+          <path d="M306 148 V234 M306 188 H320 M306 234 H320" />
+          <path d="M712 80 V100" />
+          <path d="M594 148 V280 M594 188 H608 M594 234 H608 M594 280 H608" />
+        </g>
+        <rect class="oc-root" x="324" y="0" width="200" height="60" rx="12" />
+        <text class="oc-root-t" x="424" y="26" text-anchor="middle">代表取締役社長</text>
+        <text class="oc-root-n oc-n" x="424" y="48" text-anchor="middle">全社 132名</text>
+        <g class="oc-head">
+          <rect x="0" y="100" width="272" height="48" rx="10" />
+          <text class="oc-head-t" x="18" y="131">営業本部</text>
+          <text class="oc-head-n oc-n" x="254" y="131" text-anchor="end">68名</text>
+        </g>
+        <g class="oc-leaf">
+          <rect x="32" y="168" width="240" height="40" rx="8" />
+          <text class="oc-leaf-t" x="46" y="194">東日本営業部</text>
+          <text class="oc-leaf-n oc-n" x="258" y="194" text-anchor="end">28名</text>
+        </g>
+        <g class="oc-leaf">
+          <rect x="32" y="214" width="240" height="40" rx="8" />
+          <text class="oc-leaf-t" x="46" y="240">西日本営業部</text>
+          <text class="oc-leaf-n oc-n" x="258" y="240" text-anchor="end">24名</text>
+        </g>
+        <g class="oc-leaf">
+          <rect x="32" y="260" width="240" height="40" rx="8" />
+          <text class="oc-leaf-t" x="46" y="286">法人営業部</text>
+          <text class="oc-leaf-n oc-n" x="258" y="286" text-anchor="end">16名</text>
+        </g>
+        <g class="oc-head">
+          <rect x="288" y="100" width="272" height="48" rx="10" />
+          <text class="oc-head-t" x="306" y="131">商品開発本部</text>
+          <text class="oc-head-n oc-n" x="542" y="131" text-anchor="end">36名</text>
+        </g>
+        <g class="oc-leaf">
+          <rect x="320" y="168" width="240" height="40" rx="8" />
+          <text class="oc-leaf-t" x="334" y="194">開発部</text>
+          <text class="oc-leaf-n oc-n" x="546" y="194" text-anchor="end">22名</text>
+        </g>
+        <g class="oc-leaf">
+          <rect x="320" y="214" width="240" height="40" rx="8" />
+          <text class="oc-leaf-t" x="334" y="240">品質保証部</text>
+          <text class="oc-leaf-n oc-n" x="546" y="240" text-anchor="end">14名</text>
+        </g>
+        <g class="oc-head">
+          <rect x="576" y="100" width="272" height="48" rx="10" />
+          <text class="oc-head-t" x="594" y="131">管理本部</text>
+          <text class="oc-head-n oc-n" x="830" y="131" text-anchor="end">28名</text>
+        </g>
+        <g class="oc-leaf">
+          <rect x="608" y="168" width="240" height="40" rx="8" />
+          <text class="oc-leaf-t" x="622" y="194">経理部</text>
+          <text class="oc-leaf-n oc-n" x="834" y="194" text-anchor="end">9名</text>
+        </g>
+        <g class="oc-leaf">
+          <rect x="608" y="214" width="240" height="40" rx="8" />
+          <text class="oc-leaf-t" x="622" y="240">総務人事部</text>
+          <text class="oc-leaf-n oc-n" x="834" y="240" text-anchor="end">12名</text>
+        </g>
+        <g class="oc-leaf">
+          <rect x="608" y="260" width="240" height="40" rx="8" />
+          <text class="oc-leaf-t" x="622" y="286">情報システム部</text>
+          <text class="oc-leaf-n oc-n" x="834" y="286" text-anchor="end">7名</text>
+        </g>
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .oc { display: flex; flex-direction: column; height: 100%; }
+  .oc-diagram { position: relative; flex: 1; margin: calc(12 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .oc-diagram svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* 図の中の寸法は、viewBox（幅848）の数字そのまま */
+  .oc-lines path { fill: none; stroke: #c3c8d2; stroke-width: 2.5; }
+  .oc-root { fill: #1f2430; }
+  .oc-root-t { font-size: 18px; font-weight: 800; fill: #fff; }
+  .oc-root-n { font-size: 16px; font-weight: 700; fill: #c3c8d2; }
+  .oc-head rect { fill: var(--t-accent); stroke: var(--t-accent); stroke-width: 2.5; }
+  .oc-head-t { font-size: 20px; font-weight: 800; fill: #fff; }
+  .oc-head-n { font-size: 20px; font-weight: 800; fill: #fff; }
+  .oc-leaf rect { fill: #f3f4f7; }
+  .oc-leaf-t { font-size: 17px; font-weight: 700; fill: #1f2430; }
+  .oc-leaf-n { font-size: 17px; font-weight: 800; fill: #5a6070; }
+  .oc-n { font-variant-numeric: tabular-nums; }
+  :global([data-t-fill='line']) .oc-head rect { fill: #fff; }
+  :global([data-t-fill='line']) .oc-head-t { fill: #1f2430; }
+  :global([data-t-fill='line']) .oc-head-n { fill: var(--t-accent); }
+  :global([data-t-count='hide']) .oc-leaf-n,
+  :global([data-t-count='hide']) .oc-head-n,
+  :global([data-t-count='hide']) .oc-root-n { display: none; }
+</style>

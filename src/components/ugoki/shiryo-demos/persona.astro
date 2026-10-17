@@ -1,0 +1,91 @@
+---
+// 資料レイアウトの見本: ペルソナ型（想定するお客さま1人の人物像を、左のカードと右の3つの観点にまとめる）
+// 人物の絵は図形（SVG）で描いた、顔のない中立のイラスト。写真ではない。人物・数字はすべて架空。
+// つまみ: --t-accent（色）・data-t-quote（ひとことの帯 show|hide）・data-t-attr（左の属性欄 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'ペルソナ型',
+    kicker: '献立アプリ「こんだて帳」の想定するお客さま',
+    title: '平日の夕食づくりに追われる、共働きの34歳',
+    person: { label: 'ペルソナ（仮名）', name: 'ミサキさん', sub: '34歳・会社員（メーカーの営業企画）' },
+    attrs: [['家族', '夫と5歳の子'], ['住まい', '横浜市・賃貸'], ['帰宅', '平日19時ごろ'], ['スマホ', '毎日2時間ほど']],
+    blocks: [
+      { label: '目的', items: ['平日の夕食を30分以内に済ませたい', '子どもが食べる野菜を切らしたくない'] },
+      { label: '困りごと', items: ['毎日の献立を考えるのが負担', '買い物が2回に分かれてしまう'] },
+      { label: '使う場面', items: ['通勤電車（18時ごろ）で献立を決める', 'スーパーで買い忘れを確かめる'] },
+    ],
+    quote: '「献立を考える時間が、いちばんもったいない。」',
+    note: '※ 想定する人物像。実在の人物ではなく、数字は当社の想定。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={16} lang={lang}>
+  <div class="pe" data-demo="persona">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="pe-main">
+      <div class="pe-card" data-sf-in style="--i: 1">
+        <div class="pe-top">
+          <svg class="pe-avatar" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="50" style="fill: color-mix(in srgb, var(--t-accent) 16%, #fff)" />
+            <circle cx="50" cy="40" r="17" fill="#c3c8d2" />
+            <path d="M18 92C18 70 32 61 50 61C68 61 82 70 82 92C72 98 28 98 18 92Z" style="fill: var(--t-accent)" />
+          </svg>
+          <span class="pe-who">
+            <span class="pe-tag">{T.person.label}</span>
+            <span class="pe-name">{T.person.name}</span>
+          </span>
+        </div>
+        <span class="pe-sub">{T.person.sub}</span>
+        <dl class="pe-attrs">
+          {T.attrs.map(([k, v]) => (
+            <div><dt>{k}</dt><dd>{v}</dd></div>
+          ))}
+        </dl>
+      </div>
+      <div class="pe-blocks">
+        {T.blocks.map((b, i) => (
+          <div class="pe-block" data-sf-in style={`--i: ${i + 2}`}>
+            <span class="pe-label">{b.label}</span>
+            <span class="pe-items">{b.items.map((t) => <span>{t}</span>)}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="pe-quote" data-sf-in style="--i: 5"><span>{T.quote}</span></div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .pe { display: flex; flex-direction: column; height: 100%; }
+  .pe-main { flex: 1; display: grid; grid-template-columns: calc(300 * var(--u)) minmax(0, 1fr); gap: calc(16 * var(--u)); margin: calc(16 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .pe-card { display: flex; flex-direction: column; gap: calc(8 * var(--u)); padding: calc(14 * var(--u)) calc(18 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; min-height: 0; }
+  .pe-top { display: flex; align-items: center; gap: calc(14 * var(--u)); }
+  .pe-avatar { flex: none; width: calc(76 * var(--u)); height: calc(76 * var(--u)); }
+  .pe-who { display: grid; gap: calc(3 * var(--u)); }
+  .pe-tag { justify-self: start; padding: calc(1 * var(--u)) calc(10 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--sf-soft); color: var(--sf-ink-2); font-size: calc(13 * var(--u)); font-weight: 800; }
+  .pe-name { font-size: calc(28 * var(--u)); font-weight: 800; line-height: 1.15; }
+  .pe-sub { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); line-height: 1.45; }
+  .pe-attrs { display: grid; gap: calc(4 * var(--u)); margin: auto 0 0; padding-top: calc(8 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); }
+  .pe-attrs div { display: flex; gap: calc(12 * var(--u)); }
+  .pe-attrs dt { flex: none; width: calc(56 * var(--u)); font-size: calc(15 * var(--u)); color: var(--sf-ink-3); font-weight: 700; }
+  .pe-attrs dd { margin: 0; font-size: calc(16 * var(--u)); font-weight: 700; }
+  .pe-blocks { display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: calc(10 * var(--u)); min-height: 0; }
+  .pe-block { display: flex; align-items: center; gap: calc(18 * var(--u)); padding: calc(8 * var(--u)) calc(20 * var(--u)); border-radius: calc(12 * var(--u)); background: var(--sf-soft); }
+  .pe-label { flex: none; width: calc(86 * var(--u)); font-size: calc(18 * var(--u)); font-weight: 800; color: var(--t-accent); }
+  .pe-items { display: grid; gap: calc(4 * var(--u)); }
+  .pe-items span { position: relative; padding-left: calc(16 * var(--u)); font-size: calc(18 * var(--u)); font-weight: 700; line-height: 1.4; }
+  .pe-items span::before { content: ''; position: absolute; left: 0; top: 0.55em; width: calc(7 * var(--u)); height: calc(7 * var(--u)); border-radius: 50%; background: var(--sf-mute); }
+  .pe-quote { padding: calc(8 * var(--u)) calc(22 * var(--u)); margin-bottom: calc(8 * var(--u)); border-left: calc(5 * var(--u)) solid var(--t-accent); background: color-mix(in srgb, var(--t-accent) 7%, #fff); font-size: calc(20 * var(--u)); font-weight: 800; border-radius: 0 calc(10 * var(--u)) calc(10 * var(--u)) 0; }
+
+  /* ひとことの帯（つまみ） */
+  :global([data-t-quote='hide']) .pe-quote { display: none; }
+  /* 左の属性欄（つまみ） */
+  :global([data-t-attr='hide']) .pe-attrs { display: none; }
+</style>

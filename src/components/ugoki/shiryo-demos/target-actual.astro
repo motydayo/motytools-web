@@ -1,0 +1,89 @@
+---
+// 資料レイアウトの見本: 目標・実績型（6つの営業所の半期売上を、目標までの帯・実績の棒・目標の縦線で見せ、達成率の高い順に並べる）
+// 横の位置 = 値 ÷ 450 × 506 ＋ 84（目盛りは0〜450百万円）。達成率 = 実績 ÷ 目標。
+// つまみ: --t-accent（色）・data-t-miss（未達の見せ方 gray|red）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const PFX = 'ta-';
+const PAGE = 15;
+const ATTRS = ['miss'];
+// 営業所ごとの半期売上（百万円）。[名前, 目標, 実績]。達成率の高い順に並べる。
+const RAW = [['札幌', 120, 108], ['仙台', 150, 156], ['東京', 400, 432], ['名古屋', 220, 198], ['大阪', 300, 309], ['福岡', 180, 189]];
+const MAX = 450;
+if (RAW.some(([, t, a]) => t > MAX || a > MAX)) throw new Error('target-actual: 目盛りの最大を超える値があります');
+const rows = RAW.map(([name, t, a]) => ({ name, t, a, r: Math.round((a / t) * 100) })).sort((x, y) => y.r - x.r);
+const totT = RAW.reduce((s, r) => s + r[1], 0), totA = RAW.reduce((s, r) => s + r[2], 0);
+const missed = rows.filter((r) => r.a < r.t);
+const T = {
+  name: '目標・実績型',
+  kicker: '営業所別の半期売上：目標と実績（2025年4〜9月）',
+  title: `全体では目標の${Math.round((totA / totT) * 100)}%、${missed.map((r) => r.name).join('と')}が未達`,
+  note: `※ 単位は百万円。灰色の帯が目標まで、細い縦線が目標。達成率は 実績 ÷ 目標。全体は目標${totT.toLocaleString('en-US')}に対して実績${totA.toLocaleString('en-US')}。`,
+};
+const fmt = (n) => String(Math.round(n * 100) / 100);
+function buildBody(p) {
+  const c = (...n) => n.map((x) => p + x).join(' ');
+  const W = 848, X0 = 84, X1 = 590, PITCH = 46, CY0 = 58, BASE = 306;
+  const x = (v) => fmt(X0 + (v / MAX) * (X1 - X0));
+  let s = `    <svg class="${c('svg')}" viewBox="0 0 ${W} 338" role="img" aria-label="営業所ごとの目標と実績">\n`;
+  for (const g of [0, 100, 200, 300, 400]) {
+    s += `      <line class="${c(g === 0 ? 'base' : 'grid')}" x1="${x(g)}" x2="${x(g)}" y1="38" y2="${BASE}" />\n`;
+    s += `      <text class="${c('tick')}" x="${x(g)}" y="${BASE + 24}" text-anchor="middle">${g}</text>\n`;
+  }
+  // 凡例と列の見出し
+  s += `      <rect class="${c('bar', 'ok')}" x="${X0}" y="7" width="22" height="12" rx="2" />\n      <text class="${c('legend')}" x="${X0 + 30}" y="19">目標を達成</text>\n`;
+  s += `      <rect class="${c('bar', 'ng')}" x="${X0 + 140}" y="7" width="22" height="12" rx="2" />\n      <text class="${c('legend')}" x="${X0 + 170}" y="19">未達</text>\n`;
+  s += `      <line class="${c('tgt')}" x1="${X0 + 240}" x2="${X0 + 240}" y1="3" y2="23" />\n      <text class="${c('legend')}" x="${X0 + 252}" y="19">目標</text>\n`;
+  s += `      <text class="${c('head')}" x="690" y="19" text-anchor="end">実績</text>\n      <text class="${c('head')}" x="760" y="19" text-anchor="end">目標</text>\n      <text class="${c('head')}" x="${W}" y="19" text-anchor="end">達成率</text>\n`;
+  rows.forEach((r, i) => {
+    const cy = CY0 + i * PITCH, ok = r.a >= r.t;
+    s += `      <text class="${c('name')}" x="0" y="${cy + 6}">${r.name}</text>\n`;
+    s += `      <rect class="${c('track')}" x="${X0}" y="${cy - 17}" width="${fmt(((r.t) / MAX) * (X1 - X0))}" height="34" rx="2" />\n`;
+    s += `      <rect class="${c('bar', ok ? 'ok' : 'ng', 'act')}" x="${X0}" y="${cy - 12}" width="${fmt((r.a / MAX) * (X1 - X0))}" height="24" rx="2" />\n`;
+    s += `      <line class="${c('tgt')}" x1="${x(r.t)}" x2="${x(r.t)}" y1="${cy - 20}" y2="${cy + 20}" />\n`;
+    s += `      <text class="${c('v')}" x="690" y="${cy + 8}" text-anchor="end">${r.a}</text>\n`;
+    s += `      <text class="${c('v', 'tv')}" x="760" y="${cy + 8}" text-anchor="end">${r.t}</text>\n`;
+    s += `      <text class="${c('pct', ok ? 'ok' : 'ng')}" x="${W}" y="${cy + 9}" text-anchor="end">${r.r}%</text>\n`;
+  });
+  s += `    </svg>`;
+  return s;
+}
+// 英語版を作るときは T を言語ごとに用意する（今は日本語だけ）
+const body = buildBody('ta-');
+---
+
+<SlideFrame size={size} label={T.name} page={PAGE} lang={lang}>
+  <div class="ta" data-demo="target-actual">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ta-body" data-sf-in style="--i: 2" set:html={body} />
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style is:global>
+  .ta { display: flex; flex-direction: column; height: 100%; }
+  .ta-body { flex: 1; min-height: 0; margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); }
+  /* 横の位置は 値 ÷ 450 × 506（目盛りは0〜450）。灰色の帯は目標まで、青い棒は実績。座標は幅848×高さ338の中で数字で決めている */
+  
+  .ta-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .ta-grid { stroke: #e3e5ea; stroke-width: 1; }
+  .ta-base { stroke: #8a8f9c; stroke-width: 1.5; }
+  .ta-tick { font-size: 14px; fill: #8a8f9c; font-variant-numeric: tabular-nums; }
+  .ta-legend { font-size: 15px; fill: #5a6070; }
+  .ta-head { font-size: 15px; font-weight: 700; fill: #5a6070; }
+  .ta-name { font-size: 18px; font-weight: 700; fill: #1f2430; }
+  .ta-track { fill: #eceef2; }
+  .ta-bar.ta-ok { fill: var(--t-accent); }
+  .ta-bar.ta-ng { fill: #8a8f9c; }
+  .ta-tgt { stroke: #1f2430; stroke-width: 3; }
+  .ta-v { font-size: 22px; font-weight: 800; fill: #1f2430; font-variant-numeric: tabular-nums; }
+  .ta-v.ta-tv { fill: #8a8f9c; font-weight: 700; }
+  .ta-pct { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .ta-pct.ta-ok { fill: var(--t-accent); }
+  .ta-pct.ta-ng { fill: #8a8f9c; }
+  
+  /* 未達の見せ方（data-miss="red" なら、未達の棒と達成率を赤にする） */
+  [data-t-miss='red'] .ta-bar.ta-ng { fill: #d0453a; }
+  [data-t-miss='red'] .ta-pct.ta-ng { fill: #d0453a; }
+</style>

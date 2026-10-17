@@ -1,0 +1,73 @@
+---
+// 資料レイアウトの見本: ベン図型（3つの円を重ね、3つが重なる部分を「狙い目」として強調する。右に各円の中身を書く）
+// つまみ: --t-accent（色）・data-t-fill（円の塗り tint|line）・data-t-focus（重なりを強調 center|none）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: 'ベン図型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={9} lang={lang}>
+  <div class="vn" data-demo="venn">
+    <p class="sf-kicker" data-sf-in style="--i: 0">新サービスの狙い所（地域の工務店）</p>
+    <p class="sf-title" data-sf-in style="--i: 0">3つが重なる「小さな修繕の診断」を狙う</p>
+    <svg class="vn-svg" viewBox="0 0 848 320" role="img" aria-label="自社の強み、お客さまの困りごと、競合が手薄なところの3つの円が重なる部分に、狙い目があることを示すベン図">
+      <!-- 3つの円（半径104） -->
+      <circle class="vn-circle" cx="272" cy="106" r="104" />
+      <circle class="vn-circle" cx="392" cy="106" r="104" />
+      <circle class="vn-circle" cx="332" cy="208" r="104" />
+      <!-- 3つが重なる部分（3つの円弧で囲んだ形） -->
+      <path class="vn-core" d="M332 190.94 A104 104 0 0 0 375.7 113.6 A104 104 0 0 0 288.3 113.6 A104 104 0 0 0 332 190.94 Z" />
+
+      <text class="vn-name" x="229" y="84" text-anchor="middle">自社の</text>
+      <text class="vn-name" x="229" y="106" text-anchor="middle">強み</text>
+      <text class="vn-name" x="435" y="84" text-anchor="middle">お客さまの</text>
+      <text class="vn-name" x="435" y="106" text-anchor="middle">困りごと</text>
+      <text class="vn-name" x="332" y="268" text-anchor="middle">競合が</text>
+      <text class="vn-name" x="332" y="290" text-anchor="middle">手薄なところ</text>
+      <text class="vn-core-t" x="332" y="146" text-anchor="middle">狙い目</text>
+
+      <!-- 右の説明 -->
+      <path class="vn-divider" d="M520 6 V312" />
+      <g class="vn-rows">
+        <circle class="vn-sw" cx="556" cy="20" r="9" />
+        <text class="vn-row-t" x="580" y="26">自社の強み</text>
+        <text class="vn-row-d" x="580" y="52">施工の技術・地元の信頼</text>
+        <circle class="vn-sw" cx="556" cy="98" r="9" />
+        <text class="vn-row-t" x="580" y="104">お客さまの困りごと</text>
+        <text class="vn-row-d" x="580" y="130">誰に頼むか迷う・費用が見えない</text>
+        <circle class="vn-sw" cx="556" cy="176" r="9" />
+        <text class="vn-row-t" x="580" y="182">競合が手薄なところ</text>
+        <text class="vn-row-d" x="580" y="208">小さな修繕は大手が断る</text>
+        <circle class="vn-sw vn-sw-core" cx="556" cy="254" r="9" />
+        <text class="vn-row-t" x="580" y="260">重なる部分 ＝ 狙い目</text>
+        <text class="vn-row-d" x="580" y="286">小さな修繕の無料診断＋年1回点検</text>
+      </g>
+    </svg>
+    <p class="sf-note">※ 3つの円が重なる部分は、自社・お客さま・競合の状況が同時にそろう領域。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .vn { display: flex; flex-direction: column; height: 100%; }
+  .vn-svg { display: block; flex: 1; min-height: 0; width: 100%; margin: calc(8 * var(--u)) 0 calc(4 * var(--u)); }
+  .vn-svg text { font-family: inherit; }
+  .vn-circle { fill: var(--t-accent); fill-opacity: 0.14; stroke: var(--t-accent); stroke-width: 2.5; }
+  .vn-core { fill: var(--t-accent); fill-opacity: 0; }
+  .vn-name { font-size: 17px; font-weight: 800; fill: var(--sf-ink); }
+  .vn-core-t { font-size: 16px; font-weight: 800; fill: var(--sf-ink); }
+  .vn-divider { fill: none; stroke: var(--sf-line); stroke-width: 1.5; }
+  .vn-row-t { font-size: 18px; font-weight: 800; fill: var(--sf-ink); }
+  .vn-row-d { font-size: 16px; fill: var(--sf-ink-2); }
+  .vn-sw { fill: var(--t-accent); fill-opacity: 0.14; stroke: var(--t-accent); stroke-width: 2.5; }
+  .vn-sw-core { fill-opacity: 0.55; }
+
+  /* 円は線だけ（data-fill="line"） */
+  :global([data-t-fill='line']) .vn-circle,
+  :global([data-t-fill='line']) .vn-sw { fill-opacity: 0; }
+  :global([data-t-fill='line']) .vn-sw-core { fill-opacity: 0.55; }
+
+  /* 重なりを強調（data-focus="center"） */
+  :global([data-t-focus='center']) .vn-core { fill-opacity: 0.5; }
+</style>

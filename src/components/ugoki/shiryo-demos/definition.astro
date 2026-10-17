@@ -1,0 +1,74 @@
+---
+// 資料レイアウトの見本: 定義カード型（言葉の意味をカードで言い切り、下に計算の例を添える）
+// つまみ: --t-accent（色）・data-t-ex（例を出すか show|hide）・--t-term（用語の文字の大きさ。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '定義カード型',
+    kicker: '今日使う言葉',
+    term: 'NPS',
+    reading: 'ネット・プロモーター・スコア',
+    def: 'お客さまに「この会社を友人や同僚にすすめたいですか？」と0〜10点で聞き、愛着の強さを1つの数字にした指標。',
+    ex: [
+      ['推奨者（9〜10点）', '45%'],
+      ['批判者（0〜6点）', '15%'],
+    ],
+    result: ['NPS', '+30'],
+    note: '※ 中立（7〜8点）40%は計算に入れない。数字は架空の例。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={13} lang={lang}>
+  <div class="df" data-demo="definition">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <div class="df-card" data-sf-in style="--i: 1">
+      <p class="df-head"><span class="df-term">{T.term}</span><span class="df-read">{T.reading}</span></p>
+      <p class="df-def">{T.def}</p>
+    </div>
+    <div class="df-ex" data-sf-in style="--i: 2">
+      <div class="df-box"><span class="df-k">{T.ex[0][0]}</span><span class="df-v">{T.ex[0][1]}</span></div>
+      <span class="df-op">−</span>
+      <div class="df-box"><span class="df-k">{T.ex[1][0]}</span><span class="df-v">{T.ex[1][1]}</span></div>
+      <span class="df-op">＝</span>
+      <div class="df-box is-result"><span class="df-k">{T.result[0]}</span><span class="df-v">{T.result[1]}</span></div>
+    </div>
+    <p class="sf-note df-note" data-sf-in style="--i: 3">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .df { display: flex; flex-direction: column; height: 100%; }
+  .df-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(14 * var(--u));
+    margin: calc(16 * var(--u)) 0;
+    padding: calc(24 * var(--u)) calc(36 * var(--u));
+    border-left: calc(8 * var(--u)) solid var(--t-accent);
+    border-radius: calc(14 * var(--u));
+    background: color-mix(in srgb, var(--t-accent) 6%, #fff);
+    min-height: 0;
+  }
+  .df-head { margin: 0; display: flex; align-items: baseline; gap: calc(18 * var(--u)); }
+  .df-term { font-size: calc(var(--t-term) * var(--u)); font-weight: 800; line-height: 1.1; letter-spacing: 0.01em; color: var(--t-accent); }
+  .df-read { font-size: calc(20 * var(--u)); color: var(--sf-ink-2); }
+  .df-def { margin: 0; font-size: calc(24 * var(--u)); font-weight: 700; line-height: 1.55; }
+  .df-ex { display: flex; align-items: stretch; gap: calc(14 * var(--u)); }
+  .df-box { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: calc(2 * var(--u)); padding: calc(10 * var(--u)) calc(20 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(10 * var(--u)); }
+  .df-k { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .df-v { font-size: calc(30 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .df-op { align-self: center; font-size: calc(28 * var(--u)); font-weight: 800; color: var(--sf-ink-2); }
+  .df-box.is-result { border-color: var(--t-accent); background: var(--t-accent); }
+  .df-box.is-result .df-k, .df-box.is-result .df-v { color: #fff; }
+  .df-note { margin-top: calc(10 * var(--u)); }
+
+  /* 例の表示（つまみ: 例を出すか） */
+  :global([data-t-ex='hide']) .df-ex, :global([data-t-ex='hide']) .df-note { display: none; }
+  :global([data-t-ex='hide']) .df-card { margin-bottom: 0; }
+</style>

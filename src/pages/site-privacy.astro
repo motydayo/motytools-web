@@ -1,0 +1,160 @@
+---
+// サイト全体（motytools.com）のプライバシーポリシー（2026-10-17 新設）。
+// /privacy はメモびゅん（アプリ）のポリシーとして App Store から参照されうるため、URLも中身も触らない。
+// 各アプリのポリシーは各アプリのLP配下（例 /memomail/privacy/）にある。
+// 中身はサイトの実装（BaseLayout の GA4・AdSense・Google Fonts、テーマ切替の localStorage など）に合わせて書く。
+// 実装が変わったら、ここも書き直して「最終更新日」を改める。英語版は src/pages/en/privacy.astro。
+// 個人の氏名・メールアドレスは書かない（問い合わせはアプリ内「ご意見・要望」へ）。
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config';
+
+const UPDATED = '2026-10-17';
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'プライバシーポリシー - motytools',
+    url: `${SITE.url}/site-privacy/`,
+    inLanguage: 'ja',
+    dateModified: UPDATED,
+    publisher: { '@id': `${SITE.url}/#organization` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'プライバシーポリシー', item: `${SITE.url}/site-privacy/` },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="プライバシーポリシー"
+  description="motytools.com（無料のWebツール・Web制作の図鑑・記事）で、どんな情報をどう扱うかをまとめています。広告（Google AdSense）、アクセス解析（Google アナリティクス）、ブラウザ内の保存、配信時の記録、問い合わせ先について。"
+  path="/site-privacy/"
+  jsonLd={jsonLd}
+  alternates={{ ja: '/site-privacy/', en: '/en/privacy/' }}
+>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li aria-current="page">プライバシーポリシー</li>
+      </ol>
+    </nav>
+
+    <article class="pp-wrap">
+      <header class="pp-head">
+        <h1>プライバシーポリシー</h1>
+        <p class="pp-lead">
+          motytools（以下「当サイト」）が、Webサイト motytools.com で、どんな情報をどう扱うかをまとめたものです。
+        </p>
+        <p class="pp-date">最終更新日: <time datetime={UPDATED}>2026年10月17日</time></p>
+      </header>
+
+      <div class="pp-note">
+        <p>
+          このページは<strong>Webサイトについて</strong>のポリシーです。iPhoneアプリでの情報の扱いは、アプリごとのプライバシーポリシーに書いています。各アプリの紹介ページ（<a href="/apps/">アプリ一覧</a>から開けます）をご覧ください。
+        </p>
+      </div>
+
+      <div class="prose pp-body">
+        <h2 id="summary">要点</h2>
+        <ul>
+          <li>会員登録の仕組みはありません。名前・メールアドレス・住所などをこのサイトで入力してもらうことはありません。</li>
+          <li>計算ツールに入れた数字や、画像ツールで選んだ画像は、お使いのブラウザの中だけで処理します。当サイトのサーバーには送りません。</li>
+          <li>広告（Google AdSense）とアクセス解析（Google アナリティクス）のため、Googleが Cookie（ブラウザに保存される小さな記録）などを使います。</li>
+        </ul>
+
+        <h2 id="tools">ツールに入力した内容</h2>
+        <p>
+          手取り・ローン・和暦などの計算ツールに入れた数字、文字数カウントに貼った文章、画像の圧縮やHEICからJPGへの変換で選んだ画像、QRコードにする文字は、すべてお使いの端末のブラウザの中で処理します。当サイトのサーバーや第三者に送ることはなく、保存もしません。ページを閉じると消えます。
+        </p>
+
+        <h2 id="storage">ブラウザ内に保存するもの</h2>
+        <p>使いやすくするため、次のものをお使いのブラウザの中（localStorage など）に保存することがあります。端末の外には送りません。</p>
+        <ul>
+          <li>ライト表示・ダーク表示の切り替えの選択</li>
+          <li>図鑑の見本の一部の状態（例: サイドバーの見本を閉じたかどうか、見本の小窓を一度出したかどうか）</li>
+        </ul>
+        <p>ブラウザの設定から、サイトのデータを削除すれば消えます。</p>
+
+        <h2 id="ads">広告（Google AdSense）</h2>
+        <p>
+          当サイトは、運営費をまかなうために Google AdSense による広告を表示しています。Googleなどの第三者の広告配信事業者は、Cookie を使い、このサイトやほかのサイトへの過去のアクセス情報にもとづいて広告を出すことがあります（パーソナライズ広告）。
+        </p>
+        <ul>
+          <li>パーソナライズ広告を止めたい場合は、<a href="https://adssettings.google.com/" target="_blank" rel="noopener">Googleの広告設定</a>で無効にできます。</li>
+          <li>Google以外の広告配信事業者の Cookie は、<a href="https://www.aboutads.info/" target="_blank" rel="noopener">www.aboutads.info</a> で無効にできます。</li>
+          <li>広告の Cookie の仕組みは<a href="https://policies.google.com/technologies/ads?hl=ja" target="_blank" rel="noopener">Googleの説明</a>をご覧ください。</li>
+        </ul>
+
+        <h2 id="analytics">アクセス解析（Google アナリティクス）</h2>
+        <p>
+          どのページがどれだけ読まれているかを知るため、Google アナリティクス（GA4）を使っています。Cookie などを使って、閲覧したページ、滞在時間、おおまかな地域、端末やブラウザの種類などを集めます。名前やメールアドレスなど、個人を特定する情報は集めていません。
+        </p>
+        <p>
+          集めた情報は Google のプライバシーポリシーにもとづいて Google が管理します。Google がこれらの情報をどう使うかは<a href="https://policies.google.com/technologies/partner-sites?hl=ja" target="_blank" rel="noopener">Googleのパートナーのサイトやアプリを使用する際の Google によるデータ使用</a>をご覧ください。集めてほしくない場合は、ブラウザで Cookie を無効にするか、<a href="https://tools.google.com/dlpage/gaoptout?hl=ja" target="_blank" rel="noopener">Google アナリティクス オプトアウト アドオン</a>を使ってください。
+        </p>
+
+        <h2 id="external">外部から読み込むもの</h2>
+        <p>
+          文字の表示に Google Fonts を使っています。ページを開くと、文字のデータを受け取るためにお使いのブラウザが Google のサーバーに接続し、そのとき IP アドレス（ネット上の住所のような番号）などが Google に伝わります。動画や地図、SNSの投稿などの埋め込みは置いていません。
+        </p>
+
+        <h2 id="logs">配信時の記録</h2>
+        <p>
+          当サイトは配信事業者（Vercel）のサーバーから届けています。ページを届ける仕組みとして、配信事業者のサーバーには、IPアドレス、アクセス日時、見たページ、ブラウザの種類などの記録が自動で残ります。当サイトはこれを、障害の調査や不正なアクセスへの対策のためだけに使います。
+        </p>
+
+        <h2 id="affiliate">紹介リンク（アフィリエイト）</h2>
+        <p>
+          いまのところ、商品を紹介して報酬を得るリンク（アフィリエイト）は置いていません。記事の中の楽天市場・Yahoo!ショッピングなどへのリンクは、出典や説明のための普通のリンクです。今後置くときは、そのページに広告であることを書き、このページも更新します。
+        </p>
+
+        <h2 id="children">お子さまの情報</h2>
+        <p>
+          当サイトは一般の方に向けたもので、お子さまから意図して個人情報を集めることはありません。会員登録や入力して送る仕組み（フォーム）もありません。
+        </p>
+
+        <h2 id="third">第三者への提供</h2>
+        <p>
+          上に書いた Google と配信事業者のほか、法律で求められた場合を除いて、当サイトが情報を第三者に渡すことはありません。
+        </p>
+
+        <h2 id="changes">このページの変更</h2>
+        <p>
+          使うサービスや仕組みが変わったときは、このページを書き直し、上の「最終更新日」を改めます。大事な変更があるときは、このページの冒頭でお知らせします。
+        </p>
+
+        <h2 id="contact">問い合わせ先</h2>
+        <p>
+          このページについての問い合わせは、各iPhoneアプリの設定画面にある「ご意見・要望」からお送りください。Webサイトについての内容でもかまいません。いまのところ、Webサイト専用のメール窓口は設けていません。運営者については<a href="/about/">運営者情報</a>をご覧ください。
+        </p>
+        <p class="pp-sign">運営: motytools</p>
+      </div>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .pp-wrap { max-width: var(--article); padding-bottom: var(--sp-8); }
+  .pp-head { padding: var(--sp-5) 0 var(--sp-4); }
+  .pp-head h1 { font-size: clamp(26px, 5vw, var(--fs-2xl)); font-weight: 800; line-height: 1.3; letter-spacing: -0.01em; }
+  .pp-lead { margin-top: var(--sp-3); color: var(--text-2); line-height: 1.8; }
+  .pp-date { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .pp-note {
+    margin: var(--sp-2) 0 var(--sp-6);
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md, 12px);
+    background: var(--surface);
+    line-height: 1.8;
+  }
+  .pp-body li { line-height: 1.8; }
+  .pp-body p { line-height: 1.85; }
+  .pp-body a { overflow-wrap: anywhere; }
+  .pp-sign { margin-top: var(--sp-5); color: var(--text-2); }
+</style>

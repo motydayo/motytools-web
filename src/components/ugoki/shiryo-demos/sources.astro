@@ -1,0 +1,79 @@
+---
+// 資料レイアウトの見本: 出典・参考資料型（使った資料と数字の出どころを、番号つきの一覧にする）
+// 見本の資料名・発行元・数字はすべて架空（実在の資料を指さない）。
+// つまみ: --t-accent（色）・data-t-focus（強調する種類 ext|int|none）・data-t-where（使った場所の列 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '出典・参考資料型',
+    kicker: '出典・参考資料',
+    title: 'この資料の数字は、5つの出どころから使っている',
+    head: ['資料', '作成・発行', '時点', '使った場所'],
+    kinds: { int: '社内', ext: '外部' },
+    rows: [
+      { kind: 'int', t: '月次の売上データ', d: '会計システムの出力', by: '経理部', at: '2026年9月末', where: '3枚目：売上の推移' },
+      { kind: 'int', t: '店頭アンケート', d: '回答412件', by: 'マーケティング部', at: '2026年8月', where: '5枚目：満足度' },
+      { kind: 'ext', t: '小売市場の規模調査（例）', d: '年次レポート', by: '〇〇調査会社（例）', at: '2025年版', where: '4枚目：市場の伸び' },
+      { kind: 'ext', t: '業界団体の統計資料（例）', d: '店舗数の統計', by: '〇〇業界団体（例）', at: '2026年4月', where: '6枚目：競合の店舗数' },
+      { kind: 'int', t: '顧客インタビュー', d: '10名への聞き取り', by: '営業部', at: '2026年7月', where: '7枚目：お客さまの声' },
+    ] as { kind: 'int' | 'ext'; t: string; d: string; by: string; at: string; where: string }[],
+    note: '※ 見本の資料名・発行元・数字はすべて架空です。実際の資料には、正式な名称・発行元・発行日（URLがあればURL）を書きます。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={27} lang={lang}>
+  <div class="sr" data-demo="sources">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="sr-table">
+      <div class="sr-head" data-sf-in style="--i: 1">
+        <span class="sr-n"></span>{T.head.map((h, i) => <span class:list={[i === 3 && 'sr-where']}>{h}</span>)}
+      </div>
+      {T.rows.map((r, i) => (
+        <div class:list={['sr-row', `sr-${r.kind}`]} data-sf-in style={`--i: ${i + 2}`}>
+          <span class="sr-n">[{i + 1}]</span>
+          <span class="sr-name">
+            <span class="sr-kind">{T.kinds[r.kind]}</span>
+            <span class="sr-tt"><b>{r.t}</b><small>{r.d}</small></span>
+          </span>
+          <span class="sr-by">{r.by}</span>
+          <span class="sr-at">{r.at}</span>
+          <span class="sr-where">{r.where}</span>
+        </div>
+      ))}
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 7">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .sr { display: flex; flex-direction: column; height: 100%; }
+  .sr-table { flex: 1; display: flex; flex-direction: column; margin: calc(14 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .sr-head, .sr-row { display: grid; grid-template-columns: calc(52 * var(--u)) minmax(0, 1fr) calc(170 * var(--u)) calc(130 * var(--u)) calc(170 * var(--u)); align-items: center; }
+  .sr-head { padding-bottom: calc(6 * var(--u)); border-bottom: calc(2 * var(--u)) solid var(--sf-ink); font-size: calc(14 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .sr-row { flex: 1; min-height: 0; border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .sr-n { font-size: calc(17 * var(--u)); font-weight: 800; color: var(--sf-ink-2); font-variant-numeric: tabular-nums; }
+  .sr-name { display: flex; align-items: center; gap: calc(10 * var(--u)); min-width: 0; padding-right: calc(10 * var(--u)); }
+  .sr-kind { flex: none; padding: calc(2 * var(--u)) calc(8 * var(--u)); border: calc(1.5 * var(--u)) solid var(--sf-mute); border-radius: calc(5 * var(--u)); font-size: calc(13 * var(--u)); font-weight: 800; color: var(--sf-ink-2); }
+  .sr-tt { display: flex; flex-direction: column; min-width: 0; }
+  .sr-tt b { font-size: calc(18 * var(--u)); font-weight: 800; }
+  .sr-tt small { font-size: calc(14 * var(--u)); color: var(--sf-ink-2); }
+  .sr-by, .sr-at, .sr-where { font-size: calc(16 * var(--u)); }
+  .sr-at { font-variant-numeric: tabular-nums; }
+  .sr-where { color: var(--sf-ink-2); }
+
+  /* 強調する種類（つまみ: 強調する種類） */
+  :global([data-t-focus='ext']) .sr-ext .sr-kind,
+  :global([data-t-focus='int']) .sr-int .sr-kind { background: var(--t-accent); border-color: var(--t-accent); color: #fff; }
+  :global([data-t-focus='ext']) .sr-ext .sr-n,
+  :global([data-t-focus='int']) .sr-int .sr-n { color: var(--t-accent); }
+
+  /* 使った場所の列（つまみ: 使った場所の列） */
+  :global([data-t-where='hide']) .sr-where { display: none; }
+  :global([data-t-where='hide']) .sr-head,
+  :global([data-t-where='hide']) .sr-row { grid-template-columns: calc(52 * var(--u)) minmax(0, 1fr) calc(190 * var(--u)) calc(150 * var(--u)); }
+</style>

@@ -107,6 +107,9 @@ export const GET: APIRoute = async () => {
   ];
 
   urls.push({ loc: '/en/', lastmod: '2026-10-15', priority: '0.8' });
+  urls.push({ loc: '/about/', lastmod: gitDateOf('src/pages/about.astro', '2026-10-17'), priority: '0.4' });
+  urls.push({ loc: '/site-privacy/', lastmod: '2026-10-17', priority: '0.3' });
+  urls.push({ loc: '/en/privacy/', lastmod: '2026-10-17', priority: '0.3' });
   // 図鑑（動き・UI部品 × 日本語・英語。src/data/ugoki|ui/entries(-en)/ から自動で載る）
   for (const pair of Object.values(BOOKS)) {
     for (const b of Object.values(pair)) {
@@ -119,7 +122,8 @@ export const GET: APIRoute = async () => {
 
   if (guides.length > 0) {
     urls.push({ loc: '/guide/', lastmod: guideIndexDate, priority: '0.8' });
-    for (const g of guides) {
+    // noindex: true の記事（2026-10-17 記事監査）は載せない
+    for (const g of guides.filter((x) => !x.data.noindex)) {
       urls.push({ loc: `/guide/${g.id}/`, lastmod: isoDate(updatedOf(g)), priority: '0.7' });
     }
     // 記事が1本以上あるアプリの記事一覧だけ（0本のページは noindex なので載せない）

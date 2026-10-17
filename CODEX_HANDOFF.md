@@ -77,3 +77,14 @@
 - 手本4本: two-column（No.3）・bar-chart（26）・gantt（52）・problem-solution（76）。残り96本の番号・slug・名前・分類と書き方は `src/data/ugoki/WRITING.md` の第3弾（100種の表は check-zukan が照合）。
 - 共通の変更: select のつまみは見本に `data-t-<key>` 属性でも届く（Demo/Tuner）。記事末尾・一覧頭の「ほかの図鑑」リンクは2冊ぶん出る（otherBooks）。トップのカード・フッターに /shiryo/ を追加。OG画像は `node scripts/gen-og-ugoki.mjs shiryo`。撮影スクリプトに時間切れを追加。
 - 未公開（デプロイしていない）。撮影は `.shots/shiryo-pilot/`（git管理外）。
+
+## 2026-10-17 検索登録の診断を受けた手直し（docs/seo-diagnosis-2026-10-17.md）
+- 運営者情報 `/about/`（`src/pages/about.astro`）を新設: 屋号・運営形態（個人の開発者）・サイトにあるもの（数は台帳から自動）・作り方と確かめ方（AIを下書きに使い人が確認）・出典と更新の考え方・広告（AdSense・GA。アフィリエイトは現在なし）・問い合わせ（各アプリの「ご意見・要望」。メール窓口なし）。AboutPage＋Organization（`@id` = https://motytools.com/#organization）。sameAs はリポジトリ内に自分の開発者ページ・Xの実URLが無いので入れていない。
+- 導線: トップのフッター（旧「motytoolsについて」#about → /about/）・通常フッター・英語フッター（About motytools (Japanese)）・トップの紹介欄の文中。トップの Organization に @id・description を追加。
+- `vercel.json`: `motytools-web.vercel.app` → https://motytools.com/ へ308（redirects の先頭）。ほかの `*.vercel.app`（デプロイごとの個別URL）は確認用に転送せず `X-Robots-Tag: noindex` だけ付ける（headers の2つ目）。既存のヘッダー5種はそのまま。
+- 使い方ガイド: frontmatter `noindex: true`（スキーマ `src/content.config.ts`、書式は `src/content/guide/README.md`）。監査表 docs/guide-audit-2026-10-17.tsv の NOINDEX・MERGE-INTO 75本から指定の6本（gessha-shukin-houhou・gyosei-shobun-shirabekata・handmade-tanaoroshi・handmade-uriage-kanri・koutsujiko-tashuu・reizoko-recipe-ai）を除いた **69本を noindex,follow・サイトマップ除外**。検索に出す記事は **53本**（全122本）。ページとリンクは残す。一覧・アプリ別一覧・関連記事は検索に出す記事を先に並べ、CollectionPage の hasPart は検索に出す記事だけ。戻すときは各記事の `noindex: true` の行を消す。
+- BaseLayout の noindex は `noindex,follow` に統一。
+- トップの炎上マップのリンクを https://firemap.motytools.com/ に（旧 workers.dev）。
+- 図鑑記事のメタ欄「ほかの呼び方」が375pxで折れる不具合: ラベルを折り返さない（ZukanArticle.astro）。資料の図鑑 gantt の注記「濃い部分は〜」は、つまみ「進み具合の塗り」が表示しないのとき消える。
+- 安全マップの地図ページ（/anzen/ と6テーマ）の下に説明文は machi-anzen-map 側で追加（同リポジトリの CODEX_HANDOFF.md）。
+- 未デプロイ・未コミット。気づき: `/privacy`（フッターの「プライバシーポリシー」）の中身はメモびゅんのプライバシーポリシーで、サイト全体（AdSense・GA）の方針ページが無い。

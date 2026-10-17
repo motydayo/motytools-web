@@ -1,0 +1,88 @@
+---
+// prefix: mx
+// 資料レイアウトの見本: マトリクス型（2×2。効果と手間の2軸で8件の改善案を4つの箱に仕分ける）
+// 縦軸は上が「効果が大きい」、横軸は右が「手間が大きい」。左上が「効果は大きく手間は小さい」＝すぐやる
+// つまみ: --t-accent（色）・data-t-focus（強調する箱 tl|tr|none）・--t-gap（箱の間隔。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'マトリクス型（2×2）',
+    kicker: '総務部の業務改善（効果と手間で仕分け）',
+    title: '改善案8件のうち、まず着手するのは3件',
+    boxes: [
+      { key: 'tl', head: 'すぐやる', cond: '効果 大・手間 小', items: ['請求書の電子化', '会議室予約の一本化', '備品の発注フォーム統一'] },
+      { key: 'tr', head: '計画して進める', cond: '効果 大・手間 大', items: ['勤怠システムの入れ替え', '紙の稟議の電子化'] },
+      { key: 'bl', head: '余裕があれば', cond: '効果 小・手間 小', items: ['掲示板の整理', '名刺の共有ルール'] },
+      { key: 'br', head: '見送る', cond: '効果 小・手間 大', items: ['社内ポータルの作り直し'] },
+    ],
+    yAxis: ['大', '効果の大きさ', '小'],
+    xAxis: ['小', 'かかる手間', '大'],
+    note: '※ 効果は年間の削減時間、手間は準備にかかる担当者の作業日数をもとに、総務部で大小に分けた。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={8} lang={lang}>
+  <div class="mx" data-demo="matrix">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="mx-grid">
+      <div class="mx-y">
+        <span>{T.yAxis[0]}</span>
+        <span class="mx-axis-name">{T.yAxis[1]}</span>
+        <span>{T.yAxis[2]}</span>
+      </div>
+      {T.boxes.map((b, i) => (
+        <div class:list={['mx-box', `mx-${b.key}`]} data-sf-in style={`--i: ${i + 1}`}>
+          <span class="mx-head">{b.head}</span>
+          <span class="mx-cond">{b.cond}</span>
+          <span class="mx-items">{b.items.map((t) => <span>{t}</span>)}</span>
+        </div>
+      ))}
+      <div class="mx-x">
+        <span>{T.xAxis[0]}</span>
+        <span>{T.xAxis[1]}</span>
+        <span>{T.xAxis[2]}</span>
+      </div>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 5">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .mx { display: flex; flex-direction: column; height: 100%; }
+  .mx-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: calc(34 * var(--u)) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) calc(30 * var(--u));
+    gap: calc(var(--t-gap) * var(--u));
+    margin: calc(16 * var(--u)) 0 calc(10 * var(--u));
+    min-height: 0;
+  }
+  /* 縦軸は1列目に2行ぶん、横軸は3行目に2列ぶん */
+  .mx-y { grid-column: 1; grid-row: 1 / span 2; display: flex; flex-direction: column; align-items: center; justify-content: space-between; font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-3); }
+  .mx-axis-name { writing-mode: vertical-rl; letter-spacing: 0.1em; }
+  .mx-x { grid-column: 2 / span 2; grid-row: 3; display: flex; align-items: center; justify-content: space-between; font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-3); }
+  .mx-box { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: start; column-gap: calc(12 * var(--u)); padding: calc(12 * var(--u)) calc(18 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; min-height: 0; }
+  .mx-tl { grid-column: 2; grid-row: 1; }
+  .mx-tr { grid-column: 3; grid-row: 1; }
+  .mx-bl { grid-column: 2; grid-row: 2; }
+  .mx-br { grid-column: 3; grid-row: 2; }
+  .mx-head { font-size: calc(20 * var(--u)); font-weight: 800; line-height: 1.3; }
+  .mx-cond { align-self: center; font-size: calc(15 * var(--u)); color: var(--sf-ink-3); white-space: nowrap; }
+  .mx-items { grid-column: 1 / -1; display: grid; gap: calc(2 * var(--u)); margin-top: calc(8 * var(--u)); }
+  .mx-items span { position: relative; padding-left: calc(14 * var(--u)); font-size: calc(16 * var(--u)); line-height: 1.5; color: var(--sf-ink-2); }
+  .mx-items span::before { content: ''; position: absolute; left: 0; top: 0.66em; width: calc(6 * var(--u)); height: calc(6 * var(--u)); border-radius: 50%; background: var(--sf-mute); }
+
+  /* 強調する箱（つまみ: 強調する箱） */
+  :global([data-t-focus='tl']) .mx-tl,
+  :global([data-t-focus='tr']) .mx-tr { border-color: var(--t-accent); border-width: calc(3 * var(--u)); background: color-mix(in srgb, var(--t-accent) 6%, #fff); }
+  :global([data-t-focus='tl']) .mx-tl .mx-head,
+  :global([data-t-focus='tr']) .mx-tr .mx-head { color: var(--t-accent); }
+  :global([data-t-focus='tl']) .mx-tl .mx-items span::before,
+  :global([data-t-focus='tr']) .mx-tr .mx-items span::before { background: var(--t-accent); }
+</style>

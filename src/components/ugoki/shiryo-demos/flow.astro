@@ -1,0 +1,102 @@
+---
+// prefix: fl
+// 資料レイアウトの見本: フロー型（5つの手順を矢印でつなぎ、担当と所要時間を添える）
+// つまみ: --t-accent（色）・data-t-dir（並べ方 row|col）・data-t-focus（強調 none|3|last）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'フロー型',
+    kicker: '経費精算の流れ（2026年10月から）',
+    title: '経費精算は、申請から振込まで最長3営業日',
+    steps: [
+      { owner: '社員', name: '領収書を撮影', desc: 'スマホで撮って取り込む', time: '当日' },
+      { owner: '社員', name: '申請', desc: '金額と用途を選んで送る', time: '当日' },
+      { owner: '上長', name: '承認', desc: '内容を見て承認か差し戻し', time: '1営業日以内' },
+      { owner: '経理', name: '経理確認', desc: '領収書と金額を照らし合わせる', time: '1営業日以内' },
+      { owner: '経理', name: '振込', desc: '給与口座へ振り込む', time: '1営業日以内' },
+    ],
+    result: { label: '申請から振込まで', num: '最長3営業日', sub: '承認1日 ＋ 経理確認1日 ＋ 振込1日' },
+    note: '※ 営業日は土日祝日を除く。差し戻しになった場合は、申請し直した日から数える。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={6} lang={lang}>
+  <div class="fl" data-demo="flow">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="fl-flow">
+      {T.steps.map((s, i) => (
+        <>
+          <div class:list={['fl-step', `fl-s${i + 1}`]} data-sf-in style={`--i: ${i + 1}`}>
+            <span class="fl-top"><span class="fl-num">{i + 1}</span><span class="fl-owner">{s.owner}</span></span>
+            <span class="fl-name">{s.name}</span>
+            <span class="fl-desc">{s.desc}</span>
+            <span class="fl-time">{s.time}</span>
+          </div>
+          {i < T.steps.length - 1 && (
+            <span class="fl-arrow" data-sf-in style={`--i: ${i + 1}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+            </span>
+          )}
+        </>
+      ))}
+    </div>
+    <div class="fl-result" data-sf-in style="--i: 6">
+      <span class="fl-result-label">{T.result.label}</span>
+      <span class="fl-result-num">{T.result.num}</span>
+      <span class="fl-result-sub">{T.result.sub}</span>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 7">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .fl { display: flex; flex-direction: column; height: 100%; }
+  .fl-flow {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) calc(24 * var(--u)) minmax(0, 1fr) calc(24 * var(--u)) minmax(0, 1fr) calc(24 * var(--u)) minmax(0, 1fr) calc(24 * var(--u)) minmax(0, 1fr);
+    align-items: stretch;
+    margin: calc(18 * var(--u)) 0 calc(12 * var(--u));
+    min-height: 0;
+  }
+  .fl-step { display: flex; flex-direction: column; padding: calc(14 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u)) calc(14 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; }
+  .fl-top { display: flex; align-items: center; justify-content: space-between; gap: calc(6 * var(--u)); }
+  .fl-num { display: grid; place-items: center; width: calc(32 * var(--u)); height: calc(32 * var(--u)); border-radius: 50%; background: var(--sf-soft); color: var(--sf-ink-2); font-size: calc(16 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .fl-owner { padding: calc(2 * var(--u)) calc(10 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--sf-soft); color: var(--sf-ink-2); font-size: calc(15 * var(--u)); font-weight: 700; }
+  .fl-name { margin-top: calc(12 * var(--u)); font-size: calc(20 * var(--u)); font-weight: 800; line-height: 1.3; }
+  .fl-desc { margin-top: calc(6 * var(--u)); font-size: calc(16 * var(--u)); line-height: 1.5; color: var(--sf-ink-2); }
+  .fl-time { margin-top: auto; padding-top: calc(10 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(16 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .fl-arrow { display: grid; place-items: center; color: var(--sf-ink-3); }
+  .fl-arrow svg { width: calc(24 * var(--u)); height: calc(24 * var(--u)); }
+  /* 結論の帯 */
+  .fl-result { display: flex; align-items: center; gap: calc(16 * var(--u)); margin-bottom: calc(10 * var(--u)); padding: calc(10 * var(--u)) calc(22 * var(--u)); border-radius: calc(10 * var(--u)); background: var(--sf-soft); }
+  .fl-result-label { font-size: calc(16 * var(--u)); font-weight: 800; color: var(--sf-ink-2); }
+  .fl-result-num { font-size: calc(30 * var(--u)); font-weight: 800; color: var(--t-accent); line-height: 1.1; }
+  .fl-result-sub { margin-left: auto; font-size: calc(16 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+
+  /* 強調する工程（つまみ: 強調） */
+  :global([data-t-focus='3']) .fl-s3,
+  :global([data-t-focus='last']) .fl-s5 { border-color: var(--t-accent); border-width: calc(3 * var(--u)); background: color-mix(in srgb, var(--t-accent) 6%, #fff); }
+  :global([data-t-focus='3']) .fl-s3 .fl-num,
+  :global([data-t-focus='last']) .fl-s5 .fl-num { background: var(--t-accent); color: #fff; }
+
+  /* 縦に5段（つまみ: 並べ方） */
+  :global([data-t-dir='col']) .fl-flow {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) calc(12 * var(--u)) minmax(0, 1fr) calc(12 * var(--u)) minmax(0, 1fr) calc(12 * var(--u)) minmax(0, 1fr) calc(12 * var(--u)) minmax(0, 1fr);
+    margin: calc(12 * var(--u)) 0 calc(10 * var(--u));
+  }
+  :global([data-t-dir='col']) .fl-step { display: grid; grid-template-columns: calc(36 * var(--u)) calc(170 * var(--u)) minmax(0, 1fr) calc(64 * var(--u)) calc(124 * var(--u)); align-items: center; gap: calc(14 * var(--u)); padding: 0 calc(16 * var(--u)); }
+  :global([data-t-dir='col']) .fl-top { display: contents; }
+  :global([data-t-dir='col']) .fl-num { grid-column: 1; grid-row: 1; width: calc(28 * var(--u)); height: calc(28 * var(--u)); font-size: calc(15 * var(--u)); }
+  :global([data-t-dir='col']) .fl-name { grid-column: 2; grid-row: 1; margin: 0; font-size: calc(18 * var(--u)); }
+  :global([data-t-dir='col']) .fl-desc { grid-column: 3; grid-row: 1; margin: 0; }
+  :global([data-t-dir='col']) .fl-owner { grid-column: 4; grid-row: 1; justify-self: start; }
+  :global([data-t-dir='col']) .fl-time { grid-column: 5; grid-row: 1; margin: 0; padding: 0; border-top: 0; text-align: right; }
+  :global([data-t-dir='col']) .fl-arrow svg { width: calc(14 * var(--u)); height: calc(14 * var(--u)); transform: rotate(90deg); }
+</style>

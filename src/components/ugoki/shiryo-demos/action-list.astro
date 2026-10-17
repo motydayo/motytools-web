@@ -1,0 +1,85 @@
+---
+// 資料レイアウトの見本: アクション一覧型（誰が・何を・いつまでにやるかを表にし、状態を記号と文字で示す）
+// つまみ: --t-accent（色）・data-t-who（強調する担当者 none|sato|tanaka）・data-t-late（期限を過ぎた行 red|plain）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'アクション一覧型',
+    kicker: '新店舗オープン準備のアクション一覧（10月17日時点）',
+    title: '6件のうち2件が完了、1件が期限を過ぎている',
+    head: ['やること', '担当', '期限', '状態'],
+    status: { done: '完了', doing: '進行中', todo: '未着手', late: '期限切れ' },
+    rows: [
+      { t: '見積書を3社から集める', who: '佐藤', whoKey: 'sato', due: '10/10', s: 'done' },
+      { t: '店舗の図面を契約先に送る', who: '田中', whoKey: 'tanaka', due: '10/12', s: 'done' },
+      { t: 'レジ2社のデモ日程を調整する', who: '鈴木', whoKey: 'suzuki', due: '10/16', s: 'late' },
+      { t: '開店記念の割引案を作る', who: '田中', whoKey: 'tanaka', due: '10/29', s: 'doing' },
+      { t: '採用面接の日程を決める', who: '高橋', whoKey: 'takahashi', due: '10/31', s: 'doing' },
+      { t: '近隣への挨拶状を印刷する', who: '佐藤', whoKey: 'sato', due: '11/10', s: 'todo' },
+    ] as { t: string; who: string; whoKey: string; due: string; s: 'done' | 'doing' | 'todo' | 'late' }[],
+    note: '※ 状態は10月17日時点。期限を過ぎた作業は赤で示す。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={21} lang={lang}>
+  <div class="al" data-demo="action-list">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="al-table">
+      <div class="al-head" data-sf-in style="--i: 1">
+        <span class="al-nohead">No</span>{T.head.map((h) => <span>{h}</span>)}
+      </div>
+      {T.rows.map((r, i) => (
+        <div class:list={['al-row', `al-s-${r.s}`]} data-who={r.whoKey} data-sf-in style={`--i: ${i + 2}`}>
+          <span class="al-no">{i + 1}</span>
+          <span class="al-t">{r.t}</span>
+          <span class="al-who">{r.who}</span>
+          <span class="al-due">{r.due}</span>
+          <span class="al-st">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              {r.s === 'done' && <><circle cx="12" cy="12" r="9" fill="currentColor" /><path d="M7.8 12.4l3 3 5.4-6" stroke="#fff" /></>}
+              {r.s === 'doing' && <><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" /></>}
+              {r.s === 'todo' && <circle cx="12" cy="12" r="9" />}
+              {r.s === 'late' && <><circle cx="12" cy="12" r="9" fill="currentColor" /><path d="M12 7.5v5.5M12 16.4v.1" stroke="#fff" /></>}
+            </svg>
+            {T.status[r.s]}
+          </span>
+        </div>
+      ))}
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 8">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .al { display: flex; flex-direction: column; height: 100%; }
+  .al-table { flex: 1; display: flex; flex-direction: column; margin: calc(14 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .al-head, .al-row { display: grid; grid-template-columns: calc(48 * var(--u)) minmax(0, 1fr) calc(96 * var(--u)) calc(96 * var(--u)) calc(150 * var(--u)); align-items: center; }
+  .al-head { padding-bottom: calc(6 * var(--u)); border-bottom: calc(2 * var(--u)) solid var(--sf-ink); font-size: calc(14 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .al-row { flex: 1; min-height: 0; border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .al-nohead { padding-left: calc(10 * var(--u)); }
+  .al-no { padding-left: calc(10 * var(--u)); font-size: calc(16 * var(--u)); color: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+  .al-t { font-size: calc(20 * var(--u)); font-weight: 700; padding-right: calc(12 * var(--u)); }
+  .al-who { font-size: calc(19 * var(--u)); }
+  .al-due { font-size: calc(19 * var(--u)); font-variant-numeric: tabular-nums; }
+  .al-st { display: flex; align-items: center; gap: calc(8 * var(--u)); font-size: calc(18 * var(--u)); font-weight: 700; }
+  .al-st svg { flex: none; width: calc(22 * var(--u)); height: calc(22 * var(--u)); }
+  .al-s-done .al-st { color: var(--sf-ink-2); }
+  .al-s-doing .al-st { color: var(--t-accent); }
+  .al-s-todo .al-st { color: var(--sf-ink-3); }
+  .al-s-late .al-st { color: #d0453a; }
+
+  /* 期限を過ぎた行（つまみ: 期限を過ぎた行）。plain のときは文字の色を変えない */
+  :global([data-t-late='red']) .al-s-late .al-due { color: #d0453a; font-weight: 800; }
+  :global([data-t-late='plain']) .al-s-late .al-st { color: var(--sf-ink); }
+
+  /* 強調する担当者（つまみ: 強調する担当者） */
+  :global([data-t-who='sato']) .al-row[data-who='sato'],
+  :global([data-t-who='tanaka']) .al-row[data-who='tanaka'] { background: color-mix(in srgb, var(--t-accent) 9%, #fff); box-shadow: inset calc(4 * var(--u)) 0 var(--t-accent); }
+  :global([data-t-who='sato']) .al-row[data-who='sato'] .al-who,
+  :global([data-t-who='tanaka']) .al-row[data-who='tanaka'] .al-who { color: var(--t-accent); font-weight: 800; }
+</style>

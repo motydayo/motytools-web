@@ -1,0 +1,79 @@
+---
+// 資料レイアウトの見本: カンバン型（作業を「未着手・作業中・レビュー待ち・完了」の列に並べる）
+// 列は4つ。件数は札の数から数える。作業中だけ「上限3」の札を添える。
+// つまみ: --t-accent（色）・data-t-focus（強調 review|none）・data-t-limit（上限の表示 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'カンバン型',
+    kicker: 'Webサイトリニューアルの進み具合',
+    title: 'レビュー待ちが4件たまり、完了が止まっている',
+    note: '※ 9月第2週の月曜時点・全15件。作業中の上限は3件。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={10} lang={lang}>
+  <div class="kb" data-demo="kanban">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="kb-board">
+      <div class="kb-col kb-todo" data-sf-in style="--i: 1">
+        <div class="kb-head"><span class="kb-name">未着手</span><span class="kb-count">3</span></div>
+        <div class="kb-cards">
+          <span class="kb-card">料金表の更新</span>
+          <span class="kb-card">FAQページの追加</span>
+          <span class="kb-card">採用ページの新設</span>
+        </div>
+      </div>
+      <div class="kb-col kb-doing" data-sf-in style="--i: 2">
+        <div class="kb-head"><span class="kb-name">作業中</span><span class="kb-limit">上限3</span><span class="kb-count">3</span></div>
+        <div class="kb-cards">
+          <span class="kb-card">トップ画像の差替え</span>
+          <span class="kb-card">お知らせ一覧の改修</span>
+          <span class="kb-card">スマホ表示の調整</span>
+        </div>
+      </div>
+      <div class="kb-col kb-review" data-sf-in style="--i: 3">
+        <div class="kb-head"><span class="kb-name">レビュー待ち</span><span class="kb-count">4</span></div>
+        <div class="kb-cards">
+          <span class="kb-card">会社概要の文面</span>
+          <span class="kb-card">事例ページ3本</span>
+          <span class="kb-card">フォームの文言</span>
+          <span class="kb-card">プライバシー規約</span>
+        </div>
+      </div>
+      <div class="kb-col kb-done" data-sf-in style="--i: 4">
+        <div class="kb-head"><span class="kb-name">完了</span><span class="kb-count">5</span></div>
+        <div class="kb-cards">
+          <span class="kb-card">サイト構成の決定</span>
+          <span class="kb-card">デザイン案の承認</span>
+          <span class="kb-card">ロゴの書き出し</span>
+          <span class="kb-card">写真の撮影</span>
+          <span class="kb-card">ドメインの移管</span>
+        </div>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .kb { display: flex; flex-direction: column; height: 100%; }
+  .kb-board { flex: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(14 * var(--u)); margin: calc(16 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .kb-col { display: flex; flex-direction: column; padding: calc(12 * var(--u)); border: calc(2 * var(--u)) solid transparent; border-radius: calc(12 * var(--u)); background: #f3f4f7; min-width: 0; }
+  .kb-head { display: flex; align-items: center; gap: calc(8 * var(--u)); margin-bottom: calc(10 * var(--u)); }
+  .kb-name { font-size: calc(18 * var(--u)); font-weight: 800; white-space: nowrap; }
+  .kb-limit { padding: 0 calc(8 * var(--u)); border-radius: calc(6 * var(--u)); background: #fff; color: #5a6070; font-size: calc(14 * var(--u)); font-weight: 700; line-height: calc(22 * var(--u)); white-space: nowrap; }
+  .kb-count { margin-left: auto; min-width: calc(28 * var(--u)); padding: 0 calc(6 * var(--u)); border-radius: calc(999 * var(--u)); background: #fff; color: #5a6070; font-size: calc(18 * var(--u)); font-weight: 800; line-height: calc(28 * var(--u)); text-align: center; font-variant-numeric: tabular-nums; }
+  .kb-cards { display: flex; flex-direction: column; gap: calc(8 * var(--u)); }
+  .kb-card { padding: calc(10 * var(--u)) calc(12 * var(--u)); border: calc(1 * var(--u)) solid #e3e5ea; border-radius: calc(8 * var(--u)); background: #fff; font-size: calc(16 * var(--u)); font-weight: 700; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kb-done .kb-card { color: #8a8f9c; font-weight: 500; }
+  /* 強調する列（data-focus="review"） */
+  :global([data-t-focus='review']) .kb-review { border-color: var(--t-accent); background: color-mix(in srgb, var(--t-accent) 7%, #fff); }
+  :global([data-t-focus='review']) .kb-review .kb-count { background: var(--t-accent); color: #fff; }
+  :global([data-t-limit='hide']) .kb-limit { display: none; }
+</style>

@@ -1,0 +1,91 @@
+---
+// 資料レイアウトの見本: 円グラフ型（問い合わせの種類ごとの割合を円で見せ、右の凡例に数字を大きく書く）
+// 円は「半径75の円を、太さ150の線で描く」方法で作る。円周を100とみなし（pathLength=100）、割合をそのまま線の長さにする。
+// つまみ: --t-accent（色）・data-t-focus（色を付ける切れ目 top1|top2）・--t-size（円の大きさ。%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '円グラフ型',
+    kicker: '問い合わせの種類別の割合（2025年度）',
+    title: '問い合わせの6割超が使い方と料金・請求',
+    // 大きい順（時計回り、12時の位置から）。合計は100
+    data: [
+      ['使い方', 38],
+      ['料金・請求', 24],
+      ['不具合', 18],
+      ['契約の変更', 12],
+      ['その他', 8],
+    ] as [string, number][],
+    legendHead: '種類',
+    note: '※ 2025年度の問い合わせ1,240件の内訳。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+if (T.data.reduce((a, [, v]) => a + v, 0) !== 100) throw new Error('pie-chart: 割合の合計が100になっていません');
+const GAP = 0.6;
+let acc = 0;
+const slices = T.data.map(([n, v]) => {
+  const s = { n, v, dash: `${+(v - GAP).toFixed(2)} ${+(100 - v + GAP).toFixed(2)}`, off: -+(acc + GAP / 2).toFixed(2) };
+  acc += v;
+  return s;
+});
+---
+
+<SlideFrame size={size} label={T.name} page={11} lang={lang}>
+  <div class="pc" data-demo="pie-chart">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="pc-body">
+      <div class="pc-pie" data-sf-in style="--i: 1">
+        <svg viewBox="0 0 340 340" class="pc-svg" role="img" aria-label={T.title}>
+          <g transform="rotate(-90 170 170)">
+            {slices.map((s, i) => (
+              <circle class={`pc-slice pc-s${i + 1}`} cx="170" cy="170" r="75" pathLength="100" stroke-dasharray={s.dash} stroke-dashoffset={s.off} />
+            ))}
+          </g>
+        </svg>
+      </div>
+      <div class="pc-legend">
+        {slices.map((s, i) => (
+          <div class="pc-item" data-sf-in style={`--i: ${i + 2}`}>
+            <i class={`pc-sw pc-s${i + 1}`} />
+            <span class="pc-label">{s.n}</span>
+            <span class="pc-pct">{s.v}<small>%</small></span>
+          </div>
+        ))}
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .pc { display: flex; flex-direction: column; height: 100%; --c1: var(--t-accent); --c2: #9aa0ac; --c3: #b9bec9; --c4: #d0d4dc; --c5: #e1e4ea; }
+  .pc-body { flex: 1; display: flex; align-items: center; gap: calc(56 * var(--u)); margin: calc(12 * var(--u)) 0 calc(6 * var(--u)); min-height: 0; }
+  .pc-pie { flex: 0 0 calc(312 * var(--u)); height: calc(312 * var(--u)); display: flex; align-items: center; justify-content: center; margin-left: calc(24 * var(--u)); }
+  .pc-svg { display: block; width: var(--t-size); height: auto; }
+  .pc-slice { fill: none; stroke-width: 150; }
+  .pc-s1.pc-slice { stroke: var(--c1); }
+  .pc-s2.pc-slice { stroke: var(--c2); }
+  .pc-s3.pc-slice { stroke: var(--c3); }
+  .pc-s4.pc-slice { stroke: var(--c4); }
+  .pc-s5.pc-slice { stroke: var(--c5); }
+  .pc-legend { flex: 1; display: flex; flex-direction: column; border-top: calc(1 * var(--u)) solid var(--sf-line); }
+  .pc-item { display: flex; align-items: center; gap: calc(14 * var(--u)); padding: calc(10 * var(--u)) 0; border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .pc-sw { display: block; width: calc(18 * var(--u)); height: calc(18 * var(--u)); border-radius: calc(4 * var(--u)); }
+  .pc-sw.pc-s1 { background: var(--c1); }
+  .pc-sw.pc-s2 { background: var(--c2); }
+  .pc-sw.pc-s3 { background: var(--c3); }
+  .pc-sw.pc-s4 { background: var(--c4); }
+  .pc-sw.pc-s5 { background: var(--c5); }
+  .pc-label { flex: 1; font-size: calc(20 * var(--u)); font-weight: 700; }
+  .pc-pct { font-size: calc(32 * var(--u)); font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .pc-pct small { margin-left: calc(2 * var(--u)); font-size: calc(18 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .pc-item:first-child .pc-pct { color: var(--t-accent); }
+
+  /* 色を付ける切れ目（つまみ）: top2 なら上位2つ */
+  :global([data-t-focus='top2']) .pc { --c2: color-mix(in srgb, var(--t-accent) 50%, #fff); }
+  :global([data-t-focus='top2']) .pc-item:nth-child(2) .pc-pct { color: var(--t-accent); }
+</style>

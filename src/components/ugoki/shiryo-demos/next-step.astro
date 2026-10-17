@@ -1,0 +1,100 @@
+---
+// 資料レイアウトの見本: 問い合わせ・次の一歩型（これからの3つの流れを左に、連絡先を右に置く）
+// 見本の会社名・連絡先はすべてダミー（example.com など）。
+// つまみ: --t-accent（色）・data-t-focus（強調する連絡手段 mail|phone|none）・data-t-qr（QRコードの欄 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '問い合わせ・次の一歩型',
+    kicker: 'ご相談から導入までの流れ',
+    title: 'まずは30分の無料相談から始めましょう',
+    steps: [
+      { t: '無料相談（30分）', d: '今のお困りごとをお聞きします', when: 'お申し込みから3営業日以内' },
+      { t: 'お見積もり', d: '費用と導入の時期をご提案します', when: '相談の1週間後' },
+      { t: '導入スタート', d: '準備から運用まで伴走します', when: 'ご契約の2週間後' },
+    ],
+    contactTitle: 'お申し込み・お問い合わせ',
+    company: '株式会社サンプル商会（例）　営業部',
+    rows: [
+      { key: 'mail', k: 'メール', v: 'info@example.com', s: '24時間受付。翌営業日までにお返事します' },
+      { key: 'phone', k: '電話', v: '03-XXXX-XXXX', s: '平日9時から18時' },
+    ],
+    web: 'https://example.com/soudan',
+    qr: 'QRコード',
+    note: '※ 連絡先は見本のダミーです。実際の資料では、届く宛先に書き換えてください。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={31} lang={lang}>
+  <div class="ns" data-demo="next-step">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ns-body">
+      <ol class="ns-steps">
+        {T.steps.map((s, i) => (
+          <li data-sf-in style={`--i: ${i + 1}`}>
+            <i class="ns-num">{i + 1}</i>
+            <span class="ns-st">
+              <b>{s.t}</b>
+              <span>{s.d}</span>
+              <em>{s.when}</em>
+            </span>
+          </li>
+        ))}
+      </ol>
+      <div class="ns-contact" data-sf-in style="--i: 4">
+        <span class="ns-ct">{T.contactTitle}</span>
+        <span class="ns-co">{T.company}</span>
+        <div class="ns-cbody">
+          <ul class="ns-rows">
+            {T.rows.map((r) => (
+              <li class={`ns-r ns-${r.key}`}><span class="ns-k">{r.k}</span><span class="ns-v">{r.v}</span><span class="ns-s">{r.s}</span></li>
+            ))}
+            <li class="ns-r ns-web"><span class="ns-k">Web</span><span class="ns-wv">{T.web}</span></li>
+          </ul>
+          <span class="ns-qr"><span>{T.qr}</span></span>
+        </div>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ns { display: flex; flex-direction: column; height: 100%; }
+  .ns-body { flex: 1; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: calc(36 * var(--u)); margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .ns-steps { position: relative; display: grid; grid-auto-rows: 1fr; margin: 0; padding: 0; list-style: none; min-height: 0; }
+  .ns-steps::before { content: ''; position: absolute; left: calc(19 * var(--u)); top: calc(30 * var(--u)); bottom: calc(30 * var(--u)); border-left: calc(2 * var(--u)) dashed var(--sf-mute); }
+  .ns-steps li { position: relative; display: flex; align-items: center; gap: calc(16 * var(--u)); }
+  .ns-num { position: relative; flex: none; display: flex; align-items: center; justify-content: center; width: calc(40 * var(--u)); height: calc(40 * var(--u)); border-radius: 50%; background: var(--sf-ink-2); color: #fff; font-style: normal; font-size: calc(21 * var(--u)); font-weight: 800; }
+  .ns-steps li:first-child .ns-num { background: var(--t-accent); }
+  .ns-st { display: flex; flex-direction: column; min-width: 0; }
+  .ns-st b { font-size: calc(22 * var(--u)); font-weight: 800; }
+  .ns-st span { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .ns-st em { font-style: normal; font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink); }
+
+  .ns-contact { display: flex; flex-direction: column; padding: calc(16 * var(--u)) calc(22 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-top: calc(5 * var(--u)) solid var(--t-accent); border-radius: calc(12 * var(--u)); background: #fff; min-height: 0; }
+  .ns-ct { font-size: calc(22 * var(--u)); font-weight: 800; }
+  .ns-co { margin-top: calc(2 * var(--u)); font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .ns-cbody { flex: 1; display: flex; align-items: stretch; gap: calc(18 * var(--u)); margin-top: calc(8 * var(--u)); min-height: 0; }
+  .ns-rows { flex: 1; display: grid; grid-template-rows: 1.25fr 1fr 0.8fr; margin: 0; padding: 0; list-style: none; min-width: 0; }
+  .ns-r { display: flex; flex-direction: column; justify-content: center; padding: 0 calc(10 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); border-radius: calc(6 * var(--u)); }
+  .ns-k { font-size: calc(14 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .ns-v { font-size: calc(24 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .ns-wv { font-size: calc(16 * var(--u)); font-weight: 700; word-break: break-all; line-height: 1.3; }
+  .ns-s { font-size: calc(13 * var(--u)); color: var(--sf-ink-2); }
+  .ns-qr { flex: none; align-self: center; display: flex; align-items: center; justify-content: center; width: calc(96 * var(--u)); height: calc(96 * var(--u)); border: calc(2 * var(--u)) dashed var(--sf-mute); border-radius: calc(8 * var(--u)); font-size: calc(14 * var(--u)); font-weight: 700; color: var(--sf-ink-3); text-align: center; }
+
+  /* 強調する連絡手段（つまみ: 強調する連絡手段） */
+  :global([data-t-focus='mail']) .ns-mail,
+  :global([data-t-focus='phone']) .ns-phone { background: color-mix(in srgb, var(--t-accent) 9%, #fff); box-shadow: inset calc(4 * var(--u)) 0 var(--t-accent); }
+  :global([data-t-focus='mail']) .ns-mail .ns-v,
+  :global([data-t-focus='phone']) .ns-phone .ns-v { color: var(--t-accent); }
+
+  /* QRコードの欄（つまみ: QRコードの欄） */
+  :global([data-t-qr='hide']) .ns-qr { display: none; }
+</style>

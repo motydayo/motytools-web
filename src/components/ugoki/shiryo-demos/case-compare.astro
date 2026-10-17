@@ -1,0 +1,85 @@
+---
+// 資料レイアウトの見本: ケース横断比較型（3つの事例を同じ項目の行で並べ、成果の行を目立たせる）
+// 会社名・数字はすべて架空。
+// つまみ: --t-accent（色）・data-t-focus（成果の行 on|off）・data-t-labels（項目名の列 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'ケース横断比較型',
+    kicker: '勤怠システム「はたらきノート」導入3社の比較',
+    title: '3社とも、勤怠の集計の手間と間違いが大きく減った',
+    labels: ['課題', '導入したこと', '期間', '成果'],
+    cases: [
+      { name: 'やまぶき薬局グループ', sub: '薬局・80名', cells: ['紙のタイムカードの集計に毎月丸1日', 'スマホで打刻できる勤怠アプリ', '1か月'], res: { what: '月の集計時間', before: '24時間', after: '3時間' } },
+      { name: '大和精機', sub: '製造・210名', cells: ['3拠点で締め日と形式がばらばら', '3拠点を1つの勤怠システムに統一', '3か月'], res: { what: '修正依頼（月）', before: '40件', after: '6件' } },
+      { name: '北斗運輸', sub: '物流・45名', cells: ['ドライバーの打刻漏れが多い', '乗務開始と同時に打刻できる車載端末', '2週間'], res: { what: '打刻漏れ（月）', before: '30件', after: '0件' } },
+    ],
+    note: '※ 会社名・数字は架空の例。成果は導入前と導入後6か月目の比較。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={19} lang={lang}>
+  <div class="cc" data-demo="case-compare">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="cc-table" data-sf-in style="--i: 1">
+      <span class="cc-corner" />
+      {T.cases.map((c) => (
+        <span class="cc-head"><span class="cc-name">{c.name}</span><span class="cc-sub">{c.sub}</span></span>
+      ))}
+      {T.labels.slice(0, 3).map((l, r) => (
+        <>
+          <span class="cc-label">{l}</span>
+          {T.cases.map((c) => <span class="cc-cell">{c.cells[r]}</span>)}
+        </>
+      ))}
+      <span class="cc-label cc-res-label">{T.labels[3]}</span>
+      {T.cases.map((c) => (
+        <span class="cc-cell cc-res">
+          <span class="cc-what">{c.res.what}</span>
+          <span class="cc-nums"><span class="cc-before">{c.res.before}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg><b class="cc-after">{c.res.after}</b></span>
+        </span>
+      ))}
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .cc { display: flex; flex-direction: column; height: 100%; }
+  .cc-table {
+    flex: 1;
+    display: grid;
+    grid-template-columns: calc(112 * var(--u)) repeat(3, minmax(0, 1fr));
+    grid-template-rows: calc(58 * var(--u)) repeat(3, minmax(0, 1fr)) minmax(0, 1.25fr);
+    margin: calc(16 * var(--u)) 0 calc(10 * var(--u));
+    min-height: 0;
+  }
+  .cc-head { display: flex; flex-direction: column; justify-content: center; padding: 0 calc(16 * var(--u)); border-bottom: calc(2 * var(--u)) solid var(--sf-ink); }
+  .cc-name { font-size: calc(20 * var(--u)); font-weight: 800; line-height: 1.25; }
+  .cc-sub { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); font-weight: 700; }
+  .cc-label { display: flex; align-items: center; padding-right: calc(8 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(16 * var(--u)); font-weight: 800; color: var(--sf-ink-2); }
+  .cc-cell { display: flex; align-items: center; padding: 0 calc(16 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(17 * var(--u)); font-weight: 700; line-height: 1.4; }
+  .cc-res { flex-direction: column; align-items: flex-start; justify-content: center; gap: calc(2 * var(--u)); border-bottom: 0; }
+  .cc-res-label { border-bottom: 0; }
+  .cc-what { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); font-weight: 700; }
+  .cc-nums { display: inline-flex; align-items: center; gap: calc(8 * var(--u)); font-variant-numeric: tabular-nums; }
+  .cc-before { font-size: calc(20 * var(--u)); font-weight: 800; color: var(--sf-ink-3); }
+  .cc-nums svg { width: calc(18 * var(--u)); height: calc(18 * var(--u)); color: var(--sf-ink-3); flex: none; }
+  .cc-after { font-size: calc(32 * var(--u)); font-weight: 800; line-height: 1.15; }
+
+  /* 成果の行を目立たせる（つまみ: 成果の行） */
+  :global([data-t-focus='on']) .cc-res { background: color-mix(in srgb, var(--t-accent) 8%, #fff); }
+  :global([data-t-focus='on']) .cc-res-label { color: var(--t-accent); }
+  :global([data-t-focus='on']) .cc-after { color: var(--t-accent); }
+  :global([data-t-focus='on']) .cc-res-label { background: color-mix(in srgb, var(--t-accent) 8%, #fff); padding-left: calc(8 * var(--u)); }
+
+  /* 項目名の列を隠す（つまみ: 項目名の列） */
+  :global([data-t-labels='hide']) .cc-corner,
+  :global([data-t-labels='hide']) .cc-label { display: none; }
+  :global([data-t-labels='hide']) .cc-table { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+</style>

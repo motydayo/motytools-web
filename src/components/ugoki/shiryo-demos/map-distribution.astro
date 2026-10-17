@@ -1,0 +1,102 @@
+---
+// 資料レイアウトの見本: 地図分布型（47都道府県を同じ大きさの四角で並べたタイルマップを、店舗数の4段階の濃さで塗る）
+// 四角の位置 = 列 × 37.5、行 × 37.5（大きさ35）。位置は実際の地図を簡略にした、この資料のための配置。
+// つまみ: --t-accent（色）・data-t-label（四角の中の文字 name|count|none）・--t-r（四角の角の丸み）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const PFX = 'md-';
+const PAGE = 17;
+const ATTRS = ['label'];
+// 都道府県の店舗数（ドラッグストアの架空の数字）。四角1つが1つの都道府県。位置は実際の地図を簡略にした、この資料のための配置。
+// [名前, 列, 行, 店舗数]
+const TILES = [
+  ['北海', 12, 0, 14], ['青森', 12, 1, 3], ['秋田', 11, 2, 2], ['岩手', 12, 2, 3], ['山形', 11, 3, 2], ['宮城', 12, 3, 8],
+  ['島根', 3, 4, 1], ['鳥取', 4, 4, 1], ['兵庫', 5, 4, 15], ['京都', 6, 4, 8], ['福井', 7, 4, 2], ['石川', 8, 4, 3], ['富山', 9, 4, 2], ['新潟', 10, 4, 4], ['福島', 11, 4, 5],
+  ['福岡', 1, 5, 20], ['山口', 2, 5, 3], ['広島', 3, 5, 9], ['岡山', 4, 5, 6], ['大阪', 5, 5, 28], ['滋賀', 6, 5, 4], ['岐阜', 7, 5, 5], ['長野', 8, 5, 5], ['群馬', 9, 5, 5], ['栃木', 10, 5, 5], ['茨城', 11, 5, 7],
+  ['佐賀', 0, 6, 2], ['熊本', 1, 6, 5], ['大分', 2, 6, 3], ['和歌', 5, 6, 2], ['奈良', 6, 6, 3], ['三重', 7, 6, 4], ['愛知', 8, 6, 22], ['山梨', 9, 6, 2], ['埼玉', 10, 6, 18], ['東京', 11, 6, 42], ['千葉', 12, 6, 16],
+  ['長崎', 0, 7, 3], ['鹿児', 1, 7, 3], ['宮崎', 2, 7, 2], ['愛媛', 3, 7, 3], ['香川', 4, 7, 3], ['徳島', 5, 7, 1], ['静岡', 10, 7, 11], ['神奈', 11, 7, 24],
+  ['高知', 4, 8, 1], ['沖縄', 0, 8, 4],
+];
+if (TILES.length !== 47) throw new Error('map-distribution: 都道府県が47ではありません');
+if (new Set(TILES.map((t) => t[1] + ',' + t[2])).size !== 47) throw new Error('map-distribution: 四角の位置が重なっています');
+const TOTAL = TILES.reduce((s, t) => s + t[3], 0);
+const TOPN = 8;
+const top = [...TILES].sort((a, b) => b[3] - a[3]);
+const topSum = top.slice(0, TOPN).reduce((s, t) => s + t[3], 0);
+const pct = Math.round((topSum / TOTAL) * 100);
+const BINS = [[1, '1〜4店'], [5, '5〜9店'], [10, '10〜19店'], [20, '20店以上']];
+const bin = (v) => (v >= 20 ? 4 : v >= 10 ? 3 : v >= 5 ? 2 : 1);
+const FULL = { 北海: '北海道', 神奈: '神奈川', 鹿児: '鹿児島', 和歌: '和歌山' };
+const nm = (s) => FULL[s] ?? s;
+const T = {
+  name: '地図分布型',
+  kicker: `ドラッグストア「ハレ薬局」の都道府県別の店舗数（2025年9月末・全国${TOTAL}店）`,
+  title: `店舗の${pct}%は、上位${TOPN}都府県に集まっている`,
+  note: '※ 四角1つが1つの都道府県（位置は実際の地図を簡略にした配置）。色が濃いほど店舗数が多い。',
+};
+const fmt = (n) => String(Math.round(n * 100) / 100);
+function buildBody(p) {
+  const c = (...n) => n.map((x) => p + x).join(' ');
+  const P = 37.5, S = 35;
+  let s = `    <div class="${c('row')}">\n`;
+  s += `      <svg class="${c('svg')}" viewBox="0 0 486 338" role="img" aria-label="都道府県ごとの店舗数を色の濃さで表した地図">\n`;
+  TILES.forEach(([name, col, row, v]) => {
+    const x = fmt(col * P), y = fmt(row * P);
+    s += `        <g class="${c('t', 'l' + bin(v))}">\n`;
+    s += `          <rect class="${c('tile')}" x="${x}" y="${y}" width="${S}" height="${S}" />\n`;
+    s += `          <text class="${c('nm')}" x="${fmt(col * P + S / 2)}" y="${fmt(row * P + S / 2 + 5)}" text-anchor="middle">${name}</text>\n`;
+    s += `          <text class="${c('ct')}" x="${fmt(col * P + S / 2)}" y="${fmt(row * P + S / 2 + 5)}" text-anchor="middle">${v}</text>\n`;
+    s += `        </g>\n`;
+  });
+  s += `        <text class="${c('lg-t')}" x="0" y="16">都道府県ごとの店舗数</text>\n`;
+  BINS.forEach(([, label], i) => {
+    s += `        <rect class="${c('tile', 'chip', 'l' + (i + 1))}" x="0" y="${30 + i * 30}" width="24" height="24" />\n`;
+    s += `        <text class="${c('lg')}" x="34" y="${30 + i * 30 + 18}">${label}</text>\n`;
+  });
+  s += `      </svg>\n`;
+  s += `      <div class="${c('side')}">\n`;
+  s += `        <span class="${c('big')}">${pct}%</span>\n`;
+  s += `        <span class="${c('big-label')}">上位${TOPN}都府県に集まる店舗の割合</span>\n`;
+  s += `        <span class="${c('sub')}">${topSum}店 / 全国${TOTAL}店</span>\n`;
+  s += `        <span class="${c('rank')}">${top.slice(0, 3).map((t) => `${nm(t[0])}${t[3]}店`).join('・')}</span>\n`;
+  s += `      </div>\n    </div>`;
+  return s;
+}
+// 英語版を作るときは T を言語ごとに用意する（今は日本語だけ）
+const body = buildBody('md-');
+---
+
+<SlideFrame size={size} label={T.name} page={PAGE} lang={lang}>
+  <div class="md" data-demo="map-distribution">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="md-body" data-sf-in style="--i: 2" set:html={body} />
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style is:global>
+  .md { display: flex; flex-direction: column; height: 100%; }
+  .md-body { flex: 1; min-height: 0; margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); }
+  /* 四角1つが1つの都道府県。色の濃さは店舗数（1〜4店、5〜9店、10〜19店、20店以上の4段階）。座標は幅486×高さ338の中で数字で決めている */
+  .md-row { display: flex; gap: calc(32 * var(--u)); height: 100%; }
+  .md-svg { display: block; flex: 0 0 calc(486 * var(--u)); width: calc(486 * var(--u)); height: 100%; overflow: visible; }
+  
+  .md-tile { rx: calc(var(--t-r) * 1px); stroke: none; }
+  .md-l1 .md-tile, .md-tile.md-l1 { fill: color-mix(in srgb, var(--t-accent) 14%, #fff); }
+  .md-l2 .md-tile, .md-tile.md-l2 { fill: color-mix(in srgb, var(--t-accent) 36%, #fff); }
+  .md-l3 .md-tile, .md-tile.md-l3 { fill: color-mix(in srgb, var(--t-accent) 66%, #fff); }
+  .md-l4 .md-tile, .md-tile.md-l4 { fill: var(--t-accent); }
+  .md-nm, .md-ct { display: none; font-size: 14px; font-weight: 700; fill: #1f2430; font-variant-numeric: tabular-nums; }
+  .md-l3 .md-nm, .md-l3 .md-ct, .md-l4 .md-nm, .md-l4 .md-ct { fill: #fff; }
+  [data-t-label='name'] .md-nm { display: inline; }
+  [data-t-label='count'] .md-ct { display: inline; }
+  .md-lg-t { font-size: 16px; font-weight: 700; fill: #5a6070; }
+  .md-lg { font-size: 16px; fill: #1f2430; }
+  
+  .md-side { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: calc(6 * var(--u)); padding-left: calc(28 * var(--u)); border-left: calc(1 * var(--u)) solid #e3e5ea; }
+  .md-big { font-size: calc(64 * var(--u)); font-weight: 800; line-height: 1.05; color: var(--t-accent); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .md-big-label { font-size: calc(16 * var(--u)); color: #5a6070; }
+  .md-sub { margin-top: calc(14 * var(--u)); padding-top: calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid #e3e5ea; font-size: calc(22 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .md-rank { font-size: calc(16 * var(--u)); color: #5a6070; }
+</style>

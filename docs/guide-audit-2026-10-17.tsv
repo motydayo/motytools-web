@@ -1,0 +1,135 @@
+slug	app	title	demand	unique	intent	overlap_with	total	verdict	reason
+accessory-genka-keisan	tsukulog	ハンドメイドアクセサリーの原価計算｜ピアスの値段の付け方	3	3	5	handmade-genka-keisan	11	MERGE-INTO:handmade-genka-keisan	ピアス・レジンの計算例は具体的だが原価計算の本体記事と同じ式
+amari-yasai-recipe	arumono-recipe	余り野菜を使い切るレシピ｜スープ・味噌汁・炒め物の基本	4	2	5	amarimono-recipe-kantan	11	NOINDEX	余り野菜レシピは大手レシピサイトが独占。一般的な作り方で独自性が薄い
+amarimono-gohan-recipe	arumono-recipe	余り物とご飯で作るレシピ｜チャーハン・丼・雑炊の基本	3	2	5	amarimono-recipe-kantan	10	MERGE-INTO:amarimono-recipe-kantan	チャーハン・丼の一般レシピ。余り物早見表の一部で足りる
+amarimono-pasta	arumono-recipe	冷蔵庫の余り物で作るパスタ｜味の4系統と具の組み合わせ	3	3	5	amarimono-recipe-kantan	11	MERGE-INTO:amarimono-recipe-kantan	味4系統の表は面白いが余り物レシピ記事に統合できる
+amarimono-recipe-kantan	arumono-recipe	冷蔵庫の余り物で作る簡単レシピ｜組み合わせ早見表つき	4	4	5	amarimono-gohan-recipe	13	KEEP	食材の組み合わせから引ける早見表と分量の型が独自
+arumono-ryori-kotsu	arumono-recipe	あるもので料理するコツ5つ｜できない人が最初に覚える順番と型	3	3	5	kondate-reizoko	11	NOINDEX	型・主役・味の3手は面白いが検索需要が曖昧
+ballpython-esa-hindo	reptile-sns	ボールパイソンの餌の頻度とサイズ｜拒食のときに確かめること	3	3	5	leopa-esa-hindo	11	NOINDEX	需要はあるが獣医・専門店の上位記事に対し一次情報が無い
+barcode-saiyasune-app	price-scan	バーコードで最安値がわかるアプリ比較｜店頭で使える5選	3	3	4	kakaku-hikaku-site	10	NOINDEX	アプリ比較で自社アプリ誘導色が強い。需要も小さい
+bouhan-app-hikaku	machi-anzen-map	防犯アプリおすすめ比較｜警察公式と地図で調べるアプリ	3	3	4	fushinsha-joho-map	10	NOINDEX	防犯アプリ比較は自社アプリ含みで一般比較との差が小さい
+captio-kawari	memomail	Captioの代わりになるアプリ比較｜自分宛てメールを速く送る	4	4	5	jibun-ni-mail-iphone	13	KEEP	Captio代替という具体的で競合の少ない需要。比較が事実ベース
+chintai-shushi-keisan	ooya-note	賃貸の収支計算のしかた｜手残りとキャッシュフローの出し方	3	4	5	rimawari-keisan	12	NOINDEX	手残りの計算例は良いが利回り記事と需要が近く弱い
+chomiryo-kaifugo-kigen	pitto-kigen	調味料の開封後の賞味期限一覧｜メーカーの目安と保存場所	5	5	5		15	KEEP	調味料の開封後期限をメーカー公式の数字で一覧化。需要大で独自性が高い
+creema-tesuryo-keisan	tsukulog	Creema（クリーマ）の手数料の計算方法｜改定後の計算例と手取り早見表	4	5	5	minne-tesuryo-keisan	14	KEEP	改定後の手数料と手取り早見表。確認日つきで他記事の数字誤りを補う
+drugstore-kakaku-hikaku	price-scan	ドラッグストアの価格を比べる方法｜店頭でネットと比較	3	2	4	nichiyouhin-matomegai	9	NOINDEX	一般論が中心で実数値が無い
+fudousan-shotoku-chobo	ooya-note	不動産所得の帳簿の付け方｜簡易帳簿の項目とエクセル例	3	3	5	fudousan-shotoku-keihi	11	NOINDEX	国税庁冊子の要約が中心。上位は税理士・国税庁
+fudousan-shotoku-keihi	ooya-note	不動産所得の経費になるもの一覧｜大家が見落としやすい項目	5	2	5	fudousan-shotoku-chobo	12	NOINDEX	需要は大きいが税理士サイトが強く、国税庁の要約で差が出せない
+furikae-lesson-rule	lesson-techo	振替レッスンのルールの決め方｜期限・回数・当日欠席の扱い	3	5	5	furikae-mail-bunrei	13	KEEP	振替ルールの5項目と規約文例。講師向けで競合が薄い
+furikae-mail-bunrei	lesson-techo	レッスン振替の連絡メール文例｜欠席連絡への返信と日程調整	3	3	5	furikae-lesson-rule	11	MERGE-INTO:furikae-lesson-rule	文例集。ルール記事に統合して一本化したほうが強い
+fushinsha-joho-mail	machi-anzen-map	不審者情報メールの登録方法｜都道府県警の配信サービス一覧	4	5	5	fushinsha-joho-map	14	KEEP	都道府県警の配信サービス一覧と登録手順。一次情報を束ねた実用記事
+fushinsha-joho-map	machi-anzen-map	不審者情報をマップで見る方法｜県警の地図と見るときの注意	4	4	5	fushinsha-joho-mail	13	KEEP	県警の地図の探し方と位置・期間の読み方。需要あり
+genka-shokyaku-fudousan	ooya-note	不動産の減価償却の計算方法｜中古の耐用年数と定額法の計算例	4	5	5		14	KEEP	中古の簡便法と定額法を検算つきの計算例で示す。競合より具体的
+gessha-hiwari-keisan	lesson-techo	月謝の日割り計算のしかた｜月途中の入会・退会の決め方	4	5	5		14	KEEP	日数割り・回数割りの検算つき計算例と規約文例。需要あり競合薄
+gessha-kakuteishinkoku	lesson-techo	個人レッスン講師の確定申告｜手渡しの月謝の記録と経費の基本	3	3	5	handmade-kakuteishinkoku-ikurakara	11	NOINDEX	国税庁情報の一般的な整理で差が出にくい
+gessha-kanri-app	lesson-techo	月謝管理アプリ比較｜個人教室の講師が無料で始められる5選	3	3	4	gessha-kanrihyo-excel	10	NOINDEX	アプリ比較は自社アプリ含みで宣伝色。競合サイトも多い
+gessha-kanrihyo-excel	lesson-techo	月謝管理表のエクセルテンプレート｜未納が一目でわかる作り方	4	5	5	seito-kanri-kojin	14	KEEP	コピーして使える数式と条件付き書式。検算済みテンプレート
+gessha-mibarai-saisoku	lesson-techo	月謝の未払いを催促する文例｜角が立たない伝え方と段階	4	5	5		14	KEEP	段階別の催促文例。やわらかい確認から面談まで他にない型
+gessha-neage-oshirase	lesson-techo	月謝値上げのお知らせ文例｜時期・理由の伝え方と注意点	4	5	5		14	KEEP	値上げ案内の文例と減収にならない人数の計算
+gessha-shukin-houhou	lesson-techo	月謝の集金方法を比較｜手渡し・振込・口座振替・キャッシュレス	3	4	5		12	NOINDEX	手数料試算は良いが需要が小さい。余力があれば昇格候補
+gyosei-shobun-shirabekata	machi-anzen-map	業者の行政処分の調べ方｜頼む前に確かめる公的な検索先	3	4	5		12	NOINDEX	公的な検索先の案内は有用だが需要が小さい。昇格候補
+hachurui-joto-hikitsugi	reptile-sns	爬虫類を譲渡するときの引き継ぎ｜渡す飼育情報と相談先	2	3	5		10	NOINDEX	需要が小さく法令面の断定も避けているため上位は難しい
+hachurui-shiiku-kiroku-app	reptile-sns	爬虫類の飼育記録アプリ比較｜給餌・体重・脱皮を残す6選	3	3	3	hachurui-shiiku-note	9	NOINDEX	アプリ比較で宣伝色が強い
+hachurui-shiiku-note	reptile-sns	爬虫類の飼育記録のつけ方｜残す項目と三日坊主にならないコツ	3	3	5	hachurui-shiiku-kiroku-app	11	NOINDEX	項目列挙で独自データが無い
+hachurui-sns	reptile-sns	爬虫類の飼い主がつながるSNS｜X・インスタ・専用アプリの違い	2	2	4		8	NOINDEX	需要が小さく宣伝色が強い
+hachurui-taiju-sokutei	reptile-sns	爬虫類の体重計の選び方｜0.1g単位が要る子と測り方のコツ	3	3	5	leopa-taiju-meyasu	11	NOINDEX	体重計の選び方は需要が小さい
+handmade-genka-keisan	tsukulog	ハンドメイドの原価計算のやり方｜1個あたりの材料費の出し方	5	5	5	accessory-genka-keisan	15	KEEP	単価の出し方と原価計算表。検算した例で需要も大
+handmade-hanbai-site-hikaku	tsukulog	ハンドメイド販売サイトの手数料比較｜手取りで見る選び方	5	5	5		15	KEEP	同じ作品の手取りで比較。確認日つきの実数値
+handmade-kakuteishinkoku-ikurakara	tsukulog	ハンドメイドの確定申告はいくらから？立場別の早見表つき	5	4	5		14	KEEP	立場別の早見表と所得の計算例。国税庁基準日を明記
+handmade-keihi	tsukulog	ハンドメイドの経費になるもの一覧｜材料費・送料・道具の扱い	4	3	5	handmade-tanaoroshi	12	NOINDEX	国税庁情報の整理。上位の税理士サイトに勝ちにくい
+handmade-nedan-kimekata	tsukulog	ハンドメイドの値段の決め方｜手取りから逆算する計算式	5	5	5	handmade-rieki-ritsu	15	KEEP	手取りからの逆算式と検算例。一番強い記事
+handmade-rieki-ritsu	tsukulog	ハンドメイドの利益率の計算と目安｜原価率と時給から見直す	3	4	5	handmade-nedan-kimekata	12	MERGE-INTO:handmade-nedan-kimekata	利益率と値付けは同じ計算の裏表
+handmade-tanaoroshi	tsukulog	ハンドメイドの棚卸しのやり方｜確定申告前の数え方と計算	3	4	5	handmade-keihi	12	NOINDEX	需要が小さい。計算例は有用なので昇格候補
+handmade-uriage-kanri	tsukulog	ハンドメイドの売上管理表の作り方｜販路別の手取りまで	3	4	5		12	NOINDEX	数式つき管理表は有用だが需要が小さい。昇格候補
+handmade-zaiko-kanri	tsukulog	ハンドメイドの在庫管理のやり方｜材料と作品を管理する方法比較	3	3	4		10	NOINDEX	アプリ比較で宣伝色。需要は小さい
+hanzai-hassei-map	machi-anzen-map	犯罪発生マップの見方｜都道府県警が公開するマップの一覧と注意点	4	4	5	hikkoshi-chian-shirabekata	13	KEEP	都道府県警マップの探し方と件数の読み方。需要あり
+hijoushoku-kigen-kanri	pitto-kigen	非常食の賞味期限管理｜長期保存品を期限切れにしない方法	3	3	5	rolling-stock-kanri	11	MERGE-INTO:rolling-stock-kanri	非常食の期限管理はローリングストック記事と主題が近い
+hikkoshi-chian-shirabekata	machi-anzen-map	引っ越し先の治安の調べ方｜公的データで確かめる6つの方法	4	4	5	hanzai-hassei-map	13	KEEP	公的データ6種を見る順に整理した実用記事
+idea-memo-app	memomail	アイデアメモアプリおすすめ｜思いついた瞬間に書ける5選	3	2	4		9	NOINDEX	標準メモやKeepの一般比較で新味が無い
+instagram-hozon-seiri	recipescrap	インスタの保存済みを整理する方法｜コレクションの作り方と分け方	3	3	5	instagram-recipe-hozon	11	MERGE-INTO:instagram-recipe-hozon	コレクション整理の話。保存記事に統合
+instagram-recipe-comment	recipescrap	インスタの「レシピはコメント欄」とは？見方と残し方を解説	4	4	5		13	KEEP	「レシピはコメント欄」の意味と見つけ方。検索意図に直球
+instagram-recipe-hozon	recipescrap	インスタのレシピを保存する方法4つ｜あとで材料名で探せる残し方	4	3	5	instagram-hozon-seiri	12	KEEP	保存しても探せない問題の4方法比較。需要は大きい
+instagram-recipe-insatsu	recipescrap	インスタのレシピを印刷する方法｜説明文と画像をきれいに残す	3	4	5		12	KEEP	印刷ボタンが無い問題に4つの手順で答える。競合が少ない
+instagram-recipe-kensaku	recipescrap	インスタでレシピを検索する方法｜食材名で見つける探し方	3	2	5		10	NOINDEX	インスタ検索の一般的な使い方で独自性が薄い
+iphone-memo-pc-kyoyu	memomail	iPhoneのメモをパソコンと共有する方法｜Windowsでも見る	3	2	5		10	NOINDEX	Apple公式手順の言い換えで競合が強い
+iphone-onsei-memo	memomail	iPhoneの音声入力でメモする方法｜句読点と精度を上げるコツ	3	2	5		10	NOINDEX	Apple公式の音声入力案内と重複
+jan-code-kensaku	price-scan	バーコードから商品を検索する方法｜JANコードの調べ方	4	4	5		13	KEEP	13桁の意味と検索しても出ない理由。競合より丁寧
+jibun-ate-mail-furiwake	memomail	自分宛てメールを自動で振り分ける方法｜Gmailのフィルタ	2	3	5		10	NOINDEX	需要が小さい
+jibun-ate-mail-todokanai	memomail	自分に送ったメールが届かないときの確認点｜Gmail・Outlook	4	4	5		13	KEEP	届かない原因を3か所の順で確認できる。公式ヘルプで裏取り済み
+jibun-line-memo-hikaku	memomail	LINEのKeepメモで自分にメモを送る方法｜メールとの違い	3	2	4		9	NOINDEX	Keepメモの説明は公式ヘルプで足りる
+jibun-ni-mail-iphone	memomail	iPhoneで自分にメールを送る方法｜メモ代わりに速く送るコツ	4	4	5		13	KEEP	4方法を操作数で比較。メモ代わりの実用観点が独自
+jishu-kanri-ooya	ooya-note	自主管理の大家がやること一覧｜毎月・毎年・突発の仕事	3	3	5		11	NOINDEX	仕事の一覧は一般的な内容
+kaisugi-boushi	pitto-kigen	食品の買いすぎを防ぐ方法｜二重買いをなくす5つの習慣	3	3	5	reizoko-zaiko-kanri	11	NOINDEX	習慣の一般論
+kakaku-hikaku-site	price-scan	価格比較サイトとアプリのおすすめ｜家電・日用品・本の使い分け	4	2	4		10	NOINDEX	価格.comなどの一般比較に勝てず宣伝色もある
+keiyaku-koushin-kanri	ooya-note	賃貸契約の更新で大家がやること｜時期・更新料・家賃改定	3	3	5		11	NOINDEX	需要が小さい
+kodomo-bouhan-tsugakuro	machi-anzen-map	通学路の不審者対策｜家庭で教えることと地域の情報の使い方	3	3	5	tsugakuro-anzen-tenken	11	NOINDEX	警察の合言葉などの一般情報
+koegake-jian	machi-anzen-map	声かけ事案とは？警察が公表する理由と不審者情報の読み方	4	3	5		12	KEEP	声かけ事案の意味と公表文の読み方。不安を持つ保護者の検索に合う
+kondate-app-hikaku	arumono-recipe	献立アプリおすすめ比較｜1週間型・冷蔵庫型・AI型の違い	4	2	4	reizoko-amarimono-app	10	NOINDEX	献立アプリ比較は競合が強く自社アプリ含み
+kondate-reizoko	arumono-recipe	冷蔵庫にあるもので献立を決める手順｜毎日迷わない考え方	3	3	5	arumono-ryori-kotsu	11	NOINDEX	手順は良いが需要が小さい
+koutsujiko-tashuu	machi-anzen-map	交通事故が多い場所の調べ方｜警察庁のデータを地図で見る	3	4	5		12	NOINDEX	警察庁データの説明は良いが需要が小さい。昇格候補
+leopa-dappi	reptile-sns	レオパの脱皮の頻度とサイン｜脱皮不全の原因と受診の目安	4	3	5		12	KEEP	脱皮頻度と脱皮不全の対処。確認日つき複数情報源
+leopa-esa-hindo	reptile-sns	レオパの餌の頻度と量｜ベビーから成体まで月齢別の目安	5	4	5	ballpython-esa-hindo	14	KEEP	月齢別早見表と出典の幅。需要最大
+leopa-esa-tabenai	reptile-sns	レオパが餌を食べないときに確かめること｜原因と受診の目安	5	4	5		14	KEEP	確かめる順番と受診の目安。需要大
+leopa-jumyou	reptile-sns	ヒョウモントカゲモドキの寿命｜長生きのコツと一生の記録	4	2	5		11	NOINDEX	寿命は情報が一般的で上位に勝てない
+leopa-sanran	reptile-sns	レオパの産卵の準備｜産卵床の作り方と無精卵・産卵後のケア	3	3	5		11	NOINDEX	需要が小さく慎重に扱う分野
+leopa-taiju-meyasu	reptile-sns	レオパの体重の目安｜月齢ごとの目安と測り方・増えないとき	4	4	5	hachurui-taiju-sokutei	13	KEEP	成長段階別の体重目安と測り方
+lesson-kiroku-karte	lesson-techo	レッスン記録の書き方｜講師が生徒カルテに毎回残す5項目	2	3	5		10	NOINDEX	需要が小さい
+memo-mail-okuru-iphone	memomail	iPhoneのメモをメールで送る方法｜送れないときの対処も	3	2	5		10	NOINDEX	Apple公式手順と重複
+memo-shukan	memomail	メモを取る習慣のつけ方｜続く人がやっている小さな仕組み	2	2	5	memo-wasure-boushi	9	NOINDEX	習慣論は薄く競合が多い
+memo-wasure-boushi	memomail	メモしたのに忘れる人へ｜見返す仕組みを作る5つの方法	2	2	5	memo-shukan	9	NOINDEX	一般論で独自データ無し
+minne-tesuryo-keisan	tsukulog	minneの手数料の計算方法｜送料込みの計算例と手取り早見表	5	5	5	creema-tesuryo-keisan	15	KEEP	手数料の計算対象と手取り早見表。需要大で数字の誤記事が多い領域
+net-tento-kakaku	price-scan	ネットと店頭の価格が違う理由｜家電量販店で損しない買い方	3	3	5	net-yasuku-kau	11	NOINDEX	一般論が中心
+net-yasuku-kau	price-scan	ネットで安く買う方法｜最安値の探し方と損しない注意点	4	2	5	rakuten-yahoo-hikaku	11	NOINDEX	競合が強く新味が無い
+nichiyouhin-matomegai	price-scan	日用品のまとめ買いはどこが安い？ドラッグストアとネットの比べ方	3	3	5	drugstore-kakaku-hikaku	11	NOINDEX	比べ方の一般論
+nokorimono-remake	arumono-recipe	残り物リメイクレシピ｜カレー・鍋・煮物を別の料理に変える	3	3	5		11	NOINDEX	レシピ大手が強い
+obsidian-iphone-memo	memomail	iPhoneからObsidianに素早くメモする方法｜起動待ちを減らす	3	4	5		12	KEEP	起動待ちを減らす3方法を手順つきで。競合が薄い
+ooya-kakuteishinkoku	ooya-note	個人大家の確定申告のやり方｜1年分の集計手順と必要書類	4	3	5		12	NOINDEX	税理士・会計ソフトの解説が強い
+piano-gessha-souba	lesson-techo	ピアノ教室の月謝の相場｜個人教室と大手の違いと決め方	4	4	5		13	KEEP	公開データの平均と講師向けの決め方
+rakuten-saiyasune	price-scan	楽天市場で最安値を調べる方法｜送料込み・ポイント込みで比べる	3	3	5	rakuten-yahoo-hikaku	11	NOINDEX	楽天の最安値の探し方。比較記事に統合する価値
+rakuten-yahoo-hikaku	price-scan	楽天とYahoo!ショッピングはどっちが安い？比べ方のコツ	4	4	5	rakuten-saiyasune	13	KEEP	送料・ポイントの順で比べる手順。確認日つき
+recipe-bookmark	recipescrap	レシピのブックマーク管理術｜サイトごとに散らばらない方法	2	2	5		9	NOINDEX	需要が小さい
+recipe-hozon-app-hikaku	recipescrap	レシピ保存アプリおすすめ比較｜無料の上限と取り込み元で選ぶ	3	3	3		9	NOINDEX	アプリ比較で宣伝色が強い
+recipe-hozon-jougen	recipescrap	クラシルの保存上限は無料30件？確認日つきで解説｜超えたときの対処	4	5	5		14	KEEP	公式ヘルプで確認した上限30件と他記事の食い違いを整理。唯一性が高い
+recipe-note-app	recipescrap	レシピノートをアプリで作る方法｜スマホで自分だけのレシピ帳に	2	2	5		9	NOINDEX	需要が小さい
+recipe-screenshot-seiri	recipescrap	レシピのスクショを整理する方法｜iPhoneの写真で探せる管理術	3	3	5		11	NOINDEX	標準機能の説明が中心
+recipe-seiri-houhou	recipescrap	レシピの整理の仕方｜バラバラに溜まったレシピをまとめる手順	3	2	5		10	NOINDEX	一般的な整理術
+reitou-hozon-kigen	pitto-kigen	冷凍保存の期限の目安｜肉・魚・ご飯・野菜の一覧と管理	4	4	5		13	KEEP	食材別の冷凍期限を公的機関・メーカーから一覧化
+reizoko-amarigachi-shokuzai	arumono-recipe	冷蔵庫で余りがちな食材と使い道｜余らせない買い方も解説	3	3	5		11	NOINDEX	調査数字は良いが需要が小さい
+reizoko-amarimono-app	arumono-recipe	冷蔵庫の余り物でレシピがわかるアプリ比較｜無料で使える5選	3	3	4	kondate-app-hikaku	10	NOINDEX	アプリ比較で宣伝色が強い
+reizoko-kazoku-kyoyu	pitto-kigen	冷蔵庫の中身を家族と共有できるアプリ｜二重買いを防ぐ使い方	3	3	3		9	NOINDEX	自社アプリ誘導が主
+reizoko-recipe-ai	arumono-recipe	冷蔵庫にあるものでAIにレシピを聞く方法｜注意点とアプリとの違い	3	4	5		12	NOINDEX	AIへの聞き方の例は有用。昇格候補
+reizoko-zaiko-kanri	pitto-kigen	冷蔵庫の在庫管理のやり方｜ホワイトボード・ノート・アプリ比較	3	3	4		10	NOINDEX	一般論と自社アプリ誘導
+rimawari-keisan	ooya-note	表面利回りと実質利回りの計算方法｜式と計算例でわかる	5	4	5	chintai-shushi-keisan	14	KEEP	表面・実質利回りの式と計算例。需要大
+rolling-stock-kanri	pitto-kigen	ローリングストックの管理方法｜期限切れを出さない回し方	4	3	5	hijoushoku-kigen-kanri	12	KEEP	備蓄の回し方の管理表。非常食記事を統合
+seito-kanri-kojin	lesson-techo	生徒管理表をエクセルで作る方法｜個人教室の項目と注意点	3	3	5	gessha-kanrihyo-excel	11	MERGE-INTO:gessha-kanrihyo-excel	月謝管理表と同じ台帳。統合
+shokuchudoku-joho	machi-anzen-map	食中毒の速報はどこで見る？自治体の公表と過去の記録の調べ方	4	4	5		13	KEEP	速報の出どころ(厚労省・自治体)を整理。需要あり
+shokuhin-loss-katei	pitto-kigen	食品ロスを家庭で減らすためにできること｜今日からの7つ	3	2	5		10	NOINDEX	一般論で競合が強い
+shomi-shohi-chigai	pitto-kigen	消費期限と賞味期限の違い｜家庭での管理と使い切りの目安	5	2	5		12	NOINDEX	需要は最大だが官公庁と大手が独占。新ドメインで勝てない
+shomikigen-barcode	pitto-kigen	賞味期限はバーコードでわかる？仕組みと家庭での管理方法	4	5	5		14	KEEP	バーコードに期限は入っていないという明確な答え
+shomikigen-kanri-app	pitto-kigen	賞味期限管理アプリおすすめ比較｜入力の手間と家族共有で選ぶ	4	3	4		11	NOINDEX	アプリ比較で宣伝色
+shomikigen-kanrihyo	pitto-kigen	家庭用の賞味期限管理表の作り方｜エクセルの項目と関数	4	5	5		14	KEEP	列と式をコピーできる管理表
+super-kakaku-hikaku	price-scan	スーパーの価格を比べるアプリ｜チラシ型とバーコード型の違い	3	3	4		10	NOINDEX	アプリ比較
+tanka-hikaku-keisan	price-scan	グラム単価の計算で値段を比べる方法｜大容量は本当に得？	4	4	5		13	KEEP	単価の式と大容量・詰め替えの計算例
+tiktok-recipe-hozon	recipescrap	TikTokのレシピを保存する方法｜材料と手順を文字で残すコツ	3	3	5	youtube-recipe-hozon	11	NOINDEX	TikTokの保存方法。需要は中程度
+tochi-mukashi-shirabekata	machi-anzen-map	土地の昔を調べる方法｜田んぼや川だったかを地図で確かめる	4	4	5		13	KEEP	地理院地図の手順つき。住宅購入前の需要
+tsugakuro-anzen-tenken	machi-anzen-map	通学路の安全点検チェックリスト｜保護者が歩いて見る15項目	3	5	5		13	KEEP	印刷できる15項目のチェックリスト。独自の成果物
+yachin-kanri-app-hikaku	ooya-note	個人大家向け家賃管理アプリ比較｜無料範囲とできること	3	3	3		9	NOINDEX	アプリ比較で宣伝色
+yachin-kanri-excel-app	ooya-note	家賃管理をエクセルからアプリに変える方法｜移行の手順と注意点	2	2	3	yachin-kanri-app-hikaku	7	MERGE-INTO:yachin-kanri-app-hikaku	1,600字で薄く宣伝色が強い
+yachin-kanrihyo-template	ooya-note	家賃管理表のテンプレートと作り方｜入金チェックの関数つき	4	5	5		14	KEEP	列構成と未入金色付け・集計式のコピペテンプレート
+yachin-nyukin-kakunin	ooya-note	家賃の入金確認の方法｜毎月の確認を5分で終わらせる手順	3	3	5	yachin-kanrihyo-template	11	MERGE-INTO:yachin-kanrihyo-template	管理表記事に統合可能
+yachin-tainou-taiou	ooya-note	家賃滞納への大家の対応｜最初の1か月にやることと注意点	4	4	5		13	KEEP	最初の1か月の動き方と記録。需要あり
+yahoo-saiyasune-hyouji	price-scan	Yahoo!ショッピングで最安値を探す方法｜表示されないときは	4	4	5		13	KEEP	「最安値を見る」が出ない時の原因。ピンポイントな需要
+youtube-recipe-hozon	recipescrap	YouTubeのレシピ動画を保存する方法｜再生リストと材料メモ	3	3	5	tiktok-recipe-hozon	11	NOINDEX	一般的な保存方法
+zairyo-kara-recipe-kensaku	arumono-recipe	材料からレシピを検索する方法｜複数の食材で探すコツと0件対策	3	4	5		12	KEEP	実測した件数で食材を足すと減る様子を示す独自データ
+
+# best per app
+#tsukulog	handmade-nedan-kimekata
+#ooya-note	rimawari-keisan
+#lesson-techo	gessha-kanrihyo-excel
+#pitto-kigen	chomiryo-kaifugo-kigen
+#arumono-recipe	amarimono-recipe-kantan
+#recipescrap	recipe-hozon-jougen
+#price-scan	tanka-hikaku-keisan
+#memomail	captio-kawari
+#machi-anzen-map	fushinsha-joho-mail
+#reptile-sns	leopa-esa-tabenai

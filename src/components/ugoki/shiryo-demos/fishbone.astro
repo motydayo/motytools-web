@@ -1,0 +1,94 @@
+---
+// 資料レイアウトの見本: フィッシュボーン型（結果（魚の頭）に向かう背骨に、原因の種類ごとの骨をつなぎ、骨ごとに細かい原因を書く）
+// つまみ: --t-accent（色）・data-focus（強調 main|none）・data-badge（割合 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: 'フィッシュボーン型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={6} lang={lang}>
+  <div class="fb" data-demo="fishbone">
+    <p class="sf-kicker" data-sf-in style="--i: 0">配送遅延の原因分析（物流センター）</p>
+    <p class="sf-title" data-sf-in style="--i: 0">遅れの約7割は、「人」と「設備」が原因</p>
+    <svg class="fb-svg" viewBox="0 0 848 320" role="img" aria-label="配送の遅れの原因を、人・設備・機器・手順・環境の4つの骨に分けて並べた特性要因図">
+      <path class="fb-spine" d="M0 160 H696" />
+      <g class="fb-bone fb-hot">
+        <path class="fb-line" d="M165 32 L250 160" />
+        <path class="fb-cause-line" d="M11.599999999999994 66 H187.6" />
+        <text class="fb-cause" x="15.599999999999994" y="60">新人の割合が高い</text>
+        <path class="fb-cause-line" d="M32.80000000000001 98 H208.8" />
+        <text class="fb-cause" x="36.80000000000001" y="92">繁忙期の人手不足</text>
+        <path class="fb-cause-line" d="M54.099999999999994 130 H230.1" />
+        <text class="fb-cause" x="58.099999999999994" y="124">応援の連絡が遅い</text>
+        <rect class="fb-label" x="80" y="0" width="170" height="32" rx="8" />
+        <text class="fb-cat" x="165" y="22" text-anchor="middle">人<tspan class="fb-pct" dx="10">38%</tspan></text>
+      </g>
+      <g class="fb-bone fb-hot">
+        <path class="fb-line" d="M445 32 L530 160" />
+        <path class="fb-cause-line" d="M291.6 66 H467.6" />
+        <text class="fb-cause" x="295.6" y="60">仕分け機の停止が多い</text>
+        <path class="fb-cause-line" d="M312.8 98 H488.8" />
+        <text class="fb-cause" x="316.8" y="92">配送端末の通信不良</text>
+        <path class="fb-cause-line" d="M334.1 130 H510.1" />
+        <text class="fb-cause" x="338.1" y="124">車両の点検待ち</text>
+        <rect class="fb-label" x="360" y="0" width="170" height="32" rx="8" />
+        <text class="fb-cat" x="445" y="22" text-anchor="middle">設備・機器<tspan class="fb-pct" dx="10">31%</tspan></text>
+      </g>
+      <g class="fb-bone">
+        <path class="fb-line" d="M165 288 L250 160" />
+        <path class="fb-cause-line" d="M11.599999999999994 254 H187.6" />
+        <text class="fb-cause" x="15.599999999999994" y="248">積み込み順が不統一</text>
+        <path class="fb-cause-line" d="M32.80000000000001 222 H208.8" />
+        <text class="fb-cause" x="36.80000000000001" y="216">再配達の受付が分散</text>
+        <path class="fb-cause-line" d="M54.099999999999994 190 H230.1" />
+        <text class="fb-cause" x="58.099999999999994" y="184">伝票の確認が二度手間</text>
+        <rect class="fb-label" x="80" y="288" width="170" height="32" rx="8" />
+        <text class="fb-cat" x="165" y="310" text-anchor="middle">手順<tspan class="fb-pct" dx="10">17%</tspan></text>
+      </g>
+      <g class="fb-bone">
+        <path class="fb-line" d="M445 288 L530 160" />
+        <path class="fb-cause-line" d="M291.6 254 H467.6" />
+        <text class="fb-cause" x="295.6" y="248">不在の再配達が多い</text>
+        <path class="fb-cause-line" d="M312.8 222 H488.8" />
+        <text class="fb-cause" x="316.8" y="216">雨・雪の日の渋滞</text>
+        <path class="fb-cause-line" d="M334.1 190 H510.1" />
+        <text class="fb-cause" x="338.1" y="184">入館制限で待たされる</text>
+        <rect class="fb-label" x="360" y="288" width="170" height="32" rx="8" />
+        <text class="fb-cat" x="445" y="310" text-anchor="middle">環境<tspan class="fb-pct" dx="10">14%</tspan></text>
+      </g>
+      <g class="fb-head">
+        <rect x="696" y="106" width="152" height="108" rx="12" />
+        <text class="fb-head-t" x="772" y="148" text-anchor="middle">配送の遅れ</text>
+        <text class="fb-head-n" x="772" y="184" text-anchor="middle">遅延率 8.2%</text>
+      </g>
+    </svg>
+    <p class="sf-note">※ 割合は、遅れた配送の主な原因を現場のリーダーが1件ずつ分類した結果（2025年9月）。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .fb { display: flex; flex-direction: column; height: 100%; }
+  .fb-svg { display: block; flex: 1; min-height: 0; width: 100%; margin: calc(8 * var(--u)) 0 calc(4 * var(--u)); }
+  .fb-svg text { font-family: inherit; }
+  .fb-spine { fill: none; stroke: var(--sf-ink); stroke-width: 4; stroke-linecap: round; }
+  .fb-line { fill: none; stroke: var(--sf-ink-3); stroke-width: 3; stroke-linecap: round; }
+  .fb-cause-line { fill: none; stroke: var(--sf-mute); stroke-width: 1.5; }
+  .fb-cause { font-size: 16px; fill: var(--sf-ink); }
+  .fb-label { fill: var(--sf-soft); stroke: var(--sf-mute); stroke-width: 1.5; }
+  .fb-cat { font-size: 17px; font-weight: 800; fill: var(--sf-ink); }
+  .fb-pct { font-size: 17px; font-weight: 800; fill: var(--sf-ink-2); font-variant-numeric: tabular-nums; }
+  .fb-head rect { fill: var(--sf-ink); }
+  .fb-head-t { font-size: 18px; font-weight: 800; fill: #fff; }
+  .fb-head-n { font-size: 20px; font-weight: 800; fill: #fff; font-variant-numeric: tabular-nums; }
+
+  /* 主な原因の骨を強調（data-focus="main"） */
+  :global([data-t-focus='main']) .fb-hot .fb-line { stroke: var(--t-accent); stroke-width: 5; }
+  :global([data-t-focus='main']) .fb-hot .fb-label { fill: var(--t-accent); stroke: var(--t-accent); }
+  :global([data-t-focus='main']) .fb-hot .fb-cat,
+  :global([data-t-focus='main']) .fb-hot .fb-pct { fill: #fff; }
+
+  /* 割合を隠す（data-badge="hide"） */
+  :global([data-t-badge='hide']) .fb-pct { display: none; }
+</style>

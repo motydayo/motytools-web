@@ -1,0 +1,75 @@
+---
+// 資料レイアウトの見本: 顧客の声＋成果型（お客さまの言葉を左に大きく、数字の成果を右に3つ並べる）
+// 会社名・人物・数字はすべて架空。
+// つまみ: --t-accent（色）・data-t-side（引用の位置 left|right）・data-t-rate（削減率の札 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '顧客の声＋成果型',
+    kicker: 'みなと食品株式会社（食品卸・従業員120名）の導入事例',
+    title: '請求書の発行は、月16時間から2時間になった',
+    quote: '毎月、請求書の印刷と封入だけで丸2日かかっていました。今は2時間で終わり、本来の仕事に戻れています。',
+    who: { name: '総務部 課長 岡田様（仮名）', sub: '請求書電子化サービス「ペーパーいらず」を2026年4月に導入' },
+    resLabel: '導入前後の変化（月あたり）',
+    results: [
+      { label: '請求書の発行にかかる時間', before: '16時間', after: '2時間', rate: '約88%減' },
+      { label: '郵送・印刷の費用', before: '3.5万円', after: '0.5万円', rate: '約86%減' },
+      { label: '宛先・金額の間違い', before: '6件', after: '1件', rate: '約83%減' },
+    ],
+    note: '※ 導入前は2026年1〜3月、導入後は同年7〜9月の月平均。減った割合は四捨五入。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={18} lang={lang}>
+  <div class="tm" data-demo="testimonial">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="tm-main">
+      <div class="tm-quote" data-sf-in style="--i: 1">
+        <span class="tm-mark" aria-hidden="true">「</span>
+        <span class="tm-text">{T.quote}</span>
+        <span class="tm-who"><span class="tm-name">{T.who.name}</span><span class="tm-sub">{T.who.sub}</span></span>
+      </div>
+      <div class="tm-res">
+        <span class="tm-reslabel">{T.resLabel}</span>
+        {T.results.map((r, i) => (
+          <div class="tm-row" data-sf-in style={`--i: ${i + 2}`}>
+            <span class="tm-rl">{r.label}</span>
+            <span class="tm-nums"><span class="tm-before">{r.before}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg><b class="tm-after">{r.after}</b></span>
+            <span class="tm-rate">{r.rate}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .tm { display: flex; flex-direction: column; height: 100%; }
+  .tm-main { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: calc(20 * var(--u)); margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .tm-quote { position: relative; display: flex; flex-direction: column; gap: calc(14 * var(--u)); padding: calc(22 * var(--u)) calc(24 * var(--u)) calc(18 * var(--u)); border-radius: calc(14 * var(--u)); background: color-mix(in srgb, var(--t-accent) 7%, #fff); }
+  .tm-mark { font-size: calc(54 * var(--u)); font-weight: 800; line-height: 0.6; color: var(--t-accent); }
+  .tm-text { font-size: calc(22 * var(--u)); font-weight: 800; line-height: 1.65; }
+  .tm-who { display: grid; gap: calc(2 * var(--u)); margin-top: auto; padding-top: calc(10 * var(--u)); border-top: calc(1 * var(--u)) solid color-mix(in srgb, var(--t-accent) 25%, #fff); }
+  .tm-name { font-size: calc(17 * var(--u)); font-weight: 800; }
+  .tm-sub { font-size: calc(14 * var(--u)); color: var(--sf-ink-2); line-height: 1.45; }
+  .tm-res { display: grid; grid-template-rows: auto repeat(3, minmax(0, 1fr)); gap: calc(8 * var(--u)); min-height: 0; }
+  .tm-reslabel { font-size: calc(15 * var(--u)); font-weight: 800; color: var(--sf-ink-2); }
+  .tm-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; column-gap: calc(12 * var(--u)); align-content: center; padding: calc(6 * var(--u)) calc(18 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; }
+  .tm-rl { grid-column: 1 / -1; font-size: calc(16 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .tm-nums { display: inline-flex; align-items: center; gap: calc(10 * var(--u)); font-variant-numeric: tabular-nums; }
+  .tm-before { font-size: calc(24 * var(--u)); font-weight: 800; color: var(--sf-ink-3); }
+  .tm-nums svg { width: calc(22 * var(--u)); height: calc(22 * var(--u)); color: var(--sf-ink-3); flex: none; }
+  .tm-after { font-size: calc(36 * var(--u)); font-weight: 800; line-height: 1.15; color: var(--t-accent); }
+  .tm-rate { align-self: center; justify-self: end; padding: calc(3 * var(--u)) calc(12 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--sf-soft); font-size: calc(16 * var(--u)); font-weight: 800; white-space: nowrap; }
+
+  /* 引用を右に置く（つまみ: 引用の位置） */
+  :global([data-t-side='right']) .tm-quote { order: 2; }
+  /* 削減率の札（つまみ） */
+  :global([data-t-rate='hide']) .tm-rate { display: none; }
+</style>

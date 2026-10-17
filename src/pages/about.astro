@@ -1,0 +1,156 @@
+---
+// 運営者情報（2026-10-17 追加。docs/seo-diagnosis-2026-10-17.md）
+// 個人の氏名・メールアドレスは書かない（問い合わせはアプリ内「ご意見・要望」へ）。
+// 数はすべて台帳（tools.ts・apps.ts・zukan.ts・記事）から数えるので、増減しても書き直し不要。
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config';
+import { TOOLS } from '../data/tools';
+import { APPS } from '../data/apps';
+import { BOOKS } from '../data/zukan';
+import { getGuides } from '../lib/guide';
+
+const guides = await getGuides();
+const books = Object.values(BOOKS)
+  .map((pair) => pair.ja)
+  .filter((b) => b.entries.length > 0);
+const enBooks = Object.values(BOOKS)
+  .map((pair) => pair.en)
+  .filter((b) => b.entries.length > 0);
+
+const ORG_ID = `${SITE.url}/#organization`;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: '運営者情報 - motytools',
+    url: `${SITE.url}/about/`,
+    inLanguage: 'ja',
+    about: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': ORG_ID,
+    name: SITE.name,
+    url: `${SITE.url}/`,
+    logo: `${SITE.url}/favicon.svg`,
+    description: '個人の開発者が運営する制作スタジオ。無料のWebツール、Web制作の図鑑、iPhoneアプリを作っています。',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: '運営者情報', item: `${SITE.url}/about/` },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="運営者情報｜motytoolsについて"
+  description="motytools は個人の開発者が運営する制作スタジオです。無料のWebツール、Web制作の図鑑、iPhoneアプリの作り方と確かめ方、出典と更新の考え方、広告の表示、問い合わせ先をまとめています。"
+  path="/about/"
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li aria-current="page">運営者情報</li>
+      </ol>
+    </nav>
+
+    <article class="about-wrap">
+      <header class="about-head">
+        <h1>運営者情報</h1>
+        <p class="about-lead">
+          motytools（モティツールズ）は、個人の開発者が運営する小さな制作スタジオの屋号です。日々の「ちょっと面倒」を片付ける道具を、Webとスマートフォンの両方で作っています。
+        </p>
+      </header>
+
+      <dl class="about-facts">
+        <div><dt>屋号</dt><dd>motytools</dd></div>
+        <div><dt>運営</dt><dd>個人の開発者（会社ではありません）</dd></div>
+        <div><dt>つくっているもの</dt><dd>無料のWebツール・Web制作の図鑑・iPhoneアプリ</dd></div>
+        <div><dt>サイト</dt><dd>https://motytools.com/</dd></div>
+        <div><dt>プライバシー</dt><dd><a href="/site-privacy/">プライバシーポリシー</a></dd></div>
+        <div><dt>問い合わせ</dt><dd>各アプリの設定にある「ご意見・要望」（<a href="#contact">詳しく</a>）</dd></div>
+      </dl>
+
+      <div class="prose about-body">
+        <h2 id="what">このサイトにあるもの</h2>
+        <ul>
+          <li><a href="/tools/">無料のWebツール（{TOOLS.length}本）</a>: 手取りや住宅ローンの計算、和暦の変換、画像の圧縮など。登録不要で、入力した内容はお使いのブラウザの中だけで処理します。</li>
+          <li><a href="/apps/">iPhoneアプリ（{APPS.length}本）</a>: レシピの保存、賞味期限の管理、家賃や月謝の台帳など。各アプリの紹介ページとプライバシーポリシーもこのサイトにあります。</li>
+          <li><a href="/guide/">使い方ガイド（{guides.length}本）</a>: アプリの使い方と、アプリで解決できる困りごとの記事。</li>
+          {books.map((b) => (
+            <li><a href={b.base}>{b.name}（{b.entries.length}項目）</a>: Webサイトや資料づくりで使う型を、動く見本・使いどころ・作り方つきで1項目1ページにまとめた図鑑。</li>
+          ))}
+          {enBooks.length > 0 && <li><a href="/en/" lang="en">英語版の図鑑</a>: 英語圏の読者向けに書き直したもの。</li>}
+          <li><a href="/anzen/">まちの安全マップ</a>: 交通事故・不審者情報・行政処分・食中毒の公的な記録を地図で数えるWeb版。</li>
+        </ul>
+
+        <h2 id="how">作り方と確かめ方</h2>
+        <p>
+          文章の下書き、調べもの、プログラムの作成には生成AIを使っています。そのうえで、公開する前に人が内容を読み、計算や見本が正しく動くか、出典と食い違っていないかを確かめています。AIが書いたものをそのまま載せることはしていません。
+        </p>
+        <ul>
+          <li><strong>計算ツール</strong>: 税率・保険料率などは、国や公的機関が公表している値をもとにしています。結果はあくまで目安です。正式な金額は勤務先・金融機関・役所などでご確認ください。</li>
+          <li><strong>図鑑</strong>: 見本は実際に動くコードで作り、パソコンとスマートフォンの画面で動きを確かめています。技術の説明は、別の担当がもう一度読んで点検しています。</li>
+          <li><strong>記事</strong>: 制度・期限・安全に関わる内容は、省庁・自治体・メーカーなど元の情報を出している所の資料に当たり、記事の中で出典を示しています。自社アプリを紹介する記事では、そのことを明記しています。</li>
+          <li><strong>安全マップ</strong>: 国・警察・自治体が公開している記録だけを使い、出典と、取れないデータ・粗いデータの注意点を<a href="/anzen/about/data/">データの出典と弱点</a>のページに書いています。</li>
+        </ul>
+
+        <h2 id="update">出典と更新の考え方</h2>
+        <ul>
+          <li>数字や制度の説明には、できるだけ一次資料（元の情報を出している所の資料）を使います。まとめサイトや他人の記事だけを根拠にはしません。</li>
+          <li>記事と図鑑の各ページには更新日を出しています。制度の改正や、内容の誤りに気づいたときは書き直して更新日を改めます。</li>
+          <li>読んでもらう価値が薄いと判断したページは、検索結果に出さない設定にしたり、ほかのページにまとめたりします。</li>
+          <li>誤りを見つけたら、<a href="#contact">下の問い合わせ先</a>から教えてください。確かめたうえで直します。</li>
+        </ul>
+
+        <h2 id="ads">広告について</h2>
+        <p>
+          このサイトでは、運営費をまかなうために Google AdSense による広告が表示されることがあります。広告の配信のため、Googleなどの第三者がCookie（ブラウザに保存される小さな記録）を使うことがあります。広告に合わせた表示を望まない場合は、<a href="https://adssettings.google.com/" target="_blank" rel="noopener">Googleの広告設定</a>で止められます。仕組みの詳細は<a href="https://policies.google.com/technologies/ads?hl=ja" target="_blank" rel="noopener">Googleの説明</a>をご覧ください。情報の扱い全体は<a href="/site-privacy/">プライバシーポリシー</a>にまとめています。
+        </p>
+        <p>
+          アクセスの状況を知るために Google アナリティクスも使っています。集めるのはページの閲覧数などで、個人を特定する情報ではありません。いまのところ、このサイトに商品を紹介して報酬を得るリンク（アフィリエイト）は置いていません。置くときは、そのページに広告であることを書きます。
+        </p>
+        <p>
+          iPhoneアプリの多くは無料で、アプリ内に広告が出ます。広告を消す買い切りや有料プランがあるアプリは、それぞれの紹介ページに料金を書いています。
+        </p>
+
+        <h2 id="contact">問い合わせ先</h2>
+        <p>
+          ご意見・ご要望・誤りのお知らせは、各iPhoneアプリの設定画面にある「ご意見・要望」からお送りください。Webツールや記事についての内容でもかまいません。アプリごとのプライバシーポリシーとサポート情報は、<a href="/apps/">アプリ一覧</a>から各アプリの紹介ページをご覧ください。
+        </p>
+        <p>いまのところ、Webサイト専用のメール窓口は設けていません。</p>
+      </div>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-wrap { max-width: var(--article); padding-bottom: var(--sp-8); }
+  .about-head { padding: var(--sp-5) 0 var(--sp-4); }
+  .about-head h1 { font-size: clamp(26px, 5vw, var(--fs-2xl)); font-weight: 800; line-height: 1.3; letter-spacing: -0.01em; }
+  .about-lead { margin-top: var(--sp-3); color: var(--text-2); line-height: 1.8; }
+  .about-facts {
+    margin: var(--sp-4) 0 var(--sp-7);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md, 12px);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .about-facts div { display: grid; grid-template-columns: 9em minmax(0, 1fr); gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); }
+  .about-facts div + div { border-top: 1px solid var(--border); }
+  .about-facts dt { font-size: var(--fs-sm); font-weight: 700; color: var(--text-2); white-space: nowrap; }
+  .about-facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+  @media (max-width: 480px) {
+    .about-facts div { grid-template-columns: 1fr; gap: var(--sp-1); }
+  }
+  .about-body li { line-height: 1.8; }
+  .about-body p { line-height: 1.85; }
+</style>

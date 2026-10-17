@@ -1,0 +1,149 @@
+---
+// 資料レイアウトの見本: スクリーン注釈型（画面の写しの上に番号を置き、右の一覧で番号ごとに説明する）
+// 画面はこのファイルの中の図形（HTML/CSS）で描いたオリジナル。実在のアプリの画面ではない。
+// つまみ: --t-accent（色）・data-t-focus（目立たせる番号 none|1|2|3|4）・--t-badge（番号の丸の大きさ。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'スクリーン注釈型',
+    kicker: '家計簿アプリ「家計ノート」のホーム画面',
+    title: '開いてすぐ、今月あといくら使えるかが分かる',
+    app: { name: '家計ノート', month: '10月', add: '＋ 支出を入力' },
+    balance: { label: '今月使えるお金', value: '48,200', unit: '円' },
+    budget: { label: '予算 150,000円', pct: 68, text: '68%使用' },
+    cats: { title: '使った項目', rows: [['趣味・娯楽', 41000], ['食費', 38400], ['日用品', 12600], ['交通費', 9800]] as [string, number][] },
+    notes: [
+      { head: '今月使えるお金', text: '予算から使った分を引いた残り。いちばん上に大きく出す。' },
+      { head: '予算の使い具合', text: '棒の長さで、予算の68%を使ったと分かる。' },
+      { head: '使った項目の内訳', text: '金額の大きい順。趣味・娯楽が最大だと分かる。' },
+      { head: '支出の入力', text: 'どの画面でも右上から、すぐ入力できる。' },
+    ],
+    note: '※ 金額は2026年10月の例（予算150,000円−使った101,800円＝残り48,200円）。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+const MAX = Math.max(...T.cats.rows.map((r) => r[1]));
+const yen = (n: number) => n.toLocaleString('ja-JP');
+---
+
+<SlideFrame size={size} label={T.name} page={13} lang={lang}>
+  <div class="sa" data-demo="screen-annotation">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="sa-main">
+      <div class="sa-screen" data-sf-in style="--i: 1">
+        <div class="sa-bar"><i /><i /><i /><span>{T.app.name}</span></div>
+        <div class="sa-body">
+          <div class="sa-head">
+            <span class="sa-month">{T.app.month}</span>
+            <span class="sa-add sa-t"><span>{T.app.add}</span><b class="sa-badge" data-n="4">4</b></span>
+          </div>
+          <div class="sa-cols">
+            <div class="sa-left">
+              <div class="sa-card sa-t">
+                <span class="sa-lb">{T.balance.label}</span>
+                <span class="sa-big">{T.balance.value}<small>{T.balance.unit}</small></span>
+                <b class="sa-badge" data-n="1">1</b>
+              </div>
+              <div class="sa-card sa-t">
+                <span class="sa-lb">{T.budget.label}</span>
+                <span class="sa-track"><i style={`width: ${T.budget.pct}%`} /></span>
+                <span class="sa-pct">{T.budget.text}</span>
+                <b class="sa-badge" data-n="2">2</b>
+              </div>
+            </div>
+            <div class="sa-card sa-cat sa-t">
+              <span class="sa-lb">{T.cats.title}</span>
+              {T.cats.rows.map(([k, v]) => (
+                <span class="sa-r"><span class="sa-k">{k}</span><span class="sa-v">{yen(v)}円</span><span class="sa-mini"><i style={`width: ${(v / MAX) * 100}%`} /></span></span>
+              ))}
+              <b class="sa-badge" data-n="3">3</b>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sa-list">
+        {T.notes.map((n, i) => (
+          <div class="sa-item" data-n={i + 1} data-sf-in style={`--i: ${i + 2}`}>
+            <b class="sa-num">{i + 1}</b>
+            <span class="sa-txt"><span class="sa-nh">{n.head}</span><span class="sa-nd">{n.text}</span></span>
+          </div>
+        ))}
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .sa { display: flex; flex-direction: column; height: 100%; }
+  .sa-main { flex: 1; display: grid; grid-template-columns: calc(500 * var(--u)) minmax(0, 1fr); gap: calc(28 * var(--u)); margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+
+  /* 画面の写し（図形で描いた見本） */
+  .sa-screen { display: flex; flex-direction: column; align-self: start; border: calc(2 * var(--u)) solid var(--sf-mute); border-radius: calc(10 * var(--u)); background: var(--sf-soft); overflow: hidden; }
+  .sa-bar { display: flex; align-items: center; gap: calc(6 * var(--u)); height: calc(28 * var(--u)); padding: 0 calc(12 * var(--u)); background: #fff; border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .sa-bar i { width: calc(9 * var(--u)); height: calc(9 * var(--u)); border-radius: 50%; background: var(--sf-mute); }
+  .sa-bar span { margin-left: calc(8 * var(--u)); font-size: calc(13 * var(--u)); font-weight: 800; color: var(--sf-ink-2); }
+  .sa-body { display: flex; flex-direction: column; gap: calc(10 * var(--u)); padding: calc(14 * var(--u)) calc(16 * var(--u)) calc(16 * var(--u)); }
+  .sa-head { display: flex; align-items: center; justify-content: space-between; }
+  .sa-month { font-size: calc(20 * var(--u)); font-weight: 800; }
+  .sa-add { padding: calc(5 * var(--u)) calc(14 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--t-accent); color: #fff; font-size: calc(14 * var(--u)); font-weight: 800; }
+  .sa-cols { display: grid; grid-template-columns: 1fr 1fr; gap: calc(12 * var(--u)); }
+  .sa-left { display: grid; gap: calc(12 * var(--u)); }
+  .sa-card { display: flex; flex-direction: column; gap: calc(4 * var(--u)); padding: calc(12 * var(--u)) calc(14 * var(--u)); border-radius: calc(8 * var(--u)); background: #fff; box-shadow: 0 0 0 calc(1 * var(--u)) var(--sf-line); }
+  .sa-lb { font-size: calc(13 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .sa-big { font-size: calc(38 * var(--u)); font-weight: 800; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .sa-big small { margin-left: calc(2 * var(--u)); font-size: calc(18 * var(--u)); color: var(--sf-ink-2); }
+  .sa-track { display: block; height: calc(12 * var(--u)); border-radius: calc(6 * var(--u)); background: var(--sf-line); overflow: hidden; margin-top: calc(4 * var(--u)); }
+  .sa-track i { display: block; height: 100%; background: var(--sf-ink-2); border-radius: calc(6 * var(--u)); }
+  .sa-pct { font-size: calc(14 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .sa-cat { gap: calc(7 * var(--u)); }
+  .sa-r { display: grid; grid-template-columns: 1fr auto; row-gap: calc(3 * var(--u)); align-items: baseline; }
+  .sa-k { font-size: calc(13 * var(--u)); font-weight: 700; }
+  .sa-v { font-size: calc(13 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .sa-mini { grid-column: 1 / -1; display: block; height: calc(5 * var(--u)); border-radius: calc(3 * var(--u)); background: var(--sf-line); overflow: hidden; }
+  .sa-mini i { display: block; height: 100%; background: var(--sf-mute); }
+
+  /* 画面の上に置く番号の丸 */
+  .sa-t { position: relative; }
+  .sa-badge {
+    position: absolute;
+    top: calc(var(--t-badge) * -0.45 * var(--u));
+    left: calc(var(--t-badge) * -0.45 * var(--u));
+    display: grid;
+    place-items: center;
+    width: calc(var(--t-badge) * var(--u));
+    height: calc(var(--t-badge) * var(--u));
+    border-radius: 50%;
+    background: var(--t-accent);
+    color: #fff;
+    font-size: calc(var(--t-badge) * 0.58 * var(--u));
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: 0 0 0 calc(2.5 * var(--u)) #fff;
+  }
+
+  /* 右の説明の一覧 */
+  .sa-list { display: grid; grid-template-rows: repeat(4, 1fr); align-content: start; gap: calc(8 * var(--u)); min-height: 0; }
+  .sa-item { display: flex; align-items: flex-start; gap: calc(12 * var(--u)); padding: calc(8 * var(--u)) calc(12 * var(--u)); border-radius: calc(10 * var(--u)); }
+  .sa-num { flex: none; display: grid; place-items: center; width: calc(var(--t-badge) * var(--u)); height: calc(var(--t-badge) * var(--u)); border-radius: 50%; background: var(--t-accent); color: #fff; font-size: calc(var(--t-badge) * 0.58 * var(--u)); font-weight: 800; line-height: 1; }
+  .sa-txt { display: grid; gap: calc(2 * var(--u)); }
+  .sa-nh { font-size: calc(18 * var(--u)); font-weight: 800; }
+  .sa-nd { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); line-height: 1.45; }
+
+  /* 目立たせる番号（つまみ）: その番号の説明に薄い背景を敷き、ほかを薄くする */
+  :global([data-t-focus='1']) .sa-item:not([data-n='1']),
+  :global([data-t-focus='2']) .sa-item:not([data-n='2']),
+  :global([data-t-focus='3']) .sa-item:not([data-n='3']),
+  :global([data-t-focus='4']) .sa-item:not([data-n='4']) { opacity: 0.4; }
+  :global([data-t-focus='1']) .sa-item[data-n='1'],
+  :global([data-t-focus='2']) .sa-item[data-n='2'],
+  :global([data-t-focus='3']) .sa-item[data-n='3'],
+  :global([data-t-focus='4']) .sa-item[data-n='4'] { background: color-mix(in srgb, var(--t-accent) 9%, #fff); }
+  :global([data-t-focus='1']) .sa-badge:not([data-n='1']),
+  :global([data-t-focus='2']) .sa-badge:not([data-n='2']),
+  :global([data-t-focus='3']) .sa-badge:not([data-n='3']),
+  :global([data-t-focus='4']) .sa-badge:not([data-n='4']) { background: var(--sf-ink-3); }
+</style>

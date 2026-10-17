@@ -1,0 +1,122 @@
+---
+// 資料レイアウトの見本: ROI試算型（かけるお金・戻るお金を左に並べ、右に累計の棒で元が取れる時期を見せる）
+// 棒は0の線から上下に伸ばす。位置 = (値 - 最小) ÷ (最大 - 最小)。累計は「効果 - 運用費」を毎年足して計算する。
+// つまみ: --t-accent（色）・data-t-highlight（色を付ける棒 last|all）・--t-bar（棒の太さ。1本ぶんの幅に対する%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const MIN = -800;
+const MAX = 200;
+const TICKS = [-800, -600, -400, -200, 0, 200];
+const DICT = {
+  ja: {
+    name: 'ROI試算型',
+    kicker: '予約管理システム導入のROI試算（3年間）',
+    title: '導入費は2.5年で回収でき、3年後には120万円の黒字',
+    unit: '万円',
+    invest: 600,
+    gain: 300,
+    gainParts: '作業時間120＋取りこぼし減180',
+    run: 60,
+    labels: { invest: '最初にかける費用', gain: '毎年戻ってくる効果', run: '毎年かかる運用費', net: '1年あたりの純効果', cum: '累計の収支', result: '元が取れるのは', roi: '3年間のROI' },
+    years: ['導入時', '1年後', '2年後', '3年後'],
+    payback: '2.5年後',
+    roiVal: '+20%',
+    note: '※ 作業時間の削減＝年480時間×時給2,500円。金額は税抜。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+const net = T.gain - T.run;
+const cum = [-T.invest, -T.invest + net, -T.invest + net * 2, -T.invest + net * 3];
+const pos = (v: number) => ((v - MIN) / (MAX - MIN)) * 100;
+if (cum.some((v) => v < MIN || v > MAX)) throw new Error('roi: 値が目盛りの範囲を超えています');
+const sign = (v: number) => (v < 0 ? '−' : '+') + Math.abs(v);
+---
+
+<SlideFrame size={size} label={T.name} page={13} lang={lang}>
+  <div class="ro" data-demo="roi">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ro-body">
+      <div class="ro-calc" data-sf-in style="--i: 1">
+        <div class="ro-line"><span class="ro-lab">{T.labels.invest}</span><span class="ro-amt">−{T.invest}<small>{T.unit}</small></span></div>
+        <div class="ro-line"><span class="ro-lab">{T.labels.gain}<em>{T.gainParts}</em></span><span class="ro-amt">+{T.gain}<small>{T.unit}</small></span></div>
+        <div class="ro-line"><span class="ro-lab">{T.labels.run}</span><span class="ro-amt">−{T.run}<small>{T.unit}</small></span></div>
+        <div class="ro-line ro-net"><span class="ro-lab">{T.labels.net}</span><span class="ro-amt">+{net}<small>{T.unit}</small></span></div>
+        <div class="ro-result">
+          <span class="ro-result-lab">{T.labels.result}</span>
+          <span class="ro-result-num">{T.payback}</span>
+          <span class="ro-result-sub">{T.labels.roi} {T.roiVal}</span>
+        </div>
+      </div>
+      <div class="ro-chart">
+        <p class="ro-chart-title">{T.labels.cum}（{T.unit}）</p>
+        <div class="ro-grid">
+          <div class="ro-y">
+            {TICKS.map((t) => <span class="ro-tick" style={`--p: ${pos(t)}`}>{t < 0 ? `−${-t}` : t}</span>)}
+          </div>
+          <div class="ro-plot">
+            {TICKS.map((t) => <i class:list={['ro-line-h', t === 0 && 'is-zero']} style={`--p: ${pos(t)}`} />)}
+            <div class="ro-bars">
+              {cum.map((v, i) => (
+                <div class:list={['ro-slot', v >= 0 && 'is-plus']} style={`--p: ${pos(Math.min(v, 0))}; --h: ${(Math.abs(v) / (MAX - MIN)) * 100}`}>
+                  <span class="ro-bar" data-sf-grow="y" style={`--i: ${i}`} />
+                  <span class="ro-val" data-sf-in style={`--i: ${i + 4}`}>{sign(v)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="ro-x">{T.years.map((y) => <span>{y}</span>)}</div>
+        </div>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ro { display: flex; flex-direction: column; height: 100%; }
+  .ro-body { flex: 1; display: flex; gap: calc(36 * var(--u)); margin: calc(16 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .ro-calc { flex: 0 0 calc(340 * var(--u)); display: flex; flex-direction: column; }
+  .ro-line { flex: 1; display: flex; align-items: center; justify-content: space-between; gap: calc(10 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .ro-lab { display: flex; flex-direction: column; font-size: calc(17 * var(--u)); font-weight: 700; }
+  .ro-lab em { font-style: normal; font-size: calc(13 * var(--u)); font-weight: 400; color: var(--sf-ink-2); }
+  .ro-amt { font-size: calc(26 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ro-amt small { margin-left: calc(2 * var(--u)); font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .ro-net { border-bottom: calc(2 * var(--u)) solid var(--sf-ink); }
+  .ro-result { margin-top: calc(10 * var(--u)); padding: calc(10 * var(--u)) calc(16 * var(--u)); border-radius: calc(10 * var(--u)); background: color-mix(in srgb, var(--t-accent) 8%, #fff); border: calc(2 * var(--u)) solid var(--t-accent); display: flex; flex-direction: column; }
+  .ro-result-lab { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .ro-result-num { font-size: calc(44 * var(--u)); font-weight: 800; line-height: 1.1; color: var(--t-accent); font-variant-numeric: tabular-nums; }
+  .ro-result-sub { font-size: calc(16 * var(--u)); font-weight: 700; }
+
+  .ro-chart { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .ro-chart-title { margin: 0 0 calc(6 * var(--u)); font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .ro-grid { flex: 1; display: grid; grid-template-columns: calc(48 * var(--u)) 1fr; grid-template-rows: 1fr calc(28 * var(--u)); min-height: 0; }
+  .ro-y, .ro-plot { position: relative; }
+  .ro-tick { position: absolute; right: calc(8 * var(--u)); bottom: calc(var(--p) * 1%); transform: translateY(50%); font-size: calc(14 * var(--u)); color: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+  .ro-line-h { position: absolute; left: 0; right: 0; bottom: calc(var(--p) * 1%); height: calc(1 * var(--u)); background: var(--sf-line); }
+  .ro-line-h.is-zero { height: calc(2 * var(--u)); background: var(--sf-ink-3); z-index: 1; }
+  .ro-bars { position: absolute; inset: 0; display: flex; }
+  .ro-slot { position: relative; flex: 1; }
+  .ro-bar {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--p) * 1%);
+    width: var(--t-bar);
+    height: calc(var(--h) * 1%);
+    margin-left: calc(var(--t-bar) / -2);
+    background: var(--sf-mute);
+    border-radius: 0 0 calc(4 * var(--u)) calc(4 * var(--u));
+  }
+  .ro-slot.is-plus .ro-bar { border-radius: calc(4 * var(--u)) calc(4 * var(--u)) 0 0; }
+  /* 値の文字: 下向きの棒は棒の下、上向きの棒は棒の上 */
+  .ro-val { position: absolute; left: 0; right: 0; bottom: calc(var(--p) * 1% - 30 * var(--u)); text-align: center; font-size: calc(20 * var(--u)); font-weight: 800; color: var(--sf-ink-2); font-variant-numeric: tabular-nums; }
+  .ro-slot.is-plus .ro-val { bottom: calc((var(--p) + var(--h)) * 1% + 6 * var(--u)); color: var(--sf-ink); font-size: calc(24 * var(--u)); }
+  .ro-x { grid-column: 2; display: flex; align-items: flex-end; }
+  .ro-x span { flex: 1; text-align: center; font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+
+  /* 色を付ける棒（つまみ: 色を付ける棒） */
+  :global([data-t-highlight='last']) .ro-slot.is-plus .ro-bar { background: var(--t-accent); }
+  :global([data-t-highlight='last']) .ro-slot.is-plus .ro-val { color: var(--t-accent); }
+  :global([data-t-highlight='all']) .ro-bar { background: var(--t-accent); }
+</style>

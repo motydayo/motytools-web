@@ -1,0 +1,46 @@
+---
+// prefix: om
+// 資料レイアウトの見本: 1メッセージ型（言いたいことを1文だけ大きく置き、強調は1か所に絞る）
+// つまみ: --t-accent（色）・data-t-mark（強調のしかた color|marker|none）・--t-size（メッセージの大きさ。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '1メッセージ型',
+    kicker: '営業部会　今月のひとこと',
+    pre: '解約の',
+    em: '7割',
+    post: 'は、使い始めの30日以内に起きています。',
+    sub: 'だから来期は、導入後30日の支援に人を集めます。',
+    note: '※ 2025年4月〜2026年3月に解約した法人顧客212社のうち148社（約7割）。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={2} lang={lang}>
+  <div class="om" data-demo="one-message">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <div class="om-body">
+      <div class="om-text" data-sf-in style="--i: 1">
+        <p class="om-msg">{T.pre}<b class="om-em">{T.em}</b>{T.post}</p>
+        <p class="om-sub">{T.sub}</p>
+      </div>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 3">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .om { display: flex; flex-direction: column; height: 100%; }
+  .om-body { flex: 1; display: flex; align-items: center; min-height: 0; }
+  .om-text { padding: calc(8 * var(--u)) 0 calc(8 * var(--u)) calc(32 * var(--u)); border-left: calc(8 * var(--u)) solid var(--t-accent); }
+  .om-msg { margin: 0; font-size: calc(var(--t-size) * var(--u)); font-weight: 800; line-height: 1.35; letter-spacing: 0.01em; }
+  .om-em { font-weight: 800; color: var(--t-accent); }
+  .om-sub { margin: calc(24 * var(--u)) 0 0; font-size: calc(24 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+
+  /* 強調のしかた（つまみ: 強調のしかた） */
+  :global([data-t-mark='marker']) .om-em { color: var(--sf-ink); background: linear-gradient(transparent 60%, color-mix(in srgb, var(--t-accent) 30%, #fff) 60%); }
+  :global([data-t-mark='none']) .om-em { color: var(--sf-ink); }
+</style>

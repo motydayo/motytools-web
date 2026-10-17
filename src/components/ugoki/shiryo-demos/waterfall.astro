@@ -1,0 +1,137 @@
+---
+// 資料レイアウトの見本: ウォーターフォール型（前期の営業利益から今期へ、増えた要因と減った要因を順に積み上げる）
+// 各棒の位置は「その前までの合計」から始まる: 下端 = min(前の合計, 後の合計) ÷ 目盛りの最大20、高さ = 増減の大きさ ÷ 20。
+// 12.0 +6.5 −3.2 −2.1 −1.4 +1.8 = 13.6 になることを下で確かめている。
+// つまみ: --t-accent（色）・data-t-connector（つなぐ線 show|hide）・--t-bar（棒の太さ。1本ぶんの幅に対する%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const MAX = 20;
+const TICKS = [0, 5, 10, 15, 20];
+const DICT = {
+  ja: {
+    name: 'ウォーターフォール型',
+    kicker: '営業利益の増減要因（前期→今期）',
+    title: '営業利益は12.0億円から13.6億円へ',
+    unit: '億円',
+    start: ['前期の利益', 12.0],
+    steps: [
+      ['売上の増加', 6.5],
+      ['原価の上昇', -3.2],
+      ['人件費', -2.1],
+      ['広告費', -1.4],
+      ['為替の影響', 1.8],
+    ] as [string, number][],
+    end: ['今期の利益', 13.6],
+    big: '+1.6億円',
+    bigLabel: '前期からの増加額',
+    sub: '売上の増加が +6.5',
+    note: '※ 営業利益（単位: 億円）。為替の影響は円安による海外売上の換算差。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+const r1 = (v: number) => +v.toFixed(1);
+let run = T.start[1] as number;
+const bars: { name: string; kind: 'total' | 'up' | 'down'; lo: number; h: number; end: number; label: string }[] = [
+  { name: T.start[0] as string, kind: 'total', lo: 0, h: run, end: run, label: run.toFixed(1) },
+];
+for (const [name, d] of T.steps) {
+  const next = r1(run + d);
+  bars.push({ name, kind: d >= 0 ? 'up' : 'down', lo: Math.min(run, next), h: Math.abs(d), end: next, label: (d >= 0 ? '+' : '−') + Math.abs(d).toFixed(1) });
+  run = next;
+}
+if (run !== T.end[1]) throw new Error(`waterfall: 合計が合っていません（${run} / ${T.end[1]}）`);
+bars.push({ name: T.end[0] as string, kind: 'total', lo: 0, h: run, end: run, label: run.toFixed(1) });
+if (bars.some((b) => b.lo + b.h > MAX) || TICKS[TICKS.length - 1] !== MAX) throw new Error('waterfall: 目盛りの最大と値が合っていません');
+---
+
+<SlideFrame size={size} label={T.name} page={18} lang={lang}>
+  <div class="wf" data-demo="waterfall">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="wf-body">
+      <div class="wf-chart">
+        <div class="wf-y">
+          <span class="wf-unit">（{T.unit}）</span>
+          {TICKS.map((t) => <span class="wf-tick" style={`--v: ${t}`}>{t}</span>)}
+        </div>
+        <div class="wf-plot">
+          {TICKS.map((t) => <i class:list={['wf-grid', t === 0 && 'is-base']} style={`--v: ${t}`} />)}
+          <div class="wf-cols">
+            {bars.map((b, i) => (
+              <div class={`wf-slot is-${b.kind}`} style={`--lo: ${b.lo}; --h: ${b.h}; --end: ${b.end}`}>
+                {i < bars.length - 1 && <i class="wf-link" />}
+                <span class="wf-bar" data-sf-grow="y" style={`--i: ${i}`} />
+                <span class="wf-val" data-sf-in style={`--i: ${i + 3}`}>{b.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="wf-x">
+          {bars.map((b) => <span>{b.name}</span>)}
+        </div>
+      </div>
+      <div class="wf-side" data-sf-in style="--i: 9">
+        <span class="wf-big">{T.big}</span>
+        <span class="wf-big-label">{T.bigLabel}</span>
+        <span class="wf-sub">{T.sub}</span>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .wf { display: flex; flex-direction: column; height: 100%; }
+  .wf-body { flex: 1; display: flex; gap: calc(30 * var(--u)); margin: calc(16 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .wf-chart { flex: 1; display: grid; grid-template-columns: calc(40 * var(--u)) 1fr; grid-template-rows: 1fr calc(34 * var(--u)); padding-top: calc(28 * var(--u)); min-width: 0; }
+  .wf-y { position: relative; }
+  .wf-unit { position: absolute; bottom: 100%; left: 0; margin-bottom: calc(8 * var(--u)); font-size: calc(13 * var(--u)); color: var(--sf-ink-3); white-space: nowrap; }
+  .wf-tick { position: absolute; right: calc(8 * var(--u)); bottom: calc(var(--v) / 20 * 100%); transform: translateY(50%); font-size: calc(14 * var(--u)); color: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+  .wf-plot { position: relative; }
+  .wf-grid { position: absolute; left: 0; right: 0; bottom: calc(var(--v) / 20 * 100%); height: calc(1 * var(--u)); background: var(--sf-line); }
+  .wf-grid.is-base { background: var(--sf-ink-3); }
+  .wf-cols { position: absolute; inset: 0; display: flex; }
+  .wf-slot { position: relative; flex: 1; }
+  .wf-bar {
+    position: absolute;
+    left: calc((100% - var(--t-bar)) / 2);
+    width: var(--t-bar);
+    bottom: calc(var(--lo) / 20 * 100%);
+    height: calc(var(--h) / 20 * 100%);
+    border-radius: calc(3 * var(--u));
+    background: var(--sf-mute);
+  }
+  .wf-slot.is-total .wf-bar { background: var(--sf-ink-2); }
+  .wf-slot.is-up .wf-bar { background: var(--t-accent); }
+  .wf-val {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc((var(--lo) + var(--h)) / 20 * 100%);
+    padding-bottom: calc(5 * var(--u));
+    text-align: center;
+    font-size: calc(18 * var(--u));
+    font-weight: 800;
+    color: var(--sf-ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .wf-slot.is-up .wf-val { color: var(--t-accent); }
+  .wf-slot.is-total .wf-val { color: var(--sf-ink); }
+  /* 棒どうしをつなぐ線（その棒が終わったあとの合計の高さ） */
+  .wf-link {
+    position: absolute;
+    left: calc(50% + var(--t-bar) / 2);
+    width: calc(100% - var(--t-bar));
+    bottom: calc(var(--end) / 20 * 100%);
+    border-top: calc(1.5 * var(--u)) dashed var(--sf-ink-3);
+  }
+  :global([data-t-connector='hide']) .wf-link { display: none; }
+  .wf-x { grid-column: 2; display: flex; align-items: flex-end; }
+  .wf-x span { flex: 1; text-align: center; font-size: calc(15 * var(--u)); color: var(--sf-ink-2); line-height: 1.25; }
+
+  .wf-side { flex: 0 0 calc(176 * var(--u)); display: flex; flex-direction: column; justify-content: center; gap: calc(6 * var(--u)); padding-left: calc(24 * var(--u)); border-left: calc(1 * var(--u)) solid var(--sf-line); }
+  .wf-big { font-size: calc(42 * var(--u)); font-weight: 800; line-height: 1.1; color: var(--t-accent); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; white-space: nowrap; }
+  .wf-big-label { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .wf-sub { margin-top: calc(14 * var(--u)); padding-top: calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(18 * var(--u)); font-weight: 800; }
+</style>

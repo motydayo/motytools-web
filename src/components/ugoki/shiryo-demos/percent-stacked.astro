@@ -1,0 +1,96 @@
+---
+// 資料レイアウトの見本: 100%積み上げ型（年代ごとの注文方法の割合を、同じ長さの横棒で比べる）
+// どの棒も全体が100%。段の長さは割合（%）そのものなので、各行の合計が100になっていることを確かめてから描く。
+// つまみ: --t-accent（色）・data-t-focus（色を付ける内訳 app|tint）・--t-bar（棒の太さ。1行ぶんの高さに対する%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const TICKS = [0, 25, 50, 75, 100];
+const DICT = {
+  ja: {
+    name: '100%積み上げ型',
+    kicker: '年代別の注文方法の割合（2025年度）',
+    title: 'アプリ注文は20代で62%、60代以上では12%',
+    series: ['アプリ', 'Web（パソコン）', '電話・FAX'],
+    // [年代, [アプリ, Web, 電話・FAX]]（割合%。各行の合計は100）
+    data: [
+      ['20代', [62, 31, 7]],
+      ['30代', [54, 38, 8]],
+      ['40代', [41, 44, 15]],
+      ['50代', [27, 47, 26]],
+      ['60代以上', [12, 38, 50]],
+    ] as [string, number[]][],
+    note: '※ 年代ごとの注文件数に占める割合。回答のあった注文のみ。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+if (T.data.some(([, vs]) => vs.reduce((a, b) => a + b, 0) !== 100)) throw new Error('percent-stacked: 各行の合計が100になっていません');
+---
+
+<SlideFrame size={size} label={T.name} page={10} lang={lang}>
+  <div class="ps2" data-demo="percent-stacked">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ps2-body">
+      <div class="ps2-legend" data-sf-in style="--i: 1">
+        {T.series.map((s, k) => <span class="ps2-key"><i class={`ps2-sw ps2-s${k + 1}`} />{s}</span>)}
+      </div>
+      <div class="ps2-chart">
+        <div class="ps2-names">
+          {T.data.map(([n]) => <span class="ps2-name">{n}</span>)}
+        </div>
+        <div class="ps2-plot">
+          {TICKS.map((t) => <i class:list={['ps2-grid', t === 0 && 'is-base']} style={`--v: ${t}`} />)}
+          {T.data.map(([, vs], i) => (
+            <div class="ps2-row">
+              <div class="ps2-track" data-sf-grow="x" style={`--i: ${i}`}>
+                {vs.map((v, k) => <span class={`ps2-seg ps2-s${k + 1}`} style={`--v: ${v}`}>{v}%</span>)}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="ps2-axis">
+          {TICKS.map((t) => <span class="ps2-tick" style={`--v: ${t}`}>{t}%</span>)}
+        </div>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ps2 { display: flex; flex-direction: column; height: 100%; --c1: var(--t-accent); --c2: #b4bac6; --c3: #dfe2e8; }
+  .ps2-body { flex: 1; display: flex; flex-direction: column; margin: calc(14 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .ps2-legend { display: flex; gap: calc(28 * var(--u)); padding-left: calc(104 * var(--u)); height: calc(30 * var(--u)); align-items: center; font-size: calc(16 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .ps2-key { display: inline-flex; align-items: center; gap: calc(8 * var(--u)); }
+  .ps2-sw { display: inline-block; width: calc(14 * var(--u)); height: calc(14 * var(--u)); border-radius: calc(3 * var(--u)); }
+  .ps2-chart { flex: 1; display: grid; grid-template-columns: calc(104 * var(--u)) 1fr; grid-template-rows: 1fr calc(28 * var(--u)); min-height: 0; padding-right: calc(8 * var(--u)); }
+  .ps2-names { display: flex; flex-direction: column; }
+  .ps2-name { flex: 1; display: flex; align-items: center; font-size: calc(18 * var(--u)); font-weight: 700; }
+  .ps2-plot { position: relative; display: flex; flex-direction: column; }
+  .ps2-grid { position: absolute; top: 0; bottom: 0; left: calc(var(--v) * 1%); width: calc(1 * var(--u)); background: var(--sf-line); }
+  .ps2-grid.is-base { background: var(--sf-ink-3); }
+  .ps2-row { position: relative; flex: 1; }
+  .ps2-track { position: absolute; left: 0; right: 0; top: calc((100% - var(--t-bar)) / 2); bottom: calc((100% - var(--t-bar)) / 2); display: flex; }
+  .ps2-seg {
+    flex: 0 0 calc(var(--v) * 1%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset calc(-2 * var(--u)) 0 #fff;
+    font-size: calc(16 * var(--u));
+    font-weight: 700;
+    color: var(--sf-ink);
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ps2-s1 { background: var(--c1); color: #fff; }
+  .ps2-s2 { background: var(--c2); }
+  .ps2-s3 { background: var(--c3); }
+  .ps2-axis { grid-column: 2; position: relative; }
+  .ps2-tick { position: absolute; top: calc(6 * var(--u)); left: calc(var(--v) * 1%); transform: translateX(-50%); font-size: calc(14 * var(--u)); color: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+
+  /* 色を付ける内訳（つまみ）: tint なら3つとも同じ色の濃淡 */
+  :global([data-t-focus='tint']) .ps2 { --c2: color-mix(in srgb, var(--t-accent) 45%, #fff); --c3: color-mix(in srgb, var(--t-accent) 18%, #fff); }
+</style>

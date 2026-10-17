@@ -1,0 +1,62 @@
+---
+// 資料レイアウトの見本: 引用強調型（お客さまの言葉を大きく引用し、下に誰の言葉かを添える）
+// つまみ: --t-accent（色）・data-t-style（飾り mark|bar）・--t-size（引用文の大きさ。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '引用強調型',
+    kicker: 'お客さまの声',
+    quote: '請求書の確認が、月末の徹夜から定時内の作業に変わりました。',
+    initial: '山',
+    who: '山本 恵子さん',
+    role: '株式会社ナカムラ設備　総務部 課長',
+    note: '※ 2026年7月、導入3か月後のインタビューより。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={11} lang={lang}>
+  <div class="qt" data-demo="quote">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <div class="qt-main">
+      <svg class="qt-mark" viewBox="0 0 52 40" aria-hidden="true" data-sf-in style="--i: 1"><path d="M0 40V22C0 9 7 2 20 0l2 6C14 8 11 13 11 20h11v20zM30 40V22C30 9 37 2 50 0l2 6C44 8 41 13 41 20h11v20z" fill="currentColor" /></svg>
+      <p class="qt-text" data-sf-in style="--i: 1">{T.quote}</p>
+      <div class="qt-who" data-sf-in style="--i: 2">
+        <span class="qt-av">{T.initial}</span>
+        <span class="qt-name"><b>{T.who}</b><span>{T.role}</span></span>
+      </div>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 3">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .qt { display: flex; flex-direction: column; height: 100%; }
+  .qt-main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-left: calc(8 * var(--u)); }
+  .qt-mark { display: none; width: calc(64 * var(--u)); height: auto; margin-bottom: calc(14 * var(--u)); color: var(--t-accent); }
+  .qt-text { margin: 0; font-size: calc(var(--t-size) * var(--u)); font-weight: 800; line-height: 1.5; letter-spacing: 0.02em; }
+  .qt-who { display: flex; align-items: center; gap: calc(16 * var(--u)); margin-top: calc(32 * var(--u)); }
+  .qt-av {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: calc(56 * var(--u));
+    height: calc(56 * var(--u));
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--t-accent) 14%, #fff);
+    color: var(--t-accent);
+    font-size: calc(24 * var(--u));
+    font-weight: 800;
+  }
+  .qt-name { display: flex; flex-direction: column; }
+  .qt-name b { font-size: calc(22 * var(--u)); font-weight: 800; }
+  .qt-name span { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+
+  /* 飾り（つまみ: 飾り） */
+  :global([data-t-style='mark']) .qt-mark { display: block; }
+  :global([data-t-style='bar']) .qt-text { padding-left: calc(24 * var(--u)); border-left: calc(8 * var(--u)) solid var(--t-accent); }
+  :global([data-t-style='bar']) .qt-who { padding-left: calc(32 * var(--u)); }
+</style>

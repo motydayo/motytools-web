@@ -1,0 +1,96 @@
+---
+// 資料レイアウトの見本: カスタマージャーニー型（上に5つの段階、縦に「行動」「接する場所」「気持ち（曲線）」「改善策」の4段。気持ちが最も下がる段階を強調する）
+// つまみ: --t-accent（色）・data-t-focus（強調 low|none）・data-t-curve（線の形 smooth|line）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: 'カスタマージャーニー型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={13} lang={lang}>
+  <div class="cj" data-demo="customer-journey">
+    <p class="sf-kicker" data-sf-in style="--i: 0">オンラインでソファを買うお客さまの旅（30代・共働き世帯）</p>
+    <p class="sf-title" data-sf-in style="--i: 0">気持ちが最も下がるのは、届くまでの不安</p>
+    <div class="cj-grid">
+      <span class="cj-corner"></span>
+      <span class="cj-st">気づく</span>
+      <span class="cj-st">比べる</span>
+      <span class="cj-st">買う</span>
+      <span class="cj-st cj-c4">届くまで</span>
+      <span class="cj-st">使い続ける</span>
+      <span class="cj-rh">行動</span>
+      <span class="cj-cell">SNSで見かける</span>
+      <span class="cj-cell">口コミを比べる</span>
+      <span class="cj-cell">注文する</span>
+      <span class="cj-cell cj-c4">配送日を待つ</span>
+      <span class="cj-cell">組み立てて使う</span>
+      <span class="cj-rh">接点</span>
+      <span class="cj-cell cj-soft">SNS広告</span>
+      <span class="cj-cell cj-soft">公式サイト</span>
+      <span class="cj-cell cj-soft">注文画面</span>
+      <span class="cj-cell cj-c4 cj-soft">配送連絡メール</span>
+      <span class="cj-cell cj-soft">取扱説明書</span>
+      <span class="cj-rh cj-rh-feel"><b>気持ち</b><em>上ほど良い</em></span>
+      <span class="cj-feel">
+        <svg class="cj-svg" viewBox="0 0 748 120" role="img" aria-label="気持ちの変化。気になる、迷う、楽しみ、不安、満足の順で、届くまでが最も低い">
+        <rect class="cj-hl" x="448.8" y="0" width="149.6" height="120" />
+        <path class="cj-mid" d="M0 60 H748" />
+        <path class="cj-curve cj-smooth" d="M74.8 60 C99.7 63.3 174.5 83.3 224.4 80 C274.3 76.7 324.1 36.7 374 40 C423.9 43.3 473.7 103.3 523.6 100 C573.5 96.7 648.3 33.3 673.2 20" />
+        <path class="cj-curve cj-line" d="M74.8 60 L224.4 80 L374 40 L523.6 100 L673.2 20" />
+        <circle class="cj-dot" cx="74.8" cy="60" r="7" />
+        <text class="cj-word" x="74.8" y="46" text-anchor="middle">気になる</text>
+        <circle class="cj-dot" cx="224.4" cy="80" r="7" />
+        <text class="cj-word" x="224.4" y="66" text-anchor="middle">迷う</text>
+        <circle class="cj-dot" cx="374" cy="40" r="7" />
+        <text class="cj-word" x="374" y="26" text-anchor="middle">楽しみ</text>
+        <circle class="cj-dot cj-low" cx="523.6" cy="100" r="9" />
+        <text class="cj-word cj-low-t" x="523.6" y="86" text-anchor="middle">不安</text>
+        <circle class="cj-dot" cx="673.2" cy="20" r="7" />
+        <text class="cj-word" x="673.2" y="48" text-anchor="middle">満足</text>
+        </svg>
+      </span>
+      <span class="cj-rh">改善策</span>
+      <span class="cj-cell cj-fix">サイズ感の動画</span>
+      <span class="cj-cell cj-fix">比較表を用意</span>
+      <span class="cj-cell cj-fix">納期を先に表示</span>
+      <span class="cj-cell cj-c4 cj-fix">追跡と遅れの連絡</span>
+      <span class="cj-cell cj-fix">組み立て動画</span>
+    </div>
+    <p class="sf-note">※ 気持ちの高さは、購入者10人への聞き取りから作った5段階の目安。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .cj { display: flex; flex-direction: column; height: 100%; }
+  .cj-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: calc(100 * var(--u)) repeat(5, minmax(0, 1fr)); grid-template-rows: calc(36 * var(--u)) calc(58 * var(--u)) calc(48 * var(--u)) minmax(0, 1fr) calc(62 * var(--u)); margin: calc(12 * var(--u)) 0 calc(8 * var(--u)); }
+  .cj-st { display: grid; place-items: center; background: var(--sf-ink-2); border-left: calc(2 * var(--u)) solid #fff; color: #fff; font-size: calc(17 * var(--u)); font-weight: 800; }
+  .cj-rh { display: flex; flex-direction: column; justify-content: center; padding-left: calc(4 * var(--u)); border-top: calc(1.5 * var(--u)) solid var(--sf-line); font-size: calc(16 * var(--u)); font-weight: 800; color: var(--sf-ink-2); line-height: 1.3; }
+  .cj-rh-feel b { font-size: calc(16 * var(--u)); }
+  .cj-rh-feel em { font-size: calc(16 * var(--u)); font-style: normal; font-weight: 400; color: var(--sf-ink-3); }
+  .cj-cell { display: grid; place-items: center; padding: calc(4 * var(--u)) calc(8 * var(--u)); border-top: calc(1.5 * var(--u)) solid var(--sf-line); font-size: calc(16 * var(--u)); line-height: 1.35; text-align: center; }
+  .cj-soft { background: var(--sf-soft); }
+  .cj-fix { font-weight: 700; }
+  .cj-feel { grid-column: 2 / -1; border-top: calc(1.5 * var(--u)) solid var(--sf-line); }
+  .cj-svg { display: block; width: 100%; height: 100%; }
+  .cj-svg text { font-family: inherit; }
+  .cj-hl { fill: var(--t-accent); fill-opacity: 0; }
+  .cj-mid { fill: none; stroke: var(--sf-line); stroke-width: 1.5; stroke-dasharray: 6 6; }
+  .cj-curve { fill: none; stroke: var(--sf-ink-2); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+  .cj-line { display: none; }
+  .cj-dot { fill: #fff; stroke: var(--sf-ink-2); stroke-width: 3.5; }
+  .cj-word { font-size: 16px; font-weight: 700; fill: var(--sf-ink-2); }
+
+  /* 線の形（data-curve="line" で折れ線） */
+  :global([data-t-curve='line']) .cj-smooth { display: none; }
+  :global([data-t-curve='line']) .cj-line { display: block; }
+
+  /* 気持ちが最も下がる段階を強調（data-focus="low"） */
+  :global([data-t-focus='low']) .cj-st.cj-c4 { background: var(--t-accent); }
+  :global([data-t-focus='low']) .cj-cell.cj-c4 { background: color-mix(in srgb, var(--t-accent) 8%, #fff); }
+  :global([data-t-focus='low']) .cj-cell.cj-soft.cj-c4 { background: color-mix(in srgb, var(--t-accent) 12%, var(--sf-soft)); }
+  :global([data-t-focus='low']) .cj-fix.cj-c4 { font-weight: 800; color: var(--t-accent); }
+  :global([data-t-focus='low']) .cj-hl { fill-opacity: 0.08; }
+  :global([data-t-focus='low']) .cj-low { stroke: var(--t-accent); fill: var(--t-accent); }
+  :global([data-t-focus='low']) .cj-low-t { fill: var(--t-accent); font-weight: 800; }
+</style>

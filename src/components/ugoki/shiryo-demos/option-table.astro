@@ -1,0 +1,94 @@
+---
+// 資料レイアウトの見本: 選択肢比較表型（3つの案を、同じ6項目で表にして比べ、推奨の列を強調する）
+// つまみ: --t-accent（色）・data-t-pick（強調する案 1|2|3|none）・--t-lab（項目名の列の幅。表全体に対する%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '選択肢比較表型',
+    kicker: '勤怠管理システムの選定（30人で利用）',
+    title: '案Aが、費用・期間・使いやすさのバランスで最良',
+    badge: '推奨',
+    opts: [
+      ['案A', 'ピタッと勤怠'],
+      ['案B', 'タイムノート'],
+      ['案C', '出勤くん'],
+    ],
+    rows: [
+      ['月額（30人）', ['0.9万円', '1.2万円', '0.75万円']],
+      ['初期費用', ['0円', '5万円', '0円']],
+      ['導入期間', ['2週間', '1か月', '3か月']],
+      ['スマホで打刻', [['○', 'できる'], ['○', 'できる'], ['×', 'できない']]],
+      ['給与ソフトとの連携', [['○', '自動'], ['△', '手作業が要る'], ['○', '自動']]],
+      ['サポート', ['メールのみ', '電話・メール', '電話・メール']],
+    ] as [string, (string | string[])[]][],
+    note: '※ 税抜。導入期間は契約から全員が使い始めるまで。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={16} lang={lang}>
+  <div class="ot" data-demo="option-table">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ot-wrap" data-sf-in style="--i: 1">
+      <table class="ot-t">
+        <tr>
+          <th class="ot-l"></th>
+          {T.opts.map(([n, name]) => (
+            <th class="ot-c"><span class="ot-no">{n}</span><span class="ot-name">{name}</span><span class="ot-badge">{T.badge}</span></th>
+          ))}
+        </tr>
+        {T.rows.map(([label, vals]) => (
+          <tr>
+            <th class="ot-l">{label}</th>
+            {vals.map((v) => (
+              <td class="ot-c">
+                {Array.isArray(v) ? <><span class="ot-mk">{v[0]}</span>{v[1]}</> : v}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </table>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 2">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ot { display: flex; flex-direction: column; height: 100%; }
+  .ot-wrap { flex: 1; margin: calc(14 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .ot-t { width: 100%; height: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0; }
+  .ot-t th, .ot-t td { padding: 0 calc(14 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); text-align: left; vertical-align: middle; font-size: calc(18 * var(--u)); }
+  .ot-t col { width: auto; }
+  .ot-l { width: var(--t-lab); font-size: calc(16 * var(--u)) !important; font-weight: 700; color: var(--sf-ink-2); }
+  .ot-c { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .ot-t tr:first-child > th { border-bottom: calc(2 * var(--u)) solid var(--sf-ink-3); height: calc(62 * var(--u)); }
+  .ot-no { display: block; font-size: calc(14 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .ot-name { font-size: calc(20 * var(--u)); font-weight: 800; }
+  .ot-badge { display: none; margin-left: calc(8 * var(--u)); padding: calc(1 * var(--u)) calc(10 * var(--u)); border-radius: calc(999 * var(--u)); background: #fff; color: var(--t-accent); font-size: calc(14 * var(--u)); font-weight: 800; vertical-align: calc(2 * var(--u)); }
+  .ot-mk { margin-right: calc(6 * var(--u)); font-size: calc(20 * var(--u)); font-weight: 800; }
+
+  /* 強調する案（つまみ: 強調する案）。1=案A・2=案B・3=案C */
+  :global([data-t-pick='1']) .ot-c:nth-child(2),
+  :global([data-t-pick='2']) .ot-c:nth-child(3),
+  :global([data-t-pick='3']) .ot-c:nth-child(4) {
+    background: color-mix(in srgb, var(--t-accent) 7%, #fff);
+    border-left: calc(3 * var(--u)) solid var(--t-accent);
+    border-right: calc(3 * var(--u)) solid var(--t-accent);
+  }
+  :global([data-t-pick='1']) .ot-t tr:first-child > .ot-c:nth-child(2),
+  :global([data-t-pick='2']) .ot-t tr:first-child > .ot-c:nth-child(3),
+  :global([data-t-pick='3']) .ot-t tr:first-child > .ot-c:nth-child(4) { background: var(--t-accent); color: #fff; border-radius: calc(10 * var(--u)) calc(10 * var(--u)) 0 0; }
+  :global([data-t-pick='1']) .ot-t tr:first-child > .ot-c:nth-child(2) .ot-no,
+  :global([data-t-pick='2']) .ot-t tr:first-child > .ot-c:nth-child(3) .ot-no,
+  :global([data-t-pick='3']) .ot-t tr:first-child > .ot-c:nth-child(4) .ot-no { color: rgba(255, 255, 255, 0.85); }
+  :global([data-t-pick='1']) .ot-t tr:last-child > .ot-c:nth-child(2),
+  :global([data-t-pick='2']) .ot-t tr:last-child > .ot-c:nth-child(3),
+  :global([data-t-pick='3']) .ot-t tr:last-child > .ot-c:nth-child(4) { border-bottom: calc(3 * var(--u)) solid var(--t-accent); border-radius: 0 0 calc(10 * var(--u)) calc(10 * var(--u)); }
+  :global([data-t-pick='1']) .ot-c:nth-child(2) .ot-badge,
+  :global([data-t-pick='2']) .ot-c:nth-child(3) .ot-badge,
+  :global([data-t-pick='3']) .ot-c:nth-child(4) .ot-badge { display: inline-block; }
+</style>

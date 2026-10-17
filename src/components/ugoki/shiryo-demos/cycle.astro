@@ -1,0 +1,93 @@
+---
+// 資料レイアウトの見本: 循環サイクル型（繰り返す流れを、輪のように矢印でつなぐ）
+// 4つの手順を楕円の上（上・右・下・左）に置き、楕円の弧で矢印をつなぐ。弧の端は、箱から出る所と入る所を計算した座標。
+// つまみ: --t-accent（色）・data-t-start（始まりの印 show|hide）・--t-line（矢印の太さ）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '循環サイクル型',
+    kicker: 'お客さまの声を改善につなげる4つの手順',
+    title: '声を集めて直す流れを、毎月1周まわす',
+    note: '※ 矢印の向きに進み、4つ目の次は1つ目に戻る。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={15} lang={lang}>
+  <div class="cy" data-demo="cycle">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="cy-diagram" data-sf-in style="--i: 1">
+      <svg viewBox="0 0 848 340" role="img" aria-label="お客さまの声を改善につなげる4つの手順（集める・分ける・直す・確かめるを毎月1周まわす）">
+        <path class="cy-arc" d="M558 71.8 A270 120 0 0 1 660.1 117.8" />
+        <polygon class="cy-tip" points="667.2,123.9 654.7,121.2 663.5,111.6" />
+        <path class="cy-arc" d="M669.2 226.2 A270 120 0 0 1 568.1 277.5" />
+        <polygon class="cy-tip" points="559,279.9 568,270.9 571.3,283.5" />
+        <path class="cy-arc" d="M290 280.2 A270 120 0 0 1 187.9 234.2" />
+        <polygon class="cy-tip" points="180.8,228.1 193.3,230.8 184.5,240.4" />
+        <path class="cy-arc" d="M178.8 125.8 A270 120 0 0 1 279.9 74.5" />
+        <polygon class="cy-tip" points="289,72.1 280,81.1 276.7,68.5" />
+        <g class="cy-step">
+          <rect class="cy-box" x="299" y="14" width="250" height="84" rx="14" />
+          <circle class="cy-no" cx="329" cy="56" r="16" />
+          <text class="cy-no-t" x="329" y="62" text-anchor="middle">1</text>
+          <text class="cy-t" x="357" y="44">集める</text>
+          <text class="cy-s" x="357" y="64">アンケートと</text>
+          <text class="cy-s" x="357" y="84">問い合わせを回収</text>
+        </g>
+        <g class="cy-step">
+          <rect class="cy-box" x="569" y="134" width="250" height="84" rx="14" />
+          <circle class="cy-no" cx="599" cy="176" r="16" />
+          <text class="cy-no-t" x="599" y="182" text-anchor="middle">2</text>
+          <text class="cy-t" x="627" y="164">分ける</text>
+          <text class="cy-s" x="627" y="184">内容を5種類に</text>
+          <text class="cy-s" x="627" y="204">仕分けする</text>
+        </g>
+        <g class="cy-step">
+          <rect class="cy-box" x="299" y="254" width="250" height="84" rx="14" />
+          <circle class="cy-no" cx="329" cy="296" r="16" />
+          <text class="cy-no-t" x="329" y="302" text-anchor="middle">3</text>
+          <text class="cy-t" x="357" y="284">直す</text>
+          <text class="cy-s" x="357" y="304">多い順に2件を</text>
+          <text class="cy-s" x="357" y="324">改善する</text>
+        </g>
+        <g class="cy-step">
+          <rect class="cy-box" x="29" y="134" width="250" height="84" rx="14" />
+          <circle class="cy-no" cx="59" cy="176" r="16" />
+          <text class="cy-no-t" x="59" y="182" text-anchor="middle">4</text>
+          <text class="cy-t" x="87" y="164">確かめる</text>
+          <text class="cy-s" x="87" y="184">翌月の声で</text>
+          <text class="cy-s" x="87" y="204">効果を見る</text>
+        </g>
+        <g class="cy-start"><rect x="313" y="0" width="70" height="24" rx="12" /><text x="348" y="17" text-anchor="middle">START</text></g>
+        <text class="cy-c1" x="424" y="154" text-anchor="middle">1周の長さ</text>
+        <text class="cy-c2" x="424" y="202" text-anchor="middle">1か月</text>
+        <text class="cy-c3" x="424" y="232" text-anchor="middle">毎月の第1週に始める</text>
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .cy { display: flex; flex-direction: column; height: 100%; }
+  .cy-diagram { position: relative; flex: 1; margin: calc(12 * var(--u)) 0 calc(6 * var(--u)); min-height: 0; }
+  .cy-diagram svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* 図の中の寸法は、viewBox（幅848）の数字そのまま */
+  .cy-arc { fill: none; stroke: #8a8f9c; stroke-width: var(--t-line); stroke-linecap: butt; }
+  .cy-tip { fill: #8a8f9c; }
+  .cy-box { fill: #fff; stroke: #c3c8d2; stroke-width: 2; }
+  .cy-no { fill: var(--t-accent); }
+  .cy-no-t { font-size: 18px; font-weight: 800; fill: #fff; }
+  .cy-t { font-size: 21px; font-weight: 800; fill: #1f2430; }
+  .cy-s { font-size: 16px; fill: #5a6070; }
+  .cy-start rect { fill: var(--t-accent); }
+  .cy-start text { font-size: 14px; font-weight: 800; fill: #fff; letter-spacing: 0.06em; }
+  :global([data-t-start='hide']) .cy-start { display: none; }
+  .cy-c1 { font-size: 16px; fill: #5a6070; }
+  .cy-c2 { font-size: 48px; font-weight: 800; fill: var(--t-accent); }
+  .cy-c3 { font-size: 16px; fill: #5a6070; }
+</style>

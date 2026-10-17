@@ -56,7 +56,7 @@ const ogImageUrl = `${SITE.url}${ogImage}`;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex" />}
+    {noindex && <meta name="robots" content="noindex,follow" />}
     <link rel="canonical" href={canonical} />
     {appleAppId && <meta name="apple-itunes-app" content={`app-id=${appleAppId}`} />}
     <meta property="og:type" content={ogType} />
@@ -192,7 +192,8 @@ const ogImageUrl = `${SITE.url}${ogImage}`;
               <h2>motytools</h2>
               <ul>
                 <li><a href="/" lang="ja" hreflang="ja">motytools (Japanese)</a></li>
-                <li><a href="/privacy" lang="ja" hreflang="ja">Privacy policy (Japanese)</a></li>
+                <li><a href="/about/" lang="ja" hreflang="ja">About motytools (Japanese)</a></li>
+                <li><a href="/en/privacy/">Privacy policy</a></li>
               </ul>
             </div>
           </div>
@@ -218,8 +219,8 @@ const ogImageUrl = `${SITE.url}${ogImage}`;
               <a href="/ui/">UI部品の図鑑</a>
               <a href="/shiryo/">資料レイアウトの図鑑</a>
               <a href="#products">プロダクト</a>
-              <a href="#about">motytoolsについて</a>
-              <a href="/privacy">プライバシーポリシー</a>
+              <a href="/about/">運営者情報</a>
+              <a href="/site-privacy/">プライバシーポリシー</a>
             </nav>
           </div>
           <div class="hm-footer-bottom">
@@ -260,7 +261,8 @@ const ogImageUrl = `${SITE.url}${ogImage}`;
                 <li><a href="/ugoki/">Webの動きの図鑑</a></li>
                 <li><a href="/ui/">UI部品の図鑑</a></li>
                 <li><a href="/shiryo/">資料レイアウトの図鑑</a></li>
-                <li><a href="/privacy">プライバシーポリシー</a></li>
+                <li><a href="/about/">運営者情報</a></li>
+                <li><a href="/site-privacy/">プライバシーポリシー</a></li>
               </ul>
             </div>
           </div>

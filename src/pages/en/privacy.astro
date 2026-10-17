@@ -1,0 +1,143 @@
+---
+// English version of the site-wide privacy policy (2026-10-17). Japanese original: src/pages/site-privacy.astro.
+// Keep both in sync with the actual implementation (GA4, AdSense, Google Fonts, localStorage in BaseLayout etc.).
+// /privacy is MemoMail's (app) policy — do not link it as the site policy.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../config';
+
+const UPDATED = '2026-10-17';
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Privacy Policy - motytools',
+    url: `${SITE.url}/en/privacy/`,
+    inLanguage: 'en',
+    dateModified: UPDATED,
+    publisher: { '@id': `${SITE.url}/#organization` },
+  },
+];
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="How motytools.com (free web tools, the Web Motion Library and the UI Component Library) handles information: Google AdSense ads, Google Analytics, data stored in your browser, server logs and how to contact us."
+  path="/en/privacy/"
+  jsonLd={jsonLd}
+  lang="en"
+  alternates={{ ja: '/site-privacy/', en: '/en/privacy/' }}
+>
+  <div class="container">
+    <article class="pp-wrap">
+      <header class="pp-head">
+        <h1>Privacy Policy</h1>
+        <p class="pp-lead">
+          This page explains what information motytools (“we”) handles on the website motytools.com, and how.
+        </p>
+        <p class="pp-date">Last updated: <time datetime={UPDATED}>October 17, 2026</time></p>
+      </header>
+
+      <div class="pp-note">
+        <p>
+          This policy covers <strong>the website</strong>. Each of our iPhone apps has its own privacy policy, linked from that app’s page (see the <a href="/apps/" lang="ja" hreflang="ja">app list, in Japanese</a>).
+        </p>
+      </div>
+
+      <div class="prose pp-body">
+        <h2 id="summary">In short</h2>
+        <ul>
+          <li>There are no accounts. We never ask you to enter your name, email address or postal address on this site.</li>
+          <li>Numbers you type into our tools and images you pick in our image tools are processed inside your browser. They are not sent to our servers.</li>
+          <li>For ads (Google AdSense) and analytics (Google Analytics), Google uses cookies and similar technologies.</li>
+        </ul>
+
+        <h2 id="tools">What you enter into tools</h2>
+        <p>
+          Everything you put into our calculators, character counter, image compressor, HEIC-to-JPG converter or QR code generator is processed on your own device, in your browser. It is not sent to us or to any third party, and it is not stored. It is gone when you close the page.
+        </p>
+
+        <h2 id="storage">What we store in your browser</h2>
+        <p>To make the site easier to use, we may store the following in your browser (localStorage and similar). It never leaves your device.</p>
+        <ul>
+          <li>Your choice of light or dark theme</li>
+          <li>The state of some live demos in the libraries (for example, whether you collapsed the sidebar demo, or whether a popup demo has already been shown)</li>
+        </ul>
+        <p>You can remove it at any time by clearing this site’s data in your browser settings.</p>
+
+        <h2 id="ads">Advertising (Google AdSense)</h2>
+        <p>
+          We show ads through Google AdSense to cover running costs. Third-party vendors, including Google, use cookies to serve ads based on your prior visits to this site and other sites (personalized advertising).
+        </p>
+        <ul>
+          <li>You can turn off personalized advertising in <a href="https://adssettings.google.com/" target="_blank" rel="noopener">Google’s Ad Settings</a>.</li>
+          <li>You can opt out of other vendors’ cookies at <a href="https://www.aboutads.info/" target="_blank" rel="noopener">www.aboutads.info</a>.</li>
+          <li>For how Google uses advertising cookies, see <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">Google’s explanation</a>.</li>
+        </ul>
+
+        <h2 id="analytics">Analytics (Google Analytics)</h2>
+        <p>
+          We use Google Analytics (GA4) to understand which pages are read and how much. Using cookies and similar technologies, it collects the pages you view, time on page, approximate region, and device and browser type. We do not collect information that identifies you, such as your name or email address.
+        </p>
+        <p>
+          This information is handled by Google under Google’s privacy policy. See <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">How Google uses information from sites or apps that use its services</a>. To opt out, disable cookies in your browser or install the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-out Browser Add-on</a>.
+        </p>
+
+        <h2 id="external">Resources loaded from other services</h2>
+        <p>
+          We use Google Fonts to display text. When you open a page, your browser connects to Google’s servers to download the fonts, which passes information such as your IP address to Google. We do not embed videos, maps or social media posts.
+        </p>
+
+        <h2 id="logs">Server logs</h2>
+        <p>
+          The site is delivered from our hosting provider (Vercel). As part of delivering pages, the provider’s servers automatically record your IP address, the date and time, the page requested and your browser type. We use these records only to investigate outages and to protect against abuse.
+        </p>
+
+        <h2 id="affiliate">Affiliate links</h2>
+        <p>
+          We currently have no affiliate links (links that earn us a commission). Links to online stores in our articles are ordinary links for reference. If we add affiliate links in the future, we will label them on the page and update this policy.
+        </p>
+
+        <h2 id="children">Children</h2>
+        <p>
+          This site is meant for a general audience. We do not knowingly collect personal information from children, and the site has no accounts or forms.
+        </p>
+
+        <h2 id="third">Sharing with third parties</h2>
+        <p>
+          Apart from Google and our hosting provider as described above, we do not share information with third parties unless required by law.
+        </p>
+
+        <h2 id="changes">Changes to this policy</h2>
+        <p>
+          When the services or technologies we use change, we will update this page and the “Last updated” date above. We will note any significant change at the top of this page.
+        </p>
+
+        <h2 id="contact">Contact</h2>
+        <p>
+          For questions about this policy, please use “Feedback” (ご意見・要望) in the settings screen of any of our iPhone apps. Questions about the website are welcome there too. We do not currently have an email address for the website. For more about us, see <a href="/about/" lang="ja" hreflang="ja">About motytools (Japanese)</a>.
+        </p>
+        <p class="pp-sign">Operated by motytools</p>
+      </div>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .pp-wrap { max-width: var(--article); padding-bottom: var(--sp-8); }
+  .pp-head { padding: var(--sp-5) 0 var(--sp-4); }
+  .pp-head h1 { font-size: clamp(26px, 5vw, var(--fs-2xl)); font-weight: 800; line-height: 1.3; letter-spacing: -0.01em; }
+  .pp-lead { margin-top: var(--sp-3); color: var(--text-2); line-height: 1.7; }
+  .pp-date { margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .pp-note {
+    margin: var(--sp-2) 0 var(--sp-6);
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md, 12px);
+    background: var(--surface);
+    line-height: 1.7;
+  }
+  .pp-body li { line-height: 1.7; }
+  .pp-body p { line-height: 1.7; }
+  .pp-body a { overflow-wrap: anywhere; }
+  .pp-sign { margin-top: var(--sp-5); color: var(--text-2); }
+</style>

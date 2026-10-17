@@ -1,0 +1,104 @@
+---
+// 資料レイアウトの見本: 決裁依頼型（決めてほしいこと・費用・期限を左に、理由と承認欄を右に置く）
+// つまみ: --t-accent（色）・data-t-focus（強調する項目 cost|due|none）・data-t-stamp（承認欄 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '決裁依頼型',
+    kicker: '物流部からの決裁のお願い（10月17日）',
+    title: '480万円の導入を、11月7日までにご決裁ください',
+    ask: { label: '決めてほしいこと', value: '倉庫管理システム「ロジノート」の導入' },
+    cost: { label: '費用', value: '480', unit: '万円', sub: '初期費用350万円＋初年度の運用費130万円' },
+    due: { label: 'ご決裁の期限', value: '11月7日', unit: 'まで', sub: '発注先の見積価格は11月末まで有効' },
+    reasonsTitle: '導入したい理由',
+    reasons: [
+      '出荷ミスが月12件から2件に減る見込み',
+      '棚卸し作業が3日から半日になる',
+      '現行システムの保守が2027年3月に終了',
+    ],
+    stampTitle: '承認欄',
+    stamps: ['起案', '課長', '部長', '本部長'],
+    drafter: '山田',
+    note: '※ 費用は税抜。出荷ミスと作業時間は、他社の導入例と1か月の試用結果から試算。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={23} lang={lang}>
+  <div class="ap" data-demo="approval">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ap-body">
+      <div class="ap-left">
+        <div class="ap-card ap-ask" data-sf-in style="--i: 1">
+          <span class="ap-label">{T.ask.label}</span>
+          <span class="ap-ask-v">{T.ask.value}</span>
+        </div>
+        <div class="ap-card ap-cost" data-sf-in style="--i: 2">
+          <span class="ap-label">{T.cost.label}</span>
+          <span class="ap-big"><b>{T.cost.value}</b>{T.cost.unit}</span>
+          <span class="ap-sub">{T.cost.sub}</span>
+        </div>
+        <div class="ap-card ap-due" data-sf-in style="--i: 3">
+          <span class="ap-label">{T.due.label}</span>
+          <span class="ap-big"><b>{T.due.value}</b>{T.due.unit}</span>
+          <span class="ap-sub">{T.due.sub}</span>
+        </div>
+      </div>
+      <div class="ap-right">
+        <div class="ap-reasons" data-sf-in style="--i: 4">
+          <span class="ap-label">{T.reasonsTitle}</span>
+          <ol>
+            {T.reasons.map((r, i) => <li><i>{i + 1}</i><span>{r}</span></li>)}
+          </ol>
+        </div>
+        <div class="ap-stamps" data-sf-in style="--i: 5">
+          <span class="ap-label">{T.stampTitle}</span>
+          <div class="ap-boxes">
+            {T.stamps.map((s, i) => (
+              <span class="ap-box"><span class="ap-box-h">{s}</span><span class="ap-box-b">{i === 0 ? T.drafter : ''}</span></span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ap { display: flex; flex-direction: column; height: 100%; }
+  .ap-body { flex: 1; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: calc(28 * var(--u)); margin: calc(16 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .ap-left { display: grid; grid-template-rows: 0.9fr 1.15fr 1.05fr; gap: calc(10 * var(--u)); min-height: 0; }
+  .ap-card { display: flex; flex-direction: column; justify-content: center; padding: 0 calc(20 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(10 * var(--u)); background: #fff; min-height: 0; }
+  .ap-label { font-size: calc(14 * var(--u)); font-weight: 700; color: var(--sf-ink-2); letter-spacing: 0.04em; }
+  .ap-ask-v { font-size: calc(22 * var(--u)); font-weight: 800; line-height: 1.3; }
+  .ap-big { font-size: calc(24 * var(--u)); font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .ap-big b { margin-right: calc(2 * var(--u)); font-size: calc(46 * var(--u)); letter-spacing: -0.01em; }
+  .ap-sub { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+
+  .ap-right { display: flex; flex-direction: column; gap: calc(10 * var(--u)); min-height: 0; }
+  .ap-reasons { flex: 1; display: flex; flex-direction: column; padding: calc(14 * var(--u)) calc(20 * var(--u)); border-radius: calc(10 * var(--u)); background: var(--sf-soft); min-height: 0; }
+  .ap-reasons ol { flex: 1; display: grid; grid-auto-rows: 1fr; margin: calc(4 * var(--u)) 0 0; padding: 0; list-style: none; }
+  .ap-reasons li { display: flex; align-items: center; gap: calc(12 * var(--u)); font-size: calc(17 * var(--u)); font-weight: 700; line-height: 1.35; }
+  .ap-reasons li i { flex: none; display: flex; align-items: center; justify-content: center; width: calc(26 * var(--u)); height: calc(26 * var(--u)); border-radius: 50%; background: var(--sf-ink-2); color: #fff; font-style: normal; font-size: calc(15 * var(--u)); font-weight: 800; }
+  .ap-boxes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: calc(4 * var(--u)); border: calc(1.5 * var(--u)) solid var(--sf-ink-3); }
+  .ap-box { display: flex; flex-direction: column; border-left: calc(1.5 * var(--u)) solid var(--sf-ink-3); }
+  .ap-box:first-child { border-left: 0; }
+  .ap-box-h { padding: calc(2 * var(--u)) 0; background: var(--sf-soft); text-align: center; font-size: calc(14 * var(--u)); font-weight: 700; border-bottom: calc(1.5 * var(--u)) solid var(--sf-ink-3); }
+  .ap-box-b { height: calc(50 * var(--u)); display: flex; align-items: center; justify-content: center; font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+
+  /* 強調する項目（つまみ: 強調する項目） */
+  :global([data-t-focus='cost']) .ap-cost,
+  :global([data-t-focus='due']) .ap-due { border-color: var(--t-accent); border-width: calc(3 * var(--u)); background: color-mix(in srgb, var(--t-accent) 6%, #fff); }
+  :global([data-t-focus='cost']) .ap-cost .ap-big,
+  :global([data-t-focus='due']) .ap-due .ap-big { color: var(--t-accent); }
+  :global([data-t-focus='cost']) .ap-cost .ap-label,
+  :global([data-t-focus='due']) .ap-due .ap-label { color: var(--t-accent); }
+
+  /* 承認欄の表示（つまみ: 承認欄） */
+  :global([data-t-stamp='hide']) .ap-stamps { display: none; }
+</style>

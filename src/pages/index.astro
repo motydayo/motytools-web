@@ -8,9 +8,13 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': `${SITE.url}/#organization`,
     name: 'motytools',
-    url: SITE.url,
+    url: `${SITE.url}/`,
     logo: `${SITE.url}/favicon.svg`,
+    description: '個人の開発者が運営する制作スタジオ。無料のWebツール、Web制作の図鑑、iPhoneアプリを作っています。',
+    // 運営者情報（/about/）
+    mainEntityOfPage: `${SITE.url}/about/`,
   },
   {
     '@context': 'https://schema.org',
@@ -63,7 +67,7 @@ interface Product {
 }
 const showcase: Product[] = [
   {
-    href: 'https://firemap.alazora.workers.dev',
+    href: 'https://firemap.motytools.com/',
     external: true,
     name: '炎上マップ',
     desc: '話題の投稿を時系列で可視化。',
@@ -465,7 +469,7 @@ const compact: Product[] = [
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg>
         <div>
           <b>iPhoneアプリも作っています</b>
-          <p><a href="/apps/">アプリ一覧</a>と<a href="/guide/">使い方ガイド</a>をご覧ください。ご意見・ご要望は各アプリの「ご意見・要望」からお寄せください。</p>
+          <p><a href="/apps/">アプリ一覧</a>と<a href="/guide/">使い方ガイド</a>をご覧ください。ご意見・ご要望は各アプリの「ご意見・要望」からお寄せください。運営や作り方は<a href="/about/">運営者情報</a>にまとめています。</p>
         </div>
       </div>
     </div>

@@ -1,0 +1,103 @@
+---
+// 資料レイアウトの見本: 分岐・合流型（流れが分かれて同時に進み、また合わさる様子を見せる）
+// 箱の幅は週数に比例（1週＝84px）。3つの作業の道すじ（5週・3週・2週）が分かれて、全部そろったら合流する。
+// 5週の道すじ（商品開発）が全体の日程を決める。
+// つまみ: --t-accent（色）・data-t-critical（いちばん長い道すじ on|off）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '分岐・合流型',
+    kicker: '新商品の発売準備（企画決定から発売まで）',
+    title: '商品開発の5週間が、発売日を決める',
+    note: '※ 箱の幅は作業にかかる週数に比例。販促は3週間、販売準備は2週間で終わる。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={16} lang={lang}>
+  <div class="bm" data-demo="branch-merge">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="bm-diagram" data-sf-in style="--i: 1">
+      <svg viewBox="0 0 848 340" role="img" aria-label="新商品の発売準備の分岐・合流（企画決定から3つの作業が同時に進み、発売日に合流する）">
+        <path class="bm-line" d="M112 170 H146" />
+        <path class="bm-bar" d="M146 70 V270" />
+        <path class="bm-bar" d="M700 70 V270" />
+        <path class="bm-line" d="M700 170 H728" />
+        <polygon class="bm-tip" points="738,170 728,164 728,176" />
+        <g class="bm-track is-crit">
+          <path class="bm-line" d="M146 70 H180" />
+          <polygon class="bm-tip" points="190,70 180,64 180,76" />
+          <text class="bm-name" x="190" y="36">商品開発</text>
+          <polygon class="bm-box" points="190,44 426,44 438,70 426,96 190,96" />
+          <text class="bm-text" x="311" y="76" text-anchor="middle">試作</text>
+          <polygon class="bm-box" points="442,44 594,44 606,70 594,96 442,96" />
+          <text class="bm-text" x="521" y="76" text-anchor="middle">品質検査</text>
+          <path class="bm-line bm-slack" d="M610 70 H700" />
+          <text class="bm-wk" x="618" y="76">5週間</text>
+        </g>
+        <g class="bm-track">
+          <path class="bm-line" d="M146 170 H180" />
+          <polygon class="bm-tip" points="190,170 180,164 180,176" />
+          <text class="bm-name" x="190" y="136">販促</text>
+          <polygon class="bm-box" points="190,144 342,144 354,170 342,196 190,196" />
+          <text class="bm-text" x="269" y="176" text-anchor="middle">チラシ制作</text>
+          <polygon class="bm-box" points="358,144 426,144 438,170 426,196 358,196" />
+          <text class="bm-text" x="395" y="176" text-anchor="middle">告知準備</text>
+          <path class="bm-line bm-slack" d="M442 170 H700" />
+          <text class="bm-wk" x="618" y="176">3週間</text>
+        </g>
+        <g class="bm-track">
+          <path class="bm-line" d="M146 270 H180" />
+          <polygon class="bm-tip" points="190,270 180,264 180,276" />
+          <text class="bm-name" x="190" y="236">販売準備</text>
+          <polygon class="bm-box" points="190,244 258,244 270,270 258,296 190,296" />
+          <text class="bm-text" x="227" y="276" text-anchor="middle">倉庫手配</text>
+          <polygon class="bm-box" points="274,244 342,244 354,270 342,296 274,296" />
+          <text class="bm-text" x="311" y="276" text-anchor="middle">在庫登録</text>
+          <path class="bm-line bm-slack" d="M358 270 H700" />
+          <text class="bm-wk" x="618" y="276">2週間</text>
+        </g>
+        <rect class="bm-node" x="0" y="138" width="112" height="64" rx="12" />
+        <text class="bm-node-t" x="56" y="167" text-anchor="middle">企画決定</text>
+        <text class="bm-node-d" x="56" y="190" text-anchor="middle">2/25</text>
+        <rect class="bm-end" x="738" y="138" width="110" height="64" rx="12" />
+        <text class="bm-end-t" x="793" y="167" text-anchor="middle">発売日</text>
+        <text class="bm-end-d" x="793" y="192" text-anchor="middle">4/1</text>
+        <text class="bm-cap" x="170" y="312" text-anchor="end">同時に進める</text>
+        <text class="bm-cap" x="700" y="312" text-anchor="middle">全部そろったら次へ</text>
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .bm { display: flex; flex-direction: column; height: 100%; }
+  .bm-diagram { position: relative; flex: 1; margin: calc(12 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .bm-diagram svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* 図の中の寸法は、viewBox（幅848）の数字そのまま。箱の幅は週数 × 84 */
+  .bm-line { fill: none; stroke: #8a8f9c; stroke-width: 2.5; }
+  .bm-slack { stroke: #c3c8d2; stroke-dasharray: 2 6; stroke-linecap: round; }
+  .bm-bar { fill: none; stroke: #1f2430; stroke-width: 5; stroke-linecap: round; }
+  .bm-tip { fill: #8a8f9c; }
+  .bm-name { font-size: 16px; font-weight: 800; fill: #5a6070; }
+  .bm-box { fill: #f3f4f7; stroke: #c3c8d2; stroke-width: 1.5; }
+  .bm-text { font-size: 16px; font-weight: 700; fill: #1f2430; }
+  .bm-wk { font-size: 17px; font-weight: 800; fill: #5a6070; paint-order: stroke; stroke: #fff; stroke-width: 7px; stroke-linejoin: round; }
+  .bm-node { fill: #fff; stroke: #8a8f9c; stroke-width: 2.5; }
+  .bm-node-t { font-size: 18px; font-weight: 800; fill: #1f2430; }
+  .bm-node-d { font-size: 16px; fill: #5a6070; }
+  .bm-end { fill: #1f2430; }
+  .bm-end-t { font-size: 16px; fill: #fff; }
+  .bm-end-d { font-size: 26px; font-weight: 800; fill: #fff; }
+  .bm-cap { font-size: 16px; fill: #8a8f9c; }
+  /* いちばん長い道すじ（data-critical="on"） */
+  :global([data-t-critical='on']) .bm-track.is-crit .bm-box { fill: var(--t-accent); stroke: var(--t-accent); }
+  :global([data-t-critical='on']) .bm-track.is-crit .bm-text { fill: #fff; }
+  :global([data-t-critical='on']) .bm-track.is-crit .bm-wk { fill: var(--t-accent); }
+  :global([data-t-critical='on']) .bm-track.is-crit .bm-name { fill: var(--t-accent); }
+</style>

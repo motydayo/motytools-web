@@ -1,0 +1,103 @@
+---
+// prefix: cc
+// 資料レイアウトの見本: 事例紹介カード型（写真の枠・お客さま・課題・取り組み・成果の数字を1枚のカードにまとめる）
+// 写真は実際の資料では本物の写真に差し替える枠。ここでは枠の位置と大きさだけを示す
+// つまみ: --t-accent（色）・data-t-side（写真の位置 left|right）・data-t-focus（強調 results|none）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '事例紹介カード型',
+    kicker: '導入事例　和菓子店',
+    title: 'ネット予約で、電話の予約を月120件減らしました',
+    photo: '店舗の写真を入れる枠',
+    customer: 'たちばな堂（和菓子店）',
+    profile: '埼玉県川越市・創業1952年・従業員14人',
+    blocks: [
+      { label: '課題', text: '電話予約が月に約300件。営業時間中は電話に出るため、製造の手が止まっていた。' },
+      { label: '取り組み', text: 'ネット予約を導入。受け取り日時を選ぶ形にし、確認の連絡がLINEに届くようにした。' },
+    ],
+    resultLabel: '成果',
+    results: [
+      { k: '電話の予約（月）', from: '300', to: '180', unit: '件', sub: '月120件減（−40%）' },
+      { k: '聞き間違い（月）', from: '6', to: '0', unit: '件', sub: 'ゼロに' },
+      { k: '効果が出るまで', to: '2', unit: 'か月', sub: '導入から' },
+    ],
+    note: '※ 導入前は2026年1〜3月、導入後は2026年8〜10月の月平均。掲載は事前に了承を得ている。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={11} lang={lang}>
+  <div class="cc" data-demo="case-card">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="cc-body">
+      <div class="cc-photo" data-sf-in style="--i: 1">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20l3-10h30l3 10M6 20h36M6 20c0 3 2.5 5 5 5s5-2 5-5c0 3 2.5 5 5 5h6c2.5 0 5-2 5-5 0 3 2.5 5 5 5s5-2 5-5M10 26v14h28V26M20 40V31h8v9" /></svg>
+        <span>{T.photo}</span>
+      </div>
+      <div class="cc-main">
+        <div class="cc-who" data-sf-in style="--i: 2"><b>{T.customer}</b><span>{T.profile}</span></div>
+        {T.blocks.map((b, i) => (
+          <div class="cc-block" data-sf-in style={`--i: ${i + 3}`}>
+            <span class="cc-label">{b.label}</span>
+            <span class="cc-text">{b.text}</span>
+          </div>
+        ))}
+        <div class="cc-results" data-sf-in style="--i: 5">
+          <span class="cc-label cc-label-r">{T.resultLabel}</span>
+          <div class="cc-res">
+            {T.results.map((r) => (
+              <div class="cc-r">
+                <span class="cc-rk">{r.k}</span>
+                <span class="cc-rv">
+                  {r.from && <span class="cc-from">{r.from}</span>}
+                  {r.from && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>}
+                  <b>{r.to}</b><small>{r.unit}</small>
+                </span>
+                <span class="cc-rs">{r.sub}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 6">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .cc { display: flex; flex-direction: column; height: 100%; }
+  .cc-body { flex: 1; display: flex; gap: calc(28 * var(--u)); margin: calc(16 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .cc-photo { flex: 0 0 calc(280 * var(--u)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(12 * var(--u)); border-radius: calc(12 * var(--u)); background: var(--sf-soft); border: calc(2 * var(--u)) dashed var(--sf-mute); color: var(--sf-ink-3); font-size: calc(15 * var(--u)); }
+  .cc-photo svg { width: calc(64 * var(--u)); height: calc(64 * var(--u)); }
+  .cc-main { flex: 1; display: flex; flex-direction: column; gap: calc(10 * var(--u)); min-width: 0; min-height: 0; }
+  .cc-who { display: flex; flex-direction: column; gap: 0; }
+  .cc-who b { font-size: calc(22 * var(--u)); font-weight: 800; line-height: 1.3; }
+  .cc-who span { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .cc-block { display: grid; grid-template-columns: calc(76 * var(--u)) minmax(0, 1fr); column-gap: calc(12 * var(--u)); align-items: start; }
+  .cc-label { justify-self: start; padding: calc(2 * var(--u)) calc(12 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--sf-soft); color: var(--sf-ink-2); font-size: calc(15 * var(--u)); font-weight: 800; }
+  .cc-text { font-size: calc(16 * var(--u)); line-height: 1.5; color: var(--sf-ink); }
+  .cc-results { display: grid; grid-template-columns: calc(76 * var(--u)) minmax(0, 1fr); column-gap: calc(12 * var(--u)); align-items: start; margin-top: auto; padding: calc(12 * var(--u)) calc(14 * var(--u)) calc(12 * var(--u)) calc(12 * var(--u)); border-radius: calc(10 * var(--u)); background: var(--sf-soft); }
+  .cc-label-r { background: #fff; }
+  .cc-res { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(12 * var(--u)); }
+  .cc-r { display: flex; flex-direction: column; min-width: 0; }
+  .cc-rk { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .cc-rv { display: flex; align-items: baseline; gap: calc(4 * var(--u)); font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .cc-from { font-size: calc(20 * var(--u)); font-weight: 700; color: var(--sf-ink-3); }
+  .cc-rv svg { align-self: center; width: calc(16 * var(--u)); height: calc(16 * var(--u)); color: var(--sf-ink-3); flex: none; }
+  .cc-rv b { font-size: calc(36 * var(--u)); font-weight: 800; }
+  .cc-rv small { font-size: calc(18 * var(--u)); font-weight: 700; }
+  .cc-rs { font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+
+  /* 強調（つまみ: 強調） */
+  :global([data-t-focus='results']) .cc-results { background: color-mix(in srgb, var(--t-accent) 8%, #fff); box-shadow: inset 0 0 0 calc(2 * var(--u)) var(--t-accent); }
+  :global([data-t-focus='results']) .cc-label-r { background: var(--t-accent); color: #fff; }
+  :global([data-t-focus='results']) .cc-rv b { color: var(--t-accent); }
+
+  /* 写真の位置（つまみ: 写真の位置） */
+  :global([data-t-side='right']) .cc-body { flex-direction: row-reverse; }
+</style>

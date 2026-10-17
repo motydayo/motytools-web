@@ -1,0 +1,117 @@
+---
+// 資料レイアウトの見本: 散布図型（店舗ごとの広告費と新規顧客数を点で打ち、全体の傾きを線で添える）
+// 図は幅620×高さ332（スライドのpx）のSVG1枚。点の位置は 横=広告費÷50、縦=新規顧客÷150 で計算する。目盛りは両方とも0から。
+// 傾きの線は最小二乗法（点からの距離の2乗の合計がいちばん小さくなる直線）で15点から計算した。
+// つまみ: --t-accent（色）・data-t-trend（傾きの線 show|hide）・--t-dot（点の大きさ）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const W = 620;
+const H = 332;
+const L = 54;
+const R = 604;
+const TOP = 26;
+const BOT = 282;
+const XMAX = 50;
+const YMAX = 150;
+const XT = [0, 10, 20, 30, 40, 50];
+const YT = [0, 50, 100, 150];
+const DICT = {
+  ja: {
+    name: '散布図型',
+    kicker: '店舗ごとの広告費と新規顧客数（15店舗）',
+    title: '広告費が増えるほど、新規顧客も増える',
+    xLabel: '広告費（万円／月）',
+    yLabel: '新規顧客（人／月）',
+    // [広告費, 新規顧客]
+    data: [
+      [5, 32], [8, 41], [10, 38], [13, 55], [16, 62], [18, 58], [21, 80], [24, 76],
+      [27, 95], [30, 102], [33, 98], [37, 121], [41, 118], [46, 139], [14, 92],
+    ] as [number, number][],
+    star: [14, 92] as [number, number],
+    starLabel: '渋谷店',
+    starSub: ['広告費が少なくても', '成果が高い'],
+    big: '+25人',
+    bigLabel: '広告費を10万円増やしたときの、新規顧客の増え方の目安',
+    sub: '相関係数 0.94',
+    note: '※ 2025年度の月平均。直線は15店舗のデータから計算。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+if (T.data.some(([x, y]) => x > XMAX || y > YMAX)) throw new Error('scatter: 目盛りの最大と値が合っていません');
+const px = (x: number) => +(L + (x / XMAX) * (R - L)).toFixed(1);
+const py = (y: number) => +(BOT - (y / YMAX) * (BOT - TOP)).toFixed(1);
+// 最小二乗法
+const n = T.data.length;
+const mx = T.data.reduce((a, [x]) => a + x, 0) / n;
+const my = T.data.reduce((a, [, y]) => a + y, 0) / n;
+const sxy = T.data.reduce((a, [x, y]) => a + (x - mx) * (y - my), 0);
+const sxx = T.data.reduce((a, [x]) => a + (x - mx) ** 2, 0);
+const slope = sxy / sxx;
+const icpt = my - slope * mx;
+const trend = { x1: px(0), y1: py(icpt), x2: px(XMAX), y2: py(icpt + slope * XMAX) };
+const isStar = ([x, y]: [number, number]) => x === T.star[0] && y === T.star[1];
+const sx = px(T.star[0]);
+const sy = py(T.star[1]);
+---
+
+<SlideFrame size={size} label={T.name} page={14} lang={lang}>
+  <div class="sc" data-demo="scatter">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="sc-body">
+      <div class="sc-chart" data-sf-in style="--i: 2">
+        <svg class="sc-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={T.title}>
+          <text class="sc-axis" x="0" y="14">{T.yLabel}</text>
+          {YT.map((t) => (
+            <>
+              <line class:list={['sc-grid', t === 0 && 'is-base']} x1={L} x2={R} y1={py(t)} y2={py(t)} />
+              <text class="sc-tick" x={L - 10} y={py(t) + 5} text-anchor="end">{t}</text>
+            </>
+          ))}
+          {XT.map((t) => (
+            <>
+              {t > 0 && <line class="sc-grid" x1={px(t)} x2={px(t)} y1={TOP} y2={BOT} />}
+              <text class="sc-tick" x={px(t)} y={BOT + 23} text-anchor="middle">{t}</text>
+            </>
+          ))}
+          <text class="sc-axis" x={R} y={H - 2} text-anchor="end">{T.xLabel}</text>
+          <line class="sc-trend" x1={trend.x1} y1={trend.y1} x2={trend.x2} y2={trend.y2} />
+          {T.data.filter((p) => !isStar(p)).map(([x, y]) => <circle class="sc-dot" cx={px(x)} cy={py(y)} r="7" />)}
+          <circle class="sc-dot is-star" cx={sx} cy={sy} r="10" />
+          <text class="sc-star" x={sx + 16} y={sy - 40}>{T.starLabel}</text>
+          <text class="sc-star-sub" x={sx + 16} y={sy - 22}>{T.starSub[0]}</text>
+          <text class="sc-star-sub" x={sx + 16} y={sy - 4}>{T.starSub[1]}</text>
+        </svg>
+      </div>
+      <div class="sc-side" data-sf-in style="--i: 4">
+        <span class="sc-big">{T.big}</span>
+        <span class="sc-big-label">{T.bigLabel}</span>
+        <span class="sc-sub">{T.sub}</span>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .sc { display: flex; flex-direction: column; height: 100%; }
+  .sc-body { flex: 1; display: flex; align-items: center; gap: calc(34 * var(--u)); margin: calc(12 * var(--u)) 0 calc(6 * var(--u)); min-height: 0; }
+  .sc-chart { flex: 0 0 calc(620 * var(--u)); }
+  .sc-svg { display: block; width: 100%; height: auto; overflow: visible; font-family: inherit; }
+  .sc-axis { font-size: 13px; fill: var(--sf-ink-3); }
+  .sc-tick { font-size: 14px; fill: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+  .sc-grid { stroke: var(--sf-line); stroke-width: 1; }
+  .sc-grid.is-base { stroke: var(--sf-ink-3); }
+  .sc-dot { r: calc(var(--t-dot) * 1px); fill: var(--sf-ink-3); fill-opacity: 0.8; stroke: #fff; stroke-width: 1.5; }
+  .sc-dot.is-star { fill: var(--t-accent); fill-opacity: 1; r: calc(var(--t-dot) * 1.4px); }
+  .sc-trend { stroke: var(--t-accent); stroke-width: 2.5; stroke-dasharray: 8 6; stroke-linecap: round; }
+  .sc-star { font-size: 17px; font-weight: 800; fill: var(--t-accent); }
+  .sc-star-sub { font-size: 14px; fill: var(--sf-ink-2); }
+  :global([data-t-trend='hide']) .sc-trend { display: none; }
+
+  .sc-side { flex: 1; align-self: stretch; display: flex; flex-direction: column; justify-content: center; gap: calc(6 * var(--u)); padding-left: calc(24 * var(--u)); border-left: calc(1 * var(--u)) solid var(--sf-line); }
+  .sc-big { font-size: calc(52 * var(--u)); font-weight: 800; line-height: 1.05; color: var(--t-accent); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .sc-big-label { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .sc-sub { margin-top: calc(14 * var(--u)); padding-top: calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(17 * var(--u)); font-weight: 800; }
+</style>

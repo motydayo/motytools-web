@@ -1,0 +1,115 @@
+---
+// 資料レイアウトの見本: 画像ギャラリー型（同じ大きさ・同じ背景の画像を3×2に並べ、名前と値段を添える）
+// 絵はすべてこのファイルの中の図形（SVG）で描いたオリジナル。写真・外部画像は使わない。
+// つまみ: --t-accent（色）・data-t-caption（名前と値段 show|hide）・--t-gap（タイルの間隔。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '画像ギャラリー型',
+    kicker: 'うつわ工房「ことのは窯」2026年秋の新作',
+    title: '秋の新作は、毎日使いたいうつわ6点',
+    items: [
+      { key: 'mug', name: 'マグカップ', price: '2,800円' },
+      { key: 'mame', name: '豆皿（2枚組）', price: '1,100円' },
+      { key: 'bowl', name: '飯碗', price: '1,800円' },
+      { key: 'vase', name: '一輪挿し', price: '3,600円' },
+      { key: 'pot', name: '急須', price: '5,200円' },
+      { key: 'plate', name: '角皿', price: '2,400円' },
+    ],
+    note: '※ 価格は税込。手づくりのため、色や形が少しずつ異なります。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={12} lang={lang}>
+  <div class="gl" data-demo="gallery">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="gl-grid">
+      {T.items.map((it, i) => (
+        <div class="gl-tile" data-sf-in style={`--i: ${i + 1}`}>
+          <div class="gl-pic">
+            <svg viewBox="0 22 200 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect y="0" width="200" height="140" fill="#f3f4f7" />
+              <ellipse cx="100" cy="112" rx="46" ry="5" fill="#e3e5ea" />
+              {it.key === 'mug' && (
+                <>
+                  <path d="M122 62c22 0 22 38 0 38" fill="none" stroke="var(--t-accent)" stroke-width="9" />
+                  <rect x="72" y="46" width="52" height="64" rx="9" fill="var(--t-accent)" />
+                  <rect x="72" y="46" width="52" height="10" rx="5" fill="#fff" opacity="0.25" />
+                </>
+              )}
+              {it.key === 'mame' && (
+                <>
+                  <ellipse cx="86" cy="94" rx="44" ry="13" fill="#c3c8d2" />
+                  <ellipse cx="86" cy="92" rx="33" ry="8" fill="#e3e5ea" />
+                  <ellipse cx="118" cy="104" rx="40" ry="12" fill="#8a8f9c" />
+                  <ellipse cx="118" cy="102" rx="30" ry="7" fill="#c3c8d2" />
+                </>
+              )}
+              {it.key === 'bowl' && (
+                <>
+                  <rect x="86" y="104" width="28" height="7" rx="2" fill="#c3c8d2" />
+                  <path d="M60 64H140C140 94 124 106 100 106C76 106 60 94 60 64Z" fill="#fff" stroke="#c3c8d2" stroke-width="3" />
+                  <path d="M63 78H137" stroke="var(--t-accent)" stroke-width="7" />
+                  <ellipse cx="100" cy="64" rx="40" ry="7" fill="#f3f4f7" stroke="#c3c8d2" stroke-width="3" />
+                </>
+              )}
+              {it.key === 'vase' && (
+                <>
+                  <path d="M100 40Q102 32 108 28" fill="none" stroke="#5a6070" stroke-width="3" stroke-linecap="round" />
+                  <circle cx="109" cy="27" r="6.5" fill="var(--t-accent)" />
+                  <path d="M90 40H110V54C130 62 136 80 134 94C132 106 118 112 100 112C82 112 68 106 66 94C64 80 70 62 90 54Z" fill="#8a8f9c" />
+                  <path d="M76 84C78 74 84 68 90 64" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.35" />
+                </>
+              )}
+              {it.key === 'pot' && (
+                <>
+                  <path d="M64 66C40 66 38 100 66 102" fill="none" stroke="#5a6070" stroke-width="7" stroke-linecap="round" />
+                  <path d="M126 76L152 58L157 65L130 94Z" fill="var(--t-accent)" />
+                  <ellipse cx="96" cy="84" rx="38" ry="27" fill="var(--t-accent)" />
+                  <ellipse cx="96" cy="58" rx="18" ry="5" fill="#fff" opacity="0.4" />
+                  <circle cx="96" cy="52" r="5" fill="#5a6070" />
+                </>
+              )}
+              {it.key === 'plate' && (
+                <>
+                  <path d="M46 84L100 60L154 84L100 110Z" fill="#c3c8d2" />
+                  <path d="M60 84L100 67L140 84L100 102Z" fill="#e3e5ea" />
+                  <circle cx="100" cy="84" r="6" fill="var(--t-accent)" />
+                </>
+              )}
+            </svg>
+          </div>
+          <div class="gl-cap"><span class="gl-name">{it.name}</span><span class="gl-price">{it.price}</span></div>
+        </div>
+      ))}
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .gl { display: flex; flex-direction: column; height: 100%; }
+  .gl-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: calc(var(--t-gap) * var(--u));
+    margin: calc(18 * var(--u)) 0 calc(10 * var(--u));
+    min-height: 0;
+  }
+  .gl-tile { display: flex; flex-direction: column; gap: calc(6 * var(--u)); min-height: 0; }
+  .gl-pic { flex: 1; min-height: 0; overflow: hidden; border-radius: calc(10 * var(--u)); line-height: 0; }
+  .gl-pic svg { display: block; width: 100%; height: 100%; }
+  .gl-cap { display: flex; align-items: baseline; justify-content: space-between; gap: calc(8 * var(--u)); padding: 0 calc(2 * var(--u)); }
+  .gl-name { font-size: calc(17 * var(--u)); font-weight: 700; }
+  .gl-price { font-size: calc(17 * var(--u)); font-weight: 800; color: var(--t-accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* 名前と値段（つまみ: 名前と値段） */
+  :global([data-t-caption='hide']) .gl-cap { display: none; }
+</style>

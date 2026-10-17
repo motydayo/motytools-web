@@ -290,8 +290,10 @@ const others = otherBooks(book.id, lang);
   .ugd-one { margin-top: var(--sp-3); font-size: var(--fs-md); color: var(--text-2); }
   .ugd-demo { margin-bottom: var(--sp-3); }
   .ugd-names { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-5); margin-top: var(--sp-4); font-size: var(--fs-sm); color: var(--text-2); }
-  .ugd-names div { display: flex; gap: var(--sp-2); }
-  .ugd-names dt { color: var(--text-3); }
+  .ugd-names div { display: flex; gap: var(--sp-2); min-width: 0; }
+  /* 狭い画面でラベルが「ほかの呼」で折れないよう、ラベルは折り返さず値の側を折り返す */
+  .ugd-names dt { flex: 0 0 auto; white-space: nowrap; color: var(--text-3); }
+  .ugd-names dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
   .ugd-body section { margin-top: var(--sp-7); }
   .ugd-body h2 { font-size: var(--fs-lg); font-weight: 800; margin-bottom: var(--sp-3); scroll-margin-top: 72px; }
   .ugd-body p { margin-top: var(--sp-3); line-height: 1.85; }

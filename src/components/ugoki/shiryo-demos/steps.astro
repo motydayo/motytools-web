@@ -1,0 +1,130 @@
+---
+// 資料レイアウトの見本: 操作手順型（番号つきの4つの手順に、画面の絵と1文の説明を添える）
+// 画面の絵はこのファイルの中の図形（SVG）で描いたオリジナル。実在するソフトの画面ではない。
+// つまみ: --t-accent（色）・data-t-layout（並べ方 row|grid）・data-t-thumb（画面の絵 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '操作手順型',
+    kicker: '会計ソフト「ソラ」の使い方',
+    title: '請求書は4つの操作で、PDFにして送れる',
+    steps: [
+      { n: 1, head: '「請求」を開く', text: '左のメニューから「請求」を選ぶ' },
+      { n: 2, head: '取引先を選ぶ', text: '「新規作成」を押して、送り先を選ぶ' },
+      { n: 3, head: '金額と日付を入れる', text: '入力したら「確認」を押す' },
+      { n: 4, head: 'PDFで送る', text: '内容を見て「PDFで送信」を押す' },
+    ],
+    note: '※ 操作の画面は説明用のイメージ。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={14} lang={lang}>
+  <div class="st" data-demo="steps">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="st-row">
+      {T.steps.map((s) => (
+        <div class="st-card" data-sf-in style={`--i: ${s.n}`}>
+          <div class="st-pic">
+            <svg viewBox="0 0 200 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="200" height="110" fill="#f3f4f7" />
+              {s.n === 1 && (
+                <>
+                  <rect width="62" height="110" fill="#fff" />
+                  <rect x="10" y="14" width="40" height="10" rx="3" fill="#e3e5ea" />
+                  <rect x="5" y="31" width="52" height="20" rx="5" fill="var(--t-accent)" />
+                  <text x="14" y="45" font-size="12" font-weight="800" fill="#fff">請求</text>
+                  <rect x="10" y="62" width="40" height="10" rx="3" fill="#e3e5ea" />
+                  <rect x="10" y="82" width="40" height="10" rx="3" fill="#e3e5ea" />
+                  <rect x="76" y="14" width="64" height="11" rx="3" fill="#c3c8d2" />
+                  <rect x="76" y="36" width="112" height="16" rx="4" fill="#fff" />
+                  <rect x="76" y="58" width="112" height="16" rx="4" fill="#fff" />
+                  <rect x="76" y="80" width="112" height="16" rx="4" fill="#fff" />
+                  <path d="M44 44l0 20l5-5l4 9l4-2l-4-9l7 0z" fill="#1f2430" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" />
+                </>
+              )}
+              {s.n === 2 && (
+                <>
+                  <rect x="14" y="14" width="60" height="11" rx="3" fill="#c3c8d2" />
+                  <rect x="122" y="10" width="64" height="22" rx="6" fill="var(--t-accent)" />
+                  <text x="132" y="25" font-size="12" font-weight="800" fill="#fff">新規作成</text>
+                  <rect x="14" y="44" width="172" height="14" rx="4" fill="#fff" />
+                  <rect x="14" y="66" width="172" height="14" rx="4" fill="#fff" />
+                  <rect x="96" y="38" width="90" height="56" rx="6" fill="#fff" stroke="#c3c8d2" stroke-width="2" />
+                  <rect x="100" y="43" width="82" height="20" rx="4" fill="var(--t-accent)" opacity="0.16" />
+                  <text x="106" y="57" font-size="12" font-weight="800" fill="#1f2430">みなと食品</text>
+                  <text x="106" y="82" font-size="12" font-weight="700" fill="#5a6070">北斗運輸</text>
+                  <path d="M148 56l0 20l5-5l4 9l4-2l-4-9l7 0z" fill="#1f2430" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" />
+                </>
+              )}
+              {s.n === 3 && (
+                <>
+                  <rect x="20" y="10" width="40" height="9" rx="3" fill="#c3c8d2" />
+                  <rect x="20" y="23" width="160" height="18" rx="5" fill="#fff" stroke="#c3c8d2" stroke-width="2" />
+                  <text x="28" y="36" font-size="12" font-weight="800" fill="#1f2430">120,000円</text>
+                  <rect x="20" y="48" width="40" height="9" rx="3" fill="#c3c8d2" />
+                  <rect x="20" y="61" width="160" height="18" rx="5" fill="#fff" stroke="#c3c8d2" stroke-width="2" />
+                  <text x="28" y="74" font-size="12" font-weight="800" fill="#1f2430">2026/10/31</text>
+                  <rect x="122" y="86" width="58" height="20" rx="6" fill="var(--t-accent)" />
+                  <text x="137" y="100" font-size="12" font-weight="800" fill="#fff">確認</text>
+                  <path d="M150 96l0 20l5-5l4 9l4-2l-4-9l7 0z" fill="#1f2430" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" transform="translate(0 -8)" />
+                </>
+              )}
+              {s.n === 4 && (
+                <>
+                  <rect x="16" y="8" width="72" height="94" rx="5" fill="#fff" stroke="#c3c8d2" stroke-width="2" />
+                  <rect x="26" y="20" width="36" height="9" rx="3" fill="#c3c8d2" />
+                  <rect x="26" y="38" width="52" height="5" rx="2.5" fill="#e3e5ea" />
+                  <rect x="26" y="49" width="52" height="5" rx="2.5" fill="#e3e5ea" />
+                  <rect x="26" y="60" width="40" height="5" rx="2.5" fill="#e3e5ea" />
+                  <rect x="26" y="82" width="52" height="9" rx="3" fill="#c3c8d2" />
+                  <rect x="104" y="26" width="84" height="24" rx="6" fill="var(--t-accent)" />
+                  <text x="114" y="42" font-size="12" font-weight="800" fill="#fff">PDFで送信</text>
+                  <circle cx="122" cy="82" r="11" fill="var(--t-accent)" opacity="0.16" />
+                  <path d="M116 82l5 5l9-10" fill="none" stroke="var(--t-accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+                  <text x="140" y="87" font-size="12" font-weight="800" fill="#1f2430">送信完了</text>
+                  <path d="M160 40l0 20l5-5l4 9l4-2l-4-9l7 0z" fill="#1f2430" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" />
+                </>
+              )}
+            </svg>
+          </div>
+          <div class="st-text">
+            <span class="st-n">{s.n}</span>
+            <span class="st-copy"><span class="st-head">{s.head}</span><span class="st-desc">{s.text}</span></span>
+          </div>
+        </div>
+      ))}
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .st { display: flex; flex-direction: column; height: 100%; }
+  .st-row { flex: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(14 * var(--u)); margin: calc(20 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; align-content: start; }
+  .st-card { display: flex; flex-direction: column; gap: calc(12 * var(--u)); padding: calc(8 * var(--u)) calc(8 * var(--u)) calc(12 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; }
+  .st-pic { overflow: hidden; border-radius: calc(7 * var(--u)); line-height: 0; }
+  .st-pic svg { display: block; width: 100%; height: auto; }
+  .st-text { display: flex; align-items: flex-start; gap: calc(10 * var(--u)); padding: 0 calc(6 * var(--u)); }
+  .st-n { flex: none; display: grid; place-items: center; width: calc(34 * var(--u)); height: calc(34 * var(--u)); border-radius: 50%; background: var(--t-accent); color: #fff; font-size: calc(19 * var(--u)); font-weight: 800; line-height: 1; }
+  .st-copy { display: grid; gap: calc(3 * var(--u)); }
+  .st-head { font-size: calc(19 * var(--u)); font-weight: 800; line-height: 1.3; }
+  .st-desc { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); line-height: 1.45; }
+
+  /* 2×2に並べる（つまみ: 並べ方） */
+  :global([data-t-layout='grid']) .st-row { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); align-content: stretch; }
+  :global([data-t-layout='grid']) .st-card { flex-direction: row; align-items: center; padding: calc(8 * var(--u)); }
+  :global([data-t-layout='grid']) .st-pic { flex: none; width: 42%; }
+  :global([data-t-layout='grid']) .st-text { flex: 1; }
+
+  /* 画面の絵を隠す（つまみ: 画面の絵） */
+  :global([data-t-thumb='hide']) .st-pic { display: none; }
+  :global([data-t-thumb='hide']) .st-card { justify-content: center; padding: calc(18 * var(--u)) calc(14 * var(--u)); }
+  :global([data-t-thumb='hide']) .st-text { flex-direction: column; gap: calc(12 * var(--u)); }
+  :global([data-t-thumb='hide'][data-t-layout='grid']) .st-text { flex-direction: row; }
+  :global([data-t-thumb='hide']) .st-head { font-size: calc(22 * var(--u)); }
+</style>

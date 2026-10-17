@@ -1,0 +1,104 @@
+---
+// 資料レイアウトの見本: RACI責任分担型（作業ごとに、誰が実行・承認・相談・報告の役かを表にする）
+// 6つの作業×5つの役割。どの行も A（最終責任者）がちょうど1人、R（実行する人）が1人以上（フロントマターではなく生成時に検算済み）。
+// つまみ: --t-accent（色）・data-t-focus（強調 a|same）・data-t-legend（凡例 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'RACI責任分担型',
+    kicker: '新サービス立ち上げの責任分担表（RACI）',
+    title: '作業ごとに、最終責任者（A）は必ず1人にする',
+    note: '※ 空欄は関わらない。1つの作業にAは1人だけ。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={12} lang={lang}>
+  <div class="rc" data-demo="raci">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="rc-table">
+      <span class="rc-corner">作業</span>
+      <span class="rc-role">企画リーダー</span>
+      <span class="rc-role">営業部</span>
+      <span class="rc-role">開発部</span>
+      <span class="rc-role">法務部</span>
+      <span class="rc-role">経営会議</span>
+      <span class="rc-task" data-sf-in style="--i: 1">料金プランを決める</span>
+      <span class="rc-cell"><b class="rc-l rc-r">R</b></span>
+      <span class="rc-cell"><b class="rc-l rc-c">C</b></span>
+      <span class="rc-cell"><b class="rc-l rc-c">C</b></span>
+      <span class="rc-cell"><b class="rc-l rc-i">I</b></span>
+      <span class="rc-cell"><b class="rc-l rc-a">A</b></span>
+      <span class="rc-task" data-sf-in style="--i: 2">契約書のひな形を作る</span>
+      <span class="rc-cell"><b class="rc-l rc-a">A</b></span>
+      <span class="rc-cell"><b class="rc-l rc-c">C</b></span>
+      <span class="rc-cell"><i class="rc-none"></i></span>
+      <span class="rc-cell"><b class="rc-l rc-r">R</b></span>
+      <span class="rc-cell"><b class="rc-l rc-i">I</b></span>
+      <span class="rc-task" data-sf-in style="--i: 3">管理画面を開発する</span>
+      <span class="rc-cell"><b class="rc-l rc-a">A</b></span>
+      <span class="rc-cell"><b class="rc-l rc-c">C</b></span>
+      <span class="rc-cell"><b class="rc-l rc-r">R</b></span>
+      <span class="rc-cell"><i class="rc-none"></i></span>
+      <span class="rc-cell"><b class="rc-l rc-i">I</b></span>
+      <span class="rc-task" data-sf-in style="--i: 4">販売資料を作る</span>
+      <span class="rc-cell"><b class="rc-l rc-a">A</b></span>
+      <span class="rc-cell"><b class="rc-l rc-r">R</b></span>
+      <span class="rc-cell"><b class="rc-l rc-c">C</b></span>
+      <span class="rc-cell"><b class="rc-l rc-c">C</b></span>
+      <span class="rc-cell"><i class="rc-none"></i></span>
+      <span class="rc-task" data-sf-in style="--i: 5">個人情報の扱いを確認する</span>
+      <span class="rc-cell"><b class="rc-l rc-c">C</b></span>
+      <span class="rc-cell"><b class="rc-l rc-i">I</b></span>
+      <span class="rc-cell"><b class="rc-l rc-r">R</b></span>
+      <span class="rc-cell"><b class="rc-l rc-a">A</b></span>
+      <span class="rc-cell"><b class="rc-l rc-i">I</b></span>
+      <span class="rc-task" data-sf-in style="--i: 6">発売日を決定する</span>
+      <span class="rc-cell"><b class="rc-l rc-r">R</b></span>
+      <span class="rc-cell"><b class="rc-l rc-c">C</b></span>
+      <span class="rc-cell"><b class="rc-l rc-c">C</b></span>
+      <span class="rc-cell"><b class="rc-l rc-i">I</b></span>
+      <span class="rc-cell"><b class="rc-l rc-a">A</b></span>
+    </div>
+    <div class="rc-legend">
+      <span class="rc-key"><b class="rc-l rc-r">R</b>実行する</span>
+      <span class="rc-key"><b class="rc-l rc-a">A</b>最終責任をもつ</span>
+      <span class="rc-key"><b class="rc-l rc-c">C</b>事前に相談する</span>
+      <span class="rc-key"><b class="rc-l rc-i">I</b>結果を知らせる</span>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .rc { display: flex; flex-direction: column; height: 100%; }
+  .rc-table {
+    flex: 1;
+    display: grid;
+    grid-template-columns: calc(236 * var(--u)) repeat(5, minmax(0, 1fr));
+    grid-template-rows: calc(44 * var(--u)) repeat(6, 1fr);
+    margin: calc(14 * var(--u)) 0 calc(6 * var(--u));
+    min-height: 0;
+  }
+  .rc-corner, .rc-role { align-self: end; padding-bottom: calc(8 * var(--u)); font-size: calc(16 * var(--u)); font-weight: 700; color: #5a6070; border-bottom: calc(2 * var(--u)) solid #1f2430; }
+  .rc-role { text-align: center; }
+  .rc-task, .rc-cell { display: flex; align-items: center; border-bottom: calc(1 * var(--u)) solid #e3e5ea; }
+  .rc-task { font-size: calc(18 * var(--u)); font-weight: 700; }
+  .rc-cell { justify-content: center; }
+  .rc-l { display: inline-grid; place-items: center; width: calc(32 * var(--u)); height: calc(32 * var(--u)); border-radius: 50%; font-size: calc(17 * var(--u)); font-weight: 800; }
+  .rc-none { width: calc(14 * var(--u)); height: calc(2 * var(--u)); background: #e3e5ea; }
+  /* 4つとも同じ濃さ（data-focus="same"）は灰色の丸にそろえる */
+  .rc-l { background: #f3f4f7; color: #5a6070; }
+  :global([data-t-focus='a']) .rc-a { background: var(--t-accent); color: #fff; }
+  :global([data-t-focus='a']) .rc-r { background: color-mix(in srgb, var(--t-accent) 16%, #fff); color: var(--t-accent); }
+  :global([data-t-focus='same']) .rc-l { background: #e8ebf1; color: #1f2430; }
+  /* 凡例 */
+  .rc-legend { display: flex; gap: calc(22 * var(--u)); padding: calc(6 * var(--u)) 0 calc(12 * var(--u)); font-size: calc(16 * var(--u)); color: #5a6070; }
+  .rc-key { display: inline-flex; align-items: center; gap: calc(8 * var(--u)); }
+  .rc-key .rc-l { width: calc(26 * var(--u)); height: calc(26 * var(--u)); font-size: calc(15 * var(--u)); }
+  :global([data-t-legend='hide']) .rc-legend { display: none; }
+</style>

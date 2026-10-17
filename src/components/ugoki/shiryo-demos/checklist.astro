@@ -1,0 +1,72 @@
+---
+// 資料レイアウトの見本: チェックリスト型（確認する項目と、済んだかどうかを一覧にして並べる）
+// 項目は8つ、済みは5つ。進み具合の棒の長さは 5 ÷ 8 = 62.5% から計算した値。
+// つまみ: --t-accent（色）・data-t-done（済みの見せ方 fade|normal）・data-t-due（期限の列 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'チェックリスト型',
+    kicker: '新入社員 受け入れ準備チェックリスト（4月1日入社）',
+    title: '入社日まであと5日。未完了は3項目',
+    note: '※ 今日は3月27日。期限は準備を終える日。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={11} lang={lang}>
+  <div class="ck" data-demo="checklist">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ck-body">
+      <div class="ck-list">
+        <div class="ck-row ck-head"><span></span><span>確認する項目</span><span>担当</span><span class="ck-due">期限</span></div>
+        <div class="ck-row is-done" data-sf-in style="--i: 1"><span class="ck-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg></span><span class="ck-name">雇用契約書の締結</span><span class="ck-who">総務</span><span class="ck-due">3/10</span></div>
+        <div class="ck-row is-done" data-sf-in style="--i: 2"><span class="ck-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg></span><span class="ck-name">社会保険の加入手続き</span><span class="ck-who">総務</span><span class="ck-due">3/18</span></div>
+        <div class="ck-row is-done" data-sf-in style="--i: 3"><span class="ck-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg></span><span class="ck-name">PC・アカウントの準備</span><span class="ck-who">情シス</span><span class="ck-due">3/20</span></div>
+        <div class="ck-row is-done" data-sf-in style="--i: 4"><span class="ck-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg></span><span class="ck-name">座席と入館証の手配</span><span class="ck-who">総務</span><span class="ck-due">3/24</span></div>
+        <div class="ck-row is-done" data-sf-in style="--i: 5"><span class="ck-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg></span><span class="ck-name">配属先への事前連絡</span><span class="ck-who">人事</span><span class="ck-due">3/25</span></div>
+        <div class="ck-row" data-sf-in style="--i: 6"><span class="ck-box"></span><span class="ck-name">初日のスケジュール作成</span><span class="ck-who">人事</span><span class="ck-due">3/27</span></div>
+        <div class="ck-row" data-sf-in style="--i: 7"><span class="ck-box"></span><span class="ck-name">メンター面談の設定</span><span class="ck-who">配属先</span><span class="ck-due">3/30</span></div>
+        <div class="ck-row" data-sf-in style="--i: 8"><span class="ck-box"></span><span class="ck-name">歓迎ランチの予約</span><span class="ck-who">配属先</span><span class="ck-due">3/31</span></div>
+      </div>
+      <div class="ck-side" data-sf-in style="--i: 9">
+        <span class="ck-big"><b>5</b> / 8</span>
+        <span class="ck-big-label">確認が済んだ項目</span>
+        <span class="ck-meter"><i style="width: 62.5%"></i></span>
+        <span class="ck-rest">残り3項目</span>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ck { display: flex; flex-direction: column; height: 100%; }
+  .ck-body { flex: 1; display: flex; gap: calc(36 * var(--u)); margin: calc(14 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .ck-list { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .ck-row { flex: 1; display: grid; grid-template-columns: calc(30 * var(--u)) 1fr calc(72 * var(--u)) auto; align-items: center; gap: calc(12 * var(--u)); padding: 0 calc(4 * var(--u)); border-bottom: calc(1 * var(--u)) solid #e3e5ea; font-size: calc(18 * var(--u)); }
+  .ck-row:last-child { border-bottom: 0; }
+  .ck-head { flex: 0 0 calc(28 * var(--u)); font-size: calc(14 * var(--u)); font-weight: 700; color: #8a8f9c; }
+  .ck-box { display: grid; place-items: center; width: calc(26 * var(--u)); height: calc(26 * var(--u)); border: calc(2 * var(--u)) solid #c3c8d2; border-radius: calc(6 * var(--u)); color: #fff; }
+  .ck-box svg { width: calc(18 * var(--u)); height: calc(18 * var(--u)); }
+  .ck-row.is-done .ck-box { border-color: var(--t-accent); background: var(--t-accent); }
+  .ck-name { font-weight: 700; }
+  .ck-who { font-size: calc(16 * var(--u)); color: #5a6070; }
+  .ck-due { min-width: calc(48 * var(--u)); font-size: calc(16 * var(--u)); color: #5a6070; font-variant-numeric: tabular-nums; text-align: right; }
+  .ck-head .ck-due { font-size: calc(14 * var(--u)); color: #8a8f9c; }
+  :global([data-t-done='fade']) .ck-row.is-done .ck-name,
+  :global([data-t-done='fade']) .ck-row.is-done .ck-who,
+  :global([data-t-done='fade']) .ck-row.is-done .ck-due { color: #8a8f9c; font-weight: 500; }
+  :global([data-t-due='hide']) .ck-due { display: none; }
+  /* 右の進み具合 */
+  .ck-side { flex: 0 0 calc(200 * var(--u)); display: flex; flex-direction: column; justify-content: center; gap: calc(8 * var(--u)); padding-left: calc(28 * var(--u)); border-left: calc(1 * var(--u)) solid #e3e5ea; }
+  .ck-big { font-size: calc(28 * var(--u)); font-weight: 800; color: #8a8f9c; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .ck-big b { font-size: calc(64 * var(--u)); color: var(--t-accent); }
+  .ck-big-label { font-size: calc(16 * var(--u)); color: #5a6070; }
+  .ck-meter { display: block; height: calc(10 * var(--u)); margin-top: calc(6 * var(--u)); border-radius: calc(999 * var(--u)); background: #e3e5ea; overflow: hidden; }
+  .ck-meter i { display: block; height: 100%; background: var(--t-accent); }
+  .ck-rest { margin-top: calc(12 * var(--u)); padding-top: calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid #e3e5ea; font-size: calc(20 * var(--u)); font-weight: 800; }
+</style>

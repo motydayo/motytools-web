@@ -1,0 +1,110 @@
+---
+// 資料レイアウトの見本: 価格プラン型（料金プランを3つ並べ、おすすめを強調する）
+// つまみ: --t-accent（色）・data-t-focus（強調するプラン light|standard|premium|none）・--t-gap（カードの間隔。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '価格プラン型',
+    kicker: '予約管理サービス「ヨヤクノート」の料金',
+    title: 'おすすめはスタンダード：3店舗まで月9,800円',
+    badge: 'おすすめ',
+    per: '/月',
+    plans: [
+      { key: 'light', name: 'ライト', price: '3,000', target: '1店舗で始める個人のお店向け', feats: ['1店舗まで', '予約は月100件まで', 'メールで通知', '問い合わせはメールのみ'] },
+      { key: 'standard', name: 'スタンダード', price: '9,800', target: '店舗を増やしていくお店向け', feats: ['3店舗まで', '予約は月500件まで', 'LINEで通知', '売上レポートつき'] },
+      { key: 'premium', name: 'プレミアム', price: '24,800', target: '多店舗のチェーン向け', feats: ['店舗数は無制限', '予約も無制限', '専任の担当者がつく', '他のシステムと連携'] },
+    ],
+    note: '※ 税抜。初期費用はかかりません。年払いにすると2か月分お得です。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={9} lang={lang}>
+  <div class="pc" data-demo="pricing">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="pc-cards">
+      {T.plans.map((p, i) => (
+        <div class:list={['pc-card', `pc-${p.key}`]} data-sf-in style={`--i: ${i + 1}`}>
+          <span class="pc-badge">{T.badge}</span>
+          <span class="pc-name">{p.name}</span>
+          <span class="pc-price"><span class="pc-yen">¥</span><b class="pc-num">{p.price}</b><span class="pc-per">{T.per}</span></span>
+          <span class="pc-target">{p.target}</span>
+          <ul class="pc-feats">
+            {p.feats.map((f) => (
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 4">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .pc { display: flex; flex-direction: column; height: 100%; }
+  .pc-cards {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: calc(var(--t-gap) * var(--u));
+    margin: calc(30 * var(--u)) 0 calc(12 * var(--u));
+    min-height: 0;
+  }
+  .pc-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: calc(22 * var(--u)) calc(22 * var(--u)) calc(16 * var(--u));
+    border: calc(2 * var(--u)) solid var(--sf-line);
+    border-radius: calc(12 * var(--u));
+    background: #fff;
+  }
+  .pc-badge {
+    display: none;
+    position: absolute;
+    top: calc(-15 * var(--u));
+    left: calc(22 * var(--u));
+    padding: calc(3 * var(--u)) calc(14 * var(--u));
+    border-radius: calc(999 * var(--u));
+    background: var(--t-accent);
+    color: #fff;
+    font-size: calc(14 * var(--u));
+    font-weight: 800;
+  }
+  .pc-name { font-size: calc(22 * var(--u)); font-weight: 800; }
+  .pc-price { display: flex; align-items: baseline; gap: calc(4 * var(--u)); margin-top: calc(4 * var(--u)); }
+  .pc-yen { font-size: calc(22 * var(--u)); font-weight: 800; }
+  .pc-price { white-space: nowrap; }
+  .pc-num { font-size: calc(42 * var(--u)); font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .pc-per { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .pc-target { margin-top: calc(4 * var(--u)); padding-bottom: calc(12 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .pc-feats { flex: 1; display: grid; grid-template-rows: repeat(4, 1fr); margin: 0; padding: 0; list-style: none; }
+  .pc-feats li { display: flex; align-items: center; gap: calc(10 * var(--u)); font-size: calc(17 * var(--u)); }
+  .pc-feats svg { flex: none; width: calc(20 * var(--u)); height: calc(20 * var(--u)); color: var(--sf-ink-3); }
+
+  /* 強調するプラン（つまみ: 強調するプラン） */
+  :global([data-t-focus='light']) .pc-light,
+  :global([data-t-focus='standard']) .pc-standard,
+  :global([data-t-focus='premium']) .pc-premium {
+    border-color: var(--t-accent);
+    border-width: calc(3 * var(--u));
+    background: color-mix(in srgb, var(--t-accent) 6%, #fff);
+  }
+  :global([data-t-focus='light']) .pc-light .pc-badge,
+  :global([data-t-focus='standard']) .pc-standard .pc-badge,
+  :global([data-t-focus='premium']) .pc-premium .pc-badge { display: inline-block; }
+  :global([data-t-focus='light']) .pc-light .pc-num,
+  :global([data-t-focus='standard']) .pc-standard .pc-num,
+  :global([data-t-focus='premium']) .pc-premium .pc-num,
+  :global([data-t-focus='light']) .pc-light .pc-feats svg,
+  :global([data-t-focus='standard']) .pc-standard .pc-feats svg,
+  :global([data-t-focus='premium']) .pc-premium .pc-feats svg { color: var(--t-accent); }
+</style>

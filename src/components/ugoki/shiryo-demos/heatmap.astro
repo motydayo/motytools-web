@@ -1,0 +1,104 @@
+---
+// 資料レイアウトの見本: ヒートマップ型（曜日×時間帯の来店者数を、数の大きさに応じた色の濃さで塗る）
+// 色の濃さは 値 ÷ 最大の値（98）で決める（アクセント色を白と混ぜる割合）。最大のマスには枠を付ける。
+// つまみ: --t-accent（色）・data-t-numbers（数字 show|hide）・--t-gap（マスの間隔）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'ヒートマップ型',
+    kicker: '曜日×時間帯の来店者数（カフェ・1日平均）',
+    title: '来店のピークは土日の12〜14時台',
+    cols: ['8〜10時', '10〜12時', '12〜14時', '14〜16時', '16〜18時', '18〜20時'],
+    // [曜日, 6つの時間帯の来店者数（人）]
+    rows: [
+      ['月', [22, 31, 64, 28, 25, 18]],
+      ['火', [20, 29, 61, 30, 27, 19]],
+      ['水', [24, 33, 66, 29, 26, 20]],
+      ['木', [21, 30, 63, 27, 28, 21]],
+      ['金', [26, 38, 79, 36, 41, 44]],
+      ['土', [35, 72, 98, 81, 66, 52]],
+      ['日', [31, 68, 92, 74, 58, 33]],
+    ] as [string, number[]][],
+    low: '少ない',
+    high: '多い',
+    big: '98人',
+    bigLabel: '土曜12〜14時台の来店者数（最多）',
+    sub: '月〜木の昼は 61〜66人',
+    note: '※ 2025年4〜9月の営業日の平均。単位は人。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+const MAX = Math.max(...T.rows.flatMap(([, vs]) => vs));
+if (MAX !== 98) throw new Error('heatmap: 最大の値と CSS の「/ 98」が合っていません');
+---
+
+<SlideFrame size={size} label={T.name} page={16} lang={lang}>
+  <div class="hm" data-demo="heatmap">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="hm-body">
+      <div class="hm-chart" data-sf-in style="--i: 2">
+        <div class="hm-grid">
+          <span class="hm-corner" />
+          {T.cols.map((c) => <span class="hm-col">{c}</span>)}
+          {T.rows.map(([d, vs]) => (
+            <>
+              <span class="hm-day">{d}</span>
+              {vs.map((v) => (
+                <span class:list={['hm-cell', v / MAX > 0.55 && 'is-dark', v === MAX && 'is-max']} style={`--v: ${v}`}>{v}</span>
+              ))}
+            </>
+          ))}
+        </div>
+        <div class="hm-scale">
+          <span>{T.low}</span><i class="hm-bar" /><span>{T.high}</span>
+        </div>
+      </div>
+      <div class="hm-side" data-sf-in style="--i: 5">
+        <span class="hm-big">{T.big}</span>
+        <span class="hm-big-label">{T.bigLabel}</span>
+        <span class="hm-sub">{T.sub}</span>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .hm { display: flex; flex-direction: column; height: 100%; }
+  .hm-body { flex: 1; display: flex; gap: calc(36 * var(--u)); margin: calc(14 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .hm-chart { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .hm-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: calc(40 * var(--u)) repeat(6, minmax(0, 1fr));
+    grid-template-rows: calc(34 * var(--u)) repeat(7, minmax(0, 1fr));
+    gap: calc(var(--t-gap) * var(--u));
+    min-height: 0;
+  }
+  .hm-col { align-self: end; padding-bottom: calc(6 * var(--u)); text-align: center; font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-2); white-space: nowrap; }
+  .hm-day { align-self: center; font-size: calc(18 * var(--u)); font-weight: 700; }
+  .hm-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: calc(4 * var(--u));
+    background: color-mix(in srgb, var(--t-accent) calc(var(--v) / 98 * 100%), #fff);
+    font-size: calc(18 * var(--u));
+    font-weight: 700;
+    color: var(--sf-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .hm-cell.is-dark { color: #fff; }
+  .hm-cell.is-max { outline: calc(3 * var(--u)) solid var(--sf-ink); outline-offset: calc(-1 * var(--u)); }
+  :global([data-t-numbers='hide']) .hm-cell { color: transparent; }
+  .hm-scale { display: flex; align-items: center; justify-content: flex-end; gap: calc(10 * var(--u)); height: calc(26 * var(--u)); margin-top: calc(6 * var(--u)); font-size: calc(14 * var(--u)); color: var(--sf-ink-2); }
+  .hm-bar { display: block; width: calc(160 * var(--u)); height: calc(12 * var(--u)); border-radius: calc(3 * var(--u)); background: linear-gradient(to right, color-mix(in srgb, var(--t-accent) 0%, #fff), var(--t-accent)); }
+
+  .hm-side { flex: 0 0 calc(216 * var(--u)); display: flex; flex-direction: column; justify-content: center; gap: calc(6 * var(--u)); padding-left: calc(20 * var(--u)); border-left: calc(1 * var(--u)) solid var(--sf-line); }
+  .hm-big { font-size: calc(60 * var(--u)); font-weight: 800; line-height: 1.05; color: var(--t-accent); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .hm-big-label { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .hm-sub { margin-top: calc(14 * var(--u)); padding-top: calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(16 * var(--u)); font-weight: 800; }
+</style>

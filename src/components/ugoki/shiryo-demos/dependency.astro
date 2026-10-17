@@ -1,0 +1,120 @@
+---
+// 資料レイアウトの見本: 依存関係ネットワーク型（作業を四角、「これが済まないとあれができない」を矢印で結ぶ。合計がいちばん長い道すじ（18日）を太い線で示す）
+// つまみ: --t-accent（色）・data-t-focus（強調 path|none）・data-t-slack（余裕日数 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: '依存関係ネットワーク型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={16} lang={lang}>
+  <div class="dp" data-demo="dependency">
+    <p class="sf-kicker" data-sf-in style="--i: 0">Webサイト作り直しの作業の順序</p>
+    <p class="sf-title" data-sf-in style="--i: 0">公開までは最短18日。遅れに弱い道すじは1本</p>
+    <svg class="dp-svg" viewBox="0 0 848 320" role="img" aria-label="要件整理から公開までの7つの作業と、その順序を矢印で結んだ図。要件整理、デザイン、画面開発、結合テスト、公開の道すじが合計18日で最も長い">
+      <!-- 矢印（細い線 → 太い線の順に重ねる） -->
+      <g class="dp-edges">
+        <path d="M128 150 C152 150 147.5 150 171.5 150" />
+        <path d="M128 150 C152 150 147.5 240 171.5 240" />
+        <path d="M307.5 150 C331.5 150 327 106 351 106" />
+        <path d="M307.5 240 C331.5 240 506.5 150 530.5 150" />
+      </g>
+      <g class="dp-edges dp-edges-crit">
+        <path d="M128 150 C152 150 147.5 62 171.5 62" />
+        <path d="M307.5 62 C331.5 62 327 106 351 106" />
+        <path d="M487 106 C511 106 506.5 150 530.5 150" />
+        <path d="M666.5 150 C690.5 150 686 150 710 150" />
+      </g>
+      <g class="dp-heads">
+        <polygon points="179.5,150 169.5,144 169.5,156" />
+        <polygon points="179.5,240 169.5,234 169.5,246" />
+        <polygon points="359,106 349,100 349,112" />
+        <polygon points="538.5,150 528.5,144 528.5,156" />
+      </g>
+      <g class="dp-heads dp-heads-crit">
+        <polygon points="179.5,62 169.5,56 169.5,68" />
+        <polygon points="359,106 349,100 349,112" />
+        <polygon points="538.5,150 528.5,144 528.5,156" />
+        <polygon points="718,150 708,144 708,156" />
+      </g>
+
+      <!-- 作業（名前と日数） -->
+      <g class="dp-node dp-crit">
+        <rect x="0" y="122" width="128" height="56" rx="10" />
+        <text class="dp-name" x="64" y="146" text-anchor="middle">要件整理</text>
+        <text class="dp-days" x="64" y="167" text-anchor="middle">3日</text>
+      </g>
+      <g class="dp-node dp-crit">
+        <rect x="179.5" y="34" width="128" height="56" rx="10" />
+        <text class="dp-name" x="243.5" y="58" text-anchor="middle">デザイン</text>
+        <text class="dp-days" x="243.5" y="79" text-anchor="middle">5日</text>
+      </g>
+      <g class="dp-node">
+        <rect x="179.5" y="122" width="128" height="56" rx="10" />
+        <text class="dp-name" x="243.5" y="146" text-anchor="middle">文章作成</text>
+        <text class="dp-days" x="243.5" y="167" text-anchor="middle">4日</text>
+      </g>
+      <g class="dp-node">
+        <rect x="179.5" y="212" width="128" height="56" rx="10" />
+        <text class="dp-name" x="243.5" y="236" text-anchor="middle">画像撮影</text>
+        <text class="dp-days" x="243.5" y="257" text-anchor="middle">2日</text>
+      </g>
+      <g class="dp-node dp-crit">
+        <rect x="359" y="78" width="128" height="56" rx="10" />
+        <text class="dp-name" x="423" y="102" text-anchor="middle">画面開発</text>
+        <text class="dp-days" x="423" y="123" text-anchor="middle">6日</text>
+      </g>
+      <g class="dp-node dp-crit">
+        <rect x="538.5" y="122" width="128" height="56" rx="10" />
+        <text class="dp-name" x="602.5" y="146" text-anchor="middle">結合テスト</text>
+        <text class="dp-days" x="602.5" y="167" text-anchor="middle">3日</text>
+      </g>
+      <g class="dp-node dp-crit">
+        <rect x="718" y="122" width="128" height="56" rx="10" />
+        <text class="dp-name" x="782" y="146" text-anchor="middle">公開</text>
+        <text class="dp-days" x="782" y="167" text-anchor="middle">1日</text>
+      </g>
+
+      <!-- 余裕の日数 -->
+      <g class="dp-slack">
+        <text x="243.5" y="198" text-anchor="middle">余裕 1日</text>
+        <text x="243.5" y="290" text-anchor="middle">余裕 9日</text>
+      </g>
+
+      <!-- 凡例 -->
+      <g class="dp-legend">
+        <path d="M0 309 H34" />
+        <text x="46" y="315">太い線 ＝ 遅れると全体が遅れる、いちばん長い道すじ（合計18日）</text>
+      </g>
+    </svg>
+    <p class="sf-note">※ 数字は各作業の日数。「余裕」は、遅れても全体に響かない日数。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .dp { display: flex; flex-direction: column; height: 100%; }
+  .dp-svg { display: block; flex: 1; min-height: 0; width: 100%; margin: calc(8 * var(--u)) 0 calc(4 * var(--u)); }
+  .dp-svg text { font-family: inherit; }
+  .dp-edges { fill: none; stroke: var(--sf-mute); stroke-width: 2.5; stroke-linecap: round; }
+  .dp-heads { fill: var(--sf-mute); }
+  .dp-node rect { fill: #fff; stroke: var(--sf-mute); stroke-width: 2.5; }
+  .dp-name { font-size: 17px; font-weight: 800; fill: var(--sf-ink); }
+  .dp-days { font-size: 16px; fill: var(--sf-ink-2); font-variant-numeric: tabular-nums; }
+  .dp-slack text { font-size: 16px; font-weight: 700; fill: var(--sf-ink-3); }
+  .dp-legend { display: none; }
+  .dp-legend path { fill: none; stroke: var(--t-accent); stroke-width: 5; stroke-linecap: round; }
+  .dp-legend text { font-size: 16px; fill: var(--sf-ink-2); }
+  .dp-edges-crit { stroke: var(--sf-ink-3); stroke-width: 2.5; }
+  .dp-heads-crit { fill: var(--sf-ink-3); }
+
+  /* いちばん長い道すじを強調（data-focus="path"） */
+  :global([data-t-focus='path']) .dp-edges-crit { stroke: var(--t-accent); stroke-width: 5; }
+  :global([data-t-focus='path']) .dp-heads-crit { fill: var(--t-accent); }
+  :global([data-t-focus='path']) .dp-crit rect { stroke: var(--t-accent); stroke-width: 3; fill: color-mix(in srgb, var(--t-accent) 8%, #fff); }
+  :global([data-t-focus='path']) .dp-crit .dp-days { fill: var(--t-accent); font-weight: 800; }
+  :global([data-t-focus='path']) .dp-legend { display: block; }
+
+  /* 余裕の日数を隠す（data-slack="hide"） */
+  :global([data-t-slack='hide']) .dp-slack { display: none; }
+</style>

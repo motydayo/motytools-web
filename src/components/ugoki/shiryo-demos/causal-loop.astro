@@ -1,0 +1,117 @@
+---
+// 資料レイアウトの見本: 因果ループ型（4つの要素を矢印の輪でつなぎ、矢印ごとに＋（同じ向きに増減）を書く。輪の中央に「強化ループ（R）」の印を置く）
+// つまみ: --t-accent（色）・data-t-cut（断ち切る場所の印 show|hide）・--t-arrow（矢印の太さ。SVGの単位）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: '因果ループ型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={8} lang={lang}>
+  <div class="cl" data-demo="causal-loop">
+    <p class="sf-kicker" data-sf-in style="--i: 0">長時間労働の悪循環（営業事務チーム）</p>
+    <p class="sf-title" data-sf-in style="--i: 0">残業は、放っておくとさらに残業を生む</p>
+    <svg class="cl-svg" viewBox="0 0 848 320" role="img" aria-label="残業が増えると疲れがたまり、ミスや手戻りが増え、仕事の量が増えて、さらに残業が増える悪循環の図">
+      <!-- 矢印（時計回り） -->
+      <g class="cl-arrows">
+        <path d="M210 60 H320" />
+        <path d="M425 90 V220" />
+        <path d="M330 260 H220" />
+        <path d="M115 230 V100" />
+      </g>
+      <g class="cl-heads">
+        <polygon points="330,60 316,52 316,68" />
+        <polygon points="425,230 417,216 433,216" />
+        <polygon points="210,260 224,252 224,268" />
+        <polygon points="115,90 107,104 123,104" />
+      </g>
+
+      <!-- 要素 -->
+      <g class="cl-node">
+        <rect x="20" y="30" width="190" height="60" rx="12" />
+        <text x="115" y="67" text-anchor="middle">残業が増える</text>
+      </g>
+      <g class="cl-node">
+        <rect x="330" y="30" width="190" height="60" rx="12" />
+        <text x="425" y="67" text-anchor="middle">疲れがたまる</text>
+      </g>
+      <g class="cl-node cl-cutnode">
+        <rect x="330" y="230" width="190" height="60" rx="12" />
+        <text x="425" y="267" text-anchor="middle">ミス・手戻りが増える</text>
+      </g>
+      <g class="cl-node">
+        <rect x="20" y="230" width="190" height="60" rx="12" />
+        <text x="115" y="267" text-anchor="middle">仕事の量が増える</text>
+      </g>
+
+      <!-- 矢印ごとの「＋」 -->
+      <g class="cl-plus">
+        <circle cx="270" cy="60" r="15" /><text x="270" y="68" text-anchor="middle">+</text>
+        <circle cx="425" cy="160" r="15" /><text x="425" y="168" text-anchor="middle">+</text>
+        <circle cx="270" cy="260" r="15" /><text x="270" y="268" text-anchor="middle">+</text>
+        <circle cx="115" cy="160" r="15" /><text x="115" y="168" text-anchor="middle">+</text>
+      </g>
+
+      <!-- 輪の中央: 強化ループ -->
+      <g class="cl-r">
+        <circle cx="270" cy="160" r="54" />
+        <text class="cl-r-big" x="270" y="160" text-anchor="middle">R</text>
+        <text class="cl-r-sub" x="270" y="186" text-anchor="middle">強化ループ</text>
+      </g>
+
+      <!-- 断ち切る場所の印 -->
+      <g class="cl-cutmark">
+        <path d="M296 243 L310 277" />
+        <path d="M308 243 L322 277" />
+      </g>
+
+      <!-- 右の説明 -->
+      <g class="cl-card">
+        <rect x="580" y="20" width="268" height="140" rx="12" />
+        <text class="cl-card-h" x="600" y="48">読み方</text>
+        <circle class="cl-legend" cx="613" cy="82" r="13" /><text class="cl-legend-t" x="613" y="89" text-anchor="middle">+</text>
+        <text class="cl-card-t" x="637" y="80">一方が増えると、</text>
+        <text class="cl-card-t" x="637" y="102">もう一方も増える</text>
+        <text class="cl-card-t" x="600" y="140">R ＝ 回るほど大きくなる輪</text>
+      </g>
+      <g class="cl-cutcard">
+        <rect x="580" y="176" width="268" height="124" rx="12" />
+        <text class="cl-card-h cl-cut-h" x="600" y="204">断ち切るなら</text>
+        <text class="cl-cut-t" x="600" y="234">ミス・手戻りを減らす</text>
+        <text class="cl-card-t" x="600" y="264">確認の手順を決めて、</text>
+        <text class="cl-card-t" x="600" y="286">同じミスを繰り返さない</text>
+      </g>
+    </svg>
+    <p class="sf-note">※ 矢印の根元が増えると、矢印の先も増える関係を「＋」で示した。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .cl { display: flex; flex-direction: column; height: 100%; }
+  .cl-svg { display: block; flex: 1; min-height: 0; width: 100%; margin: calc(8 * var(--u)) 0 calc(4 * var(--u)); }
+  .cl-svg text { font-family: inherit; }
+  .cl-arrows { fill: none; stroke: var(--sf-ink-2); stroke-width: var(--t-arrow); stroke-linecap: round; }
+  .cl-heads { fill: var(--sf-ink-2); }
+  .cl-node rect { fill: #fff; stroke: var(--sf-ink); stroke-width: 2.5; }
+  .cl-node text { font-size: 18px; font-weight: 800; fill: var(--sf-ink); }
+  .cl-plus circle { fill: #fff; stroke: var(--sf-ink-3); stroke-width: 2; }
+  .cl-plus text { font-size: 22px; font-weight: 800; fill: var(--sf-ink); }
+  .cl-r circle { fill: var(--sf-soft); stroke: var(--sf-mute); stroke-width: 2; }
+  .cl-r-big { font-size: 36px; font-weight: 800; fill: var(--sf-ink); }
+  .cl-r-sub { font-size: 16px; font-weight: 700; fill: var(--sf-ink-2); }
+  .cl-cutmark { display: none; fill: none; stroke: var(--t-accent); stroke-width: 4; stroke-linecap: round; }
+  .cl-card rect { fill: var(--sf-soft); }
+  .cl-card-h { font-size: 15px; font-weight: 800; fill: var(--sf-ink-2); }
+  .cl-card-t { font-size: 16px; fill: var(--sf-ink); }
+  .cl-legend { fill: #fff; stroke: var(--sf-ink-3); stroke-width: 2; }
+  .cl-legend-t { font-size: 20px; font-weight: 800; fill: var(--sf-ink); }
+  .cl-cutcard rect { fill: #fff; stroke: var(--sf-mute); stroke-width: 2; }
+  .cl-cut-t { font-size: 21px; font-weight: 800; fill: var(--sf-ink); }
+
+  /* 断ち切る場所の印（data-cut="show"） */
+  :global([data-t-cut='show']) .cl-cutmark { display: block; }
+  :global([data-t-cut='show']) .cl-cutnode rect { stroke: var(--t-accent); stroke-width: 4; }
+  :global([data-t-cut='show']) .cl-cutcard rect { stroke: var(--t-accent); stroke-width: 3; fill: color-mix(in srgb, var(--t-accent) 6%, #fff); }
+  :global([data-t-cut='show']) .cl-cut-h { fill: var(--t-accent); }
+</style>

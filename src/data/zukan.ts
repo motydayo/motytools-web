@@ -49,7 +49,11 @@ const UGOKI_JA = load(import.meta.glob<{ default: Ugoki }>('./ugoki/entries/*.ts
 const UGOKI_EN = load(import.meta.glob<{ default: Ugoki }>('./ugoki/entries-en/*.ts', { eager: true }));
 const UI_JA = load(import.meta.glob<{ default: Ugoki }>('./ui/entries/*.ts', { eager: true }));
 const UI_EN = load(import.meta.glob<{ default: Ugoki }>('./ui/entries-en/*.ts', { eager: true }));
-const SHIRYO_JA = load(import.meta.glob<{ default: Ugoki }>('./shiryo/entries/*.ts', { eager: true }));
+// 資料レイアウトの図鑑は publishedAt の日付が来た項目から順に公開する（本番ビルドだけ。開発中は全部見える）。
+// 公開日が来たら、ビルドし直して公開すれば増える。
+const today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+const released = (list: Ugoki[]) => (import.meta.env.PROD ? list.filter((u) => u.publishedAt <= today) : list);
+const SHIRYO_JA = released(load(import.meta.glob<{ default: Ugoki }>('./shiryo/entries/*.ts', { eager: true })));
 const SHIRYO_EN = load(import.meta.glob<{ default: Ugoki }>('./shiryo/entries-en/*.ts', { eager: true }));
 
 import { UGOKI_CATS_JA, UGOKI_CATS_EN, UGOKI_HUB_JA, UGOKI_HUB_EN } from './ugoki/hub';

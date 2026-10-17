@@ -1,0 +1,74 @@
+---
+// 資料レイアウトの見本: サービスブループリント型（左に「お客さまの行動」「表の対応」「裏の業務」「支える仕組み」の4段、上に5つの段階を置いた表。「見える線」で表と裏を分ける）
+// つまみ: --t-accent（色）・data-t-focus（強調 gap|none）・data-t-visible（見える線 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: 'サービスブループリント型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={12} lang={lang}>
+  <div class="sb" data-demo="service-blueprint">
+    <p class="sf-kicker" data-sf-in style="--i: 0">宅配クリーニング「らくクリ」の利用の流れ</p>
+    <p class="sf-title" data-sf-in style="--i: 0">「待つ時間」を通知で埋め、安心感を高める</p>
+    <div class="sb-grid">
+      <span class="sb-corner"></span>
+      <span class="sb-st">申し込み</span>
+      <span class="sb-st">集荷</span>
+      <span class="sb-st sb-c3">洗い・仕上げ</span>
+      <span class="sb-st">配送</span>
+      <span class="sb-st">受け取り</span>
+      <span class="sb-rh">お客さまの行動</span>
+      <span class="sb-cell">アプリで注文する</span>
+      <span class="sb-cell">玄関に袋を出す</span>
+      <span class="sb-cell sb-c3"><b>待つ</b><em>進みが見えない</em></span>
+      <span class="sb-cell">在宅で受け取る</span>
+      <span class="sb-cell">仕上がり確認</span>
+      <span class="sb-rh">表の対応</span>
+      <span class="sb-cell sb-front">注文確認を通知</span>
+      <span class="sb-cell sb-front">スタッフが訪問</span>
+      <span class="sb-cell sb-c3 sb-front">進み具合を通知<i class="sb-new">新</i></span>
+      <span class="sb-cell sb-front">スタッフが届ける</span>
+      <span class="sb-cell sb-front">感想を聞く連絡</span>
+      <span class="sb-rh sb-r4 sb-back">裏の業務<span class="sb-tag">ここから下は、お客さまに見えない</span></span>
+      <span class="sb-cell sb-back sb-r4">注文を自動で受付</span>
+      <span class="sb-cell sb-back sb-r4">検品・タグ付け</span>
+      <span class="sb-cell sb-back sb-r4 sb-c3">洗う・シミ抜き</span>
+      <span class="sb-cell sb-back sb-r4">配送ルートを組む</span>
+      <span class="sb-cell sb-back sb-r4">声を集計して改善</span>
+      <span class="sb-rh sb-back">支える仕組み</span>
+      <span class="sb-cell sb-back">注文アプリ</span>
+      <span class="sb-cell sb-back">集荷ルート管理</span>
+      <span class="sb-cell sb-back sb-c3">工場管理システム</span>
+      <span class="sb-cell sb-back">配送管理システム</span>
+      <span class="sb-cell sb-back">顧客データベース</span>
+    </div>
+    <p class="sf-note">※ 点線より下は、お客さまから見えない業務。「新」は今回追加する対応。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .sb { display: flex; flex-direction: column; height: 100%; }
+  .sb-grid { position: relative; flex: 1; min-height: 0; display: grid; grid-template-columns: calc(118 * var(--u)) repeat(5, minmax(0, 1fr)); grid-template-rows: calc(38 * var(--u)) repeat(4, minmax(0, 1fr)); margin: calc(14 * var(--u)) 0 calc(8 * var(--u)); }
+  .sb-st { display: grid; place-items: center; background: var(--sf-ink-2); border-left: calc(2 * var(--u)) solid #fff; color: #fff; font-size: calc(17 * var(--u)); font-weight: 800; }
+  .sb-rh { position: relative; display: flex; align-items: center; padding-left: calc(4 * var(--u)); border-top: calc(1.5 * var(--u)) solid var(--sf-line); font-size: calc(16 * var(--u)); font-weight: 800; color: var(--sf-ink-2); line-height: 1.3; }
+  .sb-cell { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(2 * var(--u)); padding: calc(4 * var(--u)) calc(8 * var(--u)); border-top: calc(1.5 * var(--u)) solid var(--sf-line); border-left: calc(1.5 * var(--u)) solid var(--sf-line); font-size: calc(16 * var(--u)); line-height: 1.35; text-align: center; background: #fff; }
+  .sb-cell b { font-size: calc(18 * var(--u)); font-weight: 800; }
+  .sb-cell em { font-size: calc(16 * var(--u)); font-style: normal; color: var(--sf-ink-2); }
+  .sb-back { background: var(--sf-soft); }
+  .sb-new { display: none; margin-left: calc(6 * var(--u)); padding: 0 calc(7 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--t-accent); color: #fff; font-size: calc(14 * var(--u)); font-weight: 800; font-style: normal; line-height: calc(20 * var(--u)); vertical-align: calc(1 * var(--u)); }
+
+  /* 表と裏を分ける「見える線」（data-visible="show"） */
+  .sb-tag { display: none; position: absolute; top: 0; right: calc(-724 * var(--u)); z-index: 2; transform: translateY(-50%); padding: 0 calc(12 * var(--u)); border-radius: calc(4 * var(--u)); background: var(--t-accent); color: #fff; font-size: calc(14 * var(--u)); font-weight: 700; line-height: calc(24 * var(--u)); white-space: nowrap; }
+  :global([data-t-visible='show']) .sb-r4 { border-top: calc(3 * var(--u)) dashed var(--t-accent); }
+  :global([data-t-visible='show']) .sb-tag { display: block; }
+
+  /* 不安が生まれる段階を強調（data-focus="gap"） */
+  :global([data-t-focus='gap']) .sb-st.sb-c3 { background: var(--t-accent); }
+  :global([data-t-focus='gap']) .sb-cell.sb-c3 { background: color-mix(in srgb, var(--t-accent) 8%, #fff); }
+  :global([data-t-focus='gap']) .sb-cell.sb-c3.sb-back { background: color-mix(in srgb, var(--t-accent) 12%, var(--sf-soft)); }
+  :global([data-t-focus='gap']) .sb-front.sb-c3 { font-weight: 800; }
+  :global([data-t-focus='gap']) .sb-front.sb-c3 .sb-new { display: inline-block; }
+  :global([data-t-focus='gap']) .sb-cell b { color: var(--t-accent); }
+</style>

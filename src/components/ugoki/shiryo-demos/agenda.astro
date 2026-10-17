@@ -1,0 +1,93 @@
+---
+// prefix: ag
+// 資料レイアウトの見本: 目次型（これから話す5つの話を順番に並べ、所要時間と全体の割合を添える）
+// 下の帯の幅は所要時間の比（flex の比 = 分）。合計は60分（10＋10＋20＋15＋5）
+// つまみ: --t-accent（色）・data-t-now（いま話す項目 none|1〜5）・data-t-time（所要時間と帯 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '目次型',
+    kicker: '営業部 定例会（2026年10月21日）',
+    title: '本日の議題：5つの話を60分で',
+    items: [
+      { head: '前期の振り返り', min: 10 },
+      { head: '課題の整理', min: 10 },
+      { head: '新しい施策の提案', min: 20 },
+      { head: '質疑応答・意見交換', min: 15 },
+      { head: '決めたいこと・次の一歩', min: 5 },
+    ],
+    unit: '分',
+    start: '0分',
+    end: '60分',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+// 帯の幅は分の比。合計が60分でないと帯の端がずれる
+if (T.items.reduce((s, it) => s + it.min, 0) !== 60) throw new Error('agenda: 所要時間の合計が60分ではありません');
+---
+
+<SlideFrame size={size} label={T.name} page={13} lang={lang}>
+  <div class="ag" data-demo="agenda">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ag-list">
+      {T.items.map((it, i) => (
+        <div class:list={['ag-row', `ag-i${i + 1}`]} data-sf-in style={`--i: ${i + 1}`}>
+          <span class="ag-num">{i + 1}</span>
+          <span class="ag-head">{it.head}</span>
+          <span class="ag-min">{it.min}<small>{T.unit}</small></span>
+        </div>
+      ))}
+    </div>
+    <div class="ag-bar-wrap" data-sf-in style="--i: 6">
+      <div class="ag-bar">
+        {T.items.map((it, i) => <span class={`ag-seg ag-s${i + 1}`} style={`--m: ${it.min}`}>{i + 1}</span>)}
+      </div>
+      <div class="ag-scale"><span>{T.start}</span><span>{T.end}</span></div>
+    </div>
+  </div>
+</SlideFrame>
+
+<style>
+  .ag { display: flex; flex-direction: column; height: 100%; }
+  .ag-list { flex: 1; display: flex; flex-direction: column; justify-content: center; margin: calc(8 * var(--u)) 0; min-height: 0; }
+  .ag-row { display: grid; grid-template-columns: calc(40 * var(--u)) minmax(0, 1fr) auto; align-items: center; column-gap: calc(18 * var(--u)); padding: calc(7 * var(--u)) calc(14 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .ag-row:last-child { border-bottom: 0; }
+  .ag-num { display: grid; place-items: center; width: calc(36 * var(--u)); height: calc(36 * var(--u)); border-radius: 50%; background: var(--sf-soft); color: var(--sf-ink-2); font-size: calc(18 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .ag-head { font-size: calc(24 * var(--u)); font-weight: 800; line-height: 1.3; }
+  .ag-min { font-size: calc(24 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--sf-ink-2); }
+  .ag-min small { margin-left: calc(2 * var(--u)); font-size: calc(16 * var(--u)); font-weight: 700; }
+  .ag-bar-wrap { padding-bottom: calc(4 * var(--u)); }
+  .ag-bar { display: flex; gap: calc(3 * var(--u)); }
+  .ag-seg { flex: var(--m) 1 0; display: grid; place-items: center; height: calc(28 * var(--u)); border-radius: calc(4 * var(--u)); background: var(--sf-line); color: var(--sf-ink-2); font-size: calc(15 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .ag-scale { display: flex; justify-content: space-between; margin-top: calc(4 * var(--u)); font-size: calc(13 * var(--u)); color: var(--sf-ink-3); }
+
+  /* いま話す項目（つまみ: いま話す項目） */
+  :global([data-t-now='1']) .ag-i1,
+  :global([data-t-now='2']) .ag-i2,
+  :global([data-t-now='3']) .ag-i3,
+  :global([data-t-now='4']) .ag-i4,
+  :global([data-t-now='5']) .ag-i5 { border-radius: calc(8 * var(--u)); border-bottom-color: transparent; background: color-mix(in srgb, var(--t-accent) 8%, #fff); box-shadow: inset calc(5 * var(--u)) 0 0 var(--t-accent); }
+  :global([data-t-now='1']) .ag-i1 .ag-num,
+  :global([data-t-now='2']) .ag-i2 .ag-num,
+  :global([data-t-now='3']) .ag-i3 .ag-num,
+  :global([data-t-now='4']) .ag-i4 .ag-num,
+  :global([data-t-now='5']) .ag-i5 .ag-num,
+  :global([data-t-now='1']) .ag-s1,
+  :global([data-t-now='2']) .ag-s2,
+  :global([data-t-now='3']) .ag-s3,
+  :global([data-t-now='4']) .ag-s4,
+  :global([data-t-now='5']) .ag-s5 { background: var(--t-accent); color: #fff; }
+  :global([data-t-now='1']) .ag-i1 .ag-min,
+  :global([data-t-now='2']) .ag-i2 .ag-min,
+  :global([data-t-now='3']) .ag-i3 .ag-min,
+  :global([data-t-now='4']) .ag-i4 .ag-min,
+  :global([data-t-now='5']) .ag-i5 .ag-min { color: var(--t-accent); }
+
+  /* 所要時間と帯（つまみ: 所要時間） */
+  :global([data-t-time='hide']) .ag-min,
+  :global([data-t-time='hide']) .ag-bar-wrap { display: none; }
+  :global([data-t-time='hide']) .ag-row { grid-template-columns: calc(40 * var(--u)) minmax(0, 1fr); }
+</style>

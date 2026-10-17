@@ -1,0 +1,100 @@
+---
+// 資料レイアウトの見本: バブルチャート型（商品を「市場の成長率」×「営業利益率」の位置に置き、円の面積で売上高を表す）
+// 図は幅848×高さ332（スライドのpx）のSVG1枚。円の半径は √(売上 ÷ 最大の売上) に比例させる（面積が売上に比例）。目盛りは0から。
+// つまみ: --t-accent（色）・data-t-highlight（色を付ける円 pick|all）・--t-size（円の大きさ。100が標準）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const W = 848;
+const H = 332;
+const L = 56;
+const R = 800;
+const TOP = 24;
+const BOT = 282;
+const XMAX = 16;
+const YMAX = 40;
+const XT = [0, 4, 8, 12, 16];
+const YT = [0, 10, 20, 30, 40];
+const RMAX = 44; // いちばん売上が大きい円の半径
+const DICT = {
+  ja: {
+    name: 'バブルチャート型',
+    kicker: '商品カテゴリの位置づけ（2025年度）',
+    title: '除菌スプレーは成長も利益率も最大',
+    xLabel: '市場の成長率（%／年）',
+    yLabel: '営業利益率（%）',
+    // [名前, 成長率, 利益率, 売上(億円), ラベルの向き r|l, 色を付ける円か]
+    data: [
+      ['洗濯洗剤', 2, 20, 42, 'r', false],
+      ['食器用洗剤', 6, 14, 28, 'r', false],
+      ['柔軟剤', 8, 26, 35, 'r', false],
+      ['除菌スプレー', 14, 31, 16, 'l', true],
+      ['入浴剤', 11, 12, 9, 'r', false],
+      ['芳香剤', 3, 7, 12, 'r', false],
+    ] as [string, number, number, number, 'r' | 'l', boolean][],
+    salesUnit: '億円',
+    note: '※ 円の面積が売上高（億円）。営業利益率は売上に対する営業利益の割合。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+if (T.data.some(([, x, y]) => x > XMAX || y > YMAX)) throw new Error('bubble: 目盛りの最大と値が合っていません');
+const vmax = Math.max(...T.data.map((d) => d[3]));
+const px = (x: number) => +(L + (x / XMAX) * (R - L)).toFixed(1);
+const py = (y: number) => +(BOT - (y / YMAX) * (BOT - TOP)).toFixed(1);
+const bubbles = T.data.map(([name, x, y, v, side, pick]) => {
+  const r = +(RMAX * Math.sqrt(v / vmax)).toFixed(1);
+  return { name, v, side, pick, cx: px(x), cy: py(y), r };
+});
+---
+
+<SlideFrame size={size} label={T.name} page={15} lang={lang}>
+  <div class="bb" data-demo="bubble">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="bb-body" data-sf-in style="--i: 2">
+      <svg class="bb-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={T.title}>
+        <text class="bb-axis" x="0" y="14">{T.yLabel}</text>
+        {YT.map((t) => (
+          <>
+            <line class:list={['bb-grid', t === 0 && 'is-base']} x1={L} x2={R} y1={py(t)} y2={py(t)} />
+            <text class="bb-tick" x={L - 10} y={py(t) + 5} text-anchor="end">{t}</text>
+          </>
+        ))}
+        {XT.map((t) => (
+          <>
+            {t > 0 && <line class="bb-grid" x1={px(t)} x2={px(t)} y1={TOP} y2={BOT} />}
+            <text class="bb-tick" x={px(t)} y={BOT + 23} text-anchor="middle">{t}</text>
+          </>
+        ))}
+        <text class="bb-axis" x={R} y={H - 2} text-anchor="end">{T.xLabel}</text>
+        {bubbles.map((b) => (
+          <g class:list={['bb-item', b.pick && 'is-pick']}>
+            <circle class="bb-circle" cx={b.cx} cy={b.cy} r={b.r} />
+            <text class="bb-name" x={b.side === 'r' ? b.cx + b.r + 9 : b.cx - b.r - 9} y={b.cy - 2} text-anchor={b.side === 'r' ? 'start' : 'end'}>{b.name}</text>
+            <text class="bb-val" x={b.side === 'r' ? b.cx + b.r + 9 : b.cx - b.r - 9} y={b.cy + 17} text-anchor={b.side === 'r' ? 'start' : 'end'}>{b.v}{T.salesUnit}</text>
+          </g>
+        ))}
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .bb { display: flex; flex-direction: column; height: 100%; }
+  .bb-body { flex: 1; display: flex; align-items: center; margin: calc(12 * var(--u)) 0 calc(6 * var(--u)); min-height: 0; }
+  .bb-svg { display: block; width: 100%; height: auto; overflow: visible; font-family: inherit; }
+  .bb-axis { font-size: 13px; fill: var(--sf-ink-3); }
+  .bb-tick { font-size: 14px; fill: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+  .bb-grid { stroke: var(--sf-line); stroke-width: 1; }
+  .bb-grid.is-base { stroke: var(--sf-ink-3); }
+  .bb-circle { fill: var(--sf-ink-3); fill-opacity: 0.45; stroke: #fff; stroke-width: 2; transform-box: fill-box; transform-origin: center; transform: scale(calc(var(--t-size) / 100)); }
+  .bb-name { font-size: 17px; font-weight: 800; fill: var(--sf-ink); }
+  .bb-val { font-size: 14px; fill: var(--sf-ink-2); font-variant-numeric: tabular-nums; }
+  .bb-item.is-pick .bb-circle { fill: var(--t-accent); fill-opacity: 0.85; }
+  .bb-item.is-pick .bb-name { fill: var(--t-accent); }
+  /* 色を付ける円（つまみ）: all ならすべて同じ色 */
+  :global([data-t-highlight='all']) .bb-circle { fill: var(--t-accent); fill-opacity: 0.5; }
+  :global([data-t-highlight='all']) .bb-item.is-pick .bb-circle { fill-opacity: 0.5; }
+  :global([data-t-highlight='all']) .bb-item.is-pick .bb-name { fill: var(--sf-ink); }
+</style>

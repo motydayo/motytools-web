@@ -1,0 +1,89 @@
+---
+// prefix: ba
+// 資料レイアウトの見本: Before／After型（同じ3つの物差しで、前と後を左右に並べて変化を見せる）
+// 変化の割合は値から計算する（3日→0.5日は 83%減、3人→1人は 2人減）。値を変えるときは DICT の rows を直す
+// つまみ: --t-accent（色）・data-t-focus（強調 after|none）・data-t-delta（変化の数字 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'Before／After型',
+    kicker: '営業報告の自動化',
+    title: '月次の売上報告は、3日から半日になります',
+    before: { tag: 'Before', name: '手作業で集計' },
+    after: { tag: 'After', name: '自動で集計' },
+    // [項目名, 前の値, 前の単位, 後の値, 後の単位, 変化の書き方]
+    rows: [
+      ['作成にかかる日数', 3, '日', 0.5, '日', 'pct'],
+      ['転記ミス（月あたり）', 4, '件', 0, '件', 'zero'],
+      ['担当者', 3, '人', 1, '人', 'diff'],
+    ] as [string, number, string, number, string, 'pct' | 'zero' | 'diff'][],
+    note: '※ Beforeは2026年4〜6月の平均、Afterは7月の試行運用の結果。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+const delta = (b: number, a: number, kind: 'pct' | 'zero' | 'diff', unit: string) => {
+  if (kind === 'zero') return 'ゼロに';
+  if (kind === 'diff') return `${b - a}${unit}減`;
+  return `−${Math.round(((b - a) / b) * 100)}%`;
+};
+---
+
+<SlideFrame size={size} label={T.name} page={9} lang={lang}>
+  <div class="ba" data-demo="before-after">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ba-body">
+      <div class="ba-panel ba-before" data-sf-in style="--i: 1">
+        <div class="ba-head"><span class="ba-tag">{T.before.tag}</span><span class="ba-name">{T.before.name}</span></div>
+        <div class="ba-rows">
+          {T.rows.map(([k, b, bu]) => (
+            <div class="ba-row"><span class="ba-k">{k}</span><span class="ba-v">{b}<small>{bu}</small></span></div>
+          ))}
+        </div>
+      </div>
+      <span class="ba-arrow" data-sf-in style="--i: 2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
+      </span>
+      <div class="ba-panel ba-after" data-sf-in style="--i: 3">
+        <div class="ba-head"><span class="ba-tag">{T.after.tag}</span><span class="ba-name">{T.after.name}</span></div>
+        <div class="ba-rows">
+          {T.rows.map(([k, b, bu, a, au, kind]) => (
+            <div class="ba-row"><span class="ba-k">{k}</span><span class="ba-v">{a}<small>{au}</small></span><span class="ba-d">{delta(b, a, kind, bu)}</span></div>
+          ))}
+        </div>
+      </div>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 4">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ba { display: flex; flex-direction: column; height: 100%; }
+  .ba-body { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) calc(64 * var(--u)) minmax(0, 1fr); align-items: stretch; margin: calc(20 * var(--u)) 0 calc(12 * var(--u)); min-height: 0; }
+  .ba-panel { display: flex; flex-direction: column; padding: calc(18 * var(--u)) calc(24 * var(--u)) calc(8 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; }
+  .ba-head { display: flex; align-items: center; gap: calc(12 * var(--u)); padding-bottom: calc(12 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .ba-tag { padding: calc(2 * var(--u)) calc(12 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--sf-soft); color: var(--sf-ink-2); font-size: calc(15 * var(--u)); font-weight: 800; letter-spacing: 0.04em; }
+  .ba-name { font-size: calc(22 * var(--u)); font-weight: 800; }
+  .ba-rows { flex: 1; display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); }
+  .ba-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; column-gap: calc(14 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-soft); }
+  .ba-row:last-child { border-bottom: 0; }
+  .ba-k { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .ba-v { font-size: calc(38 * var(--u)); font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; text-align: right; }
+  .ba-v small { margin-left: calc(2 * var(--u)); font-size: calc(20 * var(--u)); font-weight: 700; }
+  .ba-before .ba-v { color: var(--sf-ink-3); }
+  .ba-d { display: none; min-width: calc(76 * var(--u)); padding: calc(2 * var(--u)) calc(10 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--sf-soft); color: var(--sf-ink); font-size: calc(16 * var(--u)); font-weight: 800; text-align: center; }
+  .ba-arrow { display: grid; place-items: center; }
+  .ba-arrow svg { width: calc(44 * var(--u)); height: calc(44 * var(--u)); box-sizing: border-box; padding: calc(10 * var(--u)); border-radius: 50%; background: var(--sf-soft); color: var(--sf-ink-2); }
+
+  /* 変化の数字（つまみ: 変化の数字） */
+  :global([data-t-delta='show']) .ba-d { display: block; }
+
+  /* 強調（つまみ: 強調） */
+  :global([data-t-focus='after']) .ba-after { border-color: var(--t-accent); border-width: calc(3 * var(--u)); background: color-mix(in srgb, var(--t-accent) 6%, #fff); }
+  :global([data-t-focus='after']) .ba-after .ba-tag { background: var(--t-accent); color: #fff; }
+  :global([data-t-focus='after']) .ba-after .ba-v { color: var(--t-accent); }
+  :global([data-t-focus='after']) .ba-after .ba-d { background: color-mix(in srgb, var(--t-accent) 14%, #fff); color: var(--t-accent); }
+  :global([data-t-focus='after']) .ba-arrow svg { background: var(--t-accent); color: #fff; }
+</style>

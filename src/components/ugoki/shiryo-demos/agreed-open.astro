@@ -1,0 +1,102 @@
+---
+// 資料レイアウトの見本: 合意事項・未決事項型（決まったことと、まだ決まっていないことを左右に分ける）
+// つまみ: --t-accent（色）・data-t-focus（強調する側 open|agreed|none）・--t-gap（左右の間隔。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '合意事項・未決事項型',
+    kicker: '新店舗オープン準備会議の結果（10月15日）',
+    title: '決まった3点と、10月29日までに決める2点',
+    agreed: {
+      head: '決まったこと',
+      count: '3件',
+      items: [
+        { k: 'オープン日', v: '2027年3月1日' },
+        { k: '店舗の広さ', v: '120㎡で契約する' },
+        { k: '開店時の人員', v: '6人体制' },
+      ],
+    },
+    open: {
+      head: 'まだ決まっていないこと',
+      count: '2件',
+      items: [
+        { k: 'レジシステム', v: 'A社とB社のどちらにするか', who: '佐藤', due: '10/29' },
+        { k: '開店記念の割引', v: '割引の内容と予算をどうするか', who: '田中', due: '10/29' },
+      ],
+    },
+    whoLabel: '担当',
+    dueLabel: '期限',
+    note: '※ 未決事項は、次回の会議（10月29日）で決定する。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={19} lang={lang}>
+  <div class="ao" data-demo="agreed-open">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ao-cols">
+      <div class="ao-col ao-agreed" data-sf-in style="--i: 1">
+        <div class="ao-head">
+          <span class="ao-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+          </span>
+          <span class="ao-head-t">{T.agreed.head}</span>
+          <span class="ao-count">{T.agreed.count}</span>
+        </div>
+        <ul class="ao-items">
+          {T.agreed.items.map((it) => (
+            <li><span class="ao-k">{it.k}</span><span class="ao-v">{it.v}</span></li>
+          ))}
+        </ul>
+      </div>
+      <div class="ao-col ao-open" data-sf-in style="--i: 2">
+        <div class="ao-head">
+          <span class="ao-icon">?</span>
+          <span class="ao-head-t">{T.open.head}</span>
+          <span class="ao-count">{T.open.count}</span>
+        </div>
+        <ul class="ao-items">
+          {T.open.items.map((it) => (
+            <li>
+              <span class="ao-k">{it.k}</span>
+              <span class="ao-v">{it.v}</span>
+              <span class="ao-meta"><span>{T.whoLabel}：<b>{it.who}</b></span><span>{T.dueLabel}：<b>{it.due}</b></span></span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 3">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ao { display: flex; flex-direction: column; height: 100%; }
+  .ao-cols { flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--t-gap) * var(--u)); margin: calc(22 * var(--u)) 0 calc(12 * var(--u)); min-height: 0; }
+  .ao-col { display: flex; flex-direction: column; padding: calc(16 * var(--u)) calc(22 * var(--u)) calc(8 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; min-height: 0; }
+  .ao-head { display: flex; align-items: center; gap: calc(10 * var(--u)); padding-bottom: calc(10 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .ao-icon { display: flex; align-items: center; justify-content: center; width: calc(30 * var(--u)); height: calc(30 * var(--u)); border-radius: 50%; font-size: calc(20 * var(--u)); font-weight: 800; box-sizing: border-box; }
+  .ao-icon svg { width: calc(18 * var(--u)); height: calc(18 * var(--u)); }
+  .ao-agreed .ao-icon { background: var(--sf-ink-2); color: #fff; }
+  .ao-open .ao-icon { border: calc(2.5 * var(--u)) dashed var(--sf-ink-2); color: var(--sf-ink-2); }
+  .ao-head-t { font-size: calc(22 * var(--u)); font-weight: 800; }
+  .ao-count { margin-left: auto; font-size: calc(16 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .ao-items { flex: 1; display: grid; grid-auto-rows: 1fr; margin: 0; padding: 0; list-style: none; min-height: 0; }
+  .ao-items li { display: flex; flex-direction: column; justify-content: center; border-bottom: calc(1 * var(--u)) solid var(--sf-soft); min-height: 0; }
+  .ao-items li:last-child { border-bottom: 0; }
+  .ao-k { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .ao-v { font-size: calc(24 * var(--u)); font-weight: 800; line-height: 1.3; }
+  .ao-open .ao-v { font-size: calc(21 * var(--u)); }
+  .ao-meta { display: flex; gap: calc(20 * var(--u)); margin-top: calc(4 * var(--u)); font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .ao-meta b { color: var(--sf-ink); font-variant-numeric: tabular-nums; }
+
+  /* 強調する側（つまみ: 強調する側） */
+  :global([data-t-focus='open']) .ao-open,
+  :global([data-t-focus='agreed']) .ao-agreed { border-color: var(--t-accent); border-width: calc(3 * var(--u)); background: color-mix(in srgb, var(--t-accent) 6%, #fff); }
+  :global([data-t-focus='open']) .ao-open .ao-icon { border-color: var(--t-accent); color: var(--t-accent); }
+  :global([data-t-focus='agreed']) .ao-agreed .ao-icon { background: var(--t-accent); }
+</style>

@@ -1,0 +1,98 @@
+---
+// 資料レイアウトの見本: スモールマルチプル型（6つの店の来店数の推移を、同じ目盛りの小さな折れ線として2行×3列に並べる）
+// 線の高さ = 来店数 ÷ 1,200 × 90。6つのグラフはすべて同じ縦の目盛り（0〜1,200人）。
+// つまみ: --t-accent（色）・data-t-focus（色を付けるグラフ down|top|none）・--t-w（線の太さ）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const PFX = 'sm-';
+const PAGE = 13;
+const ATTRS = ['focus'];
+// 店ごとの月間来店数（人）。4月〜9月。6つのグラフはすべて同じ縦の目盛り（0〜1,200人）。
+const MONTHS = ['4月', '5月', '6月', '7月', '8月', '9月'];
+const DATA = [
+  ['渋谷店', [820, 860, 900, 880, 950, 1010]],
+  ['新宿店', [1100, 1080, 1120, 1150, 1130, 1180]],
+  ['池袋店', [650, 640, 620, 600, 580, 560]],
+  ['横浜店', [520, 560, 610, 680, 740, 790]],
+  ['大宮店', [410, 400, 430, 420, 440, 450]],
+  ['千葉店', [700, 690, 720, 760, 780, 800]],
+];
+const MAXV = 1200;
+if (DATA.some(([, v]) => v.some((x) => x > MAXV))) throw new Error('small-multiples: 目盛りの最大を超える値があります');
+const rows = DATA.map(([name, v]) => ({ name, v, last: v[v.length - 1], chg: Math.round((v[v.length - 1] / v[0] - 1) * 100) }));
+const ups = rows.filter((r) => r.chg > 0).length;
+const down = rows.filter((r) => r.chg < 0);
+const top = rows.reduce((m, r) => (r.chg > m.chg ? r : m));
+if (down.length !== 1) throw new Error('small-multiples: 減った店が1つではありません（見出しと合いません）');
+const T = {
+  name: 'スモールマルチプル型',
+  kicker: '店舗別の月間来店数の推移（4月〜9月）',
+  title: `${rows.length}店中${ups}店で来店数が増え、${down[0].name}だけが減少`,
+  note: '※ 6つのグラフはすべて同じ縦の目盛り（0〜1,200人）。数字は9月の来店数（人）、％は4月に対する増減。',
+};
+const fmt = (n) => String(Math.round(n * 100) / 100);
+const comma = (n) => n.toLocaleString('en-US');
+const sgn = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n) + '%';
+function buildBody(p) {
+  const c = (...n) => n.map((x) => p + x).join(' ');
+  const CW = 272, CH = 160, GX = 16, GY = 18, PX0 = 44, PX1 = 216, PY0 = 36, PY1 = 126;
+  const px = (i) => fmt(PX0 + (i / (MONTHS.length - 1)) * (PX1 - PX0));
+  const py = (v) => fmt(PY1 - (v / MAXV) * (PY1 - PY0));
+  let s = `    <svg class="${c('svg')}" viewBox="0 0 848 338" role="img" aria-label="6つの店の来店数の推移を同じ目盛りで並べたグラフ">\n`;
+  rows.forEach((r, k) => {
+    const gx = (k % 3) * (CW + GX), gy = Math.floor(k / 3) * (CH + GY);
+    const cls = r.chg < 0 ? 'down' : r === top ? 'up' : 'x';
+    s += `      <g class="${c('cell', cls)}" transform="translate(${gx} ${gy})">\n`;
+    s += `        <text class="${c('name')}" x="0" y="20">${r.name}</text>\n`;
+    s += `        <text class="${c('chg')}" x="${CW}" y="20" text-anchor="end">${sgn(r.chg)}</text>\n`;
+    for (const gv of [0, 600, 1200]) s += `        <line class="${c(gv === 0 ? 'base' : 'grid')}" x1="${PX0}" x2="${PX1}" y1="${py(gv)}" y2="${py(gv)}" />\n`;
+    if (k % 3 === 0) for (const gv of [0, 600, 1200]) s += `        <text class="${c('tick')}" x="${PX0 - 6}" y="${fmt(+py(gv) + 5)}" text-anchor="end">${comma(gv)}</text>\n`;
+    s += `        <polyline class="${c('line')}" points="${r.v.map((v, i) => `${px(i)},${py(v)}`).join(' ')}" />\n`;
+    s += `        <circle class="${c('dot')}" cx="${px(r.v.length - 1)}" cy="${py(r.last)}" r="4.5" />\n`;
+    s += `        <text class="${c('last')}" x="${PX1 + 10}" y="${fmt(+py(r.last) + 5)}">${comma(r.last)}</text>\n`;
+    s += `        <text class="${c('mon')}" x="${PX0}" y="146" text-anchor="start">${MONTHS[0]}</text>\n`;
+    s += `        <text class="${c('mon')}" x="${PX1}" y="146" text-anchor="end">${MONTHS[MONTHS.length - 1]}</text>\n`;
+    s += `      </g>\n`;
+  });
+  s += `    </svg>`;
+  return s;
+}
+// 英語版を作るときは T を言語ごとに用意する（今は日本語だけ）
+const body = buildBody('sm-');
+---
+
+<SlideFrame size={size} label={T.name} page={PAGE} lang={lang}>
+  <div class="sm" data-demo="small-multiples">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="sm-body" data-sf-in style="--i: 2" set:html={body} />
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style is:global>
+  .sm { display: flex; flex-direction: column; height: 100%; }
+  .sm-body { flex: 1; min-height: 0; margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); }
+  /* 6つのグラフはすべて同じ縦の目盛り（0〜1,200人）。高さ = 来店数 ÷ 1,200 × 90。座標は幅848×高さ338の中で数字で決めている */
+  
+  .sm-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .sm-name { font-size: 18px; font-weight: 800; fill: #1f2430; }
+  .sm-chg { font-size: 16px; font-weight: 800; fill: #5a6070; font-variant-numeric: tabular-nums; }
+  .sm-grid { stroke: #e3e5ea; stroke-width: 1; }
+  .sm-base { stroke: #8a8f9c; stroke-width: 1.5; }
+  .sm-tick { font-size: 13px; fill: #8a8f9c; font-variant-numeric: tabular-nums; }
+  .sm-mon { font-size: 14px; fill: #8a8f9c; }
+  .sm-line { fill: none; stroke: #5a6070; stroke-width: var(--t-w); stroke-linejoin: round; stroke-linecap: round; }
+  .sm-dot { fill: #5a6070; }
+  .sm-last { font-size: 16px; font-weight: 800; fill: #1f2430; font-variant-numeric: tabular-nums; }
+  
+  /* 色を付けるグラフ（data-focus: down＝減った店、top＝伸びが最大の店、none＝なし） */
+  [data-t-focus='down'] .sm-cell.sm-down .sm-line,
+  [data-t-focus='top'] .sm-cell.sm-up .sm-line { stroke: var(--t-accent); }
+  [data-t-focus='down'] .sm-cell.sm-down .sm-dot,
+  [data-t-focus='top'] .sm-cell.sm-up .sm-dot { fill: var(--t-accent); }
+  [data-t-focus='down'] .sm-cell.sm-down .sm-chg,
+  [data-t-focus='down'] .sm-cell.sm-down .sm-name,
+  [data-t-focus='top'] .sm-cell.sm-up .sm-chg,
+  [data-t-focus='top'] .sm-cell.sm-up .sm-name { fill: var(--t-accent); }
+</style>

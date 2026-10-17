@@ -1,0 +1,77 @@
+---
+// 資料レイアウトの見本: コホート分析型（登録月ごとに、1〜5か月後の継続率を表にして、割合が大きいほど濃い色にする）
+// 色の濃さ（--p）= 継続率から決めた 8〜90%（30%で最も薄く、80%で最も濃い）。右下の三角形は、まだ来ていない月。
+// つまみ: --t-accent（色）・data-t-focus（1か月後の列の強調 col|none）・data-t-shade（色の濃淡 on|off）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const PFX = 'co-';
+const PAGE = 16;
+const ATTRS = ['focus', 'shade'];
+// 登録した月ごとの人数と、1〜5か月後にも使っていた人の割合（%）。2025年9月末時点。
+const COHORTS = [
+  ['4月', 1200, [62, 51, 46, 43, 41]],
+  ['5月', 1350, [60, 49, 44, 41]],
+  ['6月', 1280, [64, 55, 50]],
+  ['7月', 1420, [66, 58]],
+  ['8月', 1510, [71]],
+];
+const first = COHORTS[0][2][0], last = COHORTS[COHORTS.length - 1][2][0];
+const T = {
+  name: 'コホート分析型',
+  kicker: '家計簿アプリ「つむぎ」：登録した月ごとの、その後の継続率（2025年9月末時点）',
+  title: `翌月の継続率は、${COHORTS[0][0]}の${first}%から${COHORTS[COHORTS.length - 1][0]}は${last}%に上昇`,
+  note: '※ 登録した人のうち、1〜5か月後にもアプリを使っていた人の割合。9月末時点のため右下は空欄。',
+};
+const comma = (n) => n.toLocaleString('en-US');
+function buildBody(p) {
+  const c = (...n) => n.map((x) => p + x).join(' ');
+  const cols = 5;
+  let s = `    <div class="${c('tbl')}">\n`;
+  s += `      <span class="${c('hd')}">登録した月</span><span class="${c('hd', 'r')}">登録人数</span>` + Array.from({ length: cols }, (_, i) => `<span class="${c('hd', 'r')}">${i + 1}か月後</span>`).join('') + '\n';
+  COHORTS.forEach(([m, n, v], ri) => {
+    s += `      <span class="${c('mo')}">${m}</span><span class="${c('cnt')}">${comma(n)}</span>\n`;
+    v.forEach((x, i) => {
+      const a = Math.min(0.9, Math.max(0.08, ((x - 30) / 50) * 0.9));
+      s += `      <span class="${c('cell', i === 0 ? 'c1' : 'cx', a >= 0.55 ? 'dk' : 'lt')}" style="--p: ${Math.round(a * 100)}%">${x}%</span>\n`;
+    });
+    const blank = cols - v.length;
+    if (blank > 0) s += ri === COHORTS.length - 1
+      ? `      <span class="${c('memo')}" style="grid-column: span ${blank}">← 8月から、初回のガイドを新しくした</span>\n`
+      : `      <span class="${c('blank')}" style="grid-column: span ${blank}"></span>\n`;
+  });
+  s += `    </div>`;
+  return s;
+}
+// 英語版を作るときは T を言語ごとに用意する（今は日本語だけ）
+const body = buildBody('co-');
+---
+
+<SlideFrame size={size} label={T.name} page={PAGE} lang={lang}>
+  <div class="co" data-demo="cohort">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="co-body" data-sf-in style="--i: 2" set:html={body} />
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style is:global>
+  .co { display: flex; flex-direction: column; height: 100%; }
+  .co-body { flex: 1; min-height: 0; margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); }
+  /* 色の濃さは継続率で決める（30%で最も薄く、80%で最も濃い）。濃い所は白い文字、薄い所は黒い文字 */
+  .co-tbl { display: grid; grid-template-columns: calc(96 * var(--u)) calc(112 * var(--u)) repeat(5, 1fr); grid-template-rows: calc(40 * var(--u)) repeat(5, 1fr); gap: calc(4 * var(--u)); height: 100%; }
+  .co-hd { align-self: end; padding: 0 calc(8 * var(--u)) calc(8 * var(--u)); font-size: calc(16 * var(--u)); font-weight: 700; color: #5a6070; }
+  .co-hd.co-r { text-align: center; }
+  .co-mo { align-self: center; font-size: calc(20 * var(--u)); font-weight: 800; }
+  .co-cnt { align-self: center; padding-right: calc(20 * var(--u)); text-align: right; font-size: calc(18 * var(--u)); font-weight: 700; color: #5a6070; font-variant-numeric: tabular-nums; }
+  .co-cell { display: flex; align-items: center; justify-content: center; border-radius: calc(4 * var(--u)); font-size: calc(22 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; background: color-mix(in srgb, var(--t-accent) var(--p), #fff); }
+  .co-cell.co-dk { color: #fff; }
+  .co-cell.co-lt { color: #1f2430; }
+  .co-blank { background: #f3f4f7; border-radius: calc(4 * var(--u)); opacity: 0.6; }
+  .co-memo { display: flex; align-items: center; padding-left: calc(16 * var(--u)); font-size: calc(18 * var(--u)); font-weight: 700; color: var(--t-accent); }
+  
+  /* 色の濃淡を消して、数字だけにする（data-shade="off"） */
+  [data-t-shade='off'] .co-cell { background: #f3f4f7; color: #1f2430; }
+  /* 1か月後の列を枠で囲む（data-focus="col"） */
+  [data-t-focus='col'] .co-cell.co-c1 { outline: calc(3 * var(--u)) solid #1f2430; outline-offset: calc(-3 * var(--u)); }
+</style>

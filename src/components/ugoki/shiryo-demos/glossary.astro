@@ -1,0 +1,62 @@
+---
+// 資料レイアウトの見本: 用語対照表型（用語・意味・例の3列で、言葉を5つ並べる）
+// つまみ: --t-accent（色）・data-t-zebra（行の見せ方 stripe|line）・--t-col（用語の列の幅。表全体に対する%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '用語対照表型',
+    kicker: '新入社員のための経理の言葉',
+    title: 'これだけ押さえる、経理の5つの言葉',
+    head: ['用語', '意味', '例'],
+    rows: [
+      ['仕訳', 'しわけ', 'お金の動きを「何に使い、どこから出したか」に分けて記録すること', '文房具を現金で買う → 「消耗品費」と「現金」'],
+      ['稟議', 'りんぎ', '上司や関係する部署に書類を回して、承認をもらう手続き', '10万円を超える購入は稟議書を出す'],
+      ['按分', 'あんぶん', '費用を、決まった割合で分けること', '家賃を3つの部署で、人数に応じて分ける'],
+      ['立替', 'たてかえ', '会社のお金を、社員が先に自分で払っておくこと', '出張の電車代を自分のICカードで払う'],
+      ['締め日', 'しめび', 'その月の記録を区切る日', '経費の提出は、毎月25日まで'],
+    ],
+    note: '※ 例は架空の社内ルール。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={14} lang={lang}>
+  <div class="gl" data-demo="glossary">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="gl-table">
+      <div class="gl-row gl-head" data-sf-in style="--i: 1">
+        {T.head.map((h) => <span>{h}</span>)}
+      </div>
+      {T.rows.map(([term, read, mean, ex], i) => (
+        <div class="gl-row" data-sf-in style={`--i: ${i + 2}`}>
+          <span class="gl-term"><b>{term}</b><small>{read}</small></span>
+          <span class="gl-mean">{mean}</span>
+          <span class="gl-ex">{ex}</span>
+        </div>
+      ))}
+    </div>
+    <p class="sf-note gl-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .gl { display: flex; flex-direction: column; height: 100%; }
+  .gl-table { flex: 1; display: flex; flex-direction: column; margin: calc(16 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .gl-row { flex: 1; display: grid; grid-template-columns: var(--t-col) 1.5fr 1fr; gap: calc(20 * var(--u)); align-items: center; padding: 0 calc(16 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .gl-head { flex: 0 0 calc(36 * var(--u)); border-bottom: calc(3 * var(--u)) solid var(--t-accent); font-size: calc(16 * var(--u)); font-weight: 800; color: var(--t-accent); }
+  .gl-term { display: flex; flex-direction: column; }
+  .gl-term b { font-size: calc(22 * var(--u)); font-weight: 800; line-height: 1.25; }
+  .gl-term small { font-size: calc(14 * var(--u)); color: var(--sf-ink-3); }
+  .gl-mean { font-size: calc(16 * var(--u)); line-height: 1.5; text-wrap: balance; }
+  .gl-ex { font-size: calc(16 * var(--u)); line-height: 1.5; color: var(--sf-ink-2); text-wrap: balance; }
+  .gl-note { margin-top: auto; }
+
+  /* 行の見せ方（つまみ: 行の見せ方） */
+  :global([data-t-zebra='stripe']) .gl-row:not(.gl-head):nth-child(even) { background: var(--sf-soft); }
+  :global([data-t-zebra='stripe']) .gl-row { border-bottom-color: transparent; }
+  :global([data-t-zebra='stripe']) .gl-head { border-bottom-color: var(--t-accent); }
+</style>

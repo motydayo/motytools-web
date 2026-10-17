@@ -1,0 +1,77 @@
+---
+// 資料レイアウトの見本: マイルストーン型（節目の日と、その日に決まることだけを時間軸に並べる）
+// 横軸の位置は日数に比例（11/15を左端、3/28を右端とし、85pxの余白を左右に取る）。札は上・下に交互に置き、重なりを避ける。
+// つまみ: --t-accent（色）・data-t-focus（強調 next|none）・--t-axis（軸の太さ）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'マイルストーン型',
+    kicker: '新店舗「横浜みなとみらい店」オープンまでの節目',
+    title: '次の節目は12月20日、内装設計の確定',
+    note: '※ 横軸は日数に比例。今日は12月1日。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={9} lang={lang}>
+  <div class="ms" data-demo="milestone">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ms-stage">
+      <span class="ms-axis"></span>
+      <span class="ms-axis-done" style="left: 10.02%; width: 9.62%"></span>
+      <span class="ms-dia is-done" style="left: 10.02%"></span>
+      <span class="ms-item ms-up is-done" style="left: 10.02%"><b class="ms-date">11/15</b><span class="ms-name">物件の契約</span><span class="ms-sub">賃貸契約を結ぶ</span></span>
+      <span class="ms-dia is-next" style="left: 31.06%"></span>
+      <span class="ms-item ms-down is-next" style="left: 31.06%"><b class="ms-date">12/20<em class="ms-tag">あと19日</em></b><span class="ms-name">内装設計の確定</span><span class="ms-sub">図面と見積を承認</span></span>
+      <span class="ms-dia is-later" style="left: 62.32%"></span>
+      <span class="ms-item ms-up is-later" style="left: 62.32%"><b class="ms-date">2/10</b><span class="ms-name">工事の完了</span><span class="ms-sub">店舗の引き渡し</span></span>
+      <span class="ms-dia is-later" style="left: 73.75%"></span>
+      <span class="ms-item ms-down is-later" style="left: 73.75%"><b class="ms-date">3/1</b><span class="ms-name">採用の完了</span><span class="ms-sub">スタッフ8名が決定</span></span>
+      <span class="ms-dia is-last" style="left: 89.98%"></span>
+      <span class="ms-item ms-up is-last" style="left: 89.98%"><b class="ms-date">3/28</b><span class="ms-name">オープン</span><span class="ms-sub">横浜みなとみらい店</span></span>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ms { display: flex; flex-direction: column; height: 100%; }
+  .ms-stage { position: relative; flex: 1; margin: calc(6 * var(--u)) 0 calc(4 * var(--u)); min-height: 0; }
+  .ms-axis,
+  .ms-axis-done { position: absolute; top: 50%; height: calc(var(--t-axis) * var(--u)); transform: translateY(-50%); border-radius: calc(999 * var(--u)); }
+  .ms-axis { left: 0; right: 0; background: #e3e5ea; }
+  .ms-axis-done { background: #8a8f9c; }
+  /* 節目のひし形 */
+  .ms-dia {
+    position: absolute;
+    top: 50%;
+    width: calc(20 * var(--u));
+    height: calc(20 * var(--u));
+    background: #fff;
+    border: calc(3 * var(--u)) solid #8a8f9c;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  .ms-dia.is-done { background: #8a8f9c; }
+  .ms-dia.is-last { background: #1f2430; border-color: #1f2430; }
+  /* 札は上下に交互。軸との間に細い線（::after）を引く */
+  .ms-item { position: absolute; width: calc(170 * var(--u)); display: flex; flex-direction: column; align-items: center; text-align: center; transform: translateX(-50%); }
+  .ms-up { bottom: calc(50% + calc(34 * var(--u))); }
+  .ms-down { top: calc(50% + calc(34 * var(--u))); }
+  .ms-item::after { content: ""; position: absolute; left: 50%; width: calc(2 * var(--u)); height: calc(12 * var(--u)); margin-left: -1px; background: #c3c8d2; }
+  .ms-up::after { bottom: -14px; }
+  .ms-down::after { top: -14px; }
+  .ms-date { display: inline-flex; align-items: center; gap: calc(8 * var(--u)); font-size: calc(24 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.3; }
+  .ms-tag { padding: 0 calc(10 * var(--u)); border-radius: calc(999 * var(--u)); background: #d0453a; color: #fff; font-size: calc(14 * var(--u)); font-style: normal; line-height: calc(22 * var(--u)); white-space: nowrap; }
+  .ms-name { font-size: calc(18 * var(--u)); font-weight: 800; line-height: 1.35; }
+  .ms-sub { font-size: calc(16 * var(--u)); color: #5a6070; line-height: 1.4; }
+  .ms-item.is-done .ms-date,
+  .ms-item.is-done .ms-name { color: #8a8f9c; }
+  /* 次の節目だけ色を付ける（data-focus="next"） */
+  :global([data-t-focus='next']) .ms-dia.is-next { width: calc(28 * var(--u)); height: calc(28 * var(--u)); background: var(--t-accent); border-color: var(--t-accent); }
+  :global([data-t-focus='next']) .ms-item.is-next .ms-date { color: var(--t-accent); }
+  :global([data-t-focus='none']) .ms-tag { display: none; }
+</style>

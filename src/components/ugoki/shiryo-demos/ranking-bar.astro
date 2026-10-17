@@ -1,0 +1,128 @@
+---
+// 資料レイアウトの見本: 横棒ランキング型（支店を売上の大きい順に横棒で並べ、右に読み取ってほしい数字を置く）
+// 棒の長さは値に比例させる（長さ = 値 ÷ 目盛りの最大500 × 100%）。値を変えるときは MAX・TICKS と CSS の「/ 500」を一緒に見直す。
+// つまみ: --t-accent（色）・data-t-highlight（色を付ける棒 top2|all）・--t-bar（棒の太さ。1行ぶんの高さに対する%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const MAX = 500;
+const TICKS = [0, 100, 200, 300, 400, 500];
+const DICT = {
+  ja: {
+    name: '横棒ランキング型',
+    kicker: '支店別の売上高（2025年度）',
+    title: '上位2支店で全社売上の45%を占める',
+    unit: '百万円',
+    // 大きい順に並べておく
+    data: [
+      ['東京本店', 482],
+      ['大阪支店', 391],
+      ['名古屋支店', 326],
+      ['福岡支店', 254],
+      ['札幌支店', 198],
+      ['仙台支店', 163],
+      ['広島支店', 121],
+    ] as [string, number][],
+    big: '45%',
+    bigLabel: '上位2支店の売上シェア',
+    sub: '合計 873百万円',
+    note: '※ 全社の売上高は1,935百万円（税抜）。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+if (T.data.some(([, v]) => v > MAX) || TICKS[TICKS.length - 1] !== MAX) throw new Error('ranking-bar: 目盛りの最大と値が合っていません');
+const fmt = (v: number) => String(v);
+---
+
+<SlideFrame size={size} label={T.name} page={6} lang={lang}>
+  <div class="rb" data-demo="ranking-bar">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="rb-body">
+      <div class="rb-chart">
+        <span class="rb-unit">（{T.unit}）</span>
+        <div class="rb-names">
+          {T.data.map(([n], i) => (
+            <span class="rb-name"><span class="rb-rank">{i + 1}</span>{n}</span>
+          ))}
+        </div>
+        <div class="rb-plot">
+          {TICKS.map((t) => <i class:list={['rb-grid', t === 0 && 'is-base']} style={`--v: ${t}`} />)}
+          {T.data.map(([, v], i) => (
+            <div class:list={["rb-row", i < 2 && "is-top"]} style={`--v: ${v}`}>
+              <div class="rb-track"><span class="rb-bar" data-sf-grow="x" style={`--i: ${i}`} /></div>
+              <span class="rb-val" data-sf-in style={`--i: ${i + 3}`}>{fmt(v)}</span>
+            </div>
+          ))}
+        </div>
+        <div class="rb-axis">
+          {TICKS.map((t) => <span class="rb-tick" style={`--v: ${t}`}>{t}</span>)}
+        </div>
+      </div>
+      <div class="rb-side" data-sf-in style="--i: 8">
+        <span class="rb-big">{T.big}</span>
+        <span class="rb-big-label">{T.bigLabel}</span>
+        <span class="rb-sub">{T.sub}</span>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .rb { display: flex; flex-direction: column; height: 100%; }
+  .rb-body { flex: 1; display: flex; gap: calc(36 * var(--u)); margin: calc(16 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .rb-chart {
+    flex: 1;
+    display: grid;
+    grid-template-columns: calc(132 * var(--u)) 1fr;
+    grid-template-rows: calc(22 * var(--u)) 1fr calc(28 * var(--u));
+    min-width: 0;
+  }
+  .rb-unit { grid-column: 2; align-self: end; padding-bottom: calc(4 * var(--u)); font-size: calc(13 * var(--u)); color: var(--sf-ink-3); }
+  .rb-names { display: flex; flex-direction: column; }
+  .rb-name { flex: 1; display: flex; align-items: center; gap: calc(8 * var(--u)); font-size: calc(18 * var(--u)); font-weight: 700; white-space: nowrap; }
+  .rb-rank { width: calc(18 * var(--u)); text-align: right; font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+  .rb-plot { position: relative; display: flex; flex-direction: column; }
+  .rb-grid { position: absolute; top: 0; bottom: 0; left: calc(var(--v) / 500 * 100%); width: calc(1 * var(--u)); background: var(--sf-line); }
+  .rb-grid.is-base { background: var(--sf-ink-3); }
+  .rb-row { position: relative; flex: 1; }
+  .rb-track { position: absolute; left: 0; right: 0; top: calc((100% - var(--t-bar)) / 2); bottom: calc((100% - var(--t-bar)) / 2); }
+  .rb-bar {
+    display: block;
+    width: calc(var(--v) / 500 * 100%);
+    height: 100%;
+    border-radius: 0 calc(4 * var(--u)) calc(4 * var(--u)) 0;
+    background: var(--t-accent);
+  }
+  .rb-val {
+    position: absolute;
+    left: calc(var(--v) / 500 * 100% + 8 * var(--u));
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: calc(18 * var(--u));
+    font-weight: 700;
+    color: var(--sf-ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .rb-axis { grid-column: 2; position: relative; }
+  .rb-tick { position: absolute; top: calc(6 * var(--u)); left: calc(var(--v) / 500 * 100%); transform: translateX(-50%); font-size: calc(14 * var(--u)); color: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+
+  /* 色を付ける棒（つまみ: 色を付ける棒）。top2 なら上位2本だけ */
+  :global([data-t-highlight='top2']) .rb-row .rb-bar { background: var(--sf-mute); }
+  :global([data-t-highlight='top2']) .rb-row.is-top .rb-bar { background: var(--t-accent); }
+  :global([data-t-highlight='top2']) .rb-row.is-top .rb-val { color: var(--sf-ink); font-weight: 800; }
+
+  .rb-side {
+    flex: 0 0 calc(200 * var(--u));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(6 * var(--u));
+    padding-left: calc(26 * var(--u));
+    border-left: calc(1 * var(--u)) solid var(--sf-line);
+  }
+  .rb-big { font-size: calc(60 * var(--u)); font-weight: 800; line-height: 1.05; color: var(--t-accent); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .rb-big-label { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .rb-sub { margin-top: calc(14 * var(--u)); padding-top: calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(20 * var(--u)); font-weight: 800; }
+</style>

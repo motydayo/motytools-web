@@ -1,0 +1,100 @@
+---
+// 資料レイアウトの見本: レーダーチャート型（6つの観点の5段階評価を、自社と競合A社で重ねて比べる）
+// 軸は中心（0）から外側（5）まで。点の位置は 中心からの距離 = 評価 ÷ 5 × 半径、角度は6等分（真上から時計回り）で計算する。
+// つまみ: --t-accent（色）・data-t-compare（競合A社 both|self）・--t-fill（自社の面の濃さ。%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const CX = 220;
+const CY = 172;
+const RAD = 116;
+const MAX = 5;
+const DICT = {
+  ja: {
+    name: 'レーダーチャート型',
+    kicker: '見積もりサービスの比較（5段階評価）',
+    title: '当社は品質とサポートで競合A社を上回る',
+    axes: ['価格', '品質', '納期', 'サポート', '機能', '使いやすさ'],
+    own: { name: '当社', values: [3, 5, 4, 5, 3, 4] },
+    rival: { name: '競合A社', values: [5, 3, 4, 2, 4, 4] },
+    groups: [
+      { head: '当社が上回る', items: ['サポート　5 対 2', '品質　5 対 3'] },
+      { head: '当社が下回る', items: ['価格　3 対 5', '機能　3 対 4'] },
+      { head: '同じ', items: ['納期・使いやすさ　4 対 4'] },
+    ],
+    note: '※ 5が最高。評価は2025年10月の社内調査による。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+const N = T.axes.length;
+if ([...T.own.values, ...T.rival.values].some((v) => v < 0 || v > MAX)) throw new Error('radar: 評価が0〜5の範囲を超えています');
+const ang = (k: number) => (k / N) * Math.PI * 2; // 真上から時計回り
+const pt = (k: number, r: number) => [+(CX + r * Math.sin(ang(k))).toFixed(1), +(CY - r * Math.cos(ang(k))).toFixed(1)];
+const ring = (lv: number) => T.axes.map((_, k) => pt(k, (lv / MAX) * RAD).join(',')).join(' ');
+const poly = (vs: number[]) => vs.map((v, k) => pt(k, (v / MAX) * RAD).join(',')).join(' ');
+const labels = T.axes.map((a, k) => {
+  const [x, y] = pt(k, RAD + 16);
+  const s = Math.sin(ang(k));
+  const c = Math.cos(ang(k));
+  return { a, x, y: y + (c > 0.3 ? -2 : c < -0.3 ? 14 : 6), anchor: s > 0.3 ? 'start' : s < -0.3 ? 'end' : 'middle' };
+});
+---
+
+<SlideFrame size={size} label={T.name} page={17} lang={lang}>
+  <div class="rd" data-demo="radar">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="rd-body">
+      <div class="rd-chart" data-sf-in style="--i: 1">
+        <svg class="rd-svg" viewBox="0 0 440 340" role="img" aria-label={T.title}>
+          {[1, 2, 3, 4, 5].map((lv) => <polygon class:list={['rd-ring', lv === MAX && 'is-outer']} points={ring(lv)} />)}
+          {T.axes.map((_, k) => <line class="rd-axis" x1={CX} y1={CY} x2={pt(k, RAD)[0]} y2={pt(k, RAD)[1]} />)}
+          {[1, 2, 3, 4, 5].map((lv) => <text class="rd-lv" x={CX + 5} y={CY - (lv / MAX) * RAD + 4}>{lv}</text>)}
+          <polygon class="rd-rival" points={poly(T.rival.values)} />
+          <polygon class="rd-own" points={poly(T.own.values)} />
+          {T.own.values.map((v, k) => <circle class="rd-pt" cx={pt(k, (v / MAX) * RAD)[0]} cy={pt(k, (v / MAX) * RAD)[1]} r="5" />)}
+          {labels.map((l) => <text class="rd-name" x={l.x} y={l.y} text-anchor={l.anchor}>{l.a}</text>)}
+        </svg>
+      </div>
+      <div class="rd-panel" data-sf-in style="--i: 3">
+        <div class="rd-legend">
+          <span class="rd-key"><i class="rd-sw is-own" />{T.own.name}</span>
+          <span class="rd-key"><i class="rd-sw is-rival" />{T.rival.name}</span>
+        </div>
+        {T.groups.map((g, gi) => (
+          <div class:list={["rd-group", gi === 0 && "is-up"]}>
+            <span class="rd-head">{g.head}</span>
+            {g.items.map((it) => <span class="rd-item">{it}</span>)}
+          </div>
+        ))}
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .rd { display: flex; flex-direction: column; height: 100%; }
+  .rd-body { flex: 1; display: flex; align-items: center; gap: calc(30 * var(--u)); margin: calc(10 * var(--u)) 0 calc(6 * var(--u)); min-height: 0; }
+  .rd-chart { flex: 0 0 calc(440 * var(--u)); }
+  .rd-svg { display: block; width: 100%; height: auto; overflow: visible; font-family: inherit; }
+  .rd-ring { fill: none; stroke: var(--sf-line); stroke-width: 1; }
+  .rd-ring.is-outer { stroke: var(--sf-mute); }
+  .rd-axis { stroke: var(--sf-line); stroke-width: 1; }
+  .rd-lv { font-size: 13px; fill: var(--sf-ink-3); paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+  .rd-name { font-size: 16px; font-weight: 700; fill: var(--sf-ink); }
+  .rd-rival { fill: var(--sf-ink-3); fill-opacity: 0.08; stroke: var(--sf-ink-3); stroke-width: 2.5; stroke-linejoin: round; stroke-dasharray: 7 5; }
+  .rd-own { fill: var(--t-accent); fill-opacity: var(--t-fill); stroke: var(--t-accent); stroke-width: 3.5; stroke-linejoin: round; }
+  .rd-pt { fill: var(--t-accent); stroke: #fff; stroke-width: 2; }
+  :global([data-t-compare='self']) .rd-rival { display: none; }
+
+  .rd-panel { flex: 1; display: flex; flex-direction: column; gap: calc(14 * var(--u)); padding-left: calc(28 * var(--u)); border-left: calc(1 * var(--u)) solid var(--sf-line); }
+  .rd-legend { display: flex; gap: calc(22 * var(--u)); font-size: calc(17 * var(--u)); font-weight: 800; }
+  .rd-key { display: inline-flex; align-items: center; gap: calc(8 * var(--u)); }
+  .rd-sw { display: inline-block; width: calc(26 * var(--u)); height: 0; border-top: calc(4 * var(--u)) solid var(--t-accent); }
+  .rd-sw.is-rival { border-top: calc(3 * var(--u)) dashed var(--sf-ink-3); }
+  .rd-group { display: flex; flex-direction: column; gap: calc(3 * var(--u)); }
+  .rd-head { font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-3); }
+  .rd-item { font-size: calc(19 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .rd-group.is-up .rd-head { color: var(--t-accent); }
+</style>

@@ -15,7 +15,10 @@ interface Props {
   app: AppEntry;
 }
 const { app } = Astro.props;
-const items = (await getGuides()).filter((g) => g.data.app === app.slug);
+// 検索に出している記事を先に（noindex の記事は後ろへ）
+const items = (await getGuides())
+  .filter((g) => g.data.app === app.slug)
+  .sort((a, b) => Number(a.data.noindex) - Number(b.data.noindex));
 const path = `/guide/app/${app.slug}/`;
 
 const jsonLd = [
@@ -26,7 +29,7 @@ const jsonLd = [
     url: `${SITE.url}${path}`,
     inLanguage: 'ja',
     about: { '@type': 'SoftwareApplication', name: app.name, operatingSystem: 'iOS', url: `${SITE.url}${app.lpPath}` },
-    hasPart: items.map((g) => ({ '@type': 'Article', headline: g.data.title, url: `${SITE.url}/guide/${g.id}/` })),
+    hasPart: items.filter((g) => !g.data.noindex).map((g) => ({ '@type': 'Article', headline: g.data.title, url: `${SITE.url}/guide/${g.id}/` })),
   },
   {
     '@context': 'https://schema.org',

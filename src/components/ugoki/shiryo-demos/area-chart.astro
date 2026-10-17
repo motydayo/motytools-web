@@ -1,0 +1,111 @@
+---
+// 資料レイアウトの見本: 面グラフ型（時間帯ごとの出荷件数を、線の下を塗った面で見せる）
+// 図は幅600×高さ330（スライドのpx）のSVG1枚。点の位置は 横=時刻の順番、縦=値÷目盛りの最大800 で計算する。目盛りは0から。
+// つまみ: --t-accent（色）・data-t-band（強調する時間帯 on|off）・--t-fill（面の濃さ。%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const W = 600;
+const H = 330;
+const L = 46;
+const R = 584;
+const TOP = 30;
+const BOT = 290;
+const MAX = 800;
+const TICKS = [0, 200, 400, 600, 800];
+const DICT = {
+  ja: {
+    name: '面グラフ型',
+    kicker: '倉庫の時間帯別の出荷件数（1日の合計）',
+    title: '出荷は午後に集中し、ピークは15時台',
+    unit: '件',
+    hours: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+    values: [120, 260, 410, 520, 300, 480, 690, 740, 610, 420, 230, 110],
+    hourSuffix: '時',
+    band: [14, 16],
+    big: '42%',
+    bigLabel: '14〜16時台に集中する出荷の割合',
+    sub: 'ピーク 15時台 740件',
+    note: '※ 平日平均。1日の出荷は合計4,890件。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+if (T.values.some((v) => v > MAX) || TICKS[TICKS.length - 1] !== MAX) throw new Error('area-chart: 目盛りの最大と値が合っていません');
+const n = T.values.length;
+const step = (R - L) / (n - 1);
+const px = (i: number) => +(L + i * step).toFixed(1);
+const py = (v: number) => +(BOT - (v / MAX) * (BOT - TOP)).toFixed(1);
+const pts = T.values.map((v, i) => ({ x: px(i), y: py(v), v, h: T.hours[i] }));
+const line = pts.map((p) => `${p.x},${p.y}`).join(' ');
+const area = `M${pts[0].x},${BOT} L${line.replace(/ /g, ' L')} L${pts[n - 1].x},${BOT} Z`;
+const bandL = +(px(T.hours.indexOf(T.band[0])) - step / 2).toFixed(1);
+const bandR = +(px(T.hours.indexOf(T.band[1])) + step / 2).toFixed(1);
+const peak = pts.reduce((a, p) => (p.v > a.v ? p : a));
+---
+
+<SlideFrame size={size} label={T.name} page={13} lang={lang}>
+  <div class="ac" data-demo="area-chart">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ac-body">
+      <div class="ac-chart" data-sf-in style="--i: 2">
+        <svg class="ac-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={T.title}>
+          <defs>
+            <clipPath id="ac-band"><rect x={bandL} y="0" width={+(bandR - bandL).toFixed(1)} height={H} /></clipPath>
+          </defs>
+          <text class="ac-unit" x="0" y="14">（{T.unit}）</text>
+          {TICKS.map((t) => (
+            <>
+              <line class:list={['ac-grid', t === 0 && 'is-base']} x1={L} x2={R} y1={py(t)} y2={py(t)} />
+              <text class="ac-ytick" x={L - 10} y={py(t) + 5} text-anchor="end">{t}</text>
+            </>
+          ))}
+          <path class="ac-area" d={area} />
+          <path class="ac-band" d={area} clip-path="url(#ac-band)" />
+          <polyline class="ac-line" points={line} />
+          <circle class="ac-dot" cx={peak.x} cy={peak.y} r="6.5" />
+          <text class="ac-peak" x={peak.x} y={peak.y - 14} text-anchor="middle">{peak.v}</text>
+          {pts.map((p) => <text class="ac-xtick" x={p.x} y={BOT + 26} text-anchor="middle">{p.h}{T.hourSuffix}</text>)}
+        </svg>
+      </div>
+      <div class="ac-side" data-sf-in style="--i: 4">
+        <span class="ac-big">{T.big}</span>
+        <span class="ac-big-label">{T.bigLabel}</span>
+        <span class="ac-sub">{T.sub}</span>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ac { display: flex; flex-direction: column; height: 100%; }
+  .ac-body { flex: 1; display: flex; align-items: center; gap: calc(40 * var(--u)); margin: calc(14 * var(--u)) 0 calc(6 * var(--u)); min-height: 0; }
+  .ac-chart { flex: 0 0 calc(600 * var(--u)); }
+  .ac-svg { display: block; width: 100%; height: auto; overflow: visible; font-family: inherit; }
+  .ac-unit { font-size: 13px; fill: var(--sf-ink-3); }
+  .ac-ytick { font-size: 14px; fill: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+  .ac-xtick { font-size: 14px; fill: var(--sf-ink-2); }
+  .ac-grid { stroke: var(--sf-line); stroke-width: 1; }
+  .ac-grid.is-base { stroke: var(--sf-ink-3); }
+  .ac-area { fill: var(--t-accent); fill-opacity: var(--t-fill); }
+  .ac-band { fill: var(--t-accent); fill-opacity: 0.55; display: none; }
+  .ac-line { fill: none; stroke: var(--t-accent); stroke-width: 3; stroke-linejoin: round; }
+  .ac-dot { fill: var(--t-accent); stroke: #fff; stroke-width: 2.5; }
+  .ac-peak { font-size: 24px; font-weight: 800; fill: var(--sf-ink); font-variant-numeric: tabular-nums; }
+  :global([data-t-band='on']) .ac-band { display: block; }
+
+  .ac-side {
+    flex: 1;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(6 * var(--u));
+    padding-left: calc(28 * var(--u));
+    border-left: calc(1 * var(--u)) solid var(--sf-line);
+  }
+  .ac-big { font-size: calc(60 * var(--u)); font-weight: 800; line-height: 1.05; color: var(--t-accent); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .ac-big-label { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .ac-sub { margin-top: calc(14 * var(--u)); padding-top: calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(17 * var(--u)); font-weight: 800; }
+</style>

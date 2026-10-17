@@ -1,0 +1,99 @@
+---
+// 資料レイアウトの見本: コスト内訳型（費用の合計を縦の棒で内訳に分け、右に項目ごとの金額を並べる）
+// 縦棒の各段の高さは「金額 ÷ 合計」で計算する（手で決めない）。
+// つまみ: --t-accent（色）・data-t-tone（色の付け方 top|shade）・--t-bar（棒の幅。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'コスト内訳型',
+    kicker: '新・受発注システムの導入費用',
+    title: '初年度の費用は合計1,200万円、半分が開発費',
+    totalLabel: '初年度の費用 合計',
+    total: 1200,
+    unit: '万円',
+    items: [
+      { name: '開発費', desc: '画面と機能の作り込み（外部委託）', v: 600 },
+      { name: '機器・環境費', desc: 'サーバーと端末20台の購入', v: 240 },
+      { name: '研修・データ移行', desc: '現場向けの研修と過去データの移行', v: 180 },
+      { name: '運用保守', desc: '稼働後12か月の保守契約', v: 120 },
+      { name: '予備費', desc: '想定外の変更に備える', v: 60 },
+    ],
+    note: '※ 税抜。割合は合計に対する比率。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+// 内訳の合計が見出しの合計と合わないと、棒がはみ出す・足りなくなる
+if (T.items.reduce((s, it) => s + it.v, 0) !== T.total) throw new Error('cost-breakdown: 内訳の合計が合っていません');
+const pct = (v: number) => Math.round((v / T.total) * 100);
+const fmt = (v: number) => v.toLocaleString('ja-JP');
+---
+
+<SlideFrame size={size} label={T.name} page={11} lang={lang}>
+  <div class="cb" data-demo="cost-breakdown">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="cb-body">
+      <div class="cb-left" data-sf-in style="--i: 1">
+        <span class="cb-total-label">{T.totalLabel}</span>
+        <span class="cb-total"><b>{fmt(T.total)}</b>{T.unit}</span>
+        <div class="cb-stack">
+          {T.items.map((it, k) => (
+            <span class:list={['cb-seg', 'cb-c', k === 0 && 'is-first', k >= 3 && 'is-light']} style={`--k: ${k}; --v: ${it.v}`}>{pct(it.v) >= 10 ? `${pct(it.v)}%` : ''}</span>
+          ))}
+        </div>
+      </div>
+      <ul class="cb-rows">
+        {T.items.map((it, k) => (
+          <li data-sf-in style={`--i: ${k + 2}`}>
+            <i class:list={['cb-chip', 'cb-c', k === 0 && 'is-first', k >= 3 && 'is-light']} style={`--k: ${k}`} />
+            <span class="cb-text"><span class="cb-name">{it.name}</span><span class="cb-desc">{it.desc}</span></span>
+            <span class="cb-amt">{fmt(it.v)}<small>{T.unit}</small></span>
+            <span class="cb-pct">{pct(it.v)}%</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .cb { display: flex; flex-direction: column; height: 100%; }
+  .cb-body { flex: 1; display: flex; gap: calc(44 * var(--u)); margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .cb-left { flex: 0 0 calc(230 * var(--u)); display: flex; flex-direction: column; min-height: 0; }
+  .cb-total-label { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .cb-total { font-size: calc(22 * var(--u)); font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .cb-total b { font-size: calc(52 * var(--u)); letter-spacing: -0.01em; margin-right: calc(4 * var(--u)); }
+  /* 縦の棒。各段の高さ = 金額 ÷ 合計 */
+  .cb-stack { flex: 1; display: flex; flex-direction: column; width: calc(var(--t-bar) * var(--u)); margin-top: calc(10 * var(--u)); gap: calc(2 * var(--u)); min-height: 0; }
+  .cb-seg {
+    flex: var(--v) 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    font-size: calc(17 * var(--u));
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+  .cb-seg:first-child { border-radius: calc(6 * var(--u)) calc(6 * var(--u)) 0 0; }
+  .cb-seg:last-child { border-radius: 0 0 calc(6 * var(--u)) calc(6 * var(--u)); }
+  .cb-rows { flex: 1; display: grid; grid-template-rows: repeat(5, 1fr); margin: 0; padding: 0; list-style: none; min-width: 0; }
+  .cb-rows li { display: flex; align-items: center; gap: calc(14 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .cb-rows li:last-child { border-bottom: 0; }
+  .cb-chip { flex: none; width: calc(16 * var(--u)); height: calc(16 * var(--u)); border-radius: calc(4 * var(--u)); }
+  .cb-text { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .cb-name { font-size: calc(20 * var(--u)); font-weight: 800; }
+  .cb-desc { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .cb-amt { font-size: calc(28 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cb-amt small { margin-left: calc(2 * var(--u)); font-size: calc(16 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .cb-pct { flex: none; width: calc(48 * var(--u)); text-align: right; font-size: calc(18 * var(--u)); font-weight: 700; color: var(--sf-ink-2); font-variant-numeric: tabular-nums; }
+
+  /* 色の付け方（つまみ: 色の付け方）。--k は大きい順の番号 */
+  :global([data-t-tone='top']) .cb-c { background: color-mix(in srgb, var(--sf-mute) calc(100% - var(--k) * 20%), #fff); color: var(--sf-ink); }
+  :global([data-t-tone='top']) .cb-c.is-first { background: var(--t-accent); color: #fff; }
+  :global([data-t-tone='shade']) .cb-c { background: color-mix(in srgb, var(--t-accent) calc(100% - var(--k) * 16%), #fff); color: #fff; }
+  :global([data-t-tone='shade']) .cb-c.is-light { color: var(--sf-ink); }
+</style>

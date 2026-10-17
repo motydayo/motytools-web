@@ -1,0 +1,76 @@
+---
+// prefix: py
+// 資料レイアウトの見本: ピラミッド型（頂点に結論、中段に根拠3つ、土台に事実3つを積む）
+// 三角形は、3つの段の高さをそろえた行に clip-path で台形を切り抜いて作る（段のあいだの6pxは無視できる誤差）
+// つまみ: --t-accent（色）・data-t-focus（色を付ける段 top|all）・data-t-label（段の名前 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'ピラミッド型',
+    kicker: '新規事業の提案',
+    title: '法人向けの置き菓子サービスを、来期から始める',
+    levels: ['結論', '根拠', '事実'],
+    conclusion: '置き菓子サービスを、来期から始める',
+    reasons: ['需要がある', '自社の強みが活きる', '1年で投資を回収できる'],
+    facts: [
+      '取引先312社のうち128社（41%）が導入に関心あり',
+      '全国42拠点の配送網で、追加の配送費はほぼ不要',
+      '初期投資600万円は、月の粗利50万円で12か月で回収',
+    ],
+    note: '※ 需要は2026年6月の取引先アンケート（回答312社）。回収期間は試算。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={7} lang={lang}>
+  <div class="py" data-demo="pyramid">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="py-grid">
+      <div class="py-row" data-sf-in style="--i: 1">
+        <div class="py-shape py-l1"><span>{T.levels[0]}</span></div>
+        <div class="py-text"><span class="py-main">{T.conclusion}</span></div>
+      </div>
+      <div class="py-row" data-sf-in style="--i: 2">
+        <div class="py-shape py-l2"><span>{T.levels[1]}</span></div>
+        <div class="py-text">
+          {T.reasons.map((r, i) => <span class="py-item py-reason"><b class="py-n">{i + 1}</b>{r}</span>)}
+        </div>
+      </div>
+      <div class="py-row" data-sf-in style="--i: 3">
+        <div class="py-shape py-l3"><span>{T.levels[2]}</span></div>
+        <div class="py-text">
+          {T.facts.map((f, i) => <span class="py-item py-fact"><b class="py-n">{i + 1}</b>{f}</span>)}
+        </div>
+      </div>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 4">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .py { display: flex; flex-direction: column; height: 100%; }
+  .py-grid { flex: 1; display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); row-gap: calc(6 * var(--u)); margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .py-row { display: grid; grid-template-columns: calc(300 * var(--u)) minmax(0, 1fr); column-gap: calc(28 * var(--u)); min-height: 0; }
+  /* 三角形を3段に切る。左右の端は、高さに対する割合で台形にする */
+  .py-shape { display: flex; align-items: center; justify-content: center; background: var(--sf-line); color: var(--sf-ink-2); font-size: calc(18 * var(--u)); font-weight: 800; letter-spacing: 0.08em; }
+  .py-l1 { clip-path: polygon(50% 0, 50% 0, 66.07% 100%, 33.93% 100%); align-items: flex-end; padding-bottom: calc(12 * var(--u)); background: var(--t-accent); color: #fff; }
+  .py-l2 { clip-path: polygon(33.03% 0, 66.97% 0, 83.03% 100%, 16.97% 100%); }
+  .py-l3 { clip-path: polygon(16.06% 0, 83.94% 0, 100% 100%, 0 100%); }
+  .py-text { display: flex; flex-direction: column; justify-content: center; gap: calc(4 * var(--u)); padding-left: calc(24 * var(--u)); border-left: calc(1 * var(--u)) solid var(--sf-line); min-width: 0; }
+  .py-main { font-size: calc(24 * var(--u)); font-weight: 800; line-height: 1.35; }
+  .py-item { display: flex; align-items: center; gap: calc(10 * var(--u)); line-height: 1.4; }
+  .py-reason { font-size: calc(20 * var(--u)); font-weight: 800; }
+  .py-fact { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .py-n { flex: none; display: grid; place-items: center; width: calc(24 * var(--u)); height: calc(24 * var(--u)); border-radius: 50%; background: var(--sf-soft); color: var(--sf-ink-2); font-size: calc(14 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+
+  /* 色を付ける段（つまみ: 色を付ける段） */
+  :global([data-t-focus='all']) .py-l2 { background: color-mix(in srgb, var(--t-accent) 62%, #fff); color: #fff; }
+  :global([data-t-focus='all']) .py-l3 { background: color-mix(in srgb, var(--t-accent) 22%, #fff); color: var(--sf-ink); }
+
+  /* 段の名前（つまみ: 段の名前） */
+  :global([data-t-label='hide']) .py-shape span { display: none; }
+</style>

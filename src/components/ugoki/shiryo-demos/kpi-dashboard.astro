@@ -1,0 +1,96 @@
+---
+// prefix: kp
+// 資料レイアウトの見本: KPIダッシュボード型（4つの数字を同じ形のカードで一覧にし、目標に届いたかを添える）
+// 月ごとの小さな棒は 値 ÷ 目盛りの最大(max) × 100% の高さで、下の線を0とする。値を変えるときは max も見直す
+// 各カードの6か月の値は、カードの大きな数字と合う（売上=合計、新規=合計、解約率・満足度=平均）
+// つまみ: --t-accent（色）・data-t-layout（並べ方 row|grid）・data-t-bars（月ごとの棒 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'KPIダッシュボード型',
+    kicker: '営業部 上期の実績（2026年4〜9月）',
+    title: '4指標のうち3つが目標を達成、新規契約だけが未達',
+    cards: [
+      { label: '売上高', value: '1.28', unit: '億円', delta: '前年比 +12%', target: '目標 1.20億円', ok: true, max: 0.25, months: [0.19, 0.2, 0.21, 0.22, 0.23, 0.23] },
+      { label: '新規契約', value: '342', unit: '件', delta: '前年比 +8%', target: '目標 360件', ok: false, max: 70, months: [50, 52, 56, 60, 62, 62] },
+      { label: '解約率（月平均）', value: '1.9', unit: '%', delta: '前年差 −0.4pt', target: '目標 2.0%以下', ok: true, max: 3, months: [2.4, 2.2, 2.0, 1.8, 1.6, 1.4] },
+      { label: '顧客満足度', value: '4.3', unit: '/ 5', delta: '前年差 +0.2', target: '目標 4.2以上', ok: true, max: 5, months: [4.1, 4.2, 4.2, 4.3, 4.4, 4.6] },
+    ],
+    status: { ok: '達成', ng: '未達' },
+    first: '4月',
+    last: '9月',
+    note: '※ 棒は月ごとの値で、下の線が0。売上高・新規契約は6か月の合計、解約率・満足度は6か月の平均。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+// 棒が目盛りの最大を超えるとはみ出す
+if (T.cards.some((c) => c.months.some((v) => v > c.max))) throw new Error('kpi-dashboard: 月ごとの値が目盛りの最大を超えています');
+---
+
+<SlideFrame size={size} label={T.name} page={10} lang={lang}>
+  <div class="kp" data-demo="kpi-dashboard">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="kp-cards">
+      {T.cards.map((c, i) => (
+        <div class:list={['kp-card', !c.ok && 'is-ng']} data-sf-in style={`--i: ${i + 1}`}>
+          <span class="kp-label">{c.label}</span>
+          <span class="kp-value">{c.value}<small>{c.unit}</small></span>
+          <span class="kp-delta">{c.delta}</span>
+          <span class="kp-status">
+            <span class="kp-target">{c.target}</span>
+            <span class="kp-chip">
+              {c.ok
+                ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6v7M12 18v.5" /></svg>}
+              {c.ok ? T.status.ok : T.status.ng}
+            </span>
+          </span>
+          <span class="kp-chart">
+            <span class="kp-bars" style={`--max: ${c.max}`}>{c.months.map((v) => <i style={`--v: ${v}`} />)}</span>
+            <span class="kp-x"><span>{T.first}</span><span>{T.last}</span></span>
+          </span>
+        </div>
+      ))}
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 5">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .kp { display: flex; flex-direction: column; height: 100%; }
+  .kp-cards { flex: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(16 * var(--u)); margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .kp-card { display: flex; flex-direction: column; padding: calc(16 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; min-width: 0; }
+  .kp-label { font-size: calc(16 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .kp-value { margin-top: calc(4 * var(--u)); font-size: calc(48 * var(--u)); font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .kp-value small { margin-left: calc(4 * var(--u)); font-size: calc(20 * var(--u)); font-weight: 700; letter-spacing: 0; }
+  .kp-delta { margin-top: calc(4 * var(--u)); font-size: calc(16 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .kp-status { display: flex; flex-direction: column; align-items: flex-start; gap: calc(6 * var(--u)); margin-top: calc(10 * var(--u)); padding-top: calc(10 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); }
+  .kp-target { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .kp-chip { display: inline-flex; align-items: center; gap: calc(4 * var(--u)); padding: calc(2 * var(--u)) calc(12 * var(--u)) calc(2 * var(--u)) calc(8 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--sf-soft); color: var(--sf-ink); font-size: calc(15 * var(--u)); font-weight: 800; }
+  .kp-chip svg { width: calc(14 * var(--u)); height: calc(14 * var(--u)); }
+  .kp-card.is-ng { border-color: #d0453a; }
+  .kp-card.is-ng .kp-chip { background: #fbeceb; color: #d0453a; }
+  .kp-chart { display: flex; flex-direction: column; gap: calc(4 * var(--u)); margin-top: auto; padding-top: calc(12 * var(--u)); }
+  .kp-bars { display: flex; align-items: flex-end; gap: calc(4 * var(--u)); height: calc(52 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-ink-3); }
+  .kp-bars i { display: block; flex: 1; height: calc(var(--v) / var(--max) * 100%); border-radius: calc(2 * var(--u)) calc(2 * var(--u)) 0 0; background: var(--sf-mute); }
+  .kp-bars i:last-child { background: var(--t-accent); }
+  .kp-x { display: flex; justify-content: space-between; font-size: calc(13 * var(--u)); color: var(--sf-ink-3); }
+
+  /* 月ごとの棒（つまみ: 月ごとの棒） */
+  :global([data-t-bars='hide']) .kp-chart { display: none; }
+
+  /* 2×2（つまみ: 並べ方）。左に数字、右に棒 */
+  :global([data-t-layout='grid']) .kp-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: calc(14 * var(--u)); }
+  :global([data-t-layout='grid']) .kp-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto auto 1fr; padding: calc(12 * var(--u)) calc(18 * var(--u)); }
+  :global([data-t-layout='grid']) .kp-label,
+  :global([data-t-layout='grid']) .kp-value,
+  :global([data-t-layout='grid']) .kp-delta,
+  :global([data-t-layout='grid']) .kp-status { grid-column: 1; }
+  :global([data-t-layout='grid']) .kp-value { font-size: calc(44 * var(--u)); margin-top: 0; }
+  :global([data-t-layout='grid']) .kp-status { flex-direction: row; align-items: center; flex-wrap: wrap; gap: calc(4 * var(--u)) calc(10 * var(--u)); margin-top: calc(8 * var(--u)); padding-top: calc(8 * var(--u)); align-self: end; }
+  :global([data-t-layout='grid']) .kp-chart { grid-column: 2; grid-row: 1 / span 4; width: calc(150 * var(--u)); margin: 0 0 0 calc(20 * var(--u)); padding: calc(4 * var(--u)) 0 0; justify-content: flex-end; }
+  :global([data-t-layout='grid']) .kp-bars { height: auto; flex: 1; }
+</style>

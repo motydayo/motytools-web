@@ -1,0 +1,81 @@
+---
+// 資料レイアウトの見本: 現状・理想・差分型（項目ごとに「今」「目指す姿」「差」「埋める打ち手」を1行で並べる）
+// つまみ: --t-accent（色）・data-t-actions（打ち手の列 show|hide）・data-t-diff（差の強調 on|off）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '現状・理想・差分型',
+    kicker: '営業部の見積もり業務',
+    title: '見積もりの手間を3分の1にし、受注まで8日にする',
+    head: { item: '項目', now: '現状', goal: '理想', diff: '差', action: '埋める打ち手' },
+    rows: [
+      { item: '見積もりの作成', now: '45分', goal: '15分', unit: '/件', diff: '30分短縮', action: 'ひな形と単価表を1つにそろえる' },
+      { item: '受注までの日数', now: '12日', goal: '8日', unit: '', diff: '4日短縮', action: '承認を2段階から1段階に減らす' },
+      { item: '見積書の誤り', now: '9件', goal: '1件', unit: '/月', diff: '8件減', action: '金額の計算を自動にする' },
+    ],
+    note: '※ 現状は2026年4〜9月の営業部の実績。理想は2027年3月末の目標。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={8} lang={lang}>
+  <div class="ab" data-demo="as-is-to-be">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ab-table">
+      <div class="ab-row ab-head">
+        <span>{T.head.item}</span><span>{T.head.now}</span><span /><span>{T.head.goal}</span><span class="ab-c-diff">{T.head.diff}</span><span class="ab-c-act">{T.head.action}</span>
+      </div>
+      {T.rows.map((r, i) => (
+        <div class="ab-row ab-body" data-sf-in style={`--i: ${i + 1}`}>
+          <span class="ab-item">{r.item}</span>
+          <span class="ab-now">{r.now}<small>{r.unit}</small></span>
+          <span class="ab-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></span>
+          <span class="ab-goal">{r.goal}<small>{r.unit}</small></span>
+          <span class="ab-c-diff ab-diff"><b>{r.diff}</b></span>
+          <span class="ab-c-act ab-act">{r.action}</span>
+        </div>
+      ))}
+    </div>
+    <p class="sf-note ab-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ab { display: flex; flex-direction: column; height: 100%; }
+  .ab-table { flex: 1; display: grid; grid-template-rows: calc(34 * var(--u)) repeat(3, 1fr); gap: calc(10 * var(--u)); margin: calc(18 * var(--u)) 0 calc(12 * var(--u)); min-height: 0; }
+  .ab-row {
+    display: grid;
+    grid-template-columns: calc(168 * var(--u)) calc(118 * var(--u)) calc(30 * var(--u)) calc(118 * var(--u)) calc(140 * var(--u)) minmax(0, 1fr);
+    align-items: center;
+  }
+  .ab-head { font-size: calc(16 * var(--u)); font-weight: 800; color: var(--sf-ink-2); border-bottom: calc(2 * var(--u)) solid var(--sf-line); padding-bottom: calc(4 * var(--u)); align-items: end; }
+  .ab-body { border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); padding: 0 calc(18 * var(--u)) 0 0; background: #fff; }
+  .ab-head > :first-child { padding-left: calc(18 * var(--u)); }
+  .ab-item { padding-left: calc(18 * var(--u)); font-size: calc(19 * var(--u)); font-weight: 800; }
+  .ab-now, .ab-goal { font-size: calc(30 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
+  .ab-now { color: var(--sf-ink-2); }
+  .ab-goal { color: var(--sf-ink); }
+  .ab small { font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-3); margin-left: calc(2 * var(--u)); }
+  .ab-arrow { display: grid; place-items: center; color: var(--sf-ink-3); }
+  .ab-arrow svg { width: calc(24 * var(--u)); height: calc(24 * var(--u)); }
+  .ab-diff { align-self: stretch; display: grid; place-items: center; }
+  .ab-diff b { font-size: calc(22 * var(--u)); font-weight: 800; color: var(--t-accent); white-space: nowrap; }
+  .ab-act { padding-left: calc(18 * var(--u)); font-size: calc(16 * var(--u)); color: var(--sf-ink-2); line-height: 1.45; }
+  .ab-c-diff { text-align: center; }
+  .ab-head .ab-c-act { padding-left: calc(18 * var(--u)); }
+  .ab-note { margin-top: auto; }
+
+  /* 差の強調（つまみ: 差の強調） */
+  :global([data-t-diff='on']) .ab-diff { background: color-mix(in srgb, var(--t-accent) 9%, #fff); margin: calc(-2 * var(--u)) 0; }
+  :global([data-t-diff='on']) .ab-head .ab-c-diff { color: var(--t-accent); }
+  :global([data-t-diff='off']) .ab-diff b { color: var(--sf-ink); }
+
+  /* 打ち手の列を隠す（つまみ: 打ち手の列） */
+  :global([data-t-actions='hide']) .ab-c-act { display: none; }
+  :global([data-t-actions='hide']) .ab-row { grid-template-columns: calc(210 * var(--u)) calc(170 * var(--u)) calc(60 * var(--u)) calc(170 * var(--u)) minmax(0, 1fr); }
+  :global([data-t-actions='hide']) .ab-now, :global([data-t-actions='hide']) .ab-goal { font-size: calc(36 * var(--u)); }
+</style>

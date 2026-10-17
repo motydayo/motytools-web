@@ -1,0 +1,79 @@
+---
+// 資料レイアウトの見本: 入出力モデル型（入れるもの・処理・出てくるものを3つの枠で左から右へ並べ、矢印でつなぐ）
+// つまみ: --t-accent（色）・data-t-focus（強調 process|none）・data-t-counts（件数 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: '入出力モデル型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={4} lang={lang}>
+  <div class="io" data-demo="input-output">
+    <p class="sf-kicker" data-sf-in style="--i: 0">請求書処理のしくみ（経理部）</p>
+    <p class="sf-title" data-sf-in style="--i: 0">請求書は3工程を通り、支払いデータになる</p>
+    <div class="io-body">
+      <div class="io-col io-in" data-sf-in style="--i: 1">
+        <span class="io-label">入力</span>
+        <p class="io-head">届いた書類</p>
+        <ul class="io-list"><li>請求書（紙・PDF）</li><li>取引先の一覧表</li><li>発注書・納品書</li></ul>
+        <p class="io-count"><b>420</b>通 ／ 月</p>
+      </div>
+      <span class="io-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></span>
+      <div class="io-col io-mid" data-sf-in style="--i: 2">
+        <span class="io-label">処理</span>
+        <p class="io-head">経理部の3工程</p>
+        <ol class="io-steps">
+          <li><i>1</i><span><b>読み取る</b><em>金額と日付を入力</em></span></li>
+          <li><i>2</i><span><b>突き合わせる</b><em>発注書と照らす</em></span></li>
+          <li><i>3</i><span><b>承認する</b><em>部長が内容を確認</em></span></li>
+        </ol>
+        <p class="io-count"><b>約4分</b> ／ 1通</p>
+      </div>
+      <span class="io-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></span>
+      <div class="io-col io-out" data-sf-in style="--i: 3">
+        <span class="io-label">出力</span>
+        <p class="io-head">できあがるもの</p>
+        <ul class="io-list"><li>承認済みの支払いデータ</li><li>差し戻しの一覧（22件）</li><li>月末の仕訳データ</li></ul>
+        <p class="io-count"><b>398</b>件 ／ 月</p>
+      </div>
+    </div>
+    <p class="sf-note">※ 件数は2025年9月の実績。処理時間は読み取りから承認までの平均。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .io { display: flex; flex-direction: column; height: 100%; }
+  .io-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) calc(36 * var(--u)) minmax(0, 1.12fr) calc(36 * var(--u)) minmax(0, 1fr);
+    margin: calc(18 * var(--u)) 0 calc(10 * var(--u));
+  }
+  .io-col { display: flex; flex-direction: column; gap: calc(10 * var(--u)); padding: calc(14 * var(--u)) calc(20 * var(--u)) calc(14 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; }
+  .io-label { align-self: flex-start; padding: calc(2 * var(--u)) calc(12 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--sf-soft); color: var(--sf-ink-2); font-size: calc(15 * var(--u)); font-weight: 800; }
+  .io-head { margin: 0; font-size: calc(21 * var(--u)); font-weight: 800; line-height: 1.3; }
+  .io-list { margin: 0; padding: 0; list-style: none; display: grid; gap: calc(8 * var(--u)); }
+  .io-list li { position: relative; padding-left: calc(14 * var(--u)); font-size: calc(16 * var(--u)); color: var(--sf-ink-2); line-height: 1.4; }
+  .io-list li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: calc(6 * var(--u)); height: calc(6 * var(--u)); border-radius: 50%; background: var(--sf-mute); }
+  .io-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: calc(8 * var(--u)); }
+  .io-steps li { display: flex; align-items: center; gap: calc(12 * var(--u)); }
+  .io-steps i { flex: none; display: grid; place-items: center; width: calc(28 * var(--u)); height: calc(28 * var(--u)); border-radius: 50%; background: var(--sf-ink-2); color: #fff; font-size: calc(16 * var(--u)); font-weight: 800; font-style: normal; font-variant-numeric: tabular-nums; }
+  .io-steps span { display: grid; line-height: 1.3; }
+  .io-steps b { font-size: calc(17 * var(--u)); font-weight: 800; }
+  .io-steps em { font-size: calc(16 * var(--u)); font-style: normal; color: var(--sf-ink-2); }
+  .io-count { margin: auto 0 0; padding-top: calc(8 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .io-count b { font-size: calc(30 * var(--u)); font-weight: 800; color: var(--sf-ink); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .io-arrow { display: grid; place-items: center; color: var(--sf-ink-3); }
+  .io-arrow svg { width: calc(28 * var(--u)); height: calc(28 * var(--u)); }
+
+  /* 処理の枠を強調（data-focus="process"） */
+  :global([data-t-focus='process']) .io-mid { border: calc(3 * var(--u)) solid var(--t-accent); background: color-mix(in srgb, var(--t-accent) 6%, #fff); }
+  :global([data-t-focus='process']) .io-mid .io-label { background: var(--t-accent); color: #fff; }
+  :global([data-t-focus='process']) .io-mid .io-steps i { background: var(--t-accent); }
+  :global([data-t-focus='process']) .io-mid .io-count b { color: var(--t-accent); }
+
+  /* 件数を隠す（data-counts="hide"） */
+  :global([data-t-counts='hide']) .io-count { display: none; }
+</style>

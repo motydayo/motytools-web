@@ -1,0 +1,75 @@
+---
+// 資料レイアウトの見本: 数字インパクト型（1つの数字を画面いっぱいに見せ、横に意味と前年比、下に目盛りつきの帯）
+// 帯の長さは値に比例（幅 = 値 ÷ 100 × 100%）。値を変えるときは CSS の「/ 100」と TICKS も一緒に見直す。
+// つまみ: --t-accent（色）・data-t-align（並べ方 left|center）・--t-num（数字の大きさ。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const MAX = 100;
+const TICKS = [0, 25, 50, 75, 100];
+const DICT = {
+  ja: {
+    name: '数字インパクト型',
+    kicker: '新入社員研修アンケート（2026年度）',
+    title: '研修の満足度は、過去最高の92%に',
+    value: 92,
+    prev: 81,
+    unit: '%',
+    label: '「役に立った」と答えた新入社員の割合',
+    chip: '前年度の81%から +11ポイント',
+    prevLabel: '前年度 81%',
+    note: '※ 回答148人（対象152人・回収率97%）。「とても役に立った」「役に立った」の合計。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+if (T.value > MAX || T.prev > MAX || TICKS[TICKS.length - 1] !== MAX) throw new Error('big-number: 目盛りの最大と値が合っていません');
+---
+
+<SlideFrame size={size} label={T.name} page={12} lang={lang}>
+  <div class="bn" data-demo="big-number">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="bn-hero">
+      <p class="bn-num" data-sf-in style="--i: 1">{T.value}<span class="bn-unit">{T.unit}</span></p>
+      <div class="bn-side" data-sf-in style="--i: 2">
+        <p class="bn-label">{T.label}</p>
+        <p class="bn-chip">{T.chip}</p>
+      </div>
+    </div>
+    <div class="bn-scale" data-sf-in style="--i: 3">
+      <div class="bn-track">
+        <i class="bn-fill" data-sf-grow="x" style={`--v: ${T.value}; --i: 3`} />
+        <i class="bn-prev" style={`--v: ${T.prev}`}><span>{T.prevLabel}</span></i>
+      </div>
+      <div class="bn-ticks">
+        {TICKS.map((t) => <span style={`--v: ${t}`}>{t}%</span>)}
+      </div>
+    </div>
+    <p class="sf-note bn-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .bn { display: flex; flex-direction: column; height: 100%; }
+  .bn-hero { flex: 1; display: flex; align-items: center; gap: calc(44 * var(--u)); min-height: 0; }
+  .bn-num { margin: 0; font-size: calc(var(--t-num) * var(--u)); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--t-accent); font-variant-numeric: tabular-nums; }
+  .bn-unit { margin-left: calc(6 * var(--u)); font-size: 0.42em; letter-spacing: 0; }
+  .bn-side { display: flex; flex-direction: column; gap: calc(14 * var(--u)); min-width: 0; padding-left: calc(32 * var(--u)); border-left: calc(1 * var(--u)) solid var(--sf-line); }
+  .bn-label { margin: 0; font-size: calc(24 * var(--u)); font-weight: 800; line-height: 1.4; }
+  .bn-chip { margin: 0; font-size: calc(20 * var(--u)); font-weight: 700; color: var(--sf-ink-2); font-variant-numeric: tabular-nums; }
+
+  /* 0〜100%の帯。長さは値に比例 */
+  .bn-scale { margin-bottom: calc(10 * var(--u)); padding-top: calc(30 * var(--u)); }
+  .bn-track { position: relative; height: calc(20 * var(--u)); border-radius: calc(10 * var(--u)); background: var(--sf-soft); }
+  .bn-fill { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--v) / 100 * 100%); border-radius: calc(10 * var(--u)); background: var(--t-accent); }
+  .bn-prev { position: absolute; left: calc(var(--v) / 100 * 100%); top: calc(-6 * var(--u)); bottom: calc(-6 * var(--u)); width: calc(3 * var(--u)); margin-left: calc(-1.5 * var(--u)); background: var(--sf-ink); }
+  .bn-prev span { position: absolute; right: calc(8 * var(--u)); bottom: 100%; margin-bottom: calc(2 * var(--u)); white-space: nowrap; font-size: calc(14 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .bn-ticks { position: relative; height: calc(24 * var(--u)); margin-top: calc(8 * var(--u)); }
+  .bn-ticks span { position: absolute; left: calc(var(--v) / 100 * 100%); transform: translateX(-50%); font-size: calc(14 * var(--u)); color: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+  .bn-ticks span:first-child { transform: none; }
+  .bn-ticks span:last-child { transform: translateX(-100%); }
+  .bn-note { margin-top: auto; }
+
+  /* 並べ方（つまみ: 並べ方） */
+  :global([data-t-align='center']) .bn-hero { justify-content: center; }
+</style>

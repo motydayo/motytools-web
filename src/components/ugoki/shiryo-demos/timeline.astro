@@ -1,0 +1,77 @@
+---
+// prefix: tl
+// 資料レイアウトの見本: タイムライン型（出来事を時間の順に1本の線へ並べる。いまの位置を赤い目印で示す）
+// 間隔は日付に比例させず等間隔にしている（5つの節目を読みやすく並べるため。注記で断る）
+// つまみ: --t-accent（色）・data-t-focus（強調 last|none）・data-t-today（いまの目印 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'タイムライン型',
+    kicker: '新店舗オープンまでの流れ（2026年）',
+    title: 'ミナト珈琲 横浜店は、10月10日にオープンします',
+    events: [
+      { date: '4月20日', head: '出店契約', body: '横浜駅西口の物件を契約', done: true },
+      { date: '6月1日', head: '内装工事', body: '約6週間。7月中旬に引き渡し', done: true },
+      { date: '7月27日', head: 'スタッフ研修', body: '新しく採用した8人が研修を開始', done: true },
+      { date: '9月20日', head: '試験営業', body: '招待客100人で通し練習' },
+      { date: '10月10日', head: 'グランドオープン', body: '初月の売上目標は900万円' },
+    ],
+    now: 'いま 8/25',
+    note: '※ 間隔は日付に比例していません。いまは3つ目と4つ目の間です。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={5} lang={lang}>
+  <div class="tl" data-demo="timeline">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="tl-track">
+      <div class="tl-inner">
+        <span class="tl-line"></span>
+        <span class="tl-done"></span>
+        <span class="tl-now"><b>{T.now}</b><i></i></span>
+        {T.events.map((e, i) => (
+          <div class:list={['tl-ev', e.done && 'is-done']} data-sf-in style={`--i: ${i + 1}`}>
+            <span class="tl-date">{e.date}</span>
+            <span class="tl-dot"></span>
+            <span class="tl-head">{e.head}</span>
+            <span class="tl-body">{e.body}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 6">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .tl { display: flex; flex-direction: column; height: 100%; }
+  .tl-track { flex: 1; display: flex; align-items: center; margin: calc(12 * var(--u)) 0; min-height: 0; }
+  .tl-inner { position: relative; width: 100%; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  /* 線は1つ目の中心から5つ目の中心まで。日付の行(calc(34 * var(--u)))と点の行(calc(24 * var(--u)))の真ん中に通す */
+  .tl-line { position: absolute; left: 10%; right: 10%; top: calc(44 * var(--u)); height: calc(4 * var(--u)); border-radius: calc(2 * var(--u)); background: var(--sf-line); }
+  .tl-done { position: absolute; left: 10%; width: 50%; top: calc(44 * var(--u)); height: calc(4 * var(--u)); border-radius: calc(2 * var(--u)); background: var(--sf-ink); }
+  .tl-now { position: absolute; left: 60%; top: 0; width: 0; }
+  .tl-now b { position: absolute; left: 0; top: calc(4 * var(--u)); transform: translateX(-50%); white-space: nowrap; font-size: calc(15 * var(--u)); font-weight: 800; color: #d0453a; }
+  .tl-now i { position: absolute; left: calc(-1 * var(--u)); top: calc(32 * var(--u)); width: calc(2 * var(--u)); height: calc(32 * var(--u)); background: #d0453a; }
+  .tl-ev { display: flex; flex-direction: column; align-items: center; padding: 0 calc(8 * var(--u)); text-align: center; }
+  .tl-date { height: calc(34 * var(--u)); display: flex; align-items: center; font-size: calc(18 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .tl-dot { position: relative; z-index: 1; box-sizing: border-box; width: calc(24 * var(--u)); height: calc(24 * var(--u)); margin-bottom: calc(14 * var(--u)); border: calc(4 * var(--u)) solid var(--sf-ink-3); border-radius: 50%; background: #fff; }
+  .tl-ev.is-done .tl-dot { border-color: var(--sf-ink); background: var(--sf-ink); }
+  .tl-head { font-size: calc(20 * var(--u)); font-weight: 800; line-height: 1.3; }
+  .tl-body { margin-top: calc(6 * var(--u)); font-size: calc(16 * var(--u)); line-height: 1.5; color: var(--sf-ink-2); }
+
+  /* いまの目印（つまみ: いまの目印）。出さないときは点をすべて同じ濃さにそろえる */
+  :global([data-t-today='hide']) .tl-now,
+  :global([data-t-today='hide']) .tl-done { display: none; }
+  :global([data-t-today='hide']) .tl-dot { border-color: var(--sf-ink); background: var(--sf-ink); }
+
+  /* 最後の節目を強調（つまみ: 強調） */
+  :global([data-t-focus='last']) .tl-ev:last-child .tl-date,
+  :global([data-t-focus='last']) .tl-ev:last-child .tl-head { color: var(--t-accent); }
+  :global([data-t-focus='last']) .tl-ev:last-child .tl-dot { border-color: var(--t-accent); background: var(--t-accent); box-shadow: 0 0 0 calc(6 * var(--u)) color-mix(in srgb, var(--t-accent) 22%, #fff); }
+</style>

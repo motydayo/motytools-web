@@ -1,0 +1,64 @@
+---
+// 資料レイアウトの見本: インタビュー抜粋型（聞き取りで出た声を3つ抜き出し、テーマの札と話した人の属性を添える）
+// 話した人・発言・数字はすべて架空。
+// つまみ: --t-accent（色）・data-t-mark（大事な言葉のマーカー on|off）・data-t-tag（テーマの札 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'インタビュー抜粋型',
+    kicker: '経理ソフト導入前のインタビュー（事務担当5名・2026年9月）',
+    title: '導入前の不安は、操作を覚える手間に集中していた',
+    voices: [
+      { tag: '覚える手間', pre: '新しい画面を', mark: '覚え直すのが大変そう', post: 'で、正直、今のままでいいかなと思っていました。', who: '40代・小売業・経理担当' },
+      { tag: '移行の不安', pre: '前のデータが', mark: 'ちゃんと引き継げるのか', post: 'が、いちばん心配でした。', who: '50代・製造業・総務担当' },
+      { tag: '期待', pre: '', mark: '月末の入力作業が減る', post: 'なら、多少の勉強はしてもいいと思っています。', who: '30代・サービス業・経理担当' },
+    ],
+    summary: { num: '4', unit: '名', text: '5名中4名が、最初の不安として「覚える手間」を挙げた' },
+    note: '※ 発言は聞き取りをもとに要約。話した人が特定されないよう、属性は大まかに記載。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={17} lang={lang}>
+  <div class="iv" data-demo="interview">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="iv-row">
+      {T.voices.map((v, i) => (
+        <div class="iv-card" data-sf-in style={`--i: ${i + 1}`}>
+          <span class="iv-tag">{v.tag}</span>
+          <span class="iv-q">{v.pre}<span class="iv-mark">{v.mark}</span>{v.post}</span>
+          <span class="iv-who">{v.who}</span>
+        </div>
+      ))}
+    </div>
+    <div class="iv-sum" data-sf-in style="--i: 4">
+      <span class="iv-num">{T.summary.num}<small>{T.summary.unit}</small></span>
+      <span class="iv-sum-text">{T.summary.text}</span>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .iv { display: flex; flex-direction: column; height: 100%; }
+  .iv-row { flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(14 * var(--u)); margin: calc(16 * var(--u)) 0 calc(12 * var(--u)); min-height: 0; }
+  .iv-card { position: relative; display: flex; flex-direction: column; gap: calc(10 * var(--u)); padding: calc(14 * var(--u)) calc(18 * var(--u)) calc(14 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; }
+  .iv-tag { align-self: flex-start; padding: calc(2 * var(--u)) calc(12 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--sf-soft); color: var(--sf-ink-2); font-size: calc(15 * var(--u)); font-weight: 800; }
+  .iv-q { position: relative; padding-left: calc(24 * var(--u)); font-size: calc(20 * var(--u)); font-weight: 700; line-height: 1.6; }
+  .iv-q::before { content: '「'; position: absolute; left: 0; top: calc(-4 * var(--u)); font-size: calc(30 * var(--u)); font-weight: 800; line-height: 1.3; color: var(--t-accent); }
+  .iv-mark { font-weight: 800; }
+  .iv-who { margin-top: auto; padding-top: calc(8 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .iv-sum { display: flex; align-items: center; gap: calc(18 * var(--u)); margin-bottom: calc(10 * var(--u)); padding: calc(8 * var(--u)) calc(22 * var(--u)); border-radius: calc(12 * var(--u)); background: var(--sf-soft); }
+  .iv-num { font-size: calc(40 * var(--u)); font-weight: 800; line-height: 1.1; color: var(--t-accent); font-variant-numeric: tabular-nums; }
+  .iv-num small { margin-left: calc(2 * var(--u)); font-size: calc(22 * var(--u)); }
+  .iv-sum-text { font-size: calc(21 * var(--u)); font-weight: 800; }
+
+  /* 大事な言葉のマーカー（つまみ: マーカー） */
+  :global([data-t-mark='on']) .iv-mark { background: linear-gradient(transparent 58%, color-mix(in srgb, var(--t-accent) 26%, #fff) 58%); }
+  /* テーマの札（つまみ: テーマの札） */
+  :global([data-t-tag='hide']) .iv-tag { display: none; }
+</style>

@@ -1,0 +1,102 @@
+---
+// 資料レイアウトの見本: リスク登録簿型（起こりうる問題を行に並べ、可能性・影響・点数（掛け算）・対策・担当を表にする。点数の高い順に並べる）
+// つまみ: --t-accent（色）・data-t-focus（強調 top|none）・data-t-level（可能性・影響の表し方 text|dots）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: 'リスク登録簿型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={15} lang={lang}>
+  <div class="rr" data-demo="risk-register">
+    <p class="sf-kicker" data-sf-in style="--i: 0">新店舗オープンのリスク管理表（10月時点）</p>
+    <p class="sf-title" data-sf-in style="--i: 0">開店前に手を打つのは、点数6の2件</p>
+    <div class="rr-table">
+      <div class="rr-row rr-head">
+        <span>No</span><span>リスク</span><span>可能性</span><span>影響</span><span>点数</span><span>対策</span><span>担当</span>
+      </div>
+      <div class="rr-row rr-top" data-sf-in style="--i: 1">
+        <span class="rr-no">1</span>
+        <span class="rr-risk">工事の遅れで開店日が延びる</span>
+        <span class="rr-lv" data-v="2"><b>中</b><i></i><i></i><i></i></span>
+        <span class="rr-lv" data-v="3"><b>大</b><i></i><i></i><i></i></span>
+        <span class="rr-sc"><b class="rr-hi">6</b></span>
+        <span class="rr-act">工程を週次で確認し、予備日を2週間とる</span>
+        <span class="rr-who">出店課</span>
+      </div>
+      <div class="rr-row rr-top" data-sf-in style="--i: 2">
+        <span class="rr-no">2</span>
+        <span class="rr-risk">採用が間に合わず人手が足りない</span>
+        <span class="rr-lv" data-v="3"><b>高</b><i></i><i></i><i></i></span>
+        <span class="rr-lv" data-v="2"><b>中</b><i></i><i></i><i></i></span>
+        <span class="rr-sc"><b class="rr-hi">6</b></span>
+        <span class="rr-act">求人媒体を追加し、10月末まで面接を続ける</span>
+        <span class="rr-who">人事部</span>
+      </div>
+      <div class="rr-row" data-sf-in style="--i: 3">
+        <span class="rr-no">3</span>
+        <span class="rr-risk">開店告知の反応が弱い</span>
+        <span class="rr-lv" data-v="2"><b>中</b><i></i><i></i><i></i></span>
+        <span class="rr-lv" data-v="2"><b>中</b><i></i><i></i><i></i></span>
+        <span class="rr-sc"><b class="rr-mid">4</b></span>
+        <span class="rr-act">開店2週間前に反応を見て広告を足す</span>
+        <span class="rr-who">販促課</span>
+      </div>
+      <div class="rr-row" data-sf-in style="--i: 4">
+        <span class="rr-no">4</span>
+        <span class="rr-risk">仕入れ先の納品が遅れる</span>
+        <span class="rr-lv" data-v="1"><b>低</b><i></i><i></i><i></i></span>
+        <span class="rr-lv" data-v="3"><b>大</b><i></i><i></i><i></i></span>
+        <span class="rr-sc"><b class="rr-mid">3</b></span>
+        <span class="rr-act">予備の仕入れ先を1社決めておく</span>
+        <span class="rr-who">仕入課</span>
+      </div>
+      <div class="rr-row" data-sf-in style="--i: 5">
+        <span class="rr-no">5</span>
+        <span class="rr-risk">設備の初期不良</span>
+        <span class="rr-lv" data-v="1"><b>低</b><i></i><i></i><i></i></span>
+        <span class="rr-lv" data-v="1"><b>小</b><i></i><i></i><i></i></span>
+        <span class="rr-sc"><b class="rr-low">1</b></span>
+        <span class="rr-act">納品時に全数を確認する</span>
+        <span class="rr-who">設備課</span>
+      </div>
+    </div>
+    <p class="sf-note">※ 点数＝可能性（低1・中2・高3）× 影響（小1・中2・大3）。点数の高い順に並べた。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .rr { display: flex; flex-direction: column; height: 100%; }
+  .rr-table { flex: 1; min-height: 0; display: flex; flex-direction: column; margin: calc(14 * var(--u)) 0 calc(8 * var(--u)); }
+  .rr-row { flex: 1; display: grid; grid-template-columns: calc(36 * var(--u)) calc(232 * var(--u)) calc(92 * var(--u)) calc(92 * var(--u)) calc(64 * var(--u)) minmax(0, 1fr) calc(68 * var(--u)); align-items: center; border-bottom: calc(1.5 * var(--u)) solid var(--sf-line); }
+  .rr-row > span { padding: 0 calc(8 * var(--u)); font-size: calc(16 * var(--u)); line-height: 1.35; }
+  .rr-head { flex: none; height: calc(34 * var(--u)); background: var(--sf-ink-2); border-bottom: 0; }
+  .rr-head > span { font-size: calc(16 * var(--u)); font-weight: 800; color: #fff; }
+  .rr-head > span:nth-child(n+3):nth-child(-n+5) { text-align: center; }
+  .rr-no { color: var(--sf-ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .rr-risk { font-weight: 800; }
+  .rr-act { color: var(--sf-ink-2); }
+  .rr-who { color: var(--sf-ink-2); text-align: center; padding: 0 calc(4 * var(--u)); }
+  .rr-lv { display: flex; align-items: center; justify-content: center; gap: calc(4 * var(--u)); }
+  .rr-lv b { font-size: calc(17 * var(--u)); font-weight: 800; }
+  .rr-lv i { display: none; width: calc(14 * var(--u)); height: calc(14 * var(--u)); border-radius: 50%; border: calc(2 * var(--u)) solid var(--sf-mute); box-sizing: border-box; }
+  .rr-sc { text-align: center; }
+  .rr-sc b { display: inline-grid; place-items: center; width: calc(36 * var(--u)); height: calc(36 * var(--u)); border-radius: 50%; font-size: calc(20 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .rr-hi { background: var(--sf-ink); color: #fff; }
+  .rr-mid { border: calc(2 * var(--u)) solid var(--sf-ink-2); color: var(--sf-ink); box-sizing: border-box; }
+  .rr-low { background: var(--sf-soft); color: var(--sf-ink-3); }
+
+  /* 点で表す（data-level="dots"）: 点の数が低1・中2・高3 */
+  :global([data-t-level='dots']) .rr-lv b { display: none; }
+  :global([data-t-level='dots']) .rr-lv i { display: block; }
+  :global([data-t-level='dots']) .rr-lv[data-v="1"] i:nth-child(-n+2),
+  :global([data-t-level='dots']) .rr-lv[data-v="2"] i:nth-child(-n+3),
+  :global([data-t-level='dots']) .rr-lv[data-v="3"] i:nth-child(-n+4) { background: var(--sf-ink-2); border-color: var(--sf-ink-2); }
+
+  /* 点数の高い2件を強調（data-focus="top"） */
+  :global([data-t-focus='top']) .rr-top { background: color-mix(in srgb, var(--t-accent) 7%, #fff); }
+  :global([data-t-focus='top']) .rr-top .rr-hi { background: var(--t-accent); }
+  :global([data-t-focus='top']) .rr-top .rr-lv[data-v="3"] b { color: var(--t-accent); }
+  :global([data-t-focus='top'])[data-level="dots"] .rr-top .rr-lv[data-v="3"] i:nth-child(-n+4) { background: var(--t-accent); border-color: var(--t-accent); }
+</style>

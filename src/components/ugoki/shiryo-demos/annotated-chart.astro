@@ -1,0 +1,95 @@
+---
+// 資料レイアウトの見本: 注釈付きグラフ型（月間訪問数の折れ線に、変化の大きい3つの月へ番号つきの注釈を書き込む）
+// 線の高さ = 訪問数 ÷ 100 × 266（目盛りは0〜100千人）。注釈は、前の月との差が大きい3つの月（3月・7月・9月）。
+// つまみ: --t-accent（色）・data-t-notes（注釈の数 all|peak|none）・--t-w（線の太さ）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const PFX = 'an-';
+const PAGE = 18;
+const ATTRS = ['notes'];
+// 自社サイトの月間訪問数（千人）。1〜12月。注釈は、前の月との差が大きい3つの月につける。
+const V = [48, 51, 63, 59, 57, 54, 41, 55, 84, 79, 74, 70];
+const MAXV = 100;
+if (V.some((v) => v > MAXV)) throw new Error('annotated-chart: 目盛りの最大を超える値があります');
+const NOTES = [
+  { m: 3, a: '新生活セールを開始' },
+  { m: 7, a: 'サーバー障害で3日間停止' },
+  { m: 9, a: 'テレビで紹介され急増' },
+];
+const peak = V.indexOf(Math.max(...V)) + 1;
+if (peak !== 9) throw new Error('annotated-chart: 最大の月が9月ではありません（見出しと合いません）');
+const T = {
+  name: '注釈付きグラフ型',
+  kicker: '自社サイトの月間訪問数（2025年1〜12月）',
+  title: `${peak}月のテレビ紹介で、訪問数は年間最高の${(V[peak - 1] / 10).toFixed(1)}万人に`,
+  note: '※ 月間の訪問数（千人）。注釈の数字は、前の月との差。',
+};
+const fmt = (n) => String(Math.round(n * 100) / 100);
+const sgn = (n) => (n > 0 ? '+' : '−') + Math.abs(n);
+function buildBody(p) {
+  const c = (...n) => n.map((x) => p + x).join(' ');
+  const L = 48, R = 840, TOP = 24, B = 290, STEP = (R - L) / 12;
+  const x = (i) => fmt(L + STEP * (i + 0.5));
+  const y = (v) => fmt(B - (v / MAXV) * (B - TOP));
+  let s = `    <svg class="${c('svg')}" viewBox="0 0 848 338" role="img" aria-label="月間訪問数の折れ線グラフと、山と谷への注釈">\n`;
+  for (let k = 0; k <= 5; k++) {
+    s += `      <line class="${c(k === 0 ? 'base' : 'grid')}" x1="${L}" x2="${R}" y1="${y(k * 20)}" y2="${y(k * 20)}" />\n`;
+    s += `      <text class="${c('tick')}" x="${L - 10}" y="${fmt(+y(k * 20) + 5)}" text-anchor="end">${k * 20}</text>\n`;
+  }
+  s += `      <text class="${c('unit')}" x="${L - 10}" y="${TOP - 16}" text-anchor="end">（千人）</text>\n`;
+  V.forEach((_, i) => { s += `      <text class="${c('mon')}" x="${x(i)}" y="${B + 24}" text-anchor="middle">${i + 1}月</text>\n`; });
+  s += `      <polyline class="${c('line')}" points="${V.map((v, i) => `${x(i)},${y(v)}`).join(' ')}" />\n`;
+  V.forEach((v, i) => {
+    s += `      <circle class="${c('dot')}" cx="${x(i)}" cy="${y(v)}" r="4" />\n`;
+  });
+  NOTES.forEach((n, k) => {
+    const i = n.m - 1, v = V[i], d = v - V[i - 1];
+    const cx = +x(i), cy = +y(v);
+    s += `      <g class="${c('note', 'n' + (k + 1))}">\n`;
+    s += `        <circle class="${c('badge')}" cx="${cx}" cy="${cy}" r="12" />\n`;
+    s += `        <text class="${c('bn')}" x="${cx}" y="${fmt(cy + 5)}" text-anchor="middle">${k + 1}</text>\n`;
+    // 文字の置き場所: 山の左 / 谷の下 / 途中の上
+    const pos = k === 2 ? { x: cx - 22, a: 'end', y1: cy - 12, y2: cy + 8 } : k === 1 ? { x: cx, a: 'middle', y1: cy + 38, y2: cy + 58 } : { x: cx, a: 'middle', y1: cy - 40, y2: cy - 20 };
+    s += `        <text class="${c('nt')}" x="${fmt(pos.x)}" y="${fmt(pos.y1)}" text-anchor="${pos.a}">${n.a}</text>\n`;
+    s += `        <text class="${c('nd')}" x="${fmt(pos.x)}" y="${fmt(pos.y2)}" text-anchor="${pos.a}">${sgn(d)}千人（${n.m - 1}月から）</text>\n`;
+    s += `      </g>\n`;
+  });
+  s += `    </svg>`;
+  return s;
+}
+// 英語版を作るときは T を言語ごとに用意する（今は日本語だけ）
+const body = buildBody('an-');
+---
+
+<SlideFrame size={size} label={T.name} page={PAGE} lang={lang}>
+  <div class="an" data-demo="annotated-chart">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="an-body" data-sf-in style="--i: 2" set:html={body} />
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style is:global>
+  .an { display: flex; flex-direction: column; height: 100%; }
+  .an-body { flex: 1; min-height: 0; margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); }
+  /* 高さ = 訪問数 ÷ 100 × 266（目盛りは0〜100千人）。注釈は、前の月との差が大きい3つの月に、番号つきの丸と短い文でつける。座標は幅848×高さ338の中で数字で決めている */
+  
+  .an-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .an-grid { stroke: #e3e5ea; stroke-width: 1; }
+  .an-base { stroke: #8a8f9c; stroke-width: 1.5; }
+  .an-tick { font-size: 14px; fill: #8a8f9c; font-variant-numeric: tabular-nums; }
+  .an-unit { font-size: 14px; fill: #8a8f9c; }
+  .an-mon { font-size: 15px; fill: #5a6070; }
+  .an-line { fill: none; stroke: #5a6070; stroke-width: var(--t-w); stroke-linejoin: round; stroke-linecap: round; }
+  .an-dot { fill: #fff; stroke: #5a6070; stroke-width: 2; }
+  .an-badge { fill: var(--t-accent); stroke: #fff; stroke-width: 2; }
+  .an-bn { font-size: 14px; font-weight: 800; fill: #fff; }
+  .an-nt { font-size: 17px; font-weight: 800; fill: #1f2430; }
+  .an-nd { font-size: 15px; font-weight: 700; fill: var(--t-accent); font-variant-numeric: tabular-nums; }
+  
+  /* 注釈の数（data-notes: all＝3つ、peak＝最大の山だけ、none＝つけない） */
+  [data-t-notes='peak'] .an-note.an-n1,
+  [data-t-notes='peak'] .an-note.an-n2,
+  [data-t-notes='none'] .an-note { display: none; }
+</style>

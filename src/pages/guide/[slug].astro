@@ -26,7 +26,11 @@ const html = entry.rendered?.html ?? '';
 const headings = (entry.rendered?.metadata?.headings ?? []).filter((h) => h.depth === 2);
 const parts = splitBody(html);
 
-const related = (await getGuides()).filter((g) => g.data.app === app.slug && g.id !== entry.id).slice(0, 6);
+// 関連記事は検索に出している記事を先に（noindex の記事は後ろへ）
+const related = (await getGuides())
+  .filter((g) => g.data.app === app.slug && g.id !== entry.id)
+  .sort((a, b) => Number(a.data.noindex) - Number(b.data.noindex))
+  .slice(0, 6);
 const others = otherApps(app.slug, 3);
 
 const jsonLd: object[] = [
@@ -78,6 +82,7 @@ if (faq.length > 0) {
   description={description}
   path={path}
   ogType="article"
+  noindex={entry.data.noindex}
   appleAppId={app.appId}
   jsonLd={jsonLd}
 >

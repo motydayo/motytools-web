@@ -1,0 +1,71 @@
+---
+// 資料レイアウトの見本: Q&A型（質問を受け付ける時間を示し、質問の出し方と本日のポイントを添える）
+// つまみ: --t-accent（色）・--t-size（Q&Aの文字の大きさ。幅960pxのスライドでのpx）・data-t-recap（本日のポイントの帯 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'Q&A型',
+    kicker: '新店舗オープン計画のご説明',
+    title: 'ご質問をどうぞ（質疑応答 10分）',
+    big: 'Q&A',
+    waysTitle: '質問の出し方',
+    ways: [
+      { t: 'その場で声をかける', d: '手を挙げて、そのままご質問ください' },
+      { t: 'チャットに書き込む', d: 'オンラインの方は、チャット欄へ' },
+      { t: 'あとからメールで送る', d: 'questions@example.com' },
+    ],
+    recapTitle: '本日お伝えしたこと',
+    recap: ['オープンは3月1日', '開店は6人体制', '未決の2点は10月29日'],
+    note: '※ 時間内に答えきれなかった質問は、後日メールでお答えします。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={29} lang={lang}>
+  <div class="qa" data-demo="qa-slide">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="qa-main">
+      <div class="qa-big" data-sf-in style="--i: 1"><span>{T.big}</span></div>
+      <div class="qa-ways" data-sf-in style="--i: 2">
+        <span class="qa-ways-t">{T.waysTitle}</span>
+        <ol>
+          {T.ways.map((w, i) => (
+            <li><i>{i + 1}</i><span class="qa-w"><b>{w.t}</b><small>{w.d}</small></span></li>
+          ))}
+        </ol>
+      </div>
+    </div>
+    <div class="qa-recap" data-sf-in style="--i: 3">
+      <span class="qa-recap-t">{T.recapTitle}</span>
+      <ul>{T.recap.map((r) => <li>{r}</li>)}</ul>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .qa { display: flex; flex-direction: column; height: 100%; }
+  .qa-main { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: calc(32 * var(--u)); margin: calc(14 * var(--u)) 0 calc(12 * var(--u)); min-height: 0; }
+  .qa-big { display: flex; align-items: center; justify-content: center; border-radius: calc(14 * var(--u)); background: color-mix(in srgb, var(--t-accent) 7%, #fff); min-width: 0; }
+  .qa-big span { font-size: calc(var(--t-size) * var(--u)); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--t-accent); }
+  .qa-ways { display: flex; flex-direction: column; min-height: 0; }
+  .qa-ways-t { padding-bottom: calc(6 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .qa-ways ol { flex: 1; display: grid; grid-auto-rows: 1fr; margin: 0; padding: 0; list-style: none; }
+  .qa-ways li { display: flex; align-items: center; gap: calc(14 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-soft); }
+  .qa-ways li:last-child { border-bottom: 0; }
+  .qa-ways li i { flex: none; display: flex; align-items: center; justify-content: center; width: calc(32 * var(--u)); height: calc(32 * var(--u)); border-radius: 50%; background: var(--sf-ink-2); color: #fff; font-style: normal; font-size: calc(17 * var(--u)); font-weight: 800; }
+  .qa-w { display: flex; flex-direction: column; min-width: 0; }
+  .qa-w b { font-size: calc(21 * var(--u)); font-weight: 800; }
+  .qa-w small { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .qa-recap { display: flex; align-items: center; gap: calc(20 * var(--u)); margin-bottom: calc(10 * var(--u)); padding: calc(12 * var(--u)) calc(20 * var(--u)); border-radius: calc(10 * var(--u)); background: var(--sf-soft); }
+  .qa-recap-t { flex: none; font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .qa-recap ul { flex: 1; display: flex; gap: calc(20 * var(--u)); margin: 0; padding: 0; list-style: none; }
+  .qa-recap li { flex: 1; padding-left: calc(12 * var(--u)); border-left: calc(3 * var(--u)) solid var(--t-accent); font-size: calc(17 * var(--u)); font-weight: 700; line-height: 1.35; }
+
+  /* 本日のポイントの帯（つまみ: 本日のポイントの帯） */
+  :global([data-t-recap='hide']) .qa-recap { display: none; }
+</style>

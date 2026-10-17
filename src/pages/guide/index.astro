@@ -7,7 +7,9 @@ import { APPS } from '../../data/apps';
 import { getGuides, updatedOf, jaDate, isoDate } from '../../lib/guide';
 
 const guides = await getGuides();
-const groups = APPS.map((app) => ({ app, items: guides.filter((g) => g.data.app === app.slug) })).filter(
+// 検索に出している記事を先に並べる（noindex の記事は各アプリの後ろへ。同じ組の中は新しい順のまま）
+const byIndexed = (a: (typeof guides)[number], b: (typeof guides)[number]) => Number(a.data.noindex) - Number(b.data.noindex);
+const groups = APPS.map((app) => ({ app, items: guides.filter((g) => g.data.app === app.slug).sort(byIndexed) })).filter(
   (g) => g.items.length > 0
 );
 const appsWithout = APPS.filter((a) => !groups.some((g) => g.app.slug === a.slug));
@@ -19,7 +21,7 @@ const jsonLd = [
     name: '使い方ガイド - motytools',
     url: `${SITE.url}/guide/`,
     inLanguage: 'ja',
-    hasPart: guides.map((g) => ({ '@type': 'Article', headline: g.data.title, url: `${SITE.url}/guide/${g.id}/` })),
+    hasPart: guides.filter((g) => !g.data.noindex).map((g) => ({ '@type': 'Article', headline: g.data.title, url: `${SITE.url}/guide/${g.id}/` })),
   },
   {
     '@context': 'https://schema.org',

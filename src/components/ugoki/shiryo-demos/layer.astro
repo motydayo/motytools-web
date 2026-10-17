@@ -1,0 +1,69 @@
+---
+// 資料レイアウトの見本: レイヤー構造型（4つの層を上から順に積み、層ごとに名前・役割・例を書く。右に「お客さま側→システム側」の向きを示す）
+// つまみ: --t-accent（色）・data-t-focus（強調 logic|data|none）・--t-gap（層の間隔。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: 'レイヤー構造型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={10} lang={lang}>
+  <div class="ly" data-demo="layer">
+    <p class="sf-kicker" data-sf-in style="--i: 0">宿泊予約システムの構成</p>
+    <p class="sf-title" data-sf-in style="--i: 0">ホテルの予約システムは、4つの層で動いている</p>
+    <div class="ly-body">
+      <div class="ly-stack">
+        <div class="ly-row" data-sf-in style="--i: 1">
+          <i class="ly-no">1</i>
+          <span class="ly-name"><b>利用する層</b><em>画面を通じて使う</em></span>
+          <span class="ly-eg"><span>予約サイト</span><span>フロントの画面</span><span>スマホアプリ</span></span>
+        </div>
+        <div class="ly-row ly-logic" data-sf-in style="--i: 2">
+          <i class="ly-no">2</i>
+          <span class="ly-name"><b>業務の層</b><em>仕事のルールを処理する</em></span>
+          <span class="ly-eg"><span>空室の確認</span><span>料金の計算</span><span>予約の確定</span></span>
+        </div>
+        <div class="ly-row ly-data" data-sf-in style="--i: 3">
+          <i class="ly-no">3</i>
+          <span class="ly-name"><b>データの層</b><em>情報をためて取り出す</em></span>
+          <span class="ly-eg"><span>顧客台帳</span><span>客室マスタ</span><span>予約データ</span></span>
+        </div>
+        <div class="ly-row" data-sf-in style="--i: 4">
+          <i class="ly-no">4</i>
+          <span class="ly-name"><b>基盤の層</b><em>全体を動かす土台</em></span>
+          <span class="ly-eg"><span>サーバー</span><span>ネットワーク</span><span>セキュリティ</span></span>
+        </div>
+      </div>
+      <div class="ly-axis" aria-hidden="true">
+        <span>お客さま側</span>
+        <svg viewBox="0 0 24 200" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 V194 M5 184 L12 195 L19 184" /></svg>
+        <span>システム側</span>
+      </div>
+    </div>
+    <p class="sf-note">※ 上の層は、下の層に頼って動く。下の層を変えると、上の層にも影響が出る。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ly { display: flex; flex-direction: column; height: 100%; }
+  .ly-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) calc(96 * var(--u)); gap: calc(20 * var(--u)); margin: calc(16 * var(--u)) 0 calc(8 * var(--u)); }
+  .ly-stack { display: flex; flex-direction: column; gap: calc(var(--t-gap) * var(--u)); min-height: 0; }
+  .ly-row { flex: 1; display: grid; grid-template-columns: calc(36 * var(--u)) calc(230 * var(--u)) minmax(0, 1fr); align-items: center; gap: calc(16 * var(--u)); padding: 0 calc(20 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; }
+  .ly-no { display: grid; place-items: center; width: calc(36 * var(--u)); height: calc(36 * var(--u)); border-radius: 50%; background: var(--sf-ink-2); color: #fff; font-size: calc(18 * var(--u)); font-weight: 800; font-style: normal; font-variant-numeric: tabular-nums; }
+  .ly-name { display: grid; gap: calc(2 * var(--u)); line-height: 1.3; }
+  .ly-name b { font-size: calc(21 * var(--u)); font-weight: 800; }
+  .ly-name em { font-size: calc(16 * var(--u)); font-style: normal; color: var(--sf-ink-2); }
+  .ly-eg { display: flex; flex-wrap: wrap; gap: calc(8 * var(--u)); }
+  .ly-eg span { padding: calc(4 * var(--u)) calc(12 * var(--u)); border: calc(1.5 * var(--u)) solid var(--sf-mute); border-radius: calc(999 * var(--u)); font-size: calc(16 * var(--u)); color: var(--sf-ink-2); background: #fff; }
+  .ly-axis { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; justify-items: center; gap: calc(8 * var(--u)); padding: calc(6 * var(--u)) 0; color: var(--sf-ink-3); font-size: calc(15 * var(--u)); font-weight: 700; text-align: center; }
+  .ly-axis svg { width: calc(24 * var(--u)); height: 100%; }
+
+  /* 強調する層（data-focus="logic" / "data"） */
+  :global([data-t-focus='logic']) .ly-logic,
+  :global([data-t-focus='data']) .ly-data { border: calc(3 * var(--u)) solid var(--t-accent); background: color-mix(in srgb, var(--t-accent) 6%, #fff); }
+  :global([data-t-focus='logic']) .ly-logic .ly-no,
+  :global([data-t-focus='data']) .ly-data .ly-no { background: var(--t-accent); }
+  :global([data-t-focus='logic']) .ly-logic .ly-eg span,
+  :global([data-t-focus='data']) .ly-data .ly-eg span { border-color: var(--t-accent); color: var(--sf-ink); }
+</style>

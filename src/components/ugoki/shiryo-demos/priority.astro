@@ -1,0 +1,91 @@
+---
+// 資料レイアウトの見本: 優先順位リスト型（やることを大事な順に並べ、効果と手間を3段階で添え、実施する線を引く）
+// つまみ: --t-accent（色）・data-t-focus（色を付ける順位 top3|top1|none）・--t-size（順位の丸の大きさ。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '優先順位リスト型',
+    kicker: 'ネットショップの改善テーマ（2027年度）',
+    title: '来期は上位3つに集中：効果大・手間小の順',
+    head: { rank: '順位', what: 'やること', effect: '効果', effort: '手間' },
+    levels: ['小', '中', '大'],
+    items: [
+      { t: '配送料の自動見積もり', d: '問い合わせの4割を占める配送料の質問をなくす', effect: 3, effort: 1 },
+      { t: '会員ポイントの統合', d: '実店舗とネットで同じポイントを使えるようにする', effect: 3, effort: 2 },
+      { t: '売れ筋20点の写真の撮り直し', d: '閲覧の多い商品から、見栄えをそろえる', effect: 2, effort: 1 },
+      { t: 'レビュー投稿の仕組み', d: '購入者の声を商品ページに載せる', effect: 2, effort: 2 },
+      { t: '英語サイトの開設', d: '海外からの注文を受けられるようにする', effect: 1, effort: 3 },
+    ],
+    cut: '来期に実施するのはここまで',
+    note: '※ 効果と手間は担当部署の見積もり（3段階）。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+const CUT_AFTER = 3;
+---
+
+<SlideFrame size={size} label={T.name} page={15} lang={lang}>
+  <div class="pi" data-demo="priority">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="pi-list">
+      <div class="pi-head" data-sf-in style="--i: 1">
+        <span>{T.head.rank}</span><span>{T.head.what}</span><span>{T.head.effect}</span><span>{T.head.effort}</span>
+      </div>
+      {T.items.map((it, i) => (
+        <>
+          <div class:list={['pi-row', `pi-r${i + 1}`]} data-sf-in style={`--i: ${i + 2}`}>
+            <span class="pi-rank">{i + 1}</span>
+            <span class="pi-what"><b>{it.t}</b><span>{it.d}</span></span>
+            <span class="pi-meter"><span class="pi-dots">{[1, 2, 3].map((n) => <i class:list={[n <= it.effect && 'on']} />)}</span><em>{T.levels[it.effect - 1]}</em></span>
+            <span class="pi-meter"><span class="pi-dots">{[1, 2, 3].map((n) => <i class:list={[n <= it.effort && 'on']} />)}</span><em>{T.levels[it.effort - 1]}</em></span>
+          </div>
+          {i + 1 === CUT_AFTER && <div class="pi-cut" data-sf-in style="--i: 5"><span>{T.cut}</span></div>}
+        </>
+      ))}
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .pi { display: flex; flex-direction: column; height: 100%; }
+  .pi-list { flex: 1; display: flex; flex-direction: column; margin: calc(14 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .pi-head, .pi-row { display: grid; grid-template-columns: calc(var(--t-size) * var(--u) + 28 * var(--u)) minmax(0, 1fr) calc(96 * var(--u)) calc(96 * var(--u)); align-items: center; }
+  .pi-head { padding-bottom: calc(6 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(14 * var(--u)); font-weight: 700; color: var(--sf-ink-3); }
+  .pi-head span:nth-child(3), .pi-head span:nth-child(4) { padding-left: calc(2 * var(--u)); }
+  .pi-row { flex: 1; min-height: 0; border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .pi-rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--t-size) * var(--u));
+    height: calc(var(--t-size) * var(--u));
+    border-radius: 50%;
+    background: var(--sf-soft);
+    color: var(--sf-ink-2);
+    font-size: calc(var(--t-size) * var(--u) * 0.55);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+  .pi-what { display: flex; flex-direction: column; min-width: 0; padding-right: calc(12 * var(--u)); }
+  .pi-what b { font-size: calc(21 * var(--u)); font-weight: 800; }
+  .pi-what span { font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+  .pi-meter { display: flex; align-items: center; gap: calc(8 * var(--u)); }
+  .pi-dots { display: flex; gap: calc(4 * var(--u)); }
+  .pi-dots i { width: calc(12 * var(--u)); height: calc(12 * var(--u)); border-radius: 50%; border: calc(2 * var(--u)) solid var(--sf-mute); box-sizing: border-box; }
+  .pi-dots i.on { background: var(--sf-ink-2); border-color: var(--sf-ink-2); }
+  .pi-meter em { font-style: normal; font-size: calc(16 * var(--u)); font-weight: 700; }
+  .pi-cut { position: relative; height: calc(26 * var(--u)); display: flex; align-items: center; }
+  .pi-cut::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: calc(2 * var(--u)) dashed var(--sf-ink-3); }
+  .pi-cut span { position: relative; margin-left: calc(28 * var(--u)); padding: 0 calc(10 * var(--u)); background: #fff; font-size: calc(14 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+
+  /* 色を付ける順位（つまみ: 色を付ける順位） */
+  :global([data-t-focus='top3']) :is(.pi-r1, .pi-r2, .pi-r3) .pi-rank,
+  :global([data-t-focus='top1']) .pi-r1 .pi-rank { background: var(--t-accent); color: #fff; }
+  :global([data-t-focus='top1']) .pi-cut,
+  :global([data-t-focus='none']) .pi-cut { visibility: hidden; }
+  :global([data-t-focus='top3']) :is(.pi-r4, .pi-r5) { opacity: 0.62; }
+</style>

@@ -1,0 +1,98 @@
+---
+// 資料レイアウトの見本: パレート図型（原因を多い順に並べた棒に、累計の割合の折れ線を重ねる）
+// 棒の高さ = 件数 ÷ 200 × 250、線の高さ = 累計 ÷ 200 × 250（左の目盛りの最大＝合計200件、右の最大＝100%）。
+// つまみ: --t-accent（色）・data-t-focus（色を付ける棒 top3|first|all）・data-t-guide（8割の目安線 show|hide）・--t-line（累計の線の太さ）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const PFX = 'pa-';
+const PAGE = 8;
+const ATTRS = ['focus', 'guide'];
+// 不良の原因と件数（多い順）。合計が200件なので、左の目盛り（0〜200件）と右の目盛り（0〜100%）が同じ高さで対応する。
+const DATA = [['傷・汚れ', 82], ['寸法不良', 50], ['色ムラ', 34], ['異物混入', 16], ['梱包ミス', 10], ['その他', 8]];
+const TOTAL = DATA.reduce((s, d) => s + d[1], 0);
+if (TOTAL !== 200) throw new Error('pareto: 合計が200件ではありません');
+let run = 0;
+const cum = DATA.map(([, v]) => (run += v) / TOTAL);
+const top3 = Math.round(cum[2] * 100);
+const T = {
+  name: 'パレート図型',
+  kicker: 'ガラス食器「ひだまり」の検品で見つかった不良（2025年9月・200件）',
+  title: `上位3つの原因で、不良の${top3}%を占めている`,
+  note: '※ 棒は件数（左の目盛り）、線は累計の割合（右の目盛り）。件数の合計は200件。',
+};
+const fmt = (n) => String(Math.round(n * 100) / 100);
+function buildBody(p) {
+  const c = (...n) => n.map((x) => p + x).join(' ');
+  const W = 848, L = 56, R = 792, TOP = 34, B = 284, H = B - TOP, SLOT = (R - L) / DATA.length, BW = Math.round(SLOT * 0.62);
+  const y = (frac) => fmt(B - frac * H);
+  const cx = (i) => L + SLOT * (i + 0.5);
+  let s = `    <svg class="${c('svg')}" viewBox="0 0 ${W} 338" role="img" aria-label="不良の原因を多い順に並べた棒と、累計の割合の線">\n`;
+  for (let k = 0; k <= 5; k++) {
+    s += `      <line class="${c(k === 0 ? 'base' : 'grid')}" x1="${L}" x2="${R}" y1="${y(k / 5)}" y2="${y(k / 5)}" />\n`;
+    s += `      <text class="${c('tick')}" x="${L - 10}" y="${fmt(B - (k / 5) * H + 5)}" text-anchor="end">${k * 40}</text>\n`;
+    s += `      <text class="${c('tick')}" x="${R + 10}" y="${fmt(B - (k / 5) * H + 5)}">${k * 20}%</text>\n`;
+  }
+  s += `      <text class="${c('unit')}" x="${L - 10}" y="${TOP - 16}" text-anchor="end">（件）</text>\n`;
+  s += `      <line class="${c('guide')}" x1="${L}" x2="${R}" y1="${y(0.8)}" y2="${y(0.8)}" />\n`;
+  s += `      <text class="${c('guide-t')}" x="${L + 8}" y="${fmt(B - 0.8 * H - 8)}">8割の目安</text>\n`;
+  DATA.forEach(([name, v], i) => {
+    const h = (v / TOTAL) * H;
+    s += `      <rect class="${c('bar', i < 3 ? 'g3' : 'rest', i === 0 ? 'g1' : 'x')}" x="${fmt(cx(i) - BW / 2)}" y="${fmt(B - h)}" width="${BW}" height="${fmt(h)}" rx="3" />\n`;
+    s += `      <text class="${c('xname')}" x="${fmt(cx(i))}" y="${B + 22}" text-anchor="middle">${name}</text>\n`;
+    s += `      <text class="${c('xval')}" x="${fmt(cx(i))}" y="${B + 46}" text-anchor="middle">${v}件</text>\n`;
+  });
+  s += `      <polyline class="${c('line')}" points="${cum.map((r, i) => `${fmt(cx(i))},${y(r)}`).join(' ')}" />\n`;
+  cum.forEach((r, i) => {
+    s += `      <circle class="${c('dot')}" cx="${fmt(cx(i))}" cy="${y(r)}" r="5" />\n`;
+    s += `      <text class="${c('cum')}" x="${fmt(cx(i))}" y="${fmt(B - r * H - 13)}" text-anchor="middle">${Math.round(r * 100)}%</text>\n`;
+  });
+  // 凡例
+  s += `      <rect class="${c('bar', 'g3', 'key')}" x="${L + 8}" y="6" width="14" height="14" rx="2" />\n`;
+  s += `      <text class="${c('legend')}" x="${L + 30}" y="19">件数（左の目盛り）</text>\n`;
+  s += `      <line class="${c('line')}" x1="${L + 230}" x2="${L + 258}" y1="13" y2="13" />\n`;
+  s += `      <circle class="${c('dot')}" cx="${L + 244}" cy="13" r="5" />\n`;
+  s += `      <text class="${c('legend')}" x="${L + 268}" y="19">累計の割合（右の目盛り）</text>\n`;
+  s += `    </svg>`;
+  return s;
+}
+// 英語版を作るときは T を言語ごとに用意する（今は日本語だけ）
+const body = buildBody('pa-');
+---
+
+<SlideFrame size={size} label={T.name} page={PAGE} lang={lang}>
+  <div class="pa" data-demo="pareto">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="pa-body" data-sf-in style="--i: 2" set:html={body} />
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style is:global>
+  .pa { display: flex; flex-direction: column; height: 100%; }
+  .pa-body { flex: 1; min-height: 0; margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); }
+  /* 棒の高さは 件数 ÷ 200 × 250、線の高さは 累計 ÷ 200 × 250。座標は幅848×高さ338の中で数字で決めている */
+  
+  .pa-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .pa-grid { stroke: #e3e5ea; stroke-width: 1; }
+  .pa-base { stroke: #8a8f9c; stroke-width: 1.5; }
+  .pa-tick { font-size: 14px; fill: #8a8f9c; font-variant-numeric: tabular-nums; }
+  .pa-unit { font-size: 14px; fill: #8a8f9c; }
+  .pa-guide { stroke: #8a8f9c; stroke-width: 1.5; stroke-dasharray: 6 5; }
+  .pa-guide-t { font-size: 14px; font-weight: 700; fill: #5a6070; }
+  .pa-bar { fill: #c3c8d2; }
+  .pa-xname { font-size: 16px; fill: #5a6070; }
+  .pa-xval { font-size: 18px; font-weight: 800; fill: #1f2430; font-variant-numeric: tabular-nums; }
+  .pa-line { fill: none; stroke: #1f2430; stroke-width: var(--t-line); stroke-linejoin: round; stroke-linecap: round; }
+  .pa-dot { fill: #fff; stroke: #1f2430; stroke-width: 2.5; }
+  .pa-cum { font-size: 16px; font-weight: 800; fill: #1f2430; font-variant-numeric: tabular-nums; }
+  .pa-legend { font-size: 14px; fill: #5a6070; }
+  .pa-bar.pa-key { fill: var(--t-accent); }
+  
+  /* 色を付ける棒（data-focus: top3＝上位3つ、first＝いちばん多い1つ、all＝すべて） */
+  [data-t-focus='top3'] .pa-bar.pa-g3 { fill: var(--t-accent); }
+  [data-t-focus='first'] .pa-bar.pa-g1 { fill: var(--t-accent); }
+  [data-t-focus='all'] .pa-bar { fill: var(--t-accent); }
+  [data-t-guide='hide'] .pa-guide,
+  [data-t-guide='hide'] .pa-guide-t { display: none; }
+</style>

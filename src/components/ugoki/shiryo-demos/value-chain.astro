@@ -1,0 +1,67 @@
+---
+// 資料レイアウトの見本: 価値連鎖型（上に支える活動を4段、下に主な活動を5つの矢じり形で並べ、右の矢印の先を「利益」にする）
+// つまみ: --t-accent（色）・data-t-focus（強調 key|none）・data-t-shape（形 chevron|box）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: '価値連鎖型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={11} lang={lang}>
+  <div class="vc" data-demo="value-chain">
+    <p class="sf-kicker" data-sf-in style="--i: 0">果実ジャム「みのり工房」の価値連鎖</p>
+    <p class="sf-title" data-sf-in style="--i: 0">差がつくのは「製造」と「販売」の2か所</p>
+    <div class="vc-body">
+      <div class="vc-main">
+        <p class="vc-cap">支える活動</p>
+        <div class="vc-support" data-sf-in style="--i: 1">
+          <div class="vc-srow"><b>全般管理</b><span>経営計画・経理・品質認証</span></div>
+          <div class="vc-srow"><b>人事・労務</b><span>繁忙期の短期スタッフ育成</span></div>
+          <div class="vc-srow"><b>技術開発</b><span>新レシピの開発（年12品）</span></div>
+          <div class="vc-srow"><b>調達</b><span>契約農家18軒から直接仕入れ</span></div>
+        </div>
+        <p class="vc-cap">主な活動（モノが顧客に届くまでの流れ）</p>
+        <div class="vc-primary">
+          <div class="vc-act" data-sf-in style="--i: 2"><span class="vc-chev">購買物流</span><p>農家から毎朝直送</p></div>
+          <div class="vc-act vc-key" data-sf-in style="--i: 3"><span class="vc-chev">製造</span><p>小ロットの釜炊き・無添加</p></div>
+          <div class="vc-act" data-sf-in style="--i: 4"><span class="vc-chev">出荷物流</span><p>冷蔵便で翌日届け</p></div>
+          <div class="vc-act vc-key" data-sf-in style="--i: 5"><span class="vc-chev">販売・営業</span><p>直営店と通販で定価販売</p></div>
+          <div class="vc-act" data-sf-in style="--i: 6"><span class="vc-chev">サービス</span><p>手紙で再購入を案内</p></div>
+        </div>
+      </div>
+      <div class="vc-profit" data-sf-in style="--i: 7"><span>利益</span></div>
+    </div>
+    <p class="sf-note">※ 活動の分け方は、価値連鎖（バリューチェーン）の考え方による。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .vc { display: flex; flex-direction: column; height: 100%; }
+  .vc-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) calc(64 * var(--u)); margin: calc(12 * var(--u)) 0 calc(8 * var(--u)); }
+  .vc-main { display: flex; flex-direction: column; min-width: 0; padding-right: calc(6 * var(--u)); }
+  .vc-cap { margin: 0 0 calc(4 * var(--u)); font-size: calc(15 * var(--u)); font-weight: 800; color: var(--sf-ink-3); }
+  .vc-support { display: grid; gap: calc(5 * var(--u)); margin-bottom: calc(12 * var(--u)); }
+  .vc-srow { display: flex; align-items: center; gap: calc(14 * var(--u)); height: calc(30 * var(--u)); padding: 0 calc(14 * var(--u)); border-radius: calc(8 * var(--u)); background: var(--sf-soft); }
+  .vc-srow b { flex: none; width: calc(92 * var(--u)); font-size: calc(16 * var(--u)); font-weight: 800; }
+  .vc-srow span { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); white-space: nowrap; }
+  .vc-primary { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .vc-chev { display: grid; place-items: center; height: calc(56 * var(--u)); padding: 0 calc(20 * var(--u)) 0 calc(24 * var(--u)); background: var(--sf-ink-2); color: #fff; font-size: calc(17 * var(--u)); font-weight: 800; text-align: center; clip-path: polygon(0 0, calc(100% - calc(18 * var(--u))) 0, 100% 50%, calc(100% - calc(18 * var(--u))) 100%, 0 100%, calc(18 * var(--u)) 50%); }
+  .vc-act:first-child .vc-chev { padding-left: calc(14 * var(--u)); clip-path: polygon(0 0, calc(100% - calc(18 * var(--u))) 0, 100% 50%, calc(100% - calc(18 * var(--u))) 100%, 0 100%); }
+  .vc-act + .vc-act .vc-chev { width: calc(100% + calc(14 * var(--u))); margin-left: calc(-14 * var(--u)); }
+  .vc-act p { margin: calc(8 * var(--u)) calc(8 * var(--u)) 0 calc(6 * var(--u)); font-size: calc(16 * var(--u)); line-height: 1.4; color: var(--sf-ink-2); }
+  .vc-profit { display: grid; place-items: center; background: var(--sf-ink); color: #fff; clip-path: polygon(0 0, 55% 0, 100% 50%, 55% 100%, 0 100%); }
+  .vc-profit span { writing-mode: vertical-rl; margin-right: calc(10 * var(--u)); font-size: calc(22 * var(--u)); font-weight: 800; letter-spacing: 0.2em; }
+
+  /* 強みの活動を強調（data-focus="key"） */
+  :global([data-t-focus='key']) .vc-key .vc-chev { background: var(--t-accent); }
+  :global([data-t-focus='key']) .vc-key p { color: var(--sf-ink); font-weight: 700; }
+
+  /* 四角形にする（data-shape="box"） */
+  :global([data-t-shape='box']) .vc-primary { gap: calc(8 * var(--u)); }
+  :global([data-t-shape='box']) .vc-chev,
+  :global([data-t-shape='box']) .vc-act:first-child .vc-chev,
+  :global([data-t-shape='box']) .vc-act + .vc-act .vc-chev { width: auto; margin-left: 0; padding: 0 calc(12 * var(--u)); border-radius: calc(10 * var(--u)); clip-path: none; }
+  :global([data-t-shape='box']) .vc-profit { border-radius: calc(10 * var(--u)); clip-path: none; }
+  :global([data-t-shape='box']) .vc-profit span { margin-right: 0; }
+</style>

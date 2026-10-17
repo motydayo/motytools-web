@@ -1,0 +1,105 @@
+---
+// 資料レイアウトの見本: スイムレーン型（担当ごとの帯（レーン）に分け、業務の流れを矢印でつなぐ）
+// 帯は3つ（申請者・上長・経理部）、手順は5つ。箱は帯の中央に置き、矢印は「右へ→上下へ」の直角で結ぶ（矢じりは自前の三角）。
+// つまみ: --t-accent（色）・data-t-focus（強調する帯 keiri|none）・data-t-num（手順の番号 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'スイムレーン型',
+    kicker: '経費精算の業務フロー',
+    title: '経費精算は5手順。経理部が2手順を受け持つ',
+    note: '※ 申請から入金までの目安は5営業日。矢印は作業の流れ。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={13} lang={lang}>
+  <div class="sl" data-demo="swimlane">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="sl-diagram" data-sf-in style="--i: 1">
+      <svg viewBox="0 0 848 340" role="img" aria-label="経費精算の業務フロー（申請者・上長・経理部の3つの帯と5つの手順）">
+        <g class="sl-lane sl-lane-0">
+          <rect class="sl-band" x="0" y="0" width="848" height="110" rx="8" />
+          <rect class="sl-tag" x="0" y="0" width="88" height="110" rx="8" />
+          <text class="sl-lane-name" x="44" y="61" text-anchor="middle">申請者</text>
+        </g>
+        <g class="sl-lane sl-lane-1">
+          <rect class="sl-band" x="0" y="113" width="848" height="110" rx="8" />
+          <rect class="sl-tag" x="0" y="113" width="88" height="110" rx="8" />
+          <text class="sl-lane-name" x="44" y="174" text-anchor="middle">上長</text>
+        </g>
+        <g class="sl-lane sl-lane-2">
+          <rect class="sl-band" x="0" y="226" width="848" height="110" rx="8" />
+          <rect class="sl-tag" x="0" y="226" width="88" height="110" rx="8" />
+          <text class="sl-lane-name" x="44" y="287" text-anchor="middle">経理部</text>
+        </g>
+        <path class="sl-arrow" d="M232.8 55 H324.4 V128" />
+        <polygon class="sl-tip" points="324.4,138 318.4,128 330.4,128" />
+        <path class="sl-arrow" d="M382.4 168 H474 V241" />
+        <polygon class="sl-tip" points="474,251 468,241 480,241" />
+        <path class="sl-arrow" d="M532 281 H555.6" />
+        <polygon class="sl-tip" points="565.6,281 555.6,275 555.6,287" />
+        <path class="sl-arrow" d="M681.6 281 H773.2 V95" />
+        <polygon class="sl-tip" points="773.2,85 767.2,95 779.2,95" />
+        <g class="sl-step sl-step-0">
+          <rect class="sl-box" x="116.80000000000001" y="25" width="116" height="60" rx="10" />
+          <text class="sl-text" x="174.8" y="52" text-anchor="middle">経費を</text>
+          <text class="sl-text" x="174.8" y="73" text-anchor="middle">申請する</text>
+          <g class="sl-num"><circle cx="116.80000000000001" cy="25" r="12" /><text x="116.80000000000001" y="30" text-anchor="middle">1</text></g>
+        </g>
+        <g class="sl-step sl-step-1">
+          <rect class="sl-box" x="266.4" y="138" width="116" height="60" rx="10" />
+          <text class="sl-text" x="324.4" y="165" text-anchor="middle">内容を</text>
+          <text class="sl-text" x="324.4" y="186" text-anchor="middle">承認する</text>
+          <g class="sl-num"><circle cx="266.4" cy="138" r="12" /><text x="266.4" y="143" text-anchor="middle">2</text></g>
+        </g>
+        <g class="sl-step sl-step-2">
+          <rect class="sl-box" x="416" y="251" width="116" height="60" rx="10" />
+          <text class="sl-text" x="474" y="278" text-anchor="middle">領収書と</text>
+          <text class="sl-text" x="474" y="299" text-anchor="middle">金額を確認</text>
+          <g class="sl-num"><circle cx="416" cy="251" r="12" /><text x="416" y="256" text-anchor="middle">3</text></g>
+        </g>
+        <g class="sl-step sl-step-2">
+          <rect class="sl-box" x="565.6" y="251" width="116" height="60" rx="10" />
+          <text class="sl-text" x="623.6" y="278" text-anchor="middle">振込データを</text>
+          <text class="sl-text" x="623.6" y="299" text-anchor="middle">作成する</text>
+          <g class="sl-num"><circle cx="565.6" cy="251" r="12" /><text x="565.6" y="256" text-anchor="middle">4</text></g>
+        </g>
+        <g class="sl-step sl-step-0">
+          <rect class="sl-box" x="715.2" y="25" width="116" height="60" rx="10" />
+          <text class="sl-text" x="773.2" y="52" text-anchor="middle">入金を</text>
+          <text class="sl-text" x="773.2" y="73" text-anchor="middle">確認する</text>
+          <g class="sl-num"><circle cx="715.2" cy="25" r="12" /><text x="715.2" y="30" text-anchor="middle">5</text></g>
+        </g>
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .sl { display: flex; flex-direction: column; height: 100%; }
+  .sl-diagram { position: relative; flex: 1; margin: calc(14 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .sl-diagram svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* 図の中の寸法は、viewBox（幅848）の数字そのまま */
+  .sl-band { fill: #fff; stroke: #e3e5ea; stroke-width: 2; }
+  .sl-tag { fill: #f3f4f7; }
+  .sl-lane-name { font-size: 18px; font-weight: 800; fill: #1f2430; }
+  .sl-arrow { fill: none; stroke: #8a8f9c; stroke-width: 2.5; }
+  .sl-tip { fill: #8a8f9c; }
+  .sl-box { fill: #fff; stroke: #8a8f9c; stroke-width: 2; }
+  .sl-text { font-size: 16px; font-weight: 700; fill: #1f2430; }
+  .sl-num circle { fill: #1f2430; }
+  .sl-num text { font-size: 14px; font-weight: 800; fill: #fff; }
+  :global([data-t-num='hide']) .sl-num { display: none; }
+  /* 強調する帯（data-focus="keiri"） */
+  :global([data-t-focus='keiri']) .sl-lane-2 .sl-band { fill: color-mix(in srgb, var(--t-accent) 7%, #fff); stroke: var(--t-accent); }
+  :global([data-t-focus='keiri']) .sl-lane-2 .sl-tag { fill: var(--t-accent); }
+  :global([data-t-focus='keiri']) .sl-lane-2 .sl-lane-name { fill: #fff; }
+  :global([data-t-focus='keiri']) .sl-step-2 .sl-box { fill: var(--t-accent); stroke: var(--t-accent); }
+  :global([data-t-focus='keiri']) .sl-step-2 .sl-text { fill: #fff; }
+</style>

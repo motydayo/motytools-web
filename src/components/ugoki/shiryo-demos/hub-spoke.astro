@@ -1,0 +1,95 @@
+---
+// 資料レイアウトの見本: ハブ＆スポーク型（中心と周りの要素のつながりを、放射状に見せる）
+// 中心の円と、周りの6つの箱（上から時計回りに60度ずつ）。周りの件数の合計は 1200 件（生成時に検算済み）。線は中心から各箱の中心へ引き、図形の下に隠す。
+// つまみ: --t-accent（色）・data-t-focus（最多の部門 top|none）・--t-line（線の太さ）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'ハブ＆スポーク型',
+    kicker: 'お客さま相談センターと社内6部門のつながり',
+    title: '月1,200件の相談を、窓口1つで6部門へつなぐ',
+    note: '※ 件数は2026年度上期の月平均。太字の数字は、その部門へ回した相談の件数。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={19} lang={lang}>
+  <div class="hs" data-demo="hub-spoke">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="hs-diagram" data-sf-in style="--i: 1">
+      <svg viewBox="0 0 848 340" role="img" aria-label="お客さま相談センターを中心に、6つの社内部門へ相談をつなぐ図">
+        <g class="hs-lines">
+          <path d="M424 170 L424 40" />
+          <path d="M424 170 L683.8 105" />
+          <path d="M424 170 L683.8 235" />
+          <path d="M424 170 L424 300" />
+          <path d="M424 170 L164.2 235" />
+          <path d="M424 170 L164.2 105" />
+        </g>
+        <g class="hs-sat is-top">
+          <rect x="306" y="7" width="236" height="66" rx="12" />
+          <text class="hs-n" x="322" y="36">配送センター</text>
+          <text class="hs-c" x="526" y="36" text-anchor="end">420件</text>
+          <text class="hs-s" x="322" y="60">配送遅れの確認</text>
+        </g>
+        <g class="hs-sat">
+          <rect x="565.8" y="72" width="236" height="66" rx="12" />
+          <text class="hs-n" x="581.8" y="101">営業部</text>
+          <text class="hs-c" x="785.8" y="101" text-anchor="end">240件</text>
+          <text class="hs-s" x="581.8" y="125">契約・解約の相談</text>
+        </g>
+        <g class="hs-sat">
+          <rect x="565.8" y="202" width="236" height="66" rx="12" />
+          <text class="hs-n" x="581.8" y="231">経理部</text>
+          <text class="hs-c" x="785.8" y="231" text-anchor="end">180件</text>
+          <text class="hs-s" x="581.8" y="255">請求・返金の確認</text>
+        </g>
+        <g class="hs-sat">
+          <rect x="306" y="267" width="236" height="66" rx="12" />
+          <text class="hs-n" x="322" y="296">情報システム部</text>
+          <text class="hs-c" x="526" y="296" text-anchor="end">160件</text>
+          <text class="hs-s" x="322" y="320">ログインの不具合</text>
+        </g>
+        <g class="hs-sat">
+          <rect x="46.2" y="202" width="236" height="66" rx="12" />
+          <text class="hs-n" x="62.2" y="231">商品開発部</text>
+          <text class="hs-c" x="266.2" y="231" text-anchor="end">90件</text>
+          <text class="hs-s" x="62.2" y="255">不具合の報告</text>
+        </g>
+        <g class="hs-sat">
+          <rect x="46.2" y="72" width="236" height="66" rx="12" />
+          <text class="hs-n" x="62.2" y="101">店舗</text>
+          <text class="hs-c" x="266.2" y="101" text-anchor="end">110件</text>
+          <text class="hs-s" x="62.2" y="125">来店予約の調整</text>
+        </g>
+        <circle class="hs-hub" cx="424" cy="170" r="66" />
+        <text class="hs-hub-t" x="424" y="154" text-anchor="middle">お客さま</text>
+        <text class="hs-hub-t" x="424" y="178" text-anchor="middle">相談センター</text>
+        <text class="hs-hub-s" x="424" y="206" text-anchor="middle">月1,200件</text>
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .hs { display: flex; flex-direction: column; height: 100%; }
+  .hs-diagram { position: relative; flex: 1; margin: calc(12 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .hs-diagram svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* 図の中の寸法は、viewBox（幅848）の数字そのまま */
+  .hs-lines path { fill: none; stroke: #c3c8d2; stroke-width: var(--t-line); }
+  .hs-sat rect { fill: #fff; stroke: #c3c8d2; stroke-width: 2; }
+  .hs-n { font-size: 18px; font-weight: 800; fill: #1f2430; }
+  .hs-c { font-size: 20px; font-weight: 800; fill: #5a6070; font-variant-numeric: tabular-nums; }
+  .hs-s { font-size: 16px; fill: #5a6070; }
+  .hs-hub { fill: var(--t-accent); }
+  .hs-hub-t { font-size: 19px; font-weight: 800; fill: #fff; }
+  .hs-hub-s { font-size: 16px; font-weight: 700; fill: #fff; }
+  /* 最も多い部門（data-focus="top"） */
+  :global([data-t-focus='top']) .hs-sat.is-top rect { stroke: var(--t-accent); stroke-width: 3; }
+  :global([data-t-focus='top']) .hs-sat.is-top .hs-c { fill: var(--t-accent); }
+</style>

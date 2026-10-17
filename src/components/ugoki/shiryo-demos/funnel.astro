@@ -1,0 +1,103 @@
+---
+// 資料レイアウトの見本: ファネル型（購入までの5段階を、人数に比例した幅の横棒で上から並べ、段階の間に「次へ進む割合」を置く）
+// 棒の幅 = 人数 ÷ 最初の人数 × 500（幅を人数に比例させる）。進む割合は 前の段階との比から計算し、いちばん低い所を強調する。
+// つまみ: --t-accent（色）・data-t-focus（強調 drop|none）・data-t-align（並べ方 center|left）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'ファネル型',
+    kicker: 'ネットショップ「ことりや」の購入までの流れ（2025年9月）',
+    title: '',
+    unit: '人',
+    stages: [
+      ['サイトへの訪問', 12000],
+      ['商品ページを見た', 6600],
+      ['カートに入れた', 2100],
+      ['購入手続きに進んだ', 1320],
+      ['購入が完了した', 840],
+    ] as [string, number][],
+    go: '進む',
+    leave: '離れる',
+    note: '※ 「進む」は、ひとつ前の段階の人数に対する割合。訪問数を100%とした購入率は7.0%（840 ÷ 12,000）。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+
+// 幅848×高さ338の座標で描く（1＝スライド幅960pxの1px）
+const W = 848, H = 338, ROW = 42, GAP = 32, BAR_MAX = 500, X0 = 200, CX = X0 + BAR_MAX / 2;
+const top = T.stages[0][1];
+const rows = T.stages.map(([name, v], i) => ({ name, v, y: i * (ROW + GAP), w: (v / top) * BAR_MAX }));
+// 前の段階からの「進む割合」と、いちばん低い段階
+const rates = rows.map((r, i) => (i === 0 ? 1 : r.v / rows[i - 1].v));
+const hot = rates.reduce((m, r, i) => (i > 0 && r < rates[m] ? i : m), 1);
+const pct = (r: number) => Math.round(r * 100);
+const title = `商品を見た人の${100 - pct(rates[hot])}%は、カートに入れず離れている`;
+if (H !== rows.length * ROW + (rows.length - 1) * GAP) throw new Error('funnel: 高さが合っていません');
+if (hot !== 2) throw new Error('funnel: 見出しの内容（カートの手前）と強調する段階が合っていません');
+const fmt = (n: number) => n.toLocaleString('en-US');
+---
+
+<SlideFrame size={size} label={T.name} page={6} lang={lang}>
+  <div class="fn" data-demo="funnel">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{title}</p>
+    <div class="fn-body" data-sf-in style="--i: 2">
+      <svg class="fn-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={T.name}>
+        {rows.map((r) => <line class="fn-rule" x1={X0} x2={720} y1={r.y + ROW / 2} y2={r.y + ROW / 2} />)}
+        {rows.map((r, i) => (
+          <>
+            <text class="fn-name" x="0" y={r.y + ROW / 2 + 6}>{r.name}</text>
+            <rect class:list={['fn-bar', 'fn-sh', (i === hot || i === hot - 1) && 'is-hot']} x={CX - r.w / 2} y={r.y} width={r.w} height={ROW} rx="4" style={`--sx: ${-(BAR_MAX - r.w) / 2}px`} />
+            <text class="fn-count" x={W} y={r.y + ROW / 2 + 8} text-anchor="end">{fmt(r.v)}<tspan class="fn-unit" dx="3">{T.unit}</tspan></text>
+          </>
+        ))}
+        {rows.slice(1).map((r, k) => {
+          const i = k + 1;
+          const gy = rows[i - 1].y + ROW + GAP / 2;
+          return (
+            <>
+              <g class="fn-sh fn-plain" style="--sx: -210px" data-hot={i === hot ? '1' : undefined}>
+                <path class="fn-tri" d={`M${CX - 40} ${gy - 4}h10l-5 8z`} />
+                <text class="fn-rate" x={CX - 24} y={gy + 5.5}>{T.go}{pct(rates[i])}%</text>
+              </g>
+              {i === hot && (
+                <g class="fn-sh fn-pill" style="--sx: -150px">
+                  <rect x={CX - 100} y={gy - 12} width="200" height="24" rx="12" />
+                  <text x={CX} y={gy + 5.5} text-anchor="middle">{T.go}{pct(rates[i])}%／{T.leave}{100 - pct(rates[i])}%</text>
+                </g>
+              )}
+            </>
+          );
+        })}
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .fn { display: flex; flex-direction: column; height: 100%; }
+  .fn-body { flex: 1; min-height: 0; margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); }
+  .fn-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .fn-rule { stroke: var(--sf-line); stroke-width: 1; stroke-dasharray: 2 4; }
+  .fn-name { font-size: 18px; font-weight: 700; fill: var(--sf-ink); }
+  .fn-count { font-size: 24px; font-weight: 800; fill: var(--sf-ink); font-variant-numeric: tabular-nums; }
+  .fn-unit { font-size: 16px; font-weight: 700; fill: var(--sf-ink-2); }
+  .fn-bar { fill: var(--t-accent); }
+  .fn-tri { fill: var(--sf-ink-3); }
+  .fn-rate { font-size: 16px; font-weight: 700; fill: var(--sf-ink-2); font-variant-numeric: tabular-nums; }
+  .fn-pill { display: none; }
+  .fn-pill rect { fill: var(--t-accent); }
+  .fn-pill text { font-size: 16px; font-weight: 800; fill: #fff; font-variant-numeric: tabular-nums; }
+
+  /* 強調する段階（つまみ: 強調）: いちばん低い所だけ色を付け、ほかの棒は灰色にする */
+  :global([data-t-focus='drop']) .fn-bar { fill: var(--sf-mute); }
+  :global([data-t-focus='drop']) .fn-bar.is-hot { fill: var(--t-accent); }
+  :global([data-t-focus='drop']) .fn-pill { display: inline; }
+  :global([data-t-focus='drop']) .fn-plain[data-hot] { display: none; }
+
+  /* 並べ方（つまみ: 並べ方）: 左にそろえる */
+  :global([data-t-align='left']) .fn-sh { transform: translateX(var(--sx)); }
+</style>

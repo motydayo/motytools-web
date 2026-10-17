@@ -1,0 +1,96 @@
+---
+// 資料レイアウトの見本: スロープグラフ型（6つの営業所の満足度を2つの年度で結び、いちばん伸びた線だけに色を付ける）
+// 縦の位置 = (90 − 点数) ÷ 40 × 270 ＋ 56（50〜90点の範囲）。左が2024年度、右が2025年度。
+// つまみ: --t-accent（色）・data-t-focus（色を付ける線 top|down|none）・--t-w（線の太さ）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const PFX = 'sl-';
+const PAGE = 11;
+const ATTRS = ['focus'];
+// 営業所ごとの顧客満足度（100点満点の平均点）。縦の位置は点数に比例（50〜90点の範囲を表示）。
+const DATA = [['福岡', 58, 74], ['札幌', 62, 68], ['名古屋', 66, 64], ['仙台', 70, 60], ['大阪', 74, 80], ['東京', 78, 84]];
+const MINV = 50, MAXV = 90;
+const rows = DATA.map(([name, a, b]) => ({ name, a, b, d: b - a }));
+const up = rows.reduce((m, r) => (r.d > m.d ? r : m));
+const dn = rows.reduce((m, r) => (r.d < m.d ? r : m));
+const sign = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n);
+const T = {
+  name: 'スロープグラフ型',
+  kicker: '営業所別の顧客満足度（2024年度 → 2025年度・100点満点）',
+  title: `${up.name}が${sign(up.d)}点で最大の伸び、${dn.name}だけが大きく低下`,
+  note: '※ アンケートの平均点。縦の位置は点数に比例（50〜90点の範囲を表示）。',
+};
+const fmt = (n) => String(Math.round(n * 100) / 100);
+function buildBody(p) {
+  const c = (...n) => n.map((x) => p + x).join(' ');
+  const TOP = 56, BOT = 326, XL = 170, XR = 470;
+  const y = (v) => fmt(TOP + ((MAXV - v) / (MAXV - MINV)) * (BOT - TOP));
+  let s = `    <div class="${c('row')}">\n`;
+  s += `      <svg class="${c('svg')}" viewBox="0 0 630 338" role="img" aria-label="営業所ごとの満足度の2024年度から2025年度への変化">\n`;
+  s += `        <text class="${c('year')}" x="${XL}" y="20" text-anchor="middle">2024年度</text>\n`;
+  s += `        <text class="${c('year')}" x="${XR}" y="20" text-anchor="middle">2025年度</text>\n`;
+  s += `        <text class="${c('year', 'sm')}" x="630" y="20" text-anchor="end">増減（点）</text>\n`;
+  rows.forEach((r) => {
+    const cls = r.name === up.name ? 'up' : r.d < 0 ? 'down' : 'x';
+    s += `        <g class="${c('g', cls)}">\n`;
+    s += `          <line class="${c('ln')}" x1="${XL}" y1="${y(r.a)}" x2="${XR}" y2="${y(r.b)}" />\n`;
+    s += `          <circle class="${c('dt')}" cx="${XL}" cy="${y(r.a)}" r="6" />\n`;
+    s += `          <circle class="${c('dt')}" cx="${XR}" cy="${y(r.b)}" r="6" />\n`;
+    s += `          <text class="${c('lb')}" x="108" y="${fmt(+y(r.a) + 6)}" text-anchor="end">${r.name}</text>\n`;
+    s += `          <text class="${c('lb', 'num')}" x="150" y="${fmt(+y(r.a) + 6)}" text-anchor="end">${r.a}</text>\n`;
+    s += `          <text class="${c('lb', 'num')}" x="494" y="${fmt(+y(r.b) + 6)}">${r.b}</text>\n`;
+    s += `          <text class="${c('lb')}" x="528" y="${fmt(+y(r.b) + 6)}">${r.name}</text>\n`;
+    s += `          <text class="${c('lb', 'num', 'chg')}" x="630" y="${fmt(+y(r.b) + 6)}" text-anchor="end">${sign(r.d)}</text>\n`;
+    s += `        </g>\n`;
+  });
+  s += `      </svg>\n`;
+  s += `      <div class="${c('side', 'side-top')}">\n        <span class="${c('big')}">${sign(up.d)}点</span>\n        <span class="${c('big-label')}">${up.name}の伸び（最大）</span>\n        <span class="${c('sub')}">${up.a}点 → ${up.b}点</span>\n      </div>\n`;
+  s += `      <div class="${c('side', 'side-down')}">\n        <span class="${c('big')}">${sign(dn.d)}点</span>\n        <span class="${c('big-label')}">${dn.name}の低下（最大）</span>\n        <span class="${c('sub')}">${dn.a}点 → ${dn.b}点</span>\n      </div>\n`;
+  s += `    </div>`;
+  return s;
+}
+// 英語版を作るときは T を言語ごとに用意する（今は日本語だけ）
+const body = buildBody('sl-');
+---
+
+<SlideFrame size={size} label={T.name} page={PAGE} lang={lang}>
+  <div class="sl" data-demo="slope">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="sl-body" data-sf-in style="--i: 2" set:html={body} />
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style is:global>
+  .sl { display: flex; flex-direction: column; height: 100%; }
+  .sl-body { flex: 1; min-height: 0; margin: calc(18 * var(--u)) 0 calc(10 * var(--u)); }
+  /* 縦の位置は (90 − 点数) ÷ 40 × 270 ＋ 56。座標は幅630×高さ338の中で数字で決めている（左に2024年度、右に2025年度） */
+  .sl-row { display: flex; gap: calc(40 * var(--u)); height: 100%; }
+  .sl-svg { display: block; flex: 0 0 calc(630 * var(--u)); width: calc(630 * var(--u)); height: 100%; overflow: visible; }
+  
+  .sl-year { font-size: 18px; font-weight: 800; fill: #5a6070; }
+  .sl-year.sl-sm { font-size: 15px; font-weight: 700; fill: #8a8f9c; }
+  .sl-g .sl-ln { stroke: #8a8f9c; stroke-opacity: 0.55; stroke-width: var(--t-w); stroke-linecap: round; }
+  .sl-g .sl-dt { fill: #8a8f9c; fill-opacity: 0.8; }
+  .sl-g .sl-lb { font-size: 18px; font-weight: 700; fill: #5a6070; }
+  .sl-g .sl-num { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .sl-g .sl-chg { fill: #8a8f9c; }
+  
+  /* 色を付ける線（data-focus: top＝いちばん伸びた営業所、down＝下がった営業所、none＝なし） */
+  [data-t-focus='top'] .sl-g.sl-up .sl-ln,
+  [data-t-focus='down'] .sl-g.sl-down .sl-ln { stroke: var(--t-accent); stroke-opacity: 1; stroke-width: calc(var(--t-w) + 2px); }
+  [data-t-focus='top'] .sl-g.sl-up .sl-dt,
+  [data-t-focus='down'] .sl-g.sl-down .sl-dt { fill: var(--t-accent); fill-opacity: 1; }
+  [data-t-focus='top'] .sl-g.sl-up .sl-lb,
+  [data-t-focus='down'] .sl-g.sl-down .sl-lb { fill: var(--t-accent); }
+  
+  
+  .sl-side { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: calc(6 * var(--u)); padding-left: calc(28 * var(--u)); border-left: calc(1 * var(--u)) solid #e3e5ea; }
+  .sl-big { font-size: calc(44 * var(--u)); font-weight: 800; line-height: 1.05; color: var(--t-accent); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .sl-big-label { font-size: calc(16 * var(--u)); color: #5a6070; }
+  .sl-sub { margin-top: calc(14 * var(--u)); padding-top: calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid #e3e5ea; font-size: calc(20 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .sl-side-down { display: none; }
+  [data-t-focus='down'] .sl-side-top { display: none; }
+  [data-t-focus='down'] .sl-side-down { display: flex; }
+</style>

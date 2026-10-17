@@ -1,0 +1,89 @@
+---
+// 資料レイアウトの見本: 製品分解図型（部品を縦にばらして、番号と名前と一言を線で結ぶ）
+// 絵はこのファイルの中の図形（SVG）で描いたオリジナル。実在する製品ではない。
+// つまみ: --t-accent（色）・--t-spread（部品の間隔。幅960pxのスライドでのpx）・data-t-detail（一言の説明 show|hide）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '製品分解図型',
+    kicker: '卓上加湿器「うるおいミニ」',
+    title: '4つの部品に分かれるので、水の通り道まで洗える',
+    parts: [
+      { n: 1, name: 'フタ', desc: '霧の出口つき。外して洗える' },
+      { n: 2, name: '水タンク', desc: '300mL入り。上から水を足せる' },
+      { n: 3, name: '振動板ユニット', desc: '水を細かい霧に変える部分' },
+      { n: 4, name: '本体ベース', desc: 'USBでつなぐ。電源を入れる所' },
+    ],
+    note: '※ 説明用のイメージ図。実際の製品とは異なる。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+// 組み立てたときの各部品の中心の高さと、線を出す右端
+const CY = [34, 94, 152, 205];
+const EDGE = [66, 66, 72, 84];
+---
+
+<SlideFrame size={size} label={T.name} page={15} lang={lang}>
+  <div class="ex" data-demo="exploded">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ex-fig" data-sf-in style="--i: 1">
+      <svg viewBox="0 0 848 336" aria-hidden="true">
+        <line x1="190" y1="0" x2="190" y2="336" stroke="#c3c8d2" stroke-width="2" stroke-dasharray="4 6" />
+        {T.parts.map((p, i) => (
+          <g class="ex-part" style={`--k: ${i}; --y: ${CY[i]}px`}>
+            <line x1={190 + EDGE[i]} y1="0" x2="372" y2="0" stroke="#c3c8d2" stroke-width="1.5" />
+            <g transform="translate(190 0)">
+              {i === 0 && (
+                <>
+                  <rect x="-14" y="-26" width="28" height="14" rx="4" fill="#5a6070" />
+                  <path d="M-60 20Q-60 -14 0 -14Q60 -14 60 20Z" fill="#8a8f9c" />
+                </>
+              )}
+              {i === 1 && (
+                <>
+                  <rect x="-60" y="-40" width="120" height="80" rx="8" fill="#e3e5ea" stroke="#c3c8d2" stroke-width="2.5" />
+                  <rect x="-55" y="-4" width="110" height="39" rx="4" fill="#c3c8d2" opacity="0.7" />
+                </>
+              )}
+              {i === 2 && (
+                <>
+                  <rect x="-66" y="-18" width="132" height="36" rx="9" style="fill: var(--t-accent)" />
+                  <ellipse cx="0" cy="0" rx="26" ry="8" fill="#fff" opacity="0.85" />
+                  <circle cx="0" cy="0" r="3" style="fill: var(--t-accent)" />
+                </>
+              )}
+              {i === 3 && (
+                <>
+                  <path d="M-70 -32H70L80 32H-80Z" fill="#8a8f9c" stroke="#8a8f9c" stroke-width="6" stroke-linejoin="round" />
+                  <circle cx="44" cy="0" r="6" fill="#fff" opacity="0.85" />
+                  <rect x="-44" y="-4" width="40" height="8" rx="4" fill="#fff" opacity="0.45" />
+                </>
+              )}
+            </g>
+            <circle cx="394" cy="0" r="15" style="fill: var(--t-accent)" />
+            <text x="394" y="6" text-anchor="middle" font-size="17" font-weight="800" fill="#fff">{p.n}</text>
+            <text class="ex-name" x="422" y="-2" font-size="22" font-weight="800">{p.name}</text>
+            <text class="ex-desc" x="422" y="22" font-size="16" fill="#5a6070">{p.desc}</text>
+          </g>
+        ))}
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ex { display: flex; flex-direction: column; height: 100%; }
+  .ex-fig { flex: 1; display: flex; align-items: center; margin: calc(8 * var(--u)) 0 calc(6 * var(--u)); min-height: 0; }
+  .ex-fig svg { display: block; width: 100%; height: auto; max-height: 100%; }
+  /* 部品の間隔（つまみ: 部品の間隔）: 下の部品ほど、間隔×順番だけ下へずらす */
+  .ex-part { transform: translateY(calc(var(--y) + var(--k) * var(--t-spread) * 1px)); }
+  .ex-name { fill: var(--sf-ink); }
+
+  /* 一言の説明（つまみ: 一言の説明） */
+  :global([data-t-detail='hide']) .ex-desc { display: none; }
+  :global([data-t-detail='hide']) .ex-name { transform: translateY(8px); }
+</style>

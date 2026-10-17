@@ -1,0 +1,67 @@
+---
+// 資料レイアウトの見本: セクション扉型（章の切り替わりを、大きな章番号と章の題名だけで示す）
+// つまみ: --t-accent（色）・data-t-bg（背景 white|accent）・data-t-align（文字の位置 left|center）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'セクション扉型',
+    kicker: '2026年度 上期 事業報告会',
+    no: '02',
+    title: 'お客さまの声から見えた3つの課題',
+    sub: '解約の理由を、電話とアンケート480件から読み解く',
+    chapters: ['売上の振り返り', 'お客さまの声', '来期の打ち手', 'お願いしたいこと'],
+    now: 1,
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={7} lang={lang}>
+  <div class="sd" data-demo="section-divider">
+    <p class="sd-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <div class="sd-main">
+      <p class="sd-no" data-sf-in style="--i: 1">{T.no}</p>
+      <p class="sd-title" data-sf-in style="--i: 2">{T.title}</p>
+      <p class="sd-sub" data-sf-in style="--i: 3">{T.sub}</p>
+    </div>
+    <ol class="sd-list" data-sf-in style="--i: 4">
+      {T.chapters.map((c, i) => (
+        <li class:list={['sd-item', i === T.now && 'is-now']}><b>{String(i + 1).padStart(2, '0')}</b>{c}</li>
+      ))}
+    </ol>
+  </div>
+</SlideFrame>
+
+<style>
+  .sd {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: calc(44 * var(--u)) calc(56 * var(--u)) calc(40 * var(--u));
+    background: #fff;
+    color: var(--sf-ink);
+  }
+  .sd-kicker { margin: 0; font-size: calc(15 * var(--u)); font-weight: 700; letter-spacing: 0.04em; color: var(--t-accent); }
+  .sd-main { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .sd-no { margin: 0; font-size: calc(140 * var(--u)); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--t-accent); font-variant-numeric: tabular-nums; }
+  .sd-title { margin: calc(8 * var(--u)) 0 0; font-size: calc(48 * var(--u)); font-weight: 800; line-height: 1.25; }
+  .sd-sub { margin: calc(14 * var(--u)) 0 0; font-size: calc(20 * var(--u)); color: var(--sf-ink-2); }
+  .sd-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(16 * var(--u)); }
+  .sd-item { padding-top: calc(10 * var(--u)); border-top: calc(3 * var(--u)) solid var(--sf-line); font-size: calc(16 * var(--u)); color: var(--sf-ink-3); }
+  .sd-item b { margin-right: calc(8 * var(--u)); font-variant-numeric: tabular-nums; }
+  .sd-item.is-now { border-top-color: var(--t-accent); color: var(--sf-ink); font-weight: 800; }
+
+  /* 文字の位置（つまみ: 文字の位置） */
+  :global([data-t-align='center']) .sd-main { align-items: center; text-align: center; }
+
+  /* 背景（つまみ: 背景） */
+  :global([data-t-bg='accent']) .sd { background: var(--t-accent); color: #fff; }
+  :global([data-t-bg='accent']) .sd-kicker { color: rgba(255, 255, 255, 0.85); }
+  :global([data-t-bg='accent']) .sd-no { color: rgba(255, 255, 255, 0.62); }
+  :global([data-t-bg='accent']) .sd-sub { color: rgba(255, 255, 255, 0.9); }
+  :global([data-t-bg='accent']) .sd-item { border-top-color: rgba(255, 255, 255, 0.35); color: rgba(255, 255, 255, 0.85); }
+  :global([data-t-bg='accent']) .sd-item.is-now { border-top-color: #fff; color: #fff; }
+</style>

@@ -1,0 +1,73 @@
+---
+// 資料レイアウトの見本: 全面写真＋帯型（写真をスライド全体に敷き、暗い帯の上に一言を置く。写真は描いた絵で代用）
+// つまみ: --t-accent（色）・data-t-band（帯の位置 bottom|middle）・--t-dark（帯の濃さ。%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '全面写真＋帯型',
+    kicker: '長期滞在型オフィス「うみのオフィス館山」',
+    title: '働く場所を、海の見える部屋に。',
+    sub: '2027年春、千葉県館山市に開業します',
+    cap: '写真はイメージ',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={9} lang={lang}>
+  <div class="fp" data-demo="full-photo">
+<svg viewBox="0 0 960 540" preserveAspectRatio="xMidYMid slice" role="img" aria-label="夕方の海と、水平線に沈む太陽のイメージ" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fp-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f5f9a"/><stop offset="0.55" stop-color="#e9a56f"/><stop offset="1" stop-color="#f7d79a"/></linearGradient>
+    <linearGradient id="fp-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d98c6a"/><stop offset="0.35" stop-color="#4b6f9a"/><stop offset="1" stop-color="#25405f"/></linearGradient>
+  </defs>
+  <rect width="960" height="330" fill="url(#fp-sky)"/>
+  <circle cx="650" cy="318" r="64" fill="#fdeab4"/>
+  <path d="M0 330l130-34 110 22 120-30 90 26 60-14v30H0z" fill="#46526e" opacity="0.8"/>
+  <path d="M760 330l90-26 70 18 40-10v18H760z" fill="#3d4863" opacity="0.85"/>
+  <rect y="330" width="960" height="210" fill="url(#fp-sea)"/>
+  <g fill="#fdeab4" opacity="0.75"><rect x="590" y="338" width="120" height="5" rx="2.5"/><rect x="570" y="352" width="160" height="5" rx="2.5"/><rect x="600" y="368" width="100" height="5" rx="2.5"/><rect x="560" y="386" width="180" height="5" rx="2.5"/><rect x="610" y="406" width="80" height="5" rx="2.5"/></g>
+  <g><path d="M230 316h60l-10 12h-40z" fill="#2c3550"/><path d="M262 276v38l-28-4z" fill="#f4eee2"/><path d="M266 282v32l22-3z" fill="#e8ddc9"/></g>
+  <path d="M0 540V470c80-18 160-14 240 4s150 10 220-8 160-22 250-6 170 4 250-8v88z" fill="#1d2d46" opacity="0.55"/>
+</svg>
+    <div class="fp-band" data-sf-in style="--i: 1">
+      <p class="fp-kicker">{T.kicker}</p>
+      <p class="fp-title">{T.title}</p>
+      <p class="fp-sub">{T.sub}</p>
+    </div>
+    <span class="fp-cap">{T.cap}</span>
+  </div>
+</SlideFrame>
+
+<style>
+  .fp { position: absolute; inset: 0; overflow: hidden; background: #25405f; }
+  .fp > :global(svg) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .fp-band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(52 * var(--u));
+    padding: calc(24 * var(--u)) calc(56 * var(--u)) calc(24 * var(--u));
+    background: color-mix(in srgb, #141a2b var(--t-dark), transparent);
+    border-left: calc(8 * var(--u)) solid var(--t-accent);
+    color: #fff;
+  }
+  .fp-kicker { margin: 0; font-size: calc(16 * var(--u)); font-weight: 700; letter-spacing: 0.04em; color: #fff; opacity: 0.9; }
+  .fp-title { margin: calc(6 * var(--u)) 0 0; font-size: calc(46 * var(--u)); font-weight: 800; line-height: 1.25; letter-spacing: 0.01em; }
+  .fp-sub { margin: calc(8 * var(--u)) 0 0; font-size: calc(20 * var(--u)); }
+  .fp-cap {
+    position: absolute;
+    left: calc(14 * var(--u));
+    bottom: calc(14 * var(--u));
+    padding: calc(3 * var(--u)) calc(10 * var(--u));
+    border-radius: calc(999 * var(--u));
+    background: rgba(20, 26, 43, 0.62);
+    color: #fff;
+    font-size: calc(13 * var(--u));
+  }
+
+  /* 帯の位置（つまみ: 帯の位置） */
+  :global([data-t-band='middle']) .fp-band { bottom: auto; top: 50%; transform: translateY(-50%); }
+</style>

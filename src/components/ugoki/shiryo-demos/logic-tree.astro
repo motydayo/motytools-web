@@ -1,0 +1,100 @@
+---
+// 資料レイアウトの見本: ロジックツリー型（結果を左に置き、右へ向かって原因を枝分かれで分解する。数字は 来店客数 × 入会率 で検算できる）
+// つまみ: --t-accent（色）・data-t-focus（原因の筋を強調 cause|none）・--t-line（枝の線の太さ。SVGの単位）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = { ja: { name: 'ロジックツリー型' } };
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={5} lang={lang}>
+  <div class="lt" data-demo="logic-tree">
+    <p class="sf-kicker" data-sf-in style="--i: 0">新規会員が減った原因の分解（雑貨店チェーン）</p>
+    <p class="sf-title" data-sf-in style="--i: 0">会員が減った原因は、声かけの減少にあった</p>
+    <svg class="lt-svg" viewBox="0 0 848 320" role="img" aria-label="新規会員数を来店客数と入会率に分け、入会率の下がりを声かけの減少まで掘り下げた図">
+      <!-- 枝の線 -->
+      <g class="lt-lines">
+        <path d="M212 139 H232 V58 H252" />
+        <path d="M212 139 H232 V220 H252" />
+        <path d="M462 58 H495 V28 H528" />
+        <path d="M462 58 H495 V88 H528" />
+        <path d="M462 220 H495 V160 H528" />
+        <path d="M462 220 H495 V220 H528" />
+        <path d="M462 220 H495 V280 H528" />
+      </g>
+      <g class="lt-lines lt-hotlines">
+        <path d="M212 139 H232 V220 H252" />
+        <path d="M462 220 H495 V160 H528" />
+      </g>
+
+      <!-- 結果（根） -->
+      <g class="lt-root">
+        <rect x="0" y="94" width="212" height="90" rx="12" />
+        <text class="lt-t1" x="106" y="128" text-anchor="middle">新規会員数（月）</text>
+        <text class="lt-big" x="106" y="167" text-anchor="middle">300 → 240人</text>
+      </g>
+
+      <!-- 1段目の枝 -->
+      <g class="lt-node">
+        <rect x="252" y="26" width="210" height="64" rx="10" />
+        <text class="lt-t1" x="268" y="53">来店客数</text>
+        <text class="lt-t2" x="268" y="77">6,000人 → 6,000人</text>
+      </g>
+      <g class="lt-node lt-hot">
+        <rect x="252" y="188" width="210" height="64" rx="10" />
+        <text class="lt-t1" x="268" y="215">入会率</text>
+        <text class="lt-t2" x="268" y="239">5.0% → 4.0%</text>
+      </g>
+
+      <!-- 2段目の枝 -->
+      <g class="lt-leaf">
+        <rect x="528" y="4" width="320" height="48" rx="8" />
+        <text class="lt-t1" x="544" y="34">新規のお客さま</text>
+        <text class="lt-t2" x="832" y="34" text-anchor="end">1,800人 → 1,800人</text>
+      </g>
+      <g class="lt-leaf">
+        <rect x="528" y="64" width="320" height="48" rx="8" />
+        <text class="lt-t1" x="544" y="94">再来店のお客さま</text>
+        <text class="lt-t2" x="832" y="94" text-anchor="end">4,200人 → 4,200人</text>
+      </g>
+      <g class="lt-leaf lt-hot">
+        <rect x="528" y="136" width="320" height="48" rx="8" />
+        <text class="lt-t1" x="544" y="166">レジでの声かけ率</text>
+        <text class="lt-t2" x="832" y="166" text-anchor="end">70% → 45%</text>
+      </g>
+      <g class="lt-leaf">
+        <rect x="528" y="196" width="320" height="48" rx="8" />
+        <text class="lt-t1" x="544" y="226">入会特典（500円引き）</text>
+        <text class="lt-t2" x="832" y="226" text-anchor="end">変更なし</text>
+      </g>
+      <g class="lt-leaf">
+        <rect x="528" y="256" width="320" height="48" rx="8" />
+        <text class="lt-t1" x="544" y="286">申込の手順</text>
+        <text class="lt-t2" x="832" y="286" text-anchor="end">変更なし</text>
+      </g>
+    </svg>
+    <p class="sf-note">※ 入会率＝新規会員数 ÷ 来店客数。1店舗あたりの月平均で、前年度の同じ月と比べた値。</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .lt { display: flex; flex-direction: column; height: 100%; }
+  .lt-svg { display: block; flex: 1; min-height: 0; width: 100%; margin: calc(8 * var(--u)) 0 calc(4 * var(--u)); }
+  .lt-svg text { font-family: inherit; }
+  .lt-lines { fill: none; stroke: var(--sf-mute); stroke-width: var(--t-line); stroke-linejoin: round; }
+  .lt-hotlines { display: none; }
+  .lt-root rect { fill: var(--sf-ink); }
+  .lt-root text { fill: #fff; }
+  .lt-node rect, .lt-leaf rect { fill: #fff; stroke: var(--sf-mute); stroke-width: 2; }
+  .lt-t1 { font-size: 16px; font-weight: 800; fill: var(--sf-ink); }
+  .lt-t2 { font-size: 16px; fill: var(--sf-ink-2); font-variant-numeric: tabular-nums; }
+  .lt-big { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .lt-root .lt-t1 { fill: #fff; }
+
+  /* 原因の筋を強調（data-focus="cause"）: 根 → 入会率 → 声かけ率 */
+  :global([data-t-focus='cause']) .lt-hotlines { display: block; stroke: var(--t-accent); stroke-width: calc(var(--t-line) + 1.5); }
+  :global([data-t-focus='cause']) .lt-hot rect { stroke: var(--t-accent); stroke-width: 3; fill: color-mix(in srgb, var(--t-accent) 7%, #fff); }
+  :global([data-t-focus='cause']) .lt-hot .lt-t1 { fill: var(--t-accent); }
+  :global([data-t-focus='cause']) .lt-leaf.lt-hot .lt-t2 { fill: var(--t-accent); font-weight: 800; }
+</style>

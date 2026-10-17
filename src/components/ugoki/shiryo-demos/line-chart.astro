@@ -1,0 +1,80 @@
+---
+// 資料レイアウトの見本: 折れ線推移型（12か月の利用者数を1本の線でつなぎ、最初と最後の数字を書く）
+// 図は幅848×高さ330（スライドのpx）のSVG1枚。点の位置は 横=月の順番、縦=値÷目盛りの最大35 で計算する。
+// つまみ: --t-accent（色）・data-t-labels（数字を書く点 edge|all）・--t-w（線の太さ）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const W = 848;
+const H = 330;
+const L = 48;
+const R = 776;
+const TOP = 30;
+const BOT = 292;
+const MAX = 35;
+const TICKS = [0, 5, 10, 15, 20, 25, 30, 35];
+const DICT = {
+  ja: {
+    name: '折れ線推移型',
+    kicker: '月間アクティブ利用者数（2025年4月〜2026年3月）',
+    title: '月間利用者は1年で1.7倍の30万人に',
+    unit: '万人',
+    months: ['4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月', '1月', '2月', '3月'],
+    values: [18.2, 18.9, 19.4, 20.8, 21.5, 22.9, 24.1, 25.3, 26.0, 27.8, 28.9, 30.2],
+    note: '※ 各月末時点の、その月に1回以上使った人の数。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+if (T.values.some((v) => v > MAX) || TICKS[TICKS.length - 1] !== MAX) throw new Error('line-chart: 目盛りの最大と値が合っていません');
+const n = T.values.length;
+const px = (i: number) => +(L + ((i + 0.5) / n) * (R - L)).toFixed(1);
+const py = (v: number) => +(BOT - (v / MAX) * (BOT - TOP)).toFixed(1);
+const pts = T.values.map((v, i) => ({ x: px(i), y: py(v), v, m: T.months[i] }));
+const line = pts.map((p) => `${p.x},${p.y}`).join(' ');
+---
+
+<SlideFrame size={size} label={T.name} page={8} lang={lang}>
+  <div class="lc" data-demo="line-chart">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="lc-body" data-sf-in style="--i: 2">
+      <svg class="lc-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={T.title}>
+        <text class="lc-unit" x="0" y="14">（{T.unit}）</text>
+        {TICKS.map((t) => (
+          <>
+            <line class:list={['lc-grid', t === 0 && 'is-base']} x1={L} x2={R} y1={py(t)} y2={py(t)} />
+            <text class="lc-ytick" x={L - 10} y={py(t) + 5} text-anchor="end">{t}</text>
+          </>
+        ))}
+        {pts.map((p) => <text class="lc-xtick" x={p.x} y={BOT + 26} text-anchor="middle">{p.m}</text>)}
+        <polyline class="lc-line" points={line} />
+        {pts.map((p, i) => (
+          <>
+            <circle class:list={['lc-dot', (i === 0 || i === n - 1) && 'is-edge']} cx={p.x} cy={p.y} r={i === n - 1 ? 7 : 4.5} />
+            <text class:list={['lc-lab', (i === 0 || i === n - 1) && 'is-edge', i === n - 1 && 'is-last']} x={p.x} y={p.y - (i === n - 1 ? 16 : 12)} text-anchor="middle">{p.v.toFixed(1)}</text>
+          </>
+        ))}
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .lc { display: flex; flex-direction: column; height: 100%; }
+  .lc-body { flex: 1; display: flex; align-items: center; margin: calc(14 * var(--u)) 0 calc(6 * var(--u)); min-height: 0; }
+  .lc-svg { display: block; width: 100%; height: auto; overflow: visible; font-family: inherit; }
+  .lc-unit { font-size: 13px; fill: var(--sf-ink-3); }
+  .lc-ytick { font-size: 14px; fill: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+  .lc-xtick { font-size: 15px; fill: var(--sf-ink-2); }
+  .lc-grid { stroke: var(--sf-line); stroke-width: 1; }
+  .lc-grid.is-base { stroke: var(--sf-ink-3); }
+  .lc-line { fill: none; stroke: var(--t-accent); stroke-width: var(--t-w); stroke-linejoin: round; stroke-linecap: round; }
+  .lc-dot { fill: #fff; stroke: var(--t-accent); stroke-width: 2.5; }
+  .lc-dot.is-edge { fill: var(--t-accent); }
+  .lc-lab { font-size: 15px; font-weight: 700; fill: var(--sf-ink-2); font-variant-numeric: tabular-nums; }
+  .lc-lab.is-last { font-size: 24px; font-weight: 800; fill: var(--t-accent); }
+  /* 数字を書く点（つまみ）: edge なら最初と最後だけ */
+  :global([data-t-labels='edge']) .lc-lab:not(.is-edge) { display: none; }
+  :global([data-t-labels='edge']) .lc-dot:not(.is-edge) { display: none; }
+</style>

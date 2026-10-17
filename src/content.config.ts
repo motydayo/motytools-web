@@ -20,6 +20,8 @@ const guide = defineCollection({
     faq: z.array(z.object({ q: z.string().min(4), a: z.string().min(10) })).default([]),
     /** true にすると公開されない（一覧・サイトマップからも消える） */
     draft: z.boolean().default(false),
+    /** true にすると検索に出さない（meta robots noindex,follow・サイトマップから外す）。ページと一覧のリンクは残る */
+    noindex: z.boolean().default(false),
   }),
 });
 

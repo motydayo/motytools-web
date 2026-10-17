@@ -1,0 +1,89 @@
+---
+// 資料レイアウトの見本: 推奨案強調型（3つの案のうち、推奨を1枚だけ大きく見せ、ほかは小さく控えめに並べる）
+// つまみ: --t-accent（色）・data-t-pos（推奨案の位置 center|left）・--t-scale（推奨案の幅の倍率。ほかの案を1としたとき）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '推奨案強調型',
+    kicker: '本社オフィスの移転先（3案）',
+    title: '移転先は案2「駅前の新ビル」を推奨します',
+    badge: '推奨',
+    small: [
+      { no: '案1', name: '現在地で更新', rent: '月80万円', note: '移転費用はかからないが、手狭（48席で62人）' },
+      { no: '案3', name: '郊外の戸建て', rent: '月60万円', note: '最も安いが、通勤が不便で退職者が出る恐れ' },
+    ],
+    big: {
+      no: '案2',
+      name: '駅前の新ビル',
+      rent: '月95万円',
+      reasonsHead: '選ぶ理由',
+      reasons: ['席が足りる（48席 → 72席）', '採用に効く（駅から徒歩3分）', '取引先に近い（3社が同じ沿線）'],
+      cost: '現在地より月15万円（年180万円）高い',
+    },
+    note: '※ 賃料は共益費込み。席数は、現在地は48席・新ビルは72席。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+const [a, c] = T.small;
+---
+
+<SlideFrame size={size} label={T.name} page={17} lang={lang}>
+  <div class="rc" data-demo="recommend">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="rc-row">
+      <div class="rc-card rc-small" data-sf-in style="--i: 1">
+        <span class="rc-no">{a.no}</span>
+        <span class="rc-name">{a.name}</span>
+        <span class="rc-rent">{a.rent}</span>
+        <span class="rc-note">{a.note}</span>
+      </div>
+      <div class="rc-card rc-big" data-sf-in style="--i: 2">
+        <span class="rc-badge">{T.badge}</span>
+        <span class="rc-no">{T.big.no}</span>
+        <span class="rc-name">{T.big.name}</span>
+        <span class="rc-rent">{T.big.rent}</span>
+        <span class="rc-rh">{T.big.reasonsHead}</span>
+        <ul class="rc-reasons">
+          {T.big.reasons.map((r) => (
+            <li><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="currentColor" /><path d="M7 12.5l3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>{r}</li>
+          ))}
+        </ul>
+        <span class="rc-cost">{T.big.cost}</span>
+      </div>
+      <div class="rc-card rc-small" data-sf-in style="--i: 3">
+        <span class="rc-no">{c.no}</span>
+        <span class="rc-name">{c.name}</span>
+        <span class="rc-rent">{c.rent}</span>
+        <span class="rc-note">{c.note}</span>
+      </div>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 4">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .rc { display: flex; flex-direction: column; height: 100%; }
+  .rc-row { flex: 1; display: flex; gap: calc(20 * var(--u)); margin: calc(22 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .rc-card { position: relative; display: flex; flex-direction: column; min-width: 0; border-radius: calc(14 * var(--u)); }
+  .rc-small { flex: 1 1 0; align-self: center; gap: calc(4 * var(--u)); padding: calc(18 * var(--u)) calc(20 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); background: var(--sf-soft); }
+  .rc-big { flex: var(--t-scale) 1 0; gap: calc(4 * var(--u)); padding: calc(18 * var(--u)) calc(26 * var(--u)) calc(14 * var(--u)); border: calc(3 * var(--u)) solid var(--t-accent); background: color-mix(in srgb, var(--t-accent) 6%, #fff); }
+  .rc-no { font-size: calc(14 * var(--u)); font-weight: 800; color: var(--sf-ink-2); }
+  .rc-name { font-size: calc(20 * var(--u)); font-weight: 800; line-height: 1.3; }
+  .rc-rent { font-size: calc(26 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--sf-ink-2); }
+  .rc-note { margin-top: calc(6 * var(--u)); font-size: calc(16 * var(--u)); line-height: 1.5; color: var(--sf-ink-2); }
+  .rc-big .rc-no { color: var(--t-accent); }
+  .rc-big .rc-name { font-size: calc(26 * var(--u)); }
+  .rc-big .rc-rent { font-size: calc(40 * var(--u)); line-height: 1.1; color: var(--t-accent); }
+  .rc-badge { position: absolute; top: calc(-14 * var(--u)); right: calc(24 * var(--u)); padding: calc(3 * var(--u)) calc(16 * var(--u)); border-radius: calc(999 * var(--u)); background: var(--t-accent); color: #fff; font-size: calc(16 * var(--u)); font-weight: 800; }
+  .rc-rh { margin-top: calc(8 * var(--u)); padding-top: calc(8 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(14 * var(--u)); font-weight: 800; color: var(--sf-ink-2); }
+  .rc-reasons { list-style: none; margin: calc(4 * var(--u)) 0 0; padding: 0; display: flex; flex-direction: column; gap: calc(6 * var(--u)); }
+  .rc-reasons li { display: flex; align-items: center; gap: calc(10 * var(--u)); font-size: calc(18 * var(--u)); font-weight: 800; color: var(--sf-ink); }
+  .rc-reasons svg { flex: none; color: var(--t-accent); }
+  .rc-cost { margin-top: auto; padding-top: calc(6 * var(--u)); font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+
+  /* 推奨案の位置（つまみ: 推奨案の位置） */
+  :global([data-t-pos='left']) .rc-big { order: -1; }
+</style>

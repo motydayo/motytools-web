@@ -1,0 +1,141 @@
+---
+// 資料レイアウトの見本: ストーリーボード型（場面の絵を4コマ並べ、1コマごとに1文の説明を添える）
+// 絵はすべてこのファイルの中の図形（SVG）で描いたオリジナル。写真・外部画像は使わない。
+// つまみ: --t-accent（色）・data-t-arrow（コマ間の矢印 show|hide）・data-t-focus（強調 last|none）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'ストーリーボード型',
+    kicker: 'ごみ出し通知アプリ「ごみナビ」の使われ方',
+    title: '通知ひとつで、ごみ出しを忘れない朝になる',
+    scenes: [
+      { n: 1, text: '出かける直前に、今日がごみの日だったと気づく' },
+      { n: 2, text: 'スマホに「今日は燃えるごみ」と通知が届く' },
+      { n: 3, text: '通知を見て、袋を持ってごみ置き場へ向かう' },
+      { n: 4, text: '収集に間に合い、安心して出かけられる' },
+    ],
+    note: '※ 想定する利用場面のイメージ。画面や数字は実際の製品とは異なる。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={11} lang={lang}>
+  <div class="sb" data-demo="storyboard">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="sb-row">
+      {T.scenes.map((s, i) => (
+        <>
+          <div class:list={['sb-frame', i === T.scenes.length - 1 && 'is-last']} data-sf-in style={`--i: ${i + 1}`}>
+            <div class="sb-pic">
+              {s.n === 1 && (
+                <svg viewBox="0 0 200 140" aria-hidden="true">
+                  <rect width="200" height="140" fill="#f3f4f7" />
+                  <rect y="112" width="200" height="28" fill="#e3e5ea" />
+                  <rect x="128" y="22" width="52" height="48" rx="4" fill="#fff" stroke="#c3c8d2" stroke-width="3" />
+                  <path d="M154 22v48M128 46h52" stroke="#c3c8d2" stroke-width="3" />
+                  <circle cx="141" cy="35" r="6" fill="#c3c8d2" />
+                  <circle cx="40" cy="38" r="16" fill="#fff" stroke="#c3c8d2" stroke-width="3" />
+                  <path d="M40 38V28M40 38l7 4" stroke="#5a6070" stroke-width="2.5" stroke-linecap="round" />
+                  <ellipse cx="164" cy="101" rx="14" ry="12" fill="var(--t-accent)" />
+                  <rect x="159" y="86" width="10" height="7" rx="2" fill="var(--t-accent)" />
+                  <rect x="76" y="100" width="9" height="14" rx="3" fill="#1f2430" />
+                  <rect x="88" y="100" width="9" height="14" rx="3" fill="#1f2430" />
+                  <rect x="74" y="69" width="24" height="38" rx="10" fill="#5a6070" />
+                  <circle cx="86" cy="56" r="10" fill="#c3c8d2" />
+                  <circle cx="112" cy="38" r="13" fill="#fff" stroke="var(--t-accent)" stroke-width="3" />
+                  <rect x="110" y="30" width="4" height="12" rx="2" fill="var(--t-accent)" />
+                  <circle cx="112" cy="46" r="2.4" fill="var(--t-accent)" />
+                </svg>
+              )}
+              {s.n === 2 && (
+                <svg viewBox="0 0 200 140" aria-hidden="true">
+                  <rect width="200" height="140" fill="#f3f4f7" />
+                  <path d="M52 52c-8 12-8 24 0 36M42 44c-12 16-12 36 0 52M148 52c8 12 8 24 0 36M158 44c12 16 12 36 0 52" fill="none" stroke="var(--t-accent)" stroke-width="3.5" stroke-linecap="round" />
+                  <rect x="72" y="10" width="56" height="120" rx="11" fill="#1f2430" />
+                  <rect x="77" y="20" width="46" height="100" rx="6" fill="#fff" />
+                  <rect x="81" y="28" width="38" height="32" rx="6" fill="var(--t-accent)" />
+                  <path d="M89 49h14l-2-3v-6c0-4-2-6-5-6s-5 2-5 6v6z" fill="#fff" />
+                  <circle cx="96" cy="51" r="2" fill="#fff" />
+                  <rect x="108" y="38" width="8" height="3" rx="1.5" fill="#fff" />
+                  <rect x="108" y="45" width="8" height="3" rx="1.5" fill="#fff" opacity="0.7" />
+                  <rect x="81" y="68" width="38" height="8" rx="3" fill="#e3e5ea" />
+                  <rect x="81" y="82" width="38" height="8" rx="3" fill="#e3e5ea" />
+                  <rect x="81" y="96" width="24" height="8" rx="3" fill="#e3e5ea" />
+                </svg>
+              )}
+              {s.n === 3 && (
+                <svg viewBox="0 0 200 140" aria-hidden="true">
+                  <rect width="200" height="140" fill="#f3f4f7" />
+                  <rect y="112" width="200" height="28" fill="#e3e5ea" />
+                  <rect x="142" y="72" width="34" height="42" rx="4" fill="#8a8f9c" />
+                  <rect x="138" y="62" width="42" height="11" rx="3" fill="#5a6070" />
+                  <path d="M150 82v24M159 82v24M168 82v24" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.6" />
+                  <rect x="58" y="102" width="9" height="13" rx="3" fill="#1f2430" />
+                  <rect x="76" y="102" width="9" height="13" rx="3" fill="#1f2430" />
+                  <rect x="58" y="71" width="26" height="38" rx="10" fill="#5a6070" />
+                  <circle cx="72" cy="57" r="10" fill="#c3c8d2" />
+                  <path d="M80 80l16 10" stroke="#5a6070" stroke-width="6" stroke-linecap="round" />
+                  <ellipse cx="102" cy="98" rx="12" ry="11" fill="var(--t-accent)" />
+                  <rect x="97" y="84" width="10" height="7" rx="2" fill="var(--t-accent)" />
+                  <path d="M104 40h26M122 32l8 8-8 8" fill="none" stroke="var(--t-accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              )}
+              {s.n === 4 && (
+                <svg viewBox="0 0 200 140" aria-hidden="true">
+                  <rect width="200" height="140" fill="#f3f4f7" />
+                  <rect y="112" width="200" height="28" fill="#e3e5ea" />
+                  <rect x="112" y="64" width="46" height="42" rx="5" fill="#8a8f9c" />
+                  <path d="M158 78h14l10 12v16h-24z" fill="#5a6070" />
+                  <rect x="164" y="82" width="8" height="8" rx="1.5" fill="#fff" opacity="0.8" />
+                  <circle cx="130" cy="108" r="8" fill="#1f2430" />
+                  <circle cx="170" cy="108" r="8" fill="#1f2430" />
+                  <circle cx="130" cy="108" r="3" fill="#c3c8d2" />
+                  <circle cx="170" cy="108" r="3" fill="#c3c8d2" />
+                  <rect x="40" y="100" width="9" height="14" rx="3" fill="#1f2430" />
+                  <rect x="54" y="100" width="9" height="14" rx="3" fill="#1f2430" />
+                  <rect x="38" y="69" width="26" height="38" rx="10" fill="#5a6070" />
+                  <circle cx="51" cy="56" r="10" fill="#c3c8d2" />
+                  <circle cx="82" cy="36" r="15" fill="var(--t-accent)" />
+                  <path d="M74 36l6 6 11-12" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              )}
+            </div>
+            <div class="sb-cap"><span class="sb-n">{s.n}</span><span class="sb-text">{s.text}</span></div>
+          </div>
+          {i < T.scenes.length - 1 && (
+            <span class="sb-arrow" data-sf-in style={`--i: ${i + 2}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+            </span>
+          )}
+        </>
+      ))}
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .sb { display: flex; flex-direction: column; height: 100%; }
+  .sb-row { flex: 1; display: flex; align-items: flex-start; gap: calc(10 * var(--u)); margin: calc(22 * var(--u)) 0 calc(12 * var(--u)); min-height: 0; }
+  .sb-frame { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: calc(10 * var(--u)); padding: calc(8 * var(--u)); border: calc(2 * var(--u)) solid var(--sf-line); border-radius: calc(12 * var(--u)); background: #fff; }
+  .sb-pic { overflow: hidden; border-radius: calc(7 * var(--u)); line-height: 0; }
+  .sb-pic svg { display: block; width: 100%; height: auto; }
+  .sb-cap { display: flex; gap: calc(8 * var(--u)); padding: 0 calc(4 * var(--u)) calc(4 * var(--u)); }
+  .sb-n { flex: none; display: grid; place-items: center; width: calc(26 * var(--u)); height: calc(26 * var(--u)); border-radius: 50%; background: var(--sf-ink); color: #fff; font-size: calc(15 * var(--u)); font-weight: 800; }
+  .sb-text { font-size: calc(16 * var(--u)); font-weight: 700; line-height: 1.45; }
+  .sb-arrow { align-self: center; flex: none; display: grid; place-items: center; width: calc(14 * var(--u)); margin-bottom: calc(60 * var(--u)); color: var(--sf-ink-3); }
+  .sb-arrow svg { width: calc(22 * var(--u)); height: calc(22 * var(--u)); flex: none; }
+  .sb-note { margin-top: auto; }
+
+  /* コマ間の矢印（つまみ: コマ間の矢印） */
+  :global([data-t-arrow='hide']) .sb-arrow { display: none; }
+  :global([data-t-arrow='hide']) .sb-row { gap: calc(18 * var(--u)); }
+
+  /* 最後のコマの強調（つまみ: 強調） */
+  :global([data-t-focus='last']) .sb-frame.is-last { border-color: var(--t-accent); border-width: calc(3 * var(--u)); background: color-mix(in srgb, var(--t-accent) 6%, #fff); }
+  :global([data-t-focus='last']) .sb-frame.is-last .sb-n { background: var(--t-accent); }
+</style>

@@ -28,9 +28,35 @@
           "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(?<vhost>.+)\\.vercel\\.app"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
     }
   ],
   "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "motytools-web.vercel.app"
+        }
+      ],
+      "destination": "https://motytools.com/$1",
+      "permanent": true
+    },
     {
       "source": "/(.*)",
       "has": [

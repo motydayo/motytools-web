@@ -1,0 +1,134 @@
+---
+// 資料レイアウトの見本: 積み上げ棒型（年度ごとの売上を、事業別の内訳を積んだ1本の棒で見せる）
+// 棒の高さは合計に比例（高さ = 合計 ÷ 目盛りの最大30 × 100%）、各段の高さは内訳の値に比例させる。
+// つまみ: --t-accent（色）・data-t-focus（色を付ける内訳 abroad|tint）・--t-bar（棒の太さ。1本ぶんの幅に対する%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const MAX = 30;
+const TICKS = [0, 5, 10, 15, 20, 25, 30];
+const DICT = {
+  ja: {
+    name: '積み上げ棒型',
+    kicker: '事業別の売上高（2022〜2025年度）',
+    title: '海外事業の伸びで売上は25.5億円に',
+    unit: '億円',
+    series: ['法人向け', '個人向け', '海外'],
+    // [年度, [法人向け, 個人向け, 海外]]（下の段から順に積む）
+    data: [
+      ['2022', [8.6, 5.2, 2.6]],
+      ['2023', [9.9, 5.6, 3.7]],
+      ['2024', [11.2, 5.9, 5.2]],
+      ['2025', [12.5, 6.1, 6.9]],
+    ] as [string, number[]][],
+    yearSuffix: '年度',
+    big: '2.7倍',
+    bigLabel: '海外事業の売上（2022年度比）',
+    sub: '全体は1.6倍',
+    note: '※ 全社の売上高（税抜）。段の数字は事業ごとの売上高。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+const total = (vs: number[]) => +vs.reduce((a, b) => a + b, 0).toFixed(1);
+if (T.data.some(([, vs]) => total(vs) > MAX) || TICKS[TICKS.length - 1] !== MAX) throw new Error('stacked-bar: 目盛りの最大と合計が合っていません');
+---
+
+<SlideFrame size={size} label={T.name} page={9} lang={lang}>
+  <div class="sk" data-demo="stacked-bar">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="sk-body">
+      <div class="sk-chart">
+        <div class="sk-y">
+          <span class="sk-unit">（{T.unit}）</span>
+          {TICKS.map((t) => <span class="sk-tick" style={`--v: ${t}`}>{t}</span>)}
+        </div>
+        <div class="sk-plot">
+          {TICKS.map((t) => <i class:list={['sk-grid', t === 0 && 'is-base']} style={`--v: ${t}`} />)}
+          <div class="sk-cols">
+            {T.data.map(([y, vs], i) => (
+              <div class="sk-slot" style={`--v: ${total(vs)}`}>
+                <span class="sk-total" data-sf-in style={`--i: ${i + 4}`}>{total(vs).toFixed(1)}</span>
+                <div class="sk-stack" data-sf-grow="y" style={`--i: ${i}`}>
+                  {vs.map((v, k) => (
+                    <span class={`sk-seg sk-s${k + 1}`} style={`--v: ${v}; --t: ${total(vs)}`}>
+                      <b>{v.toFixed(1)}</b>
+                      {i === T.data.length - 1 && <em class="sk-name">{T.series[k]}</em>}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="sk-x">
+          {T.data.map(([y]) => <span>{y}{T.yearSuffix}</span>)}
+        </div>
+      </div>
+      <div class="sk-side" data-sf-in style="--i: 8">
+        <span class="sk-big">{T.big}</span>
+        <span class="sk-big-label">{T.bigLabel}</span>
+        <span class="sk-sub">{T.sub}</span>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .sk { display: flex; flex-direction: column; height: 100%; }
+  .sk-body { flex: 1; display: flex; gap: calc(34 * var(--u)); margin: calc(16 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .sk-chart {
+    flex: 1;
+    display: grid;
+    grid-template-columns: calc(48 * var(--u)) 1fr;
+    grid-template-rows: 1fr calc(30 * var(--u));
+    padding: calc(28 * var(--u)) calc(76 * var(--u)) 0 0;
+    min-width: 0;
+  }
+  .sk-y { position: relative; }
+  .sk-unit { position: absolute; bottom: 100%; left: 0; margin-bottom: calc(8 * var(--u)); font-size: calc(13 * var(--u)); color: var(--sf-ink-3); white-space: nowrap; }
+  .sk-tick { position: absolute; right: calc(10 * var(--u)); bottom: calc(var(--v) / 30 * 100%); transform: translateY(50%); font-size: calc(14 * var(--u)); color: var(--sf-ink-3); font-variant-numeric: tabular-nums; }
+  .sk-plot { position: relative; --c1: #b4bac6; --c2: #dfe2e8; --c3: var(--t-accent); }
+  .sk-grid { position: absolute; left: 0; right: 0; bottom: calc(var(--v) / 30 * 100%); height: calc(1 * var(--u)); background: var(--sf-line); }
+  .sk-grid.is-base { background: var(--sf-ink-3); }
+  .sk-cols { position: absolute; inset: 0; display: flex; }
+  .sk-slot { position: relative; flex: 1; display: flex; justify-content: center; align-items: flex-end; }
+  .sk-stack { width: var(--t-bar); height: calc(var(--v) / 30 * 100%); display: flex; flex-direction: column-reverse; }
+  .sk-seg {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(var(--v) / var(--t) * 100%);
+    box-shadow: inset 0 calc(1.5 * var(--u)) #fff;
+    font-size: calc(15 * var(--u));
+    color: var(--sf-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .sk-seg b { font-weight: 700; }
+  .sk-s1 { background: var(--c1); }
+  .sk-s2 { background: var(--c2); }
+  .sk-s3 { background: var(--c3); color: #fff; }
+  .sk-name { position: absolute; left: calc(100% + 10 * var(--u)); top: 50%; transform: translateY(-50%); font-style: normal; font-size: calc(15 * var(--u)); font-weight: 700; color: var(--sf-ink-2); white-space: nowrap; }
+  .sk-slot .sk-s3 .sk-name { color: var(--t-accent); }
+  .sk-total { position: absolute; left: 0; right: 0; bottom: calc(var(--v) / 30 * 100%); padding-bottom: calc(5 * var(--u)); text-align: center; font-size: calc(19 * var(--u)); font-weight: 800; color: var(--sf-ink); font-variant-numeric: tabular-nums; }
+  .sk-x { grid-column: 2; display: flex; align-items: flex-end; }
+  .sk-x span { flex: 1; text-align: center; font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+
+  /* 色を付ける内訳（つまみ）: tint なら3つとも同じ色の濃淡 */
+  :global([data-t-focus='tint']) .sk-plot { --c1: color-mix(in srgb, var(--t-accent) 22%, #fff); --c2: color-mix(in srgb, var(--t-accent) 50%, #fff); }
+
+  .sk-side {
+    flex: 0 0 calc(176 * var(--u));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(6 * var(--u));
+    padding-left: calc(24 * var(--u));
+    border-left: calc(1 * var(--u)) solid var(--sf-line);
+  }
+  .sk-big { font-size: calc(52 * var(--u)); font-weight: 800; line-height: 1.05; color: var(--t-accent); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .sk-big-label { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .sk-sub { margin-top: calc(14 * var(--u)); padding-top: calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(20 * var(--u)); font-weight: 800; }
+</style>

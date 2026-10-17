@@ -1,0 +1,103 @@
+---
+// 資料レイアウトの見本: 意思決定ツリー型（条件の分かれ道をたどって、何を選ぶかを決める）
+// 質問2段・結論4つの2分木。たどる道すじ（金額80万円・新規の取引先 → 課長の承認）だけ is-route を付ける。
+// つまみ: --t-accent（色）・data-t-path（道すじの強調 on|off）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '意思決定ツリー型',
+    kicker: '発注の承認ルート（金額と取引先で分かれる）',
+    title: '80万円の新規取引先は、課長の承認で発注できる',
+    note: '※ 金額は税抜。太い線は、金額80万円・新規の取引先の場合の道すじ。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={14} lang={lang}>
+  <div class="dt" data-demo="decision-tree">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="dt-diagram" data-sf-in style="--i: 1">
+      <svg viewBox="0 0 848 340" role="img" aria-label="発注の承認ルートの意思決定ツリー（金額と取引先で4つの結論に分かれる）">
+        <path class="dt-edge" d="M180 170 H215 V84 H280" />
+        <polygon class="dt-tip" points="290,84 280,78 280,90" />
+        <path class="dt-edge" d="M470 84 H515 V44 H580" />
+        <polygon class="dt-tip" points="590,44 580,38 580,50" />
+        <path class="dt-edge" d="M470 84 H515 V124 H580" />
+        <polygon class="dt-tip" points="590,124 580,118 580,130" />
+        <path class="dt-edge" d="M470 256 H515 V296 H580" />
+        <polygon class="dt-tip" points="590,296 580,290 580,302" />
+        <path class="dt-edge is-route" d="M180 170 H215 V256 H280" />
+        <polygon class="dt-tip is-route" points="290,256 280,250 280,262" />
+        <path class="dt-edge is-route" d="M470 256 H515 V216 H580" />
+        <polygon class="dt-tip is-route" points="590,216 580,210 580,222" />
+        <text class="dt-lab" x="252" y="75" text-anchor="middle">はい</text>
+        <text class="dt-lab" x="252" y="247" text-anchor="middle">いいえ</text>
+        <text class="dt-lab" x="552" y="35" text-anchor="middle">はい</text>
+        <text class="dt-lab" x="552" y="115" text-anchor="middle">いいえ</text>
+        <text class="dt-lab" x="552" y="207" text-anchor="middle">はい</text>
+        <text class="dt-lab" x="552" y="287" text-anchor="middle">いいえ</text>
+        <g class="dt-q is-route">
+          <rect x="0" y="136" width="180" height="68" rx="12" />
+          <text x="90" y="167" text-anchor="middle">金額は100万円</text>
+          <text x="90" y="189" text-anchor="middle">以上か</text>
+        </g>
+        <g class="dt-q">
+          <rect x="290" y="50" width="180" height="68" rx="12" />
+          <text x="380" y="81" text-anchor="middle">取引先は</text>
+          <text x="380" y="103" text-anchor="middle">新規か</text>
+        </g>
+        <g class="dt-q is-route">
+          <rect x="290" y="222" width="180" height="68" rx="12" />
+          <text x="380" y="253" text-anchor="middle">取引先は</text>
+          <text x="380" y="275" text-anchor="middle">新規か</text>
+        </g>
+        <g class="dt-out">
+          <rect x="590" y="10" width="258" height="68" rx="12" />
+          <text class="dt-out-t" x="608" y="40">役員会に諮る</text>
+          <text class="dt-out-s" x="608" y="64">稟議書と与信確認が必要</text>
+        </g>
+        <g class="dt-out">
+          <rect x="590" y="90" width="258" height="68" rx="12" />
+          <text class="dt-out-t" x="608" y="120">部長の承認</text>
+          <text class="dt-out-s" x="608" y="144">見積書と発注書を提出</text>
+        </g>
+        <g class="dt-out is-route">
+          <rect x="590" y="182" width="258" height="68" rx="12" />
+          <text class="dt-out-t" x="608" y="212">課長の承認</text>
+          <text class="dt-out-s" x="608" y="236">見積書を添えて申請</text>
+        </g>
+        <g class="dt-out">
+          <rect x="590" y="262" width="258" height="68" rx="12" />
+          <text class="dt-out-t" x="608" y="292">担当者の判断で発注</text>
+          <text class="dt-out-s" x="608" y="316">社内の承認は不要</text>
+        </g>
+      </svg>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .dt { display: flex; flex-direction: column; height: 100%; }
+  .dt-diagram { position: relative; flex: 1; margin: calc(12 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .dt-diagram svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* 図の中の寸法は、viewBox（幅848）の数字そのまま */
+  .dt-edge { fill: none; stroke: #c3c8d2; stroke-width: 2.5; }
+  .dt-tip { fill: #c3c8d2; }
+  .dt-lab { font-size: 16px; font-weight: 800; fill: #5a6070; }
+  .dt-q rect { fill: #fff; stroke: #8a8f9c; stroke-width: 2.5; }
+  .dt-q text { font-size: 18px; font-weight: 800; fill: #1f2430; }
+  .dt-out rect { fill: #f3f4f7; }
+  .dt-out-t { font-size: 19px; font-weight: 800; fill: #1f2430; }
+  .dt-out-s { font-size: 16px; fill: #5a6070; }
+  /* たどる道すじ（data-path="on"） */
+  :global([data-t-path='on']) .dt-edge.is-route { stroke: var(--t-accent); stroke-width: 5; }
+  :global([data-t-path='on']) .dt-tip.is-route { fill: var(--t-accent); }
+  :global([data-t-path='on']) .dt-q.is-route rect { stroke: var(--t-accent); }
+  :global([data-t-path='on']) .dt-out.is-route rect { fill: var(--t-accent); }
+  :global([data-t-path='on']) .dt-out.is-route text { fill: #fff; }
+</style>

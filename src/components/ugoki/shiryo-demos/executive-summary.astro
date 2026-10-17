@@ -1,0 +1,71 @@
+---
+// 資料レイアウトの見本: エグゼクティブサマリー型（資料全体の結論と要点を1枚に。左に現状・提案・効果・お願い、右に主な数字）
+// つまみ: --t-accent（色）・data-t-fig（右の数字の欄 show|hide）・--t-lab（項目名の列の幅。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'エグゼクティブサマリー型',
+    kicker: '2027年度 採用強化計画（要約）',
+    title: '採用担当を2名増やし、手数料を年1,200万円減らす',
+    rows: [
+      ['現状', '欠員が平均9人。採用24人のうち18人を紹介会社に頼り、手数料は年1,800万円'],
+      ['提案', '採用担当を2名増やし、自社の求人サイトと社員紹介を強化。紹介会社経由は18人から6人へ'],
+      ['効果', '手数料は年600万円に。増員の人件費1,000万円を引いても、年200万円のプラス。欠員は4人へ'],
+      ['お願い', '10月の取締役会で、採用担当2名の増員枠を承認してください'],
+    ],
+    figs: [
+      ['−1,200万円', '紹介会社の手数料（年）'],
+      ['9人 → 4人', '欠員の平均'],
+      ['+200万円', '人件費を引いた差し引き（年）'],
+    ],
+    note: '※ 手数料は1人あたり100万円で計算。採用人数は24人のまま。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={18} lang={lang}>
+  <div class="es" data-demo="executive-summary">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="es-body">
+      <div class="es-rows">
+        {T.rows.map(([k, v], i) => (
+          <div class:list={['es-row', i === T.rows.length - 1 && 'is-ask']} data-sf-in style={`--i: ${i + 1}`}>
+            <span class="es-k">{k}</span>
+            <span class="es-v">{v}</span>
+          </div>
+        ))}
+      </div>
+      <div class="es-figs" data-sf-in style="--i: 5">
+        {T.figs.map(([v, l], i) => (
+          <div class:list={['es-fig', i === T.figs.length - 1 && 'is-last']}><span class="es-fv">{v}</span><span class="es-fl">{l}</span></div>
+        ))}
+      </div>
+    </div>
+    <p class="sf-note" data-sf-in style="--i: 6">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .es { display: flex; flex-direction: column; height: 100%; }
+  .es-body { flex: 1; display: flex; gap: calc(28 * var(--u)); margin: calc(16 * var(--u)) 0 calc(8 * var(--u)); min-height: 0; }
+  .es-rows { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .es-row { flex: 1; display: grid; grid-template-columns: calc(var(--t-lab) * var(--u)) 1fr; gap: calc(16 * var(--u)); align-items: center; padding: 0 calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); }
+  .es-row:first-child { border-top: calc(3 * var(--u)) solid var(--sf-ink); }
+  .es-k { font-size: calc(20 * var(--u)); font-weight: 800; }
+  .es-v { font-size: calc(17 * var(--u)); line-height: 1.5; }
+  .es-row.is-ask { background: color-mix(in srgb, var(--t-accent) 8%, #fff); border-top-color: var(--t-accent); border-radius: 0 0 calc(8 * var(--u)) calc(8 * var(--u)); }
+  .es-row.is-ask .es-k { color: var(--t-accent); }
+  .es-row.is-ask .es-v { font-weight: 800; }
+  .es-figs { flex: 0 0 calc(230 * var(--u)); display: flex; flex-direction: column; gap: calc(10 * var(--u)); }
+  .es-fig { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 calc(18 * var(--u)); border-radius: calc(10 * var(--u)); background: var(--sf-soft); }
+  .es-fv { font-size: calc(30 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .es-fl { font-size: calc(14 * var(--u)); color: var(--sf-ink-2); }
+  .es-fig.is-last .es-fv { color: var(--t-accent); }
+
+  /* 右の数字の欄（つまみ: 数字の欄） */
+  :global([data-t-fig='hide']) .es-figs { display: none; }
+</style>

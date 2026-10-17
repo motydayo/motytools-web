@@ -1,0 +1,67 @@
+---
+// prefix: ts
+// 資料レイアウトの見本: タイトルスライド（会社名・題名・一言・日付と発表者だけの表紙）
+// つまみ: --t-accent（色）・data-t-align（配置 left|center）・--t-size（題名の大きさ。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: 'タイトルスライド',
+    company: '株式会社ミナト商事',
+    dept: '営業企画部',
+    kicker: '第2四半期 営業報告会',
+    title: ['2026年度 上期の営業実績と', '下期の重点施策'],
+    sub: '売上は計画比103%。下期は新商品の投入で伸ばします。',
+    meta: [
+      ['日付', '2026年10月21日（水）'],
+      ['発表者', '営業企画部 部長　佐伯 美咲'],
+    ],
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={1} lang={lang}>
+  <div class="ts" data-demo="title-slide">
+    <div class="ts-brand" data-sf-in style="--i: 0">
+      <span class="ts-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15c3-4 6-4 9 0s6 4 9 0M3 9c3-4 6-4 9 0s6 4 9 0" /></svg></span>
+      <span>{T.company}</span>
+      <span class="ts-dept">{T.dept}</span>
+    </div>
+    <div class="ts-main">
+      <p class="sf-kicker ts-kicker" data-sf-in style="--i: 1">{T.kicker}</p>
+      <p class="ts-title" data-sf-in style="--i: 2">{T.title.map((l) => <span>{l}</span>)}</p>
+      <span class="ts-rule" data-sf-in style="--i: 3"></span>
+      <p class="ts-sub" data-sf-in style="--i: 4">{T.sub}</p>
+    </div>
+    <div class="ts-foot" data-sf-in style="--i: 5">
+      {T.meta.map(([k, v]) => (
+        <div><span class="ts-k">{k}</span><span class="ts-v">{v}</span></div>
+      ))}
+    </div>
+  </div>
+</SlideFrame>
+
+<style>
+  .ts { display: flex; flex-direction: column; height: 100%; }
+  .ts-brand { display: flex; align-items: center; gap: calc(12 * var(--u)); font-size: calc(18 * var(--u)); font-weight: 800; }
+  .ts-mark { display: grid; place-items: center; width: calc(32 * var(--u)); height: calc(32 * var(--u)); border-radius: calc(8 * var(--u)); background: var(--t-accent); }
+  .ts-mark svg { width: calc(20 * var(--u)); height: calc(20 * var(--u)); }
+  .ts-dept { margin-left: calc(4 * var(--u)); padding-left: calc(16 * var(--u)); border-left: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(16 * var(--u)); font-weight: 500; color: var(--sf-ink-2); }
+  .ts-main { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+  .ts-kicker { margin-bottom: calc(16 * var(--u)); font-size: calc(18 * var(--u)); }
+  .ts-title { margin: 0; font-size: calc(var(--t-size) * var(--u)); font-weight: 800; line-height: 1.25; letter-spacing: 0.01em; }
+  .ts-title span { display: block; }
+  .ts-rule { display: block; width: calc(64 * var(--u)); height: calc(6 * var(--u)); margin: calc(24 * var(--u)) 0 calc(20 * var(--u)); border-radius: calc(3 * var(--u)); background: var(--t-accent); }
+  .ts-sub { margin: 0; font-size: calc(22 * var(--u)); color: var(--sf-ink-2); }
+  .ts-foot { display: flex; gap: calc(48 * var(--u)); padding-top: calc(16 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); }
+  .ts-foot div { display: flex; flex-direction: column; gap: calc(2 * var(--u)); }
+  .ts-k { font-size: calc(14 * var(--u)); color: var(--sf-ink-3); }
+  .ts-v { font-size: calc(18 * var(--u)); font-weight: 700; }
+
+  /* 配置（つまみ: 配置） */
+  :global([data-t-align='center']) .ts-brand { justify-content: center; }
+  :global([data-t-align='center']) .ts-main { align-items: center; text-align: center; }
+  :global([data-t-align='center']) .ts-foot { justify-content: center; }
+</style>
