@@ -1,0 +1,167 @@
+---
+// 資料レイアウトの見本を入れる「スライド1枚（16:9）」の枠。中身（slot）はスライドの中身。
+// size="mini" は一覧用（読み上げから隠す・触れない）、size="full" は詳細ページ用。
+//
+// 中身の寸法は「幅960pxのスライド」の px で考え、calc(N * var(--u)) で書く（--u = スライド幅の1/960）。
+// こうすると一覧の小さな見本でも詳細ページでも、記事のコード（幅960px固定）と同じ比率で縮む。
+// 中身の要素に data-sf-in（ふわっと出る）・data-sf-grow="y|x"（棒が伸びる）と style="--i: 順番" を付けると、
+// 詳細ページでだけ一度だけ組み上がる動きが付く（動きを減らす設定・?ugstill では動かない）。
+interface Props {
+  size?: 'mini' | 'full';
+  /** 見本の名前（読み上げ用） */
+  label: string;
+  /** 右下に出すページ番号 */
+  page?: number;
+  lang?: 'ja' | 'en';
+}
+const { size = 'full', label, page = 4, lang = 'ja' } = Astro.props;
+const mini = size === 'mini';
+const L = {
+  ja: { region: `${label}の見本（スライド1枚・16:9）`, hint: 'スライド1枚（16:9）の見本です', zoom: '拡大して読む', fit: '全体を表示' },
+  en: { region: `${label} example (one 16:9 slide)`, hint: 'One 16:9 slide', zoom: 'Zoom in', fit: 'Fit to width' },
+}[lang];
+---
+
+<figure class:list={['sf-frame', `is-${size}`]} lang={lang} data-sf-frame data-size={size}>
+  <div class="sf-stage" data-sf-stage>
+    <div class="sf-slide" role={mini ? undefined : 'group'} aria-label={mini ? undefined : L.region} aria-hidden={mini ? 'true' : undefined}>
+      <div class="sf-inner">
+        <slot />
+      </div>
+      <span class="sf-page" aria-hidden="true">{page}</span>
+    </div>
+  </div>
+  {!mini && (
+    <figcaption class="sf-cap">
+      <span class="sf-hint">{L.hint}</span>
+      <button type="button" class="sf-zoom" data-sf-zoom aria-pressed="false" data-on={L.fit} data-off={L.zoom}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M16.5 16.5L21 21M8 11h6M11 8v6" /></svg>
+        <span data-label>{L.zoom}</span>
+      </button>
+    </figcaption>
+  )}
+</figure>
+
+<script>
+  // ?ugstill（撮影・確認用）では組み上がりの動きを止める
+  if (new URLSearchParams(location.search).has('ugstill')) document.documentElement.classList.add('sf-still');
+  document.querySelectorAll<HTMLElement>('[data-sf-frame]').forEach((frame) => {
+    const btn = frame.querySelector<HTMLButtonElement>('[data-sf-zoom]');
+    if (!btn || btn.dataset.ready) return;
+    btn.dataset.ready = '1';
+    btn.addEventListener('click', () => {
+      const on = !frame.classList.contains('is-zoomed');
+      frame.classList.toggle('is-zoomed', on);
+      btn.setAttribute('aria-pressed', String(on));
+      btn.querySelector('[data-label]')!.textContent = on ? btn.dataset.on! : btn.dataset.off!;
+    });
+  });
+</script>
+
+<style is:global>
+  /* スライドの中は「白い紙の資料」で固定する（サイトのダーク表示に引きずられない） */
+  .sf-frame {
+    --sf-ink: #1f2430;
+    --sf-ink-2: #5a6070;
+    --sf-ink-3: #8a8f9c;
+    --sf-line: #e3e5ea;
+    --sf-soft: #f3f4f7;
+    --sf-mute: #c3c8d2;
+    margin: 0;
+  }
+  .sf-stage {
+    padding: var(--sp-5);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+  }
+  .sf-frame.is-mini .sf-stage { padding: var(--sp-3); }
+  .sf-slide {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #ffffff;
+    color: var(--sf-ink);
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(20, 24, 40, 0.08), 0 10px 28px -14px rgba(20, 24, 40, 0.35);
+    container-type: inline-size;
+    font-family: 'Hiragino Sans', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-feature-settings: 'palt';
+    line-height: 1.4;
+    /* 幅960pxのスライドの1px */
+    --u: calc(100cqw / 960);
+  }
+  .sf-frame.is-mini .sf-slide { border-radius: 4px; }
+  .sf-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: calc(44 * var(--u)) calc(56 * var(--u)) calc(40 * var(--u));
+    font-size: calc(18 * var(--u));
+  }
+  .sf-page {
+    position: absolute;
+    right: calc(28 * var(--u));
+    bottom: calc(14 * var(--u));
+    font-size: calc(13 * var(--u));
+    color: var(--sf-ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* スライドの中で使う共通の文字（見出し・一言・注記） */
+  .sf-title { margin: 0; font-size: calc(34 * var(--u)); font-weight: 800; line-height: 1.3; letter-spacing: 0.01em; }
+  .sf-kicker { margin: 0 0 calc(6 * var(--u)); font-size: calc(15 * var(--u)); font-weight: 700; color: var(--t-accent, #2f5fcf); letter-spacing: 0.04em; }
+  .sf-lead { margin: calc(8 * var(--u)) 0 0; font-size: calc(19 * var(--u)); color: var(--sf-ink-2); }
+  .sf-note { margin: 0; font-size: calc(13 * var(--u)); color: var(--sf-ink-3); }
+
+  .sf-cap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-2);
+    min-height: 44px;
+    padding: var(--sp-1) 0 0 var(--sp-1);
+    color: var(--text-2);
+    font-size: var(--fs-sm);
+  }
+  .sf-zoom {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 12px;
+    font: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--text);
+    background: transparent;
+    border: 0;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+  }
+  .sf-zoom:hover { background: var(--surface-2); }
+  .sf-zoom:active { transform: scale(0.96); }
+  .sf-zoom:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* スマホの詳細ページでは、文字が小さくなるので「拡大して読む」（横にずらして見る）を出す */
+  @media (max-width: 640px) {
+    .sf-frame.is-full .sf-stage { padding: var(--sp-3); }
+    .sf-zoom { display: inline-flex; }
+    .sf-frame.is-zoomed .sf-stage { overflow-x: auto; overscroll-behavior-x: contain; }
+    .sf-frame.is-zoomed .sf-slide { width: 680px; }
+  }
+
+  /* 詳細ページでだけ、一度だけ組み上がる */
+  @keyframes sf-in { from { opacity: 0; transform: translateY(calc(10 * var(--u))); } }
+  @keyframes sf-grow-y { from { transform: scaleY(0); } }
+  @keyframes sf-grow-x { from { transform: scaleX(0); } }
+  .sf-frame.is-full [data-sf-in] { animation: sf-in 0.4s cubic-bezier(0.2, 0.7, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 70ms + 120ms); }
+  .sf-frame.is-full [data-sf-grow='y'] { transform-origin: bottom; animation: sf-grow-y 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 70ms + 200ms); }
+  .sf-frame.is-full [data-sf-grow='x'] { transform-origin: left; animation: sf-grow-x 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 70ms + 200ms); }
+  .sf-still .sf-frame [data-sf-in],
+  .sf-still .sf-frame [data-sf-grow] { animation: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-frame [data-sf-in],
+    .sf-frame [data-sf-grow] { animation: none; }
+  }
+</style>

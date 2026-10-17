@@ -1,0 +1,140 @@
+---
+// 資料レイアウトの見本: 課題・原因・解決型（課題 → 原因 → 解決策を矢印でつなぎ、解決策を強調する）
+// つまみ: --t-accent（色）・data-t-dir（並べ方 row|col）・data-t-focus（強調 solution|none）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '課題・原因・解決型',
+    kicker: '経理業務の見直し',
+    title: '銀行連携で、月末の締め作業を6日から2日に',
+    steps: [
+      { key: 'problem', label: '課題', head: '月末の締め作業に毎月6日かかる', points: ['請求の確認が月初にずれ込む', '締めの間、経理2人がほかの仕事をできない'] },
+      { key: 'cause', label: '原因', head: '銀行の明細を手で入力している', points: ['3つの口座・月およそ900件を転記', '転記ミスの見直しに毎月1日以上'] },
+      { key: 'solution', label: '解決策', head: '銀行連携のある会計ソフトに替える', points: ['明細を自動で取り込み、確認だけにする', '2週間の試用で効果を確かめ済み'] },
+    ],
+    result: { label: '効果の見込み', before: '6日', after: '2日', what: '月末の締め作業', sub: '毎月4日の短縮' },
+    note: '※ 日数は2025年4〜9月の平均。見込みは試用期間（2週間）の結果から算出。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={2} lang={lang}>
+  <div class="ps" data-demo="problem-solution">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="ps-flow">
+      {T.steps.map((s, i) => (
+        <>
+          <div class:list={['ps-step', `ps-${s.key}`]} data-sf-in style={`--i: ${i * 2 + 1}`}>
+            <span class="ps-label">{s.label}</span>
+            <span class="ps-head">{s.head}</span>
+            <span class="ps-points">{s.points.map((p) => <span>{p}</span>)}</span>
+          </div>
+          {i < T.steps.length - 1 && (
+            <span class="ps-arrow" data-sf-in style={`--i: ${i * 2 + 2}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+            </span>
+          )}
+        </>
+      ))}
+    </div>
+    <div class="ps-result" data-sf-in style="--i: 6">
+      <span class="ps-result-label">{T.result.label}</span>
+      <span class="ps-result-what">{T.result.what}</span>
+      <span class="ps-result-num">{T.result.before}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg><b>{T.result.after}</b></span>
+      <span class="ps-result-sub">{T.result.sub}</span>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .ps { display: flex; flex-direction: column; height: 100%; }
+  .ps-flow {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) calc(36 * var(--u)) minmax(0, 1fr) calc(36 * var(--u)) minmax(0, 1fr);
+    align-items: stretch;
+    margin: calc(20 * var(--u)) 0 calc(12 * var(--u));
+    min-height: 0;
+  }
+  /* 結論の帯: 課題と解決策を同じ物差しの数字で並べる */
+  .ps-result {
+    display: flex;
+    align-items: center;
+    gap: calc(16 * var(--u));
+    margin-bottom: calc(10 * var(--u));
+    padding: calc(10 * var(--u)) calc(22 * var(--u));
+    border-radius: calc(10 * var(--u));
+    background: var(--sf-soft);
+  }
+  .ps-result-label { font-size: calc(15 * var(--u)); font-weight: 800; color: var(--sf-ink-2); }
+  .ps-result-what { font-size: calc(18 * var(--u)); font-weight: 700; }
+  .ps-result-num { display: inline-flex; align-items: center; gap: calc(10 * var(--u)); font-size: calc(30 * var(--u)); font-weight: 800; color: var(--sf-ink-2); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .ps-result-num svg { width: calc(26 * var(--u)); height: calc(26 * var(--u)); color: var(--sf-ink-3); }
+  .ps-result-num b { font-size: calc(38 * var(--u)); color: var(--t-accent); }
+  .ps-result-sub { margin-left: auto; font-size: calc(16 * var(--u)); font-weight: 700; color: var(--sf-ink-2); }
+  .ps-step {
+    display: flex;
+    flex-direction: column;
+    gap: calc(10 * var(--u));
+    padding: calc(20 * var(--u)) calc(22 * var(--u));
+    border: calc(2 * var(--u)) solid var(--sf-line);
+    border-radius: calc(12 * var(--u));
+    background: #fff;
+  }
+  .ps-label {
+    align-self: flex-start;
+    padding: calc(2 * var(--u)) calc(12 * var(--u));
+    border-radius: calc(999 * var(--u));
+    background: var(--sf-soft);
+    color: var(--sf-ink-2);
+    font-size: calc(15 * var(--u));
+    font-weight: 800;
+  }
+  .ps-head { font-size: calc(24 * var(--u)); font-weight: 800; line-height: 1.35; }
+  .ps-points { display: grid; gap: calc(6 * var(--u)); margin-top: auto; padding-top: calc(10 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); }
+  .ps-points span { position: relative; padding-left: calc(14 * var(--u)); font-size: calc(16 * var(--u)); color: var(--sf-ink-2); line-height: 1.45; }
+  .ps-points span::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: calc(6 * var(--u));
+    height: calc(6 * var(--u));
+    border-radius: 50%;
+    background: var(--sf-mute);
+  }
+  .ps-arrow { display: grid; place-items: center; color: var(--sf-ink-3); }
+  .ps-arrow svg { width: calc(28 * var(--u)); height: calc(28 * var(--u)); }
+
+  /* 強調（つまみ: 強調する部分） */
+  :global([data-t-focus='solution']) .ps-solution {
+    border-color: var(--t-accent);
+    border-width: calc(3 * var(--u));
+    background: color-mix(in srgb, var(--t-accent) 6%, #fff);
+  }
+  :global([data-t-focus='solution']) .ps-solution .ps-label { background: var(--t-accent); color: #fff; }
+  :global([data-t-focus='solution']) .ps-solution .ps-points span::before { background: var(--t-accent); }
+
+  /* 縦に3段（つまみ: 並べ方） */
+  :global([data-t-dir='col']) .ps-flow {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) calc(22 * var(--u)) minmax(0, 1fr) calc(22 * var(--u)) minmax(0, 1fr);
+  }
+  :global([data-t-dir='col']) .ps-step {
+    display: grid;
+    grid-template-columns: calc(96 * var(--u)) calc(330 * var(--u)) minmax(0, 1fr);
+    align-items: center;
+    gap: calc(16 * var(--u));
+    padding: calc(8 * var(--u)) calc(20 * var(--u));
+  }
+  :global([data-t-dir='col']) .ps-label { align-self: center; justify-self: start; }
+  :global([data-t-dir='col']) .ps-head { font-size: calc(21 * var(--u)); }
+  :global([data-t-dir='col']) .ps-points { margin: 0; padding: 0 0 0 calc(16 * var(--u)); border-top: 0; border-left: calc(1 * var(--u)) solid var(--sf-line); gap: calc(2 * var(--u)); }
+  :global([data-t-dir='col']) .ps-points span { font-size: calc(15 * var(--u)); }
+  :global([data-t-dir='col']) .ps-arrow svg { width: calc(22 * var(--u)); height: calc(22 * var(--u)); transform: rotate(90deg); }
+</style>

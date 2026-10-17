@@ -1,9 +1,9 @@
-// 図鑑の「本」の設定。2冊（動き・UI部品）× 2言語（日本語・英語）。
+// 図鑑の「本」の設定。3冊（動き・UI部品・資料レイアウト）× 2言語（日本語・英語）。資料レイアウトは今は日本語だけ。
 // ページのひな形（src/components/zukan/）はここだけを見て組み立てる。
 import type { Lang, Ugoki } from './ugoki/types';
 export type { Lang, Ugoki } from './ugoki/types';
 
-export type BookId = 'ugoki' | 'ui';
+export type BookId = 'ugoki' | 'ui' | 'shiryo';
 
 export interface Category {
   id: string;
@@ -49,9 +49,12 @@ const UGOKI_JA = load(import.meta.glob<{ default: Ugoki }>('./ugoki/entries/*.ts
 const UGOKI_EN = load(import.meta.glob<{ default: Ugoki }>('./ugoki/entries-en/*.ts', { eager: true }));
 const UI_JA = load(import.meta.glob<{ default: Ugoki }>('./ui/entries/*.ts', { eager: true }));
 const UI_EN = load(import.meta.glob<{ default: Ugoki }>('./ui/entries-en/*.ts', { eager: true }));
+const SHIRYO_JA = load(import.meta.glob<{ default: Ugoki }>('./shiryo/entries/*.ts', { eager: true }));
+const SHIRYO_EN = load(import.meta.glob<{ default: Ugoki }>('./shiryo/entries-en/*.ts', { eager: true }));
 
 import { UGOKI_CATS_JA, UGOKI_CATS_EN, UGOKI_HUB_JA, UGOKI_HUB_EN } from './ugoki/hub';
 import { UI_CATS_JA, UI_CATS_EN, UI_HUB_JA, UI_HUB_EN } from './ui/hub';
+import { SHIRYO_CATS_JA, SHIRYO_CATS_EN, SHIRYO_HUB_JA, SHIRYO_HUB_EN } from './shiryo/hub';
 
 export const BOOKS: Record<BookId, Record<Lang, Book>> = {
   ugoki: {
@@ -62,10 +65,20 @@ export const BOOKS: Record<BookId, Record<Lang, Book>> = {
     ja: { id: 'ui', lang: 'ja', base: '/ui/', altBase: '/en/ui/', name: 'UI部品の図鑑', categories: UI_CATS_JA, entries: UI_JA, hub: UI_HUB_JA },
     en: { id: 'ui', lang: 'en', base: '/en/ui/', altBase: '/ui/', name: 'UI Component Library', categories: UI_CATS_EN, entries: UI_EN, hub: UI_HUB_EN },
   },
+  // 英語版（/en/slides/）は項目がまだ0件。0件の間は hasAlt が false なのでリンクも hreflang も出ない
+  shiryo: {
+    ja: { id: 'shiryo', lang: 'ja', base: '/shiryo/', altBase: '/en/slides/', name: '資料レイアウトの図鑑', categories: SHIRYO_CATS_JA, entries: SHIRYO_JA, hub: SHIRYO_HUB_JA },
+    en: { id: 'shiryo', lang: 'en', base: '/en/slides/', altBase: '/shiryo/', name: 'Slide Layout Library', categories: SHIRYO_CATS_EN, entries: SHIRYO_EN, hub: SHIRYO_HUB_EN },
+  },
 };
 
 export const book = (id: BookId, lang: Lang) => BOOKS[id][lang];
-export const otherBook = (id: BookId): BookId => (id === 'ugoki' ? 'ui' : 'ugoki');
+const BOOK_ORDER: BookId[] = ['ugoki', 'ui', 'shiryo'];
+/** ほかの本（項目が1件以上ある本だけ）。記事の末尾・一覧の頭の「〜も調べる」リンクに使う */
+export const otherBooks = (id: BookId, lang: Lang): Book[] =>
+  BOOK_ORDER.filter((x) => x !== id)
+    .map((x) => BOOKS[x][lang])
+    .filter((b) => b.entries.length > 0);
 
 /** もう一方の言語に同じ slug のページがあるか（hreflang と言語切替に使う） */
 export const hasAlt = (b: Book, slug?: string) => {
@@ -82,7 +95,7 @@ export const T = {
     other: '日本語',
     nameEn: '英語では',
     nameOther: 'ほかの呼び方',
-    what: { ugoki: 'どんな動き？', ui: 'どんな部品？' },
+    what: { ugoki: 'どんな動き？', ui: 'どんな部品？', shiryo: 'どんな型？' },
     usage: '使いどころ',
     when: 'こんなときに使う',
     avoid: '使わない方がいいとき',
@@ -90,7 +103,11 @@ export const T = {
     tuneLead: 'つまみを動かすと、見本・下のコード・AIへの指示文が一緒に変わります。',
     tuneReset: '最初の値に戻す',
     prompt: 'AIへの頼み方',
-    promptLead: 'ClaudeやChatGPTなどにサイトを作ってもらうときは、「いい感じにして」ではなく、名前と中身を指定すると狙いどおりになります。そのまま貼って使えます。',
+    promptLead: {
+      ugoki: 'ClaudeやChatGPTなどにサイトを作ってもらうときは、「いい感じにして」ではなく、名前と中身を指定すると狙いどおりになります。そのまま貼って使えます。',
+      ui: 'ClaudeやChatGPTなどにサイトを作ってもらうときは、「いい感じにして」ではなく、名前と中身を指定すると狙いどおりになります。そのまま貼って使えます。',
+      shiryo: 'ChatGPT・Claude・Gemini・Copilotなどに資料を作ってもらうときは、「わかりやすいスライドにして」ではなく、型の名前と「どこに何を置くか」を指定すると一発で整います。中身の数字や言葉を自分の資料に差し替えて貼ってください。',
+    },
     promptCopy: '指示文をコピー',
     howto: '作り方',
     tunedNote: '上のつまみで変えた数値が、コードにもそのまま入ります。',
@@ -106,7 +123,8 @@ export const T = {
     next: '次へ',
     more: (cat: string) => `${cat}のほかの項目`,
     all: (n: number) => `${n}種すべて見る`,
-    otherBook: { ugoki: 'UI部品の名前も調べる', ui: '動きの演出の名前も調べる' },
+    /** ほかの本へのリンクの文言（行き先の本ごと） */
+    otherBook: { ugoki: '動きの演出の名前も調べる', ui: 'UI部品の名前も調べる', shiryo: '資料レイアウトの名前も調べる' },
   },
   en: {
     home: 'Home',
@@ -114,7 +132,7 @@ export const T = {
     other: '日本語',
     nameEn: 'In Japanese',
     nameOther: 'Also called',
-    what: { ugoki: 'What it does', ui: 'What it is' },
+    what: { ugoki: 'What it does', ui: 'What it is', shiryo: 'What the layout is' },
     usage: 'When to use it',
     when: 'Good fit',
     avoid: 'Skip it when',
@@ -122,7 +140,11 @@ export const T = {
     tuneLead: 'Move a slider and the demo, the code below and the AI prompt all update together.',
     tuneReset: 'Reset to defaults',
     prompt: 'How to ask AI for it',
-    promptLead: 'When you have Claude, ChatGPT or another AI build a page, “make it look nice” gets you random results. Name the pattern and spell out the details instead. Copy and paste this as is.',
+    promptLead: {
+      ugoki: 'When you have Claude, ChatGPT or another AI build a page, “make it look nice” gets you random results. Name the pattern and spell out the details instead. Copy and paste this as is.',
+      ui: 'When you have Claude, ChatGPT or another AI build a page, “make it look nice” gets you random results. Name the pattern and spell out the details instead. Copy and paste this as is.',
+      shiryo: 'When you have ChatGPT, Claude, Gemini or Copilot make slides, “make it clear” gets you random results. Name the layout and say what goes where. Swap in your own numbers and words, then paste.',
+    },
     promptCopy: 'Copy prompt',
     howto: 'How to build it',
     tunedNote: 'Whatever you set with the sliders above is already in this code.',
@@ -138,6 +160,6 @@ export const T = {
     next: 'Next',
     more: (cat: string) => `More in ${cat}`,
     all: (n: number) => `See all ${n}`,
-    otherBook: { ugoki: 'Look up UI component names too', ui: 'Look up motion effect names too' },
+    otherBook: { ugoki: 'Look up motion effect names too', ui: 'Look up UI component names too', shiryo: 'Look up slide layout names too' },
   },
 } as const;

@@ -60,6 +60,8 @@ const t = T[lang];
         const p = params.find((x) => x.key === el.dataset.key)!;
         const v = el.value;
         demo?.style.setProperty(`--t-${p.key}`, formatTune(p, v, 'css', lang));
+        // 選択肢は属性にも置く（見本のCSSが [data-t-<key>='値'] で出し分ける）
+        if (p.type === 'select') demo?.setAttribute(`data-t-${p.key}`, v);
         const out = tuner.querySelector(`[data-out="${p.key}"]`);
         if (out) out.textContent = formatTune(p, v, 't', lang);
         scope.querySelectorAll<HTMLElement>(`.zk-tv[data-t="${p.key}"]`).forEach((s) => {

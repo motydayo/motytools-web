@@ -1,6 +1,6 @@
-// 図鑑のOG画像（1200x630 PNG）を4冊（動き・UI部品 × 日英）ぶん一括生成する。
-// 出力: public/og/ugoki/・ugoki-en/・ui/・ui-en/ の <slug>.png と index.png
-// 実行: node scripts/gen-og-ugoki.mjs （出力はコミットする）
+// 図鑑のOG画像（1200x630 PNG）を一括生成する（動き・UI部品 × 日英、資料レイアウト × 日英）。
+// 出力: public/og/ugoki/・ugoki-en/・ui/・ui-en/・shiryo/・shiryo-en/ の <slug>.png と index.png
+// 実行: node scripts/gen-og-ugoki.mjs [出力名...] （例: shiryo だけなら node scripts/gen-og-ugoki.mjs shiryo。出力はコミットする）
 import sharp from 'sharp';
 import { mkdir, readdir, readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
@@ -13,7 +13,10 @@ const BOOKS = [
   { dir: 'src/data/ugoki/entries-en', out: 'ugoki-en', lang: 'en', label: 'Web Motion Library', index: { name: 'Web Motion Library', en: 'animation effects, named', one: 'Live demos, tweakable code and AI prompts' } },
   { dir: 'src/data/ui/entries', out: 'ui', lang: 'ja', label: 'UI部品の図鑑', index: { name: 'UI部品の図鑑', en: 'UI components, named', one: '触れる見本と名前・使い分け・作り方' } },
   { dir: 'src/data/ui/entries-en', out: 'ui-en', lang: 'en', label: 'UI Component Library', index: { name: 'UI Component Library', en: 'UI components, named', one: 'Hands-on demos, code and AI prompts' } },
+  { dir: 'src/data/shiryo/entries', out: 'shiryo', lang: 'ja', label: '資料レイアウトの図鑑', art: 'slide', index: { name: '資料レイアウトの図鑑', en: 'slide layouts, named', one: '見本のスライドと型の名前・作り方・AIへの頼み方' } },
+  { dir: 'src/data/shiryo/entries-en', out: 'shiryo-en', lang: 'en', label: 'Slide Layout Library', art: 'slide', index: { name: 'Slide Layout Library', en: 'slide layouts, named', one: 'Example slides, how to build them and AI prompts' } },
 ];
+const only = new Set(process.argv.slice(2));
 
 const pick = (src, key) => {
   const m = src.match(new RegExp(`\\n  ${key}:\\s*(?:'([^']*)'|(\\d+))`));
@@ -37,6 +40,24 @@ const frame = `
     <rect x="20" y="58" width="380" height="198" rx="14" fill="none" stroke="#4f73d9" stroke-width="3" stroke-dasharray="10 8"/>
   </g>`;
 
+// 資料レイアウトの図鑑は「16:9のスライド（見出し＋縦棒グラフ）」を右側に置く
+const slide = `
+  <g transform="translate(680 175)">
+    <rect x="-16" y="-16" width="472" height="279" rx="20" fill="#ecebe6"/>
+    <rect width="440" height="247.5" rx="8" fill="#ffffff" stroke="#e3e5ea" stroke-width="2"/>
+    <rect x="28" y="24" width="90" height="8" rx="4" fill="#2f5fcf"/>
+    <rect x="28" y="42" width="250" height="16" rx="5" fill="#1f2430"/>
+    <line x1="40" y1="208" x2="300" y2="208" stroke="#8a8f9c" stroke-width="2"/>
+    <rect x="52" y="157" width="34" height="51" rx="3" fill="#c3c8d2"/>
+    <rect x="102" y="150" width="34" height="58" rx="3" fill="#c3c8d2"/>
+    <rect x="152" y="142" width="34" height="66" rx="3" fill="#c3c8d2"/>
+    <rect x="202" y="133" width="34" height="75" rx="3" fill="#c3c8d2"/>
+    <rect x="252" y="115" width="34" height="93" rx="3" fill="#2f5fcf"/>
+    <line x1="322" y1="90" x2="322" y2="210" stroke="#e3e5ea" stroke-width="2"/>
+    <rect x="338" y="118" width="78" height="26" rx="6" fill="#2f5fcf"/>
+    <rect x="338" y="156" width="70" height="8" rx="4" fill="#c3c8d2"/>
+  </g>`;
+
 // 一言を2行まで（日本語は24字、英語は42字で区切る）
 function lines(t, lang) {
   if (!t) return [];
@@ -56,11 +77,11 @@ function lines(t, lang) {
 function svg({ no, name, en, one }, b) {
   // 右の絵（x=700〜）に重ならない大きさ。1文字の幅の目安は日本語=文字の大きさ、英語=その0.6倍
   const perChar = b.lang === 'ja' ? 1 : 0.6;
-  const size = Math.min(72, Math.floor(590 / (name.length * perChar)));
+  const size = Math.min(72, Math.floor((b.art === 'slide' ? 550 : 590) / (name.length * perChar)));
   const font = b.lang === 'ja' ? 'Hiragino Sans, sans-serif' : 'Inter, Helvetica, sans-serif';
   return `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
   <rect width="1200" height="630" fill="#f7f6f2"/>
-  ${frame}
+  ${b.art === 'slide' ? slide : frame}
   <text x="80" y="150" font-family="Inter, Hiragino Sans, sans-serif" font-size="30" font-weight="800" fill="#4f46e5">${no ? `No.${String(no).padStart(2, '0')}  ` : ''}<tspan fill="#5d6272" font-weight="600">${esc(b.label)}</tspan></text>
   <text x="80" y="270" font-family="${font}" font-size="${size}" font-weight="800" fill="#1f2433">${esc(name)}</text>
   <text x="80" y="330" font-family="Inter, Hiragino Sans, sans-serif" font-size="30" font-weight="600" fill="#8a877f">${esc(en)}</text>
@@ -71,6 +92,7 @@ function svg({ no, name, en, one }, b) {
 
 let count = 0;
 for (const b of BOOKS) {
+  if (only.size && !only.has(b.out)) continue;
   const dir = path.join(root, b.dir);
   if (!existsSync(dir)) continue;
   const outDir = path.join(root, 'public', 'og', b.out);

@@ -1,5 +1,5 @@
 ---
-// 図鑑の1項目のページ（動き・UI部品 × 日本語・英語で共通）
+// 図鑑の1項目のページ（動き・UI部品・資料レイアウト × 日本語・英語で共通）
 import { codeToHtml } from 'shiki';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Demo from '../ugoki/Demo.astro';
@@ -7,7 +7,7 @@ import ZkCard from './ZkCard.astro';
 import Tuner from './Tuner.astro';
 import CopyButton from '../ugoki/CopyButton.astro';
 import { SITE } from '../../config';
-import { BOOKS, T, hasAlt, otherBook, type Book, type Ugoki } from '../../data/zukan';
+import { BOOKS, T, hasAlt, otherBooks, type Book, type Ugoki } from '../../data/zukan';
 import { fillHtml, fillText, formatTune, toSentinel, SENTINEL, type Fmt } from '../../lib/zukan/tune';
 
 interface Props {
@@ -92,7 +92,7 @@ if (u.faq.length > 0) {
     mainEntity: u.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
   });
 }
-const otherB = BOOKS[otherBook(book.id)][lang];
+const others = otherBooks(book.id, lang);
 ---
 
 <BaseLayout
@@ -169,7 +169,7 @@ const otherB = BOOKS[otherBook(book.id)][lang];
 
         <section aria-labelledby="prompt">
           <h2 id="prompt">{t.prompt}</h2>
-          <p>{t.promptLead}</p>
+          <p>{t.promptLead[book.id]}</p>
           <div class="ugd-prompt" data-copy-scope>
             <p class="ugd-prompt-text" data-prompt set:html={promptHtml} />
             <CopyButton from="[data-prompt]" text={promptPlain} label={t.promptCopy} doneLabel={lang === 'en' ? 'Copied' : undefined} failLabel={lang === 'en' ? 'Could not copy. Select the text and copy it manually.' : undefined} />
@@ -257,8 +257,10 @@ const otherB = BOOKS[otherBook(book.id)][lang];
       </section>
     )}
 
-    {otherB.entries.length > 0 && (
-      <p class="ugd-otherbook"><a href={otherB.base}>{t.otherBook[book.id]}<span aria-hidden="true">&nbsp;→</span></a></p>
+    {others.length > 0 && (
+      <p class="ugd-otherbook">
+        {others.map((o) => <a href={o.base}>{t.otherBook[o.id]}<span aria-hidden="true">&nbsp;→</span></a>)}
+      </p>
     )}
   </div>
 </BaseLayout>
@@ -362,7 +364,7 @@ const otherB = BOOKS[otherBook(book.id)][lang];
   .ugd-pager .is-next { text-align: right; }
   .ugd-more { margin-top: var(--sp-8); }
   .ugd-all { font-size: var(--fs-sm); font-weight: 700; color: var(--accent); }
-  .ugd-otherbook { margin-top: var(--sp-6); text-align: center; }
+  .ugd-otherbook { margin-top: var(--sp-6); display: flex; flex-wrap: wrap; justify-content: center; gap: 0 var(--sp-5); }
   .ugd-otherbook a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: var(--accent); }
 </style>
 

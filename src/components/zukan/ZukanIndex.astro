@@ -1,10 +1,10 @@
 ---
-// 図鑑の一覧ページ（動き・UI部品 × 日本語・英語で共通）
+// 図鑑の一覧ページ（動き・UI部品・資料レイアウト × 日本語・英語で共通）
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ZkCard from './ZkCard.astro';
 import CopyButton from '../ugoki/CopyButton.astro';
 import { SITE } from '../../config';
-import { BOOKS, T, hasAlt, otherBook, type Book } from '../../data/zukan';
+import { T, hasAlt, otherBooks, type Book } from '../../data/zukan';
 
 interface Props {
   book: Book;
@@ -20,7 +20,7 @@ const title = n(h.title);
 const description = n(h.description);
 const path = book.base;
 const alternates = hasAlt(book) ? (lang === 'ja' ? { ja: book.base, en: book.altBase } : { ja: book.altBase, en: book.base }) : undefined;
-const otherB = BOOKS[otherBook(book.id)][lang];
+const others = otherBooks(book.id, lang);
 
 const jsonLd = [
   {
@@ -68,7 +68,7 @@ const jsonLd = [
       <h1>{h.h1}</h1>
       <p>{n(h.lead)}</p>
       <p class="ugi-links">
-        {otherB.entries.length > 0 && <a href={otherB.base}>{t.otherBook[book.id]}<span aria-hidden="true">&nbsp;→</span></a>}
+        {others.map((o) => <a href={o.base}>{t.otherBook[o.id]}<span aria-hidden="true">&nbsp;→</span></a>)}
         {alternates && (
           <a href={book.altBase} hreflang={lang === 'ja' ? 'en' : 'ja'} lang={lang === 'ja' ? 'en' : 'ja'}>{lang === 'ja' ? 'English' : '日本語'}</a>
         )}

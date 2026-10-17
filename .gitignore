@@ -7,3 +7,6 @@ dist
 .agent-dist/
 .agent-cache/
 astro.config.agent*.mjs
+
+# 撮影の作業ファイル
+.shots/

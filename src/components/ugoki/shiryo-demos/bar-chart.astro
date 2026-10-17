@@ -1,0 +1,139 @@
+---
+// 資料レイアウトの見本: 縦棒グラフ型（年度ごとの売上を縦棒で並べ、右に読み取ってほしい数字を大きく置く）
+// 棒の高さは値に比例させる（高さ = 値 ÷ 目盛りの最大25 × 100%）。値を変えるときは MAX・TICKS と CSS の「/ 25」を一緒に見直す。
+// つまみ: --t-accent（色）・data-t-highlight（色を付ける棒 last|all）・--t-bar（棒の太さ。1本ぶんの幅に対する%）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const MAX = 25;
+const TICKS = [0, 5, 10, 15, 20, 25];
+const DICT = {
+  ja: {
+    name: '縦棒グラフ型',
+    kicker: '売上高の推移（2021〜2025年度）',
+    title: '売上高は4年で1.8倍、2025年度は22.5億円',
+    unit: '億円',
+    data: [
+      ['2021', 12.4],
+      ['2022', 14.1],
+      ['2023', 16.0],
+      ['2024', 18.3],
+      ['2025', 22.5],
+    ] as [string, number][],
+    yearSuffix: '年度',
+    big: '+23%',
+    bigLabel: '2025年度の前年度比',
+    sub: '2021年度の1.8倍',
+    note: '※ 全社の売上高（税抜）。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+const fmt = (v: number) => v.toFixed(1);
+// 目盛りの最大を超える値があると棒がはみ出す（CSS の「/ 25」と MAX をそろえる）
+if (T.data.some(([, v]) => v > MAX) || TICKS[TICKS.length - 1] !== MAX) throw new Error('bar-chart: 目盛りの最大と値が合っていません');
+---
+
+<SlideFrame size={size} label={T.name} page={5} lang={lang}>
+  <div class="bc" data-demo="bar-chart">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="bc-body">
+      <div class="bc-chart">
+        <div class="bc-y">
+          <span class="bc-unit">（{T.unit}）</span>
+          {TICKS.map((t) => <span class="bc-tick" style={`--v: ${t}`}>{t}</span>)}
+        </div>
+        <div class="bc-plot">
+          {TICKS.map((t) => <i class:list={['bc-grid', t === 0 && 'is-base']} style={`--v: ${t}`} />)}
+          <div class="bc-bars">
+            {T.data.map(([y, v], i) => (
+              <div class="bc-slot" style={`--v: ${v}`}>
+                <span class="bc-val" data-sf-in style={`--i: ${i + 4}`}>{fmt(v)}</span>
+                <span class="bc-bar" data-sf-grow="y" style={`--i: ${i}`} />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="bc-x">
+          {T.data.map(([y]) => <span>{y}{T.yearSuffix}</span>)}
+        </div>
+      </div>
+      <div class="bc-side" data-sf-in style="--i: 8">
+        <span class="bc-big">{T.big}</span>
+        <span class="bc-big-label">{T.bigLabel}</span>
+        <span class="bc-sub">{T.sub}</span>
+      </div>
+    </div>
+    <p class="sf-note">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .bc { display: flex; flex-direction: column; height: 100%; }
+  .bc-body { flex: 1; display: flex; gap: calc(40 * var(--u)); margin: calc(20 * var(--u)) 0 calc(10 * var(--u)); min-height: 0; }
+  .bc-chart {
+    flex: 1;
+    display: grid;
+    grid-template-columns: calc(52 * var(--u)) 1fr;
+    grid-template-rows: 1fr calc(30 * var(--u));
+    /* 上は数値ラベルと単位のぶん空ける */
+    padding-top: calc(30 * var(--u));
+    min-width: 0;
+  }
+  .bc-y { position: relative; }
+  .bc-unit { position: absolute; bottom: 100%; left: 0; margin-bottom: calc(8 * var(--u)); font-size: calc(13 * var(--u)); color: var(--sf-ink-3); white-space: nowrap; }
+  .bc-tick {
+    position: absolute;
+    right: calc(10 * var(--u));
+    bottom: calc(var(--v) / 25 * 100%);
+    transform: translateY(50%);
+    font-size: calc(14 * var(--u));
+    color: var(--sf-ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .bc-plot { position: relative; }
+  .bc-grid { position: absolute; left: 0; right: 0; bottom: calc(var(--v) / 25 * 100%); height: calc(1 * var(--u)); background: var(--sf-line); }
+  .bc-grid.is-base { background: var(--sf-ink-3); }
+  .bc-bars { position: absolute; inset: 0; display: flex; }
+  .bc-slot { position: relative; flex: 1; display: flex; justify-content: center; align-items: flex-end; }
+  .bc-bar {
+    display: block;
+    width: var(--t-bar);
+    height: calc(var(--v) / 25 * 100%);
+    border-radius: calc(4 * var(--u)) calc(4 * var(--u)) 0 0;
+    background: var(--t-accent);
+  }
+  .bc-val {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--v) / 25 * 100%);
+    padding-bottom: calc(6 * var(--u));
+    text-align: center;
+    font-size: calc(18 * var(--u));
+    font-weight: 700;
+    color: var(--sf-ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .bc-slot:last-child .bc-val { font-size: calc(24 * var(--u)); font-weight: 800; color: var(--sf-ink); }
+  .bc-x { grid-column: 2; display: flex; align-items: flex-end; }
+  .bc-x span { flex: 1; text-align: center; font-size: calc(15 * var(--u)); color: var(--sf-ink-2); }
+
+  /* 色を付ける棒（つまみ: 色を付ける棒） */
+  :global([data-t-highlight='last']) .bc-bar { background: var(--sf-mute); }
+  :global([data-t-highlight='last']) .bc-slot:last-child .bc-bar { background: var(--t-accent); }
+  :global([data-t-highlight='last']) .bc-slot:last-child .bc-val { color: var(--t-accent); }
+
+  .bc-side {
+    flex: 0 0 calc(210 * var(--u));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(6 * var(--u));
+    padding-left: calc(28 * var(--u));
+    border-left: calc(1 * var(--u)) solid var(--sf-line);
+  }
+  .bc-big { font-size: calc(60 * var(--u)); font-weight: 800; line-height: 1.05; color: var(--t-accent); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .bc-big-label { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .bc-sub { margin-top: calc(14 * var(--u)); padding-top: calc(12 * var(--u)); border-top: calc(1 * var(--u)) solid var(--sf-line); font-size: calc(20 * var(--u)); font-weight: 800; }
+</style>

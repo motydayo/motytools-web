@@ -1,10 +1,11 @@
 // 図鑑（動きの図鑑 /ugoki/・UI部品の図鑑 /ui/、英語版 /en/motion/・/en/ui/）の1項目。
 // 1項目＝1ファイル。日本語は entries/<slug>.ts、英語は entries-en/<slug>.ts（同じ slug・同じ型）。
-// 見本は src/components/ugoki/demos/<slug>.astro（動き）か ui-demos/<slug>.astro（UI部品）。
+// 見本は src/components/ugoki/demos/<slug>.astro（動き）か ui-demos/<slug>.astro（UI部品）か shiryo-demos/<slug>.astro（資料レイアウト）。
 
 export type Lang = 'ja' | 'en';
 export type UgokiCategory = 'scroll' | 'pointer' | 'load' | 'inform';
 export type UiCategory = 'overlay' | 'nav' | 'input' | 'display';
+export type ShiryoCategory = 'kousei' | 'data' | 'keikaku' | 'teian';
 
 export interface CodeBlock {
   lang: 'html' | 'css' | 'js';
@@ -40,15 +41,15 @@ export interface Ugoki {
   slug: string;
   /** 図鑑の通し番号（1〜） */
   no: number;
-  category: UgokiCategory | UiCategory;
+  category: UgokiCategory | UiCategory | ShiryoCategory;
   /** いちばん通じる呼び名（日本語版は日本語、英語版は英語） */
   name: string;
   /** もう一方の言語での呼び名（日本語版には英語名、英語版には日本語名） */
   en: string;
   /** ほかの呼び方（検索・一覧の絞り込みにも使う） */
   aka: string[];
-  /** 見本の動かし方（UgFrame の mode） */
-  mode: 'scroll' | 'pointer' | 'loop' | 'script';
+  /** 見本の動かし方（UgFrame の mode）。資料レイアウトの図鑑は 'static'（自動再生なし） */
+  mode: 'scroll' | 'pointer' | 'loop' | 'script' | 'static';
   /** <title>（検索結果に出る） */
   title: string;
   /** meta description */
@@ -70,8 +71,8 @@ export interface Ugoki {
   tune?: TuneParam[];
   /** 気をつけること */
   cautions: string[];
-  /** 似ている項目との違い。book を書けばもう一方の図鑑を指せる */
-  similar: { slug: string; diff: string; book?: 'ugoki' | 'ui' }[];
+  /** 似ている項目との違い。book を書けばほかの図鑑を指せる。まだ無い slug は記事に出ない（後で項目が増えたら自動で出る） */
+  similar: { slug: string; diff: string; book?: 'ugoki' | 'ui' | 'shiryo' }[];
   faq: { q: string; a: string }[];
   publishedAt: string;
   updatedAt?: string;

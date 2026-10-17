@@ -1,0 +1,103 @@
+---
+// 資料レイアウトの見本: 2カラム比較型（左右に2案を同じ項目で並べ、推奨案を強調する）
+// つまみ: --t-accent（色）・data-t-focus（強調する案 right|left|none）・--t-gap（列の間隔。幅960pxのスライドでのpx）
+import SlideFrame from '../SlideFrame.astro';
+const { size = 'full', lang = 'ja' } = Astro.props;
+const DICT = {
+  ja: {
+    name: '2カラム比較型',
+    kicker: '会計ソフトの乗り換え',
+    title: '案Bを推奨：年18万円安く、1か月早く使える',
+    badge: '推奨',
+    cols: [
+      { key: 'left', tag: '案A', name: 'クラウド会計 ミドリ', rows: [['月額費用', '4万円'], ['導入期間', '4か月'], ['銀行との連携', '3行'], ['サポート', 'メールのみ']] },
+      { key: 'right', tag: '案B', name: '会計クラウド ソラ', rows: [['月額費用', '2.5万円'], ['導入期間', '3か月'], ['銀行との連携', '12行'], ['サポート', '電話・チャット']] },
+    ],
+    note: '※ 月額は税抜・30人で使う場合。導入期間は契約から本番切り替えまで。',
+  },
+};
+// 英語版を作るときは DICT に en を足す（今は日本語だけ）
+const T = DICT[lang as keyof typeof DICT] ?? DICT.ja;
+---
+
+<SlideFrame size={size} label={T.name} page={3} lang={lang}>
+  <div class="tc" data-demo="two-column">
+    <p class="sf-kicker" data-sf-in style="--i: 0">{T.kicker}</p>
+    <p class="sf-title" data-sf-in style="--i: 0">{T.title}</p>
+    <div class="tc-cols">
+      {T.cols.map((c, i) => (
+        <div class:list={['tc-col', `tc-${c.key}`]} data-sf-in style={`--i: ${i + 1}`}>
+          <div class="tc-head">
+            <span class="tc-tag">{c.tag}</span>
+            <span class="tc-name">{c.name}</span>
+            <span class="tc-badge">{T.badge}</span>
+          </div>
+          <dl class="tc-rows">
+            {c.rows.map(([k, v]) => (
+              <div><dt>{k}</dt><dd>{v}</dd></div>
+            ))}
+          </dl>
+        </div>
+      ))}
+    </div>
+    <p class="sf-note tc-note" data-sf-in style="--i: 3">{T.note}</p>
+  </div>
+</SlideFrame>
+
+<style>
+  .tc { display: flex; flex-direction: column; height: 100%; }
+  .tc-cols {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: calc(var(--t-gap) * var(--u));
+    margin: calc(24 * var(--u)) 0 calc(14 * var(--u));
+    min-height: 0;
+  }
+  .tc-col {
+    display: flex;
+    flex-direction: column;
+    padding: calc(18 * var(--u)) calc(24 * var(--u));
+    border: calc(2 * var(--u)) solid var(--sf-line);
+    border-radius: calc(12 * var(--u));
+    background: #fff;
+  }
+  .tc-head { display: flex; align-items: center; gap: calc(10 * var(--u)); padding-bottom: calc(12 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-line); }
+  .tc-tag {
+    padding: calc(2 * var(--u)) calc(10 * var(--u));
+    border-radius: calc(6 * var(--u));
+    background: var(--sf-soft);
+    color: var(--sf-ink-2);
+    font-size: calc(15 * var(--u));
+    font-weight: 800;
+  }
+  .tc-name { font-size: calc(22 * var(--u)); font-weight: 800; }
+  .tc-badge {
+    display: none;
+    margin-left: auto;
+    padding: calc(3 * var(--u)) calc(12 * var(--u));
+    border-radius: calc(999 * var(--u));
+    background: var(--t-accent);
+    color: #fff;
+    font-size: calc(14 * var(--u));
+    font-weight: 800;
+  }
+  .tc-rows { flex: 1; display: grid; grid-template-rows: repeat(4, 1fr); margin: 0; }
+  .tc-rows div { display: flex; align-items: baseline; justify-content: space-between; gap: calc(12 * var(--u)); border-bottom: calc(1 * var(--u)) solid var(--sf-soft); align-content: center; padding-top: calc(10 * var(--u)); }
+  .tc-rows div:last-child { border-bottom: 0; }
+  .tc-rows dt { font-size: calc(16 * var(--u)); color: var(--sf-ink-2); }
+  .tc-rows dd { margin: 0; font-size: calc(26 * var(--u)); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .tc-note { margin-top: auto; }
+
+  /* 強調する案（つまみ: 強調する案） */
+  :global([data-t-focus='right']) .tc-right,
+  :global([data-t-focus='left']) .tc-left {
+    border-color: var(--t-accent);
+    border-width: calc(3 * var(--u));
+    background: color-mix(in srgb, var(--t-accent) 6%, #fff);
+  }
+  :global([data-t-focus='right']) .tc-right .tc-badge,
+  :global([data-t-focus='left']) .tc-left .tc-badge { display: inline-block; }
+  :global([data-t-focus='right']) .tc-right .tc-tag,
+  :global([data-t-focus='left']) .tc-left .tc-tag { background: var(--t-accent); color: #fff; }
+</style>

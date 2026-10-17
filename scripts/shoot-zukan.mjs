@@ -13,7 +13,7 @@ const chrome = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chro
 ], { stdio: 'ignore' });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let ws;
-for (let i = 0; i < 40; i++) {
+for (let i = 0; i < 120; i++) { // 起動に10秒以上かかることがあるので30秒まで待つ
   try {
     const list = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
     const page = list.find((t) => t.type === 'page');
@@ -28,7 +28,13 @@ ws.onmessage = (m) => {
   const d = JSON.parse(m.data);
   if (d.id && pending.has(d.id)) { pending.get(d.id)(d); pending.delete(d.id); }
 };
-const send = (method, params = {}) => new Promise((r) => { const i = ++id; pending.set(i, r); ws.send(JSON.stringify({ id: i, method, params })); });
+// ヘッドレスChromeがまれに応答しなくなるので、1回の呼び出しは20秒で見切る（その撮影だけ飛ばして次へ進む）
+const send = (method, params = {}) => new Promise((r) => {
+  const i = ++id;
+  const t = setTimeout(() => { pending.delete(i); r({ timeout: true }); }, 20000);
+  pending.set(i, (d) => { clearTimeout(t); r(d); });
+  ws.send(JSON.stringify({ id: i, method, params }));
+});
 const ev = async (expr) => (await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true })).result?.result?.value;
 await send('Page.enable');
 await send('Runtime.enable');
@@ -52,6 +58,7 @@ for (const j of jobs) {
     if (r) clip = { ...r, scale: 1 };
   }
   const shot = await send('Page.captureScreenshot', { format: 'png', ...(clip ? { clip, captureBeyondViewport: true } : {}) });
+  if (!shot.result?.data) { console.log('skip（応答なし）', j.name); continue; }
   writeFileSync(`${out}/${j.name}.png`, Buffer.from(shot.result.data, 'base64'));
   console.log('ok', j.name);
 }

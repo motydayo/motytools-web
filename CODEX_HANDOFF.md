@@ -66,3 +66,14 @@
 - 校閲: 日本語UI30本・英語動き32本・英語UI30本を別担当が技術と文章の両面で点検済み。
 - 本番反映済み（vercel CLI をサンドボックス外で実行）。本番で4冊の129ページ＋/en/ が200、ヘッダー5種、hreflang、OG画像を確認。Search Console はサイトマップ再送信（331件読み込み）、登録リクエストは /en/・/en/motion/・/ui/・/en/ui/。
 - 次の一手: 10/29ごろに日英それぞれの表示回数と検索語を見て題名を調整。英語版の被リンク・紹介（英語圏のデザイン系コミュニティ）を検討。
+
+## 2026-10-17 図鑑の紹介・掲載依頼の下書き（docs/outreach/）
+- zenn.md / qiita.md / show-hn.md / reddit.md / directories.md / README.md を作成。どこにも投稿していない。サイトのコードは未変更
+- 出す順番と担当は docs/outreach/README.md。投稿ボタン・ログインはオーナー
+- 残作業: オーナーの投稿待ち。Awesome CSS Learning への依頼は「作成から2週間」規則のため 10/29 以降
+
+## 2026-10-17 図鑑の第3弾: 資料レイアウトの図鑑（/shiryo/）の土台と手本4本
+- 3冊目の本 `shiryo`（日本語のみ。英語 /en/slides/ は0件の間リンク・hreflang・ページなし）。データ `src/data/shiryo/{entries,hub.ts}`、見本 `src/components/ugoki/shiryo-demos/`、枠 `SlideFrame.astro`（16:9・幅960基準の `--u`）。
+- 手本4本: two-column（No.3）・bar-chart（26）・gantt（52）・problem-solution（76）。残り96本の番号・slug・名前・分類と書き方は `src/data/ugoki/WRITING.md` の第3弾（100種の表は check-zukan が照合）。
+- 共通の変更: select のつまみは見本に `data-t-<key>` 属性でも届く（Demo/Tuner）。記事末尾・一覧頭の「ほかの図鑑」リンクは2冊ぶん出る（otherBooks）。トップのカード・フッターに /shiryo/ を追加。OG画像は `node scripts/gen-og-ugoki.mjs shiryo`。撮影スクリプトに時間切れを追加。
+- 未公開（デプロイしていない）。撮影は `.shots/shiryo-pilot/`（git管理外）。
