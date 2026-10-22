@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>そだち — 子どもの成長記録・身長体重・はじめて</title>
-  <meta name="description" content="そだちは、子どもの身長・体重と「はじめて」を写真つきで記録し、国の発育データの上でどのあたりかが一言でわかるiPhoneアプリ。会員登録・通信不要、完全オフライン。毎月1日に「そだち便り」が生まれ、祖父母にそのまま送れます。" />
+  <title>子どもの成長記録アプリ「そだち」｜身長・体重と「はじめて」を写真つきで記録</title>
+  <meta name="description" content="子どもの身長・体重と「はじめて」を写真つきで残す成長記録アプリ「そだち」。国の発育データの上にこの子の点を打ち、同じ月齢の子の中でどのあたりかを一言で。毎月の「そだち便り」は祖父母にも送れます。会員登録なし・記録は端末の中だけ。" />
   <meta name="keywords" content="そだち,子どもの成長記録,身長体重記録,育児記録アプリ,発育曲線,母子手帳,乳幼児,子育てアプリ,育児日記,はじめて記録" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://motytools.com/apps/sodachi/" />
-  <meta property="og:title" content="そだち — 子どもの成長記録・身長体重・はじめて" />
-  <meta property="og:description" content="身長・体重と「はじめて」を1分で記録。国の発育データの上に、この子の点を打ちます。毎月のそだち便りを祖父母へ。" />
+  <meta property="og:title" content="子どもの成長記録アプリ「そだち」｜身長・体重と「はじめて」を写真つきで記録" />
+  <meta property="og:description" content="子どもの身長・体重と「はじめて」を写真つきで残す成長記録アプリ「そだち」。国の発育データの上にこの子の点を打ち、同じ月齢の子の中でどのあたりかを一言で。毎月の「そだち便り」は祖父母にも送れます。会員登録なし・記録は端末の中だけ。" />
   <meta property="og:url" content="https://motytools.com/apps/sodachi/" />
   <meta property="og:site_name" content="そだち" />
   <meta property="og:locale" content="ja_JP" />
@@ -167,9 +167,11 @@
       padding: 12px 24px;
       font-size: 14px;
       font-weight: 600;
-      opacity: 0.85;
-      cursor: default;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
+    .store-placeholder:hover { transform: translateY(-1px); }
     .store-placeholder .sub {
       display: block;
       font-size: 10px;
@@ -436,6 +438,25 @@
       footer .inner { flex-direction: column; align-items: flex-start; }
     }
   </style>
+  <!-- motytools:app-meta:start -->
+  <meta name="apple-itunes-app" content="app-id=6810085507" />
+  <meta property="og:image" content="https://motytools.com/app-icons/sodachi-512.png" />
+  <meta name="twitter:card" content="summary" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"そだち","alternateName":"そだち - 子どもの成長記録・身長体重・はじめて","description":"身長・体重と「はじめて」を写真つきで残す、子どもの成長記録。","operatingSystem":"iOS 16.4 以降","applicationCategory":"LifestyleApplication","image":"https://motytools.com/app-icons/sodachi-512.png","url":"https://motytools.com/apps/sodachi/","downloadUrl":"https://apps.apple.com/jp/app/id6810085507","installUrl":"https://apps.apple.com/jp/app/id6810085507","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"publisher":{"@type":"Organization","name":"motytools","url":"https://motytools.com"}}</script>
+  <style>
+    section.mt-more { margin: 0; padding: 48px 0 40px; border-top: 1px solid var(--border, var(--line, #e5e5e5)); background: var(--bg-2, #fafaf9); text-align: left; }
+    .mt-more .mt-more-in { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .mt-more .mt-more-h { margin: 0 0 16px; font-size: 20px; font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--text, #1d1d1f); text-align: left; }
+    .mt-more .mt-more-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .mt-more .mt-more-card { position: relative; display: grid; gap: 4px; min-height: 64px; padding: 16px 48px 16px 16px; background: #fff; border: 1px solid var(--border, var(--line, #e5e5e5)); border-radius: 12px; color: var(--text, #1d1d1f); text-decoration: none; transition: border-color .15s, transform .15s; }
+    .mt-more .mt-more-card:hover { border-color: var(--accent, #555); transform: translateY(-1px); }
+    .mt-more .mt-more-card:active { transform: translateY(0); }
+    .mt-more .mt-more-t { font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text, #1d1d1f); }
+    .mt-more .mt-more-d { font-size: 13px; line-height: 1.6; color: var(--text-2, var(--sub, #55555c)); }
+    .mt-more .mt-more-card svg { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-3, #8e8e93); }
+    @media (max-width: 640px) { .mt-more .mt-more-grid { grid-template-columns: 1fr; } .mt-more .mt-more-in { padding: 0 16px; } }
+  </style>
+  <!-- motytools:app-meta:end -->
 </head>
 <body>
 
@@ -459,13 +480,13 @@
       <div><span class="badge">iOS アプリ</span></div>
       <h1>身長・体重と「はじめて」を、<br /><span class="accent">1分で記録する。</span></h1>
       <p class="tagline">会員登録も通信も不要。身長・体重と「はじめて」を写真つきで残すと、国の発育データの上にこの子の点が打たれ、同じ月齢の子の中でどのあたりかが一言でわかります。毎月1日に「そだち便り」が生まれ、そのまま祖父母に送れます。</p>
-      <div class="store-placeholder">
+      <a class="store-placeholder" href="https://apps.apple.com/jp/app/id6810085507" target="_blank" rel="noopener">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
         <span>
           <span class="sub">Download on the</span>
           <span class="main">App Store</span>
         </span>
-      </div>
+      </a>
       <p class="free-note">無料でダウンロード（お子さま2人まで。広告除去は買い切り、そだち便りは月額または年額のそだちプラスで）</p>
     </div>
   </section>
@@ -587,16 +608,36 @@
   <section class="cta">
     <div class="container">
       <h2>今日の記録から、そだちを始めよう。</h2>
-      <p>App Storeからダウンロードできます。</p>
-      <div class="store-placeholder">
+      <p>App Storeで公開中。今すぐ無料で使いはじめられます。</p>
+      <a class="store-placeholder" href="https://apps.apple.com/jp/app/id6810085507" target="_blank" rel="noopener">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
         <span>
           <span class="sub">Download on the</span>
           <span class="main">App Store</span>
         </span>
+      </a>
+    </div>
+  </section>
+
+  <!-- motytools:more:start -->
+  <section class="mt-more" aria-labelledby="mt-more-h">
+    <div class="mt-more-in">
+      <h2 class="mt-more-h" id="mt-more-h">もっと知る</h2>
+      <div class="mt-more-grid">
+        <a class="mt-more-card" href="/guide/app/sodachi/">
+          <span class="mt-more-t">関連する記事</span>
+          <span class="mt-more-d">そだちの使い方と、役立つ記事</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+        <a class="mt-more-card" href="/apps/">
+          <span class="mt-more-t">他のアプリ</span>
+          <span class="mt-more-d">motytoolsのiPhoneアプリ一覧（11本）</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
       </div>
     </div>
   </section>
+  <!-- motytools:more:end -->
 
   <footer>
     <div class="inner">

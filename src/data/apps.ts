@@ -5,7 +5,7 @@
 //   最終取得: 2026-10-12。評価は実データだけを載せる（評価が無いアプリは rating を書かない）。
 // - アイコンは public/app-icons/ に保存したもの（App Storeへの直リンクはしない）。
 //   <slug>-256.webp = 画面表示用、<slug>-512.png = 構造化データ・OGP用。
-// - 配信していないアプリ（そだち・ピッと保証など）は載せない。
+// - 配信していないアプリ（ピッと保証など）は載せない。
 
 export type AppCategoryId = 'food' | 'money' | 'life' | 'hobby';
 
@@ -18,7 +18,7 @@ export interface AppCategory {
 export const APP_CATEGORIES: AppCategory[] = [
   { id: 'food', name: '料理・食品', description: 'レシピの保存、冷蔵庫の残り物、賞味期限の管理。' },
   { id: 'money', name: 'お金・仕事', description: '家賃・月謝・原価など、個人で稼ぐ人の台帳。' },
-  { id: 'life', name: '暮らし', description: '買い物の値段、まちの安全、思いついたことのメモ。' },
+  { id: 'life', name: '暮らし', description: '買い物の値段、まちの安全、子どもの成長、思いついたことのメモ。' },
   { id: 'hobby', name: '趣味', description: '生きものの飼育記録と、同じ趣味の仲間。' },
 ];
 
@@ -297,6 +297,34 @@ export const APPS: AppEntry[] = [
     lpTitle: '交通事故・不審者情報を地図で見るアプリ「まちの安全マップ」｜行政処分・食中毒も',
     lpDescription:
       '交通事故・不審者情報・行政処分・食中毒の記録を、住所や駅名の周りで地図にして数えるiPhoneアプリ「まちの安全マップ」。警察庁の交通事故統計や各都道府県警察の公開情報を出典つきで表示。引っ越し先や通学路の確認に。',
+  },
+  {
+    slug: 'sodachi',
+    name: 'そだち',
+    storeName: 'そだち - 子どもの成長記録・身長体重・はじめて',
+    tagline: '身長・体重と「はじめて」を写真つきで残す、子どもの成長記録。',
+    audience: '0歳から高校生くらいまでの子どもを育てる親',
+    features: [
+      '身長・体重を国の発育データの上に点で残す',
+      '同じ月齢の子の中でどのあたりかを一言で',
+      '「はじめて」を写真つきで記録',
+      '毎月1日に「そだち便り」、1年のアルバムも作れる',
+      '会員登録なし。記録は端末の中だけ',
+    ],
+    pricing: '無料（お子さま2人まで）。そだちプラスは月額・年額、広告除去は買い切り',
+    appId: '6810085507',
+    storeUrl: store('6810085507'),
+    lpPath: '/apps/sodachi/',
+    icon: icon('sodachi'),
+    icon512: icon512('sodachi'),
+    category: 'life',
+    schemaCategory: 'LifestyleApplication',
+    genre: 'ライフスタイル',
+    minIos: '16.4',
+    relatedTools: [],
+    lpTitle: '子どもの成長記録アプリ「そだち」｜身長・体重と「はじめて」を写真つきで記録',
+    lpDescription:
+      '子どもの身長・体重と「はじめて」を写真つきで残す成長記録アプリ「そだち」。国の発育データの上にこの子の点を打ち、同じ月齢の子の中でどのあたりかを一言で。毎月の「そだち便り」は祖父母にも送れます。会員登録なし・記録は端末の中だけ。',
   },
   {
     slug: 'memomail',
