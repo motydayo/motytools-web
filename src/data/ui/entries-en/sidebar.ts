@@ -105,7 +105,7 @@ export default {
 .label { transition: opacity {{dur}} ease-out; }
 .is-collapsed .label { opacity: 0; }
 
-/* Mobile: hide the sidebar and use a drawer instead */
+/* Mobile: this only hides the sidebar. Build the replacement drawer and hamburger button with the code at /en/ui/drawer/ */
 @media (max-width: 767px) {
   .layout, .layout.is-collapsed { grid-template-columns: 1fr; }
   .sidebar { display: none; }
@@ -146,7 +146,7 @@ btn.addEventListener('click', () => {
     'If you hide labels with display: none when collapsing, screen readers are left with nameless icon links. Fade them out or visually hide them so the names remain.',
     'An icon-only rail takes time to learn. Show names on hover (title or a tooltip), and start first-time users with the sidebar expanded.',
     'Once the items outgrow the screen height, the bottom ones become unreachable. Give the sidebar its own overflow-y: auto so it scrolls independently of the content.',
-    'Do not just squeeze the sidebar on phones — switch to a drawer opened from a hamburger button. Reusing the same list of links keeps navigation in one place.',
+    'Do not just squeeze the sidebar on phones — switch to a drawer opened from a hamburger button. Reusing the same list of links keeps navigation in one place. The code on this page only hides the sidebar on narrow screens, so pair it with the code from the drawer page (/en/ui/drawer/).',
   ],
   similar: [
     { slug: 'drawer', diff: 'A drawer is hidden until opened, then slides over the content from an edge. A sidebar is part of the layout and sits beside the content.' },

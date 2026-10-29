@@ -14,7 +14,7 @@ export default {
   oneLine: 'A small tag on an icon or card corner that shows a count or a status.',
   what: [
     'A badge is a small tag layered onto the corner of an icon or a card. Along the top of the demo you will see a count badge (three unread notifications), a dot badge (there is something new in Messages, no number needed) and a cart count. Press “Add to cart” and the cart number goes up; open the bell and its unread badge disappears. The products below carry status badges: “NEW” overlapping the photo corner, and “Only 2 left” next to the price.',
-    'Badges follow three rules. They clear once seen — open the notifications and the unread count goes to zero. They disappear at zero, because a “0” badge is just noise. And large numbers are capped at “99+” so the badge never balloons. One more thing: the number sits on top of the icon visually, but screen readers never see it. Put the count in the button’s accessible name instead, e.g. “Notifications (3 new)”.',
+    'Badges follow three rules. They clear once seen — open the notifications and the unread count goes to zero. They disappear at zero, because a “0” badge is just noise. And large numbers are capped at “99+” so the badge never balloons. One more thing: the number sits on top of the icon visually, but on its own a screen reader announces it as a bare “3” with no context. Hide the badge from screen readers and put the count in the button’s accessible name instead, e.g. “Notifications (3 new)”.',
     'What sets a badge apart from its neighbors is that it is not interactive and it does not go away on its own. Chips are tags you click to toggle filters; a toast is a message that shows up for a few seconds and then leaves. A badge stays put until the state it describes changes.',
   ],
   when: [
@@ -124,7 +124,7 @@ setCartCount(2);`,
     { key: 'color', type: 'color', label: 'Badge color', value: '#d93a2b' },
   ],
   cautions: [
-    'Screen readers do not read the overlaid number. Set aria-hidden="true" on the badge and put the count in the button’s aria-label: “Notifications (3 new)”.',
+    'On its own, the overlaid number is read as a bare “3” with no context. Set aria-hidden="true" on the badge and put the count in the button’s aria-label: “Notifications (3 new)”.',
     'Do not rely on color alone. “Only 2 left” in words reaches people who cannot tell red from green. If the text is white, pick a background dark enough for a 4.5:1 contrast ratio.',
     'Clear counts once they have been seen. A red number that never goes away soon gets ignored entirely.',
     'Do not make the badge its own click target. The whole 44 × 44 px icon button is the target; the badge just sits on top.',

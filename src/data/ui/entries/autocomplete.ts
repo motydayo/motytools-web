@@ -98,6 +98,9 @@ const setActive = (i) => {
   input.setAttribute('aria-activedescendant', \`opt-\${i}\`);
 };
 const render = () => {
+  // 候補を作り直すので、前の選択は外す
+  active = -1;
+  input.removeAttribute('aria-activedescendant');
   const q = input.value.trim();
   hits = q ? CITIES.filter(([n, r]) => n.includes(q) || r.startsWith(q)) : [];
   if (!hits.length) {

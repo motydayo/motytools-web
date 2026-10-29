@@ -90,7 +90,10 @@ body:has(dialog[open]) { overflow: hidden; }
       code: `const dialog = document.querySelector('.modal');
 const openBtn = document.querySelector('.open-btn');
 
-openBtn.addEventListener('click', () => dialog.showModal());
+openBtn.addEventListener('click', () => {
+  dialog.returnValue = ''; // don't carry over the last result
+  dialog.showModal();
+});
 
 // Close on backdrop click (the dialog has no padding, so only the backdrop hits this)
 dialog.addEventListener('click', (e) => {

@@ -94,6 +94,10 @@ export default {
       code: `const slider = document.querySelector('#price');
 const out = document.querySelector('.price-value');
 const usd = (v) => '$' + Number(v).toLocaleString('en-US');
+// Filter the list (replace the body with your own code)
+const updateResults = (max) => {
+  console.log('Filter: up to $' + max);
+};
 
 const update = () => {
   const p = (slider.value - slider.min) / (slider.max - slider.min);

@@ -31,7 +31,7 @@ export default {
     'Build the “Guests” field of a hotel search bar as a popover. Use the native HTML popover attribute and popovertarget — do not write your own open/close logic. Anchor the panel {{gap:t}} below the Guests button, left-aligned to it, using CSS anchor positioning (position-anchor / position-area), with a JavaScript fallback that calculates the position in browsers without support. Round the corners at {{radius:t}} and animate it in over {{dur:t}}, easing out from slightly above. Inside, add + and − buttons for adults (1–8) and children (0–8) with accessible names such as “More adults”, plus a Done button. Close it on an outside click, Esc or Done, with no backdrop. Show it without motion for prefers-reduced-motion.',
   howTo: [
     'The HTML popover attribute is now the easiest way in. Add popover to the panel and popovertarget="panel-id" to the button, and you get open on click, close on a second click, light dismiss (close on an outside click) and close on Esc. The browser also exposes aria-expanded on the button for you.',
-    'Out of the box, though, a popover opens in the middle of the viewport. To pin it under its button, use CSS anchor positioning: give the button an anchor-name and the popover position-anchor and position-area, and add position-try-fallbacks so it flips above when there is no room below. Because anchor positioning support is still uneven, add a few lines that compute the position from the button’s rectangle on the toggle event. The demo recreates the same placement with position: absolute so it fits inside its frame.',
+    'Out of the box, though, a popover opens in the middle of the viewport. To pin it under its button, use CSS anchor positioning: give the button an anchor-name and the popover position-anchor and position-area, and add position-try-fallbacks so it flips above when there is no room below. Anchor positioning has worked in all major browsers since Firefox 147 shipped it in January 2026; to cover older browser versions, add a few lines that compute the position from the button’s rectangle on the toggle event. The demo recreates the same placement with position: absolute so it fits inside its frame.',
   ],
   code: [
     {
@@ -136,7 +136,7 @@ if (!CSS.supports('position-area', 'bottom span-right')) {
     'A popover does not trap focus. Pressing Tab moves from the button into the panel and then on to the rest of the page. Place the popover right after its button in the markup and that order feels natural.',
     'If the content is something to choose or fill in, add role="dialog" and a heading via aria-labelledby so screen readers announce what opened. If it is a list of commands, build a dropdown menu with role="menu" instead.',
     'On narrow screens, a panel under its button can overflow sideways or end up behind the on-screen keyboard. Many sites switch to a bottom sheet on phones.',
-    'The popover attribute, @starting-style and anchor positioning are all fairly new. Without them, the panel opens centered or without animation and still works — but keep the JavaScript positioning fallback.',
+    'The popover attribute, @starting-style and anchor positioning are all fairly new. In older browser versions, the panel opens centered or without animation and still works — keep the JavaScript positioning fallback if you support those versions.',
   ],
   similar: [
     { slug: 'tooltip', diff: 'A tooltip appears on hover and holds read-only text. A popover opens on click and can contain buttons, links and inputs.' },
@@ -150,7 +150,7 @@ if (!CSS.supports('position-area', 'bottom span-right')) {
     },
     {
       q: 'Is the popover attribute supported in all browsers?',
-      a: 'Yes — current Chrome, Edge, Safari and Firefox all support it. CSS anchor positioning, which places the popover next to its button, is less evenly supported, so ship a small JavaScript fallback that positions it on open.',
+      a: 'Yes — current Chrome, Edge, Safari and Firefox all support it. CSS anchor positioning, which places the popover next to its button, has also worked in all major browsers since January 2026 (Firefox 147; checked October 2026). If you support older browser versions, ship a small JavaScript fallback that positions it on open.',
     },
     {
       q: 'Should focus move into the popover when it opens?',
