@@ -1,5 +1,75 @@
 [
  {
+  "file": "src/content/guide/gessha-shukin-houhou.md",
+  "url": "https://motytools.com/guide/gessha-shukin-houhou/",
+  "kind": "法令リスク",
+  "severity": "高",
+  "where": "月謝の一部で保護者に上乗せする方法もあります",
+  "why": "gessha-shukin-houhou.md:79。カード決済の手数料をカードで払う人にだけ上乗せすることは、多くのカード会社の加盟店規約で禁止されている（国民生活センター https://www.kokusen.go.jp/t_box/data/t_box-faq_qa2013_44.html 「加盟店契約の規約によって禁止されていることがある」）。Square公式の解説も、会計への上乗せでなく価格全体で考えるよう案内している。記事は上乗せを選択肢として示し、規約に書けばよいと読める",
+  "fix": "「カード払いの人だけに手数料を上乗せすることは、カード会社や決済サービスの加盟店規約で禁止されていることが多い。手数料は月謝全体の価格の中で考え、上乗せを考える場合は契約先の規約を先に確認する」に書き換える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/hachurui-joto-hikitsugi.md",
+  "url": "https://motytools.com/guide/hachurui-joto-hikitsugi/",
+  "kind": "法令リスク",
+  "severity": "高",
+  "where": "無償譲渡や個人間のやり取りの扱いは書かれていません",
+  "why": "動物愛護管理法には、営利でなくても、住居と区分できる飼養施設で一定数以上（爬虫類は中型なら合計10頭以上、それ以外は合計50頭以上）の動物を譲渡・展示などする場合の『第二種動物取扱業』の届出がある（環境省パンフレット https://www.env.go.jp/nature/dobutsu/aigo/2_data/pamph/1903/pdf/16.pdf、神奈川県 https://www.pref.kanagawa.jp/osirase/1594/awc/dealers/type2.html）。記事は第一種だけを説明し、非営利の譲渡について『書かれていません』としており、多頭飼育者の譲渡では届出が要る場合を読者が見落とす。hachurui-sns.md:88-92 も同じ",
+  "fix": "『営利でなくても、飼養施設を設けて一定数以上の動物を譲渡するなどの場合は第二種動物取扱業の届出が必要です（環境省）』と頭数の目安とともに足し、最終判断は都道府県・政令市の窓口に確かめるよう書く。hachurui-sns の該当段落も同じように直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/range-slider.ts",
+  "url": "https://motytools.com/ui/range-slider/",
+  "kind": "誤り",
+  "severity": "高",
+  "where": "updateResults(Number(slider.va",
+  "why": "range-slider.ts:104 で呼んでいる updateResults はコードのどこにも定義が無い。update() は読み込み直後に必ず実行されるので、そのまま貼ると ReferenceError で止まる（英語版 entries-en/range-slider.ts:104 も同じ）",
+  "fix": "updateResults を例として定義する（例: 件数表示を更新する関数を3行で書く）か、呼び出しをコメントにして『ここで絞り込みを更新』と書く",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/range-slider.ts",
+  "url": "https://motytools.com/en/ui/range-slider/",
+  "kind": "誤り",
+  "severity": "高",
+  "where": "updateResults(Number(slider",
+  "why": "range-slider.ts:104 のJSは定義されていない関数 updateResults() を呼び、107行の update() で読み込み直後に必ず実行されるため、そのまま貼ると ReferenceError で止まる（値の表示・--p の更新もその時点で済んでいるが、以降のスクリプトも止まる）。日本語版 entries/range-slider.ts:104 も同じ",
+  "fix": "function updateResults(max) { /* 一覧を絞り込む */ } の空の定義を先に置くか、行を「// updateResults(Number(slider.value)); ← 一覧の更新はここで」とコメントにする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/barcode-saiyasune-app.md",
+  "url": "https://motytools.com/guide/barcode-saiyasune-app/",
+  "kind": "法令リスク",
+  "severity": "高",
+  "where": "ネットの最安値がわかるアプリを比べました",
+  "why": "description（3行目）と導入で「ネットの最安値」と書くが、本文121行目で「最安値」は楽天市場とYahoo!ショッピングの本体価格だけで並べた結果（送料・ポイント・Amazonは含まない）と説明している。kakaku-hikaku-site.md:75 では中古が最安値として出た例もある。自社アプリの紹介を含む広告的な記事で、比べる範囲を限定せずに「ネットの最安値」とすると、アプリの性能を実際より良く見せる表示（優良誤認）と受け取られるおそれがある",
+  "fix": "description と導入の「ネットの最安値」を「楽天市場・Yahoo!ショッピングの最安値（本体価格）」など範囲が分かる言い方にする。「最安値を見るときの注意」に、中古品やセット品が最安値に出ることがある点を1行足す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/gyosei-shobun-shirabekata.md",
+  "url": "https://motytools.com/guide/gyosei-shobun-shirabekata/",
+  "kind": "法令リスク",
+  "severity": "高",
+  "where": "掲載情報を、無断で転載や改変することはできません",
+  "why": "記事自身が:59 でネガティブ情報等検索サイトの注意事項として無断転載・改変の禁止を紹介している一方、:91・:95 でアプリが国土交通省などの処分を地図に載せ『処分内容や理由の要約』を見せると書いている。読者には自社アプリが注意事項に反しているように読める。転載の許諾や利用条件の根拠は記事にもLPにも無い",
+  "fix": "国交省の利用条件（許諾の有無、政府標準利用規約の適用範囲）を確かめ、アプリの出典ページに根拠を書いたうえで、記事の:95 に『〇〇の利用条件に沿って要約・出典表示しています』と一文足す。確認できるまでは『要約』の表現を外す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/shokuchudoku-joho.md",
+  "url": "https://motytools.com/guide/shokuchudoku-joho/",
+  "kind": "法令リスク",
+  "severity": "高",
+  "where": "自治体の掲載期間が過ぎた記録も、消さずに残しています",
+  "why": "shokuchudoku-joho.md:58-62 で自ら示すとおり、札幌市は原則14日・大田区は原則7日で削除し、新宿区も公表期間を原則7日としている（:48）。自治体が店の信用への配慮から掲載期間を限っている記録を、期間後も屋号つきで地図に残すと書いており、保持期間の上限が書かれていない。個人経営の店は屋号と場所から営業者個人が分かるおそれもある（新宿区は営業者の氏名も公表内容に含むと:42で紹介）。削除依頼に応じる旨（:83）はあるが、依頼が来るまで残る",
+  "fix": "保持する期間の上限（例: 公表日から何年）と、その間の表示方法（例: 期間後は店名を伏せて件数だけ）をアプリの出典ページで決め、記事の:81にも書く。屋号に個人名を含む場合の扱いも明記する。決まるまでは『消さずに残しています』を『期間が過ぎた記録は〜と添えて表示します（保持期間は出典ページを参照）』に弱める",
+  "confidence": "要確認"
+ },
+ {
   "file": "src/content/guide/accessory-genka-keisan.md",
   "url": "https://motytools.com/guide/accessory-genka-keisan/",
   "kind": "薄い重複",
@@ -110,16 +180,6 @@
   "confidence": "確実"
  },
  {
-  "file": "src/content/guide/gessha-shukin-houhou.md",
-  "url": "https://motytools.com/guide/gessha-shukin-houhou/",
-  "kind": "法令リスク",
-  "severity": "中",
-  "where": "月謝の一部で保護者に上乗せする方法もあります",
-  "why": "gessha-shukin-houhou.md:79。カード決済の手数料をカードで払う人にだけ上乗せすることは、多くのカード会社の加盟店規約で禁止されている（国民生活センター https://www.kokusen.go.jp/t_box/data/t_box-faq_qa2013_44.html 「加盟店契約の規約によって禁止されていることがある」）。Square公式の解説も、会計への上乗せでなく価格全体で考えるよう案内している。記事は上乗せを選択肢として示し、規約に書けばよいと読める",
-  "fix": "「カード払いの人だけに手数料を上乗せすることは、カード会社や決済サービスの加盟店規約で禁止されていることが多い。手数料は月謝全体の価格の中で考え、上乗せを考える場合は契約先の規約を先に確認する」に書き換える",
-  "confidence": "確実"
- },
- {
   "file": "src/content/guide/gyosei-shobun-shirabekata.md",
   "url": "https://motytools.com/guide/gyosei-shobun-shirabekata/",
   "kind": "誤り",
@@ -127,16 +187,6 @@
   "where": "掲載期間が過ぎた処分は載りません",
   "why": "この記事:100 は『掲載期間が過ぎた処分は載りません』とする一方、shokuchudoku-joho.md:81 は食中毒の営業停止（これも行政処分）について『掲載期間が過ぎた記録も、消さずに残しています』と書く。同じアプリの処分記録の扱いが2記事で逆に読める",
   "fix": "2記事で『行政処分』と『食中毒の処分』の扱いの違いと理由を同じ言葉で書く。方針を揃えられるなら揃える",
-  "confidence": "確実"
- },
- {
-  "file": "src/content/guide/hachurui-joto-hikitsugi.md",
-  "url": "https://motytools.com/guide/hachurui-joto-hikitsugi/",
-  "kind": "法令リスク",
-  "severity": "中",
-  "where": "無償譲渡や個人間のやり取りの扱いは書かれていません",
-  "why": "動物愛護管理法には、営利でなくても、住居と区分できる飼養施設で一定数以上（爬虫類は中型なら合計10頭以上、それ以外は合計50頭以上）の動物を譲渡・展示などする場合の『第二種動物取扱業』の届出がある（環境省パンフレット https://www.env.go.jp/nature/dobutsu/aigo/2_data/pamph/1903/pdf/16.pdf、神奈川県 https://www.pref.kanagawa.jp/osirase/1594/awc/dealers/type2.html）。記事は第一種だけを説明し、非営利の譲渡について『書かれていません』としており、多頭飼育者の譲渡では届出が要る場合を読者が見落とす。hachurui-sns.md:88-92 も同じ",
-  "fix": "『営利でなくても、飼養施設を設けて一定数以上の動物を譲渡するなどの場合は第二種動物取扱業の届出が必要です（環境省）』と頭数の目安とともに足し、最終判断は都道府県・政令市の窓口に確かめるよう書く。hachurui-sns の該当段落も同じように直す",
   "confidence": "確実"
  },
  {
@@ -232,7 +282,7 @@
  {
   "file": "src/content/guide/kaisugi-boushi.md",
   "url": "https://motytools.com/guide/kaisugi-boushi/",
-  "kind": "法令リスク",
+  "kind": "誤り",
   "severity": "中",
   "where": "この場合は1本にするか、冷凍や加熱",
   "why": "kaisugi-boushi.md:70 で牛乳の使い切り策として冷凍を挙げているが、農林水産省『ホームフリージングする際の注意点』（https://www.maff.go.jp/j/heya/sodan/1810/01.html）は牛乳・生クリームを家庭での冷凍が難しい食品に挙げている",
@@ -700,6 +750,66 @@
   "confidence": "確実"
  },
  {
+  "file": "src/data/shiryo/entries/matrix.ts",
+  "url": "https://motytools.com/shiryo/matrix/",
+  "kind": "検索の見え方",
+  "severity": "中",
+  "where": "見本で解説。軸の決め方",
+  "why": "担当25本すべての description が「〜のスライドを見本で解説。…PowerPoint・Googleスライドでの作り方、AIに（そのまま貼れる）指示文、HTML（とCSS）までまとめました。」の同じ形（「見本で解説」25本・「まとめました」23本・「AIにそのまま貼れる指示文」15本）。110〜130字のうち後半40字前後が全記事共通で、検索結果に並ぶと見分けにくく量産に見える。matrix.ts:13 ほか24本",
+  "fix": "後半の決まり文句を短くし（例「PowerPoint・Googleスライドの手順とAI用の指示文つき」）、空いた字数にその型だけの中身（見本の数字・決まりごと・よくある失敗）を入れる。公開前（built=false）の項目から順に直すとよい",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/next-step.ts",
+  "url": "https://motytools.com/shiryo/next-step/",
+  "kind": "検索の見え方",
+  "severity": "中",
+  "where": "資料の最後のスライドとは？問い合わせ先と",
+  "why": "next-step.ts:11 の title は36字で末尾が切れる。「〜とは？」は「最後のスライド」の意味を聞く言い方として不自然。さらに qa-slide.ts:11 も「質疑応答のスライドとは？Q&Aの時間を示す最後の1枚の作り方」で、aka（next-step.ts:9・qa-slide.ts:9）も両方「最後のスライド」を持ち、同じ検索語を2本で取り合う",
+  "fix": "next-step は「問い合わせスライドの作り方｜次の一歩と連絡先を示す最後の1枚」、qa-slide は「質疑応答（Q&A）スライドの作り方｜質問の時間と出し方を示す」のように分け、「最後のスライド」は next-step にだけ持たせる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/pricing.ts",
+  "url": "https://motytools.com/shiryo/pricing/",
+  "kind": "法令リスク",
+  "severity": "中",
+  "where": "予約管理サービス「ヨヤクノート」の料金",
+  "why": "pricing.ts:31（指示文）・:42（コード）。見本の架空サービス名に「ヨヤクノート」を使い、月3,000円〜24,800円の料金を載せている。「ヨヤクノート」はカカクコム（食べログ）が提供する実在の飲食店向け予約台帳アプリの名前（https://www.travelvoice.jp/20160215-60423 ・ https://boxil.jp/service/5145/reviews/36300/ ）。実在サービスの料金表に見えるおそれがあり、WRITING.md 第3弾「見本の中身はすべて架空・オリジナル。実在の会社をまねない」にも反する",
+  "fix": "実在しない名前（例「サンプル予約（例）」など）に差し替え、shiryo-demos/pricing.astro と entries の prompt・code・what をそろえて直す。名前の後ろに「（例）」を付けると誤解が減る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/question.ts",
+  "url": "https://motytools.com/shiryo/question/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "問いは「はい・いいえ」で終わらない形に",
+  "why": "question.ts:17（what）と:109（cautions）で「はい・いいえで終わる問いにすると話し合いが続きません。見本のように『どうすれば〜できますか？』…」と書くが、見本の問いは「問い合わせが2倍になっても、今の6人で3日以内に返事できますか？」（:16・:31・:45）で、はい・いいえで答えられる形。FAQ（良い問いを作るコツ）でもこの問いを良い例にしており、記事の中で決まりと見本が食い違う",
+  "fix": "見本の問いを「問い合わせが2倍になったら、3日以内の返事を守るために何を変えますか？」のように方法を問う形にして、見本（question.astro）・prompt・code・FAQの例をそろえる。または cautions の「見本のように『どうすれば〜』」を消し、はい・いいえの問いでも理由を話し合わせる使い方として書き直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/quote.ts",
+  "url": "https://motytools.com/shiryo/quote/",
+  "kind": "法令リスク",
+  "severity": "中",
+  "where": "引用するときの著作権はどうなりますか？",
+  "why": "quote.ts:121-122（FAQ）。社外の文章の引用について「出典を明記し、必要な部分だけを載せるのが原則」とだけ書くが、著作権法32条の引用には、自分の文章が主で引用が従であること（主従関係）・引用部分が区別されていること等も必要（文化庁 https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/gaiyo/chosakubutsu_jiyu.html ）。この型は引用文だけを大きく置く作りで、when（:21「専門家・社長・著名人のコメント」）や aka「名言スライド」の使い方では主従関係を満たしにくい",
+  "fix": "FAQに「本や記事の文を引用するときは、自分の説明が主で引用は従、引用部分をかぎかっこ等で区別し、出典を書く。1枚に引用文だけを大きく載せる使い方は、社外の文章では引用に当たらないことがあるので、本人の了解を得たお客さまの言葉に使う」と足す。aka の「名言スライド」は外す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/recommend.ts",
+  "url": "https://motytools.com/shiryo/recommend/",
+  "kind": "検索の見え方",
+  "severity": "中",
+  "where": "推奨案の見せ方｜複数案から1つを大きく示す",
+  "why": "recommend.ts:11 の title は46字で、WRITING.md 第3弾の上限45字も超える。検索結果では「スライドの作り方【PowerPoint・見本つき】」がまるごと切れる",
+  "fix": "「推奨案の見せ方｜複数案から1つを大きく示すスライド【見本】」など35字以内にする",
+  "confidence": "確実"
+ },
+ {
   "file": "src/data/shiryo/entries/roi.ts",
   "url": "https://motytools.com/shiryo/roi/",
   "kind": "誤り",
@@ -790,26 +900,6 @@
   "confidence": "確実"
  },
  {
-  "file": "src/data/ui/entries-en/range-slider.ts",
-  "url": "https://motytools.com/en/ui/range-slider/",
-  "kind": "誤り",
-  "severity": "中",
-  "where": "updateResults(Number(slider",
-  "why": "range-slider.ts:104 のJSは定義されていない関数 updateResults() を呼び、107行の update() で読み込み直後に必ず実行されるため、そのまま貼ると ReferenceError で止まる（値の表示・--p の更新もその時点で済んでいるが、以降のスクリプトも止まる）。日本語版 entries/range-slider.ts:104 も同じ",
-  "fix": "function updateResults(max) { /* 一覧を絞り込む */ } の空の定義を先に置くか、行を「// updateResults(Number(slider.value)); ← 一覧の更新はここで」とコメントにする",
-  "confidence": "確実"
- },
- {
-  "file": "src/content/guide/barcode-saiyasune-app.md",
-  "url": "https://motytools.com/guide/barcode-saiyasune-app/",
-  "kind": "法令リスク",
-  "severity": "中",
-  "where": "ネットの最安値がわかるアプリを比べました",
-  "why": "description（3行目）と導入で「ネットの最安値」と書くが、本文121行目で「最安値」は楽天市場とYahoo!ショッピングの本体価格だけで並べた結果（送料・ポイント・Amazonは含まない）と説明している。kakaku-hikaku-site.md:75 では中古が最安値として出た例もある。自社アプリの紹介を含む広告的な記事で、比べる範囲を限定せずに「ネットの最安値」とすると、アプリの性能を実際より良く見せる表示（優良誤認）と受け取られるおそれがある",
-  "fix": "description と導入の「ネットの最安値」を「楽天市場・Yahoo!ショッピングの最安値（本体価格）」など範囲が分かる言い方にする。「最安値を見るときの注意」に、中古品やセット品が最安値に出ることがある点を1行足す",
-  "confidence": "要確認"
- },
- {
   "file": "src/content/guide/chomiryo-kaifugo-kigen.md",
   "url": "https://motytools.com/guide/chomiryo-kaifugo-kigen/",
   "kind": "誤り",
@@ -837,16 +927,6 @@
   "where": "載せているのは、北海道、青森県、宮城県",
   "why": "不審者情報の27都道府県の内訳と、載せていない県の理由（『公開元が転載を認めていない』など）は、public/machi-anzen-map/index.html・src/data/apps.ts・設計書の『書いてよい事実』のどこにも無い（どれも『27都道府県』の数だけ）。内訳は変わりやすく、記事だけ古くなるおそれがある",
   "fix": "Web版の出典ページ（/anzen/about/data/）の県別出典と照合して一致を確かめる。記事では県名の羅列をやめ『対象の県はデータの出典ページに一覧があります』とリンクする形にすると、ずれが起きない",
-  "confidence": "要確認"
- },
- {
-  "file": "src/content/guide/gyosei-shobun-shirabekata.md",
-  "url": "https://motytools.com/guide/gyosei-shobun-shirabekata/",
-  "kind": "法令リスク",
-  "severity": "中",
-  "where": "掲載情報を、無断で転載や改変することはできません",
-  "why": "記事自身が:59 でネガティブ情報等検索サイトの注意事項として無断転載・改変の禁止を紹介している一方、:91・:95 でアプリが国土交通省などの処分を地図に載せ『処分内容や理由の要約』を見せると書いている。読者には自社アプリが注意事項に反しているように読める。転載の許諾や利用条件の根拠は記事にもLPにも無い",
-  "fix": "国交省の利用条件（許諾の有無、政府標準利用規約の適用範囲）を確かめ、アプリの出典ページに根拠を書いたうえで、記事の:95 に『〇〇の利用条件に沿って要約・出典表示しています』と一文足す。確認できるまでは『要約』の表現を外す",
   "confidence": "要確認"
  },
  {
@@ -930,16 +1010,6 @@
   "confidence": "要確認"
  },
  {
-  "file": "src/content/guide/shokuchudoku-joho.md",
-  "url": "https://motytools.com/guide/shokuchudoku-joho/",
-  "kind": "法令リスク",
-  "severity": "中",
-  "where": "自治体の掲載期間が過ぎた記録も、消さずに残しています",
-  "why": "shokuchudoku-joho.md:58-62 で自ら示すとおり、札幌市は原則14日・大田区は原則7日で削除し、新宿区も公表期間を原則7日としている（:48）。自治体が店の信用への配慮から掲載期間を限っている記録を、期間後も屋号つきで地図に残すと書いており、保持期間の上限が書かれていない。個人経営の店は屋号と場所から営業者個人が分かるおそれもある（新宿区は営業者の氏名も公表内容に含むと:42で紹介）。削除依頼に応じる旨（:83）はあるが、依頼が来るまで残る",
-  "fix": "保持する期間の上限（例: 公表日から何年）と、その間の表示方法（例: 期間後は店名を伏せて件数だけ）をアプリの出典ページで決め、記事の:81にも書く。屋号に個人名を含む場合の扱いも明記する。決まるまでは『消さずに残しています』を『期間が過ぎた記録は〜と添えて表示します（保持期間は出典ページを参照）』に弱める",
-  "confidence": "要確認"
- },
- {
   "file": "src/content/guide/tanka-hikaku-keisan.md",
   "url": "https://motytools.com/guide/tanka-hikaku-keisan/",
   "kind": "誤り",
@@ -967,6 +1037,16 @@
   "where": "縦横の比率もそろいます",
   "why": "case-card.ts:33。PowerPointで図形の「図形の塗りつぶし」→「図」で写真を入れると、写真は図形の枠いっぱいに引き伸ばされ、縦横比が枠と違えばゆがむ。「縦横の比率もそろう」とは言えない（比率を保つには写真を入れてから「図の形式」→「トリミング」→「図形に合わせてトリミング」「縦横比」を使う）。参考 https://www.microsoft.com/ja-jp/biz/smb/column-powerpoint-image-cropping",
   "fix": "「写真は枠いっぱいに伸びるので、ゆがむときは写真を選んで『図の形式』→『トリミング』の『縦横比』と『図形に合わせてトリミング』を使う」と手順を差し替える",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/pareto.ts",
+  "url": "https://motytools.com/shiryo/pareto/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "原因と件数を入れるだけで描けます",
+  "why": "pareto.ts:32（howTo）・:199（FAQ）。PowerPoint/Excelの組み込み「パレート図」は左の目盛りの最大が自動（一番高い棒に合わせた値）になるのがふつうで、記事の決まり（:17、cautions:135「左の最大は合計の件数（200件）にします」）を満たさない。「入れるだけ」では記事自身が戒める形のグラフになる",
+  "fix": "「パレート図を選んだあと、左の縦軸を右クリック→『軸の書式設定』で最大値を合計（200）にする」の一文を howTo と FAQ に足す",
   "confidence": "要確認"
  },
  {
@@ -2450,6 +2530,356 @@
   "confidence": "確実"
  },
  {
+  "file": "src/data/shiryo/entries/matrix.ts",
+  "url": "https://motytools.com/shiryo/matrix/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「マトリクス」から「基本マトリクス」を選ぶ",
+  "why": "matrix.ts:33（howTo）と:169（FAQ）。PowerPoint日本語版のSmartArtの分類名・レイアウト名は「マトリックス」「基本マトリックス」（Microsoft公式 https://support.microsoft.com/ja-JP/Office/graphics-visuals/matrix-type-smartart-graphic-descriptions ）。メニュー名として「」で示している箇所の表記が画面と違う",
+  "fix": "2か所とも「マトリックス」「基本マトリックス」に直す（型の名前「マトリクス型」はそのままでよい）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/matrix.ts",
+  "url": "https://motytools.com/shiryo/matrix/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "箱の名前は「何をするか」を動詞で書き",
+  "why": "matrix.ts:16 と cautions（:150）で「箱の名前は次にとる行動を動詞で書く」とするが、見本の左下の箱名は「余裕があれば」（:31・:60）で動詞になっていない。また avoid（:27）は「項目が20個を超えて」とするが、cautions（:151）は「1つの箱に入れる項目は3つまで」（4箱で12件）で、目安がかみ合わない",
+  "fix": "左下の箱名を「余裕があればやる」などにし、見本もそろえる。avoid の目安を「項目が12件を超えて」など cautions と合う数にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/next-step.ts",
+  "url": "https://motytools.com/shiryo/next-step/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "data-focus=\"mail\"] .r-mail .v",
+  "why": "next-step.ts:31 の指示文は「強調する行は…文字をアクセント色にする」、見本 shiryo-demos/next-step.astro:96 も強調時の数字を var(--t-accent) にしているが、記事のコード（next-step.ts:129-130）は強調時の .v に既定と同じ font-size 等を書くだけで color が無く、文字がアクセント色にならない",
+  "fix": "CSSの該当ルールの中身を color: var(--accent); にする（.slide[data-focus=\"mail\"] .r-mail .v と .slide[data-focus=\"phone\"] .r-phone .v）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/one-message.ts",
+  "url": "https://motytools.com/shiryo/one-message/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "3行を超えると、聞き手は読んでいる間",
+  "why": "one-message.ts:17（what）と FAQ は「文は2行まで」とするが、cautions（:103）は「3行を超えると」で、目安がそろわない",
+  "fix": "cautions を「2行を超えると」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/option-table.ts",
+  "url": "https://motytools.com/shiryo/option-table/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "サポート：メールのみ・電話・メール・電話",
+  "why": "option-table.ts:31（指示文）。3案の値の区切りに「・」を使い、値の中の「電話・メール」の「・」と区別できない。AIが4つ以上の値に分けて読むおそれがある",
+  "fix": "「サポート：「メールのみ」「電話・メール」「電話・メール」」のように値ごとにかぎかっこで囲む",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/option-table.ts",
+  "url": "https://motytools.com/shiryo/option-table/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "いちばん左の列（案A）に推奨案を置くのが",
+  "why": "option-table.ts:154（FAQ）。「左に置くのが一般的」と言ったあとに「位置にこだわる必要はありません」と続き、答えがどちらか分からない。「一般的」の根拠も無い",
+  "fix": "「左端は先に読まれるので推奨案を置きやすい。ただし並びは資料の中で変えない」のように1つの答えにまとめる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/option-table.ts",
+  "url": "https://motytools.com/shiryo/option-table/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "比較表の作り方｜3つ以上の案を並べて選んで",
+  "why": "option-table.ts:11 の title は39字で「「選択肢比較表型」【見本つき】」が切れる",
+  "fix": "「比較表の作り方｜3つ以上の案を並べるスライド【見本】」など35字以内にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/pareto.ts",
+  "url": "https://motytools.com/shiryo/pareto/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "パレート図とは？主な原因を絞り込む作り方",
+  "why": "pareto.ts:11 の title は42字。全角30〜35字程度で「【PowerPoint・Excel】見本つき」の途中で切れる",
+  "fix": "「パレート図とは？作り方と見本【PowerPoint・Excel】」など35字以内にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/percent-stacked.ts",
+  "url": "https://motytools.com/shiryo/percent-stacked/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "アプリ・Web・電話・FAXの3つに分けて",
+  "why": "percent-stacked.ts:16。区切りの「・」で4つに見え、「3つ」と合わない（見本の区分は「アプリ」「Web（パソコン）」「電話・FAX」）",
+  "fix": "「「アプリ」「Web」「電話・FAX」の3つに分けて」とかぎかっこで区切る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/pie-chart.ts",
+  "url": "https://motytools.com/shiryo/pie-chart/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "円グラフとは？割合を伝えるスライドの作り方",
+  "why": "pie-chart.ts:11 の title は36字で末尾「【PowerPoint】」が切れる",
+  "fix": "「【PowerPoint】」を外すか前に寄せて35字以内にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/pricing.ts",
+  "url": "https://motytools.com/shiryo/pricing/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「挿入」→「表」で3列×6行の表を作ると",
+  "why": "pricing.ts:34 で「プラン名・料金・向いているお店・できること4行が自然に同じ高さになります」とあり、1+1+1+4＝7行が要る。6行では足りない",
+  "fix": "「3列×7行の表」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/pricing.ts",
+  "url": "https://motytools.com/shiryo/pricing/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "価格プラン型とは？料金プランを3つ並べて",
+  "why": "pricing.ts:11 の title は40字。検索結果では全角30〜35字程度で切れ、「資料の作り方【見本つき】」が落ちる。また「価格プラン型」は図鑑の中の呼び名で、検索される言い方は「料金プラン 表 作り方」「料金表 スライド」",
+  "fix": "例「料金プラン表の作り方｜おすすめを1つ目立たせるスライド【見本】」のように、検索語を前に出して35字以内にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/priority.ts",
+  "url": "https://motytools.com/shiryo/priority/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "効果と手間を、丸の数（1〜3つ）と",
+  "why": "priority.ts:17 と matrix.ts:16 はどちらも「効果」と「手間」で改善案を仕分ける見本で、FAQ（priority「基準は効果の大きさと手間」、matrix「軸は効果と手間」）も同じ答え。similar で互いを指しているが、続けて読むと中身が重なって見える",
+  "fix": "priority の見本の基準を「期限」「売上への影響」など別の物差しにするか、FAQ を「同率のときの決め方」「線を引く位置の決め方」などこの型だけの質問に替える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/priority.ts",
+  "url": "https://motytools.com/shiryo/priority/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "優先順位リスト型とは？やることを大事な順に",
+  "why": "priority.ts:11 の title は38字で「【見本つき】」の手前で切れる。「優先順位リスト型」は図鑑の中の呼び名",
+  "fix": "「優先順位をスライド1枚で見せる作り方｜大事な順に並べる【見本】」など検索語を前に35字前後",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/problem-solution.ts",
+  "url": "https://motytools.com/shiryo/problem-solution/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "課題・原因・解決型のスライドとは？提案が通る",
+  "why": "problem-solution.ts:11 の title は40字で「【見本・指示文つき】」が切れる",
+  "fix": "「【見本・指示文つき】」を短くして35字前後にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/pros-cons.ts",
+  "url": "https://motytools.com/shiryo/pros-cons/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "メリット・デメリット表の作り方｜よい点と注",
+  "why": "pros-cons.ts:11 の title は40字で「スライド【見本つき】」が切れる",
+  "fix": "「メリット・デメリット表の作り方｜注意点に対策を添えるスライド」など35字前後にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/pyramid.ts",
+  "url": "https://motytools.com/shiryo/pyramid/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "白い細い線（「図形」→「線」、太さ6pt）",
+  "why": "pyramid.ts:33 は6ptの線を「細い線」、:34 は同じ線（6px）を「太めの線」と書き、言い方がそろわない。aka（:9）の「階層図」も、FAQ（階層を表す三角形とは意味が違う）と食い違う",
+  "fix": "両方「白い線（太さ6pt）」にそろえる。aka から「階層図」を外す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/pyramid.ts",
+  "url": "https://motytools.com/shiryo/pyramid/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "ピラミッド型とは？結論と根拠を積み上げて",
+  "why": "pyramid.ts:11 の title は37字で「【見本つき】」が切れる",
+  "fix": "「【見本つき】」を外すか言い回しを詰めて35字以内にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/qa-slide.ts",
+  "url": "https://motytools.com/shiryo/qa-slide/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "Q&Aの時間を示す最後の1枚の作り方",
+  "why": "qa-slide.ts:11 の title は「最後の1枚」とするが、同じ記事の FAQ（qa-slide.ts:148-149）と similar（:139）では「まとめ→Q&A→問い合わせ・次の一歩」の順を勧め、最後の1枚は次の一歩型だとしている。FAQの答えも「多くの場合は最後ですが、まとめのスライドの次に置くのが基本です」と前後がかみ合わない",
+  "fix": "title から「最後の1枚」を外す（next-step の指摘と合わせて直す）。FAQは「発表の終わり（まとめの次）に置き、その後に問い合わせ・次の一歩を続けるのが基本です」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/qa-slide.ts",
+  "url": "https://motytools.com/shiryo/qa-slide/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "未決の2点は10月29日",
+  "why": "qa-slide.ts:31（指示文）・:62（コード）の「本日お伝えしたこと」の3つ目。「未決の2点は10月29日」だけでは、その日に何をするのか（決める・回答する）が分からない",
+  "fix": "「未決の2点は10月29日に決定」などに直し、見本 qa-slide.astro もそろえる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/qa-slide.ts",
+  "url": "https://motytools.com/shiryo/qa-slide/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "新店舗オープン計画のご説明",
+  "why": "担当内で「新店舗オープン」の見本が3本ある（milestone.ts:31 横浜みなとみらい店・オープン3/28・スタッフ8名、qa-slide.ts:31 オープンは3月1日・開店は6人体制、risk-register.ts:31 新店舗オープンのリスク管理表）。同じ場面に見えるのに日付と人数が違い、続けて読むと食い違って見え、型の量産感も出る",
+  "fix": "qa-slide は別の場面（例: 新しい経費精算の社内説明会）に替えるか、3本で日付・人数をそろえる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/qa-slide.ts",
+  "url": "https://motytools.com/shiryo/qa-slide/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "質疑応答のスライドとは？",
+  "why": "qa-slide.ts:11 の title は36字で末尾「【見本つき】」が切れる。「〜のスライドとは？」は意味を聞く言い方として不自然",
+  "fix": "next-step の指摘の直し方どおり「質疑応答（Q&A）スライドの作り方…」とする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/question.ts",
+  "url": "https://motytools.com/shiryo/question/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "問いかけスライドとは？聞き手に考えてもらう",
+  "why": "question.ts:11 の title は39字。全角30〜35字程度で切れ、「の見せ方と作り方【見本つき】」が落ちる",
+  "fix": "「問いかけスライドの作り方｜聞き手に考えてもらう問いの見せ方」など35字前後にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/quote.ts",
+  "url": "https://motytools.com/shiryo/quote/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「四角形: 角を丸くする」などを2つ組み合わせる",
+  "why": "quote.ts:33。引用符（“ ”）の形を角丸四角形2つで作ると書くが、角丸四角形を並べても引用符の形にはならず、手順として読み取れない",
+  "fix": "この部分を消し、「『挿入』→『アイコン』で『引用符』と検索する」か「記号の“をテキストボックスで大きくして色を付ける」に絞る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/quote.ts",
+  "url": "https://motytools.com/shiryo/quote/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "引用スライドとは？お客さまの声を大きく見せる",
+  "why": "quote.ts:11 の title は45字（担当内で2番目に長い）。全角30〜35字程度で「「引用強調型」の作り方【PowerPoint】」が落ちる",
+  "fix": "「引用スライドの作り方｜お客さまの声を大きく見せる【見本】」など35字以内にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/raci.ts",
+  "url": "https://motytools.com/shiryo/raci/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "A とR が同じ人になってもかまいません",
+  "why": "raci.ts:18。「A とR」の間だけ半角スペースが入り、表記がそろわない",
+  "fix": "「AとRが同じ人になってもかまいません」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/raci.ts",
+  "url": "https://motytools.com/shiryo/raci/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "RACIとは？責任分担表の作り方と見本【Pow",
+  "why": "raci.ts:11 の title は42字。全角30〜35字程度で「【PowerPoint・Googleスライド】」の途中で切れる",
+  "fix": "「RACIとは？責任分担表の作り方と見本【PowerPoint】」など35字前後にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/ranking-bar.ts",
+  "url": "https://motytools.com/shiryo/ranking-bar/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "横棒グラフ（ランキング）のスライドとは？",
+  "why": "ranking-bar.ts:11。「〜のスライドとは？」は意味を聞く言い方として不自然で、「横棒グラフとは」で探す人の答えになっていない",
+  "fix": "「横棒グラフでランキングを見せる作り方｜大きい順に並べるスライド」など",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/recommend.ts",
+  "url": "https://motytools.com/shiryo/recommend/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "お客さまに料金プランを案内して、おすすめ",
+  "why": "recommend.ts:22（when）に「お客さまに料金プランを案内して、おすすめのプランを示すとき」とあるが、同じ記事の similar（pricing の diff）では「価格プラン型は…お客さまに向けた案内、推奨案強調型は社内の意思決定」と分けている。pricing・option-table・recommend の3本は「3つ並べて1つに推奨の札・太枠・淡い背景」という同じ見た目で、使い分けが伝わりにくい",
+  "fix": "when の3つ目を消し（料金プランの案内は pricing に任せる）、recommend は「社内の決裁で1案を推す」に絞って書く",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/recommend.ts",
+  "url": "https://motytools.com/shiryo/recommend/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "推奨案のかませ犬にしないでください",
+  "why": "recommend.ts:140。「かませ犬」はくだけた言い方で、ほかの文の調子（平易な説明文）と合わない",
+  "fix": "「ほかの案を、推奨案を引き立てるためだけの悪い案に見せないでください」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/resource.ts",
+  "url": "https://motytools.com/shiryo/resource/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "見本なら「保守の件数が前年の半分になった」",
+  "why": "resource.ts:167（FAQ）。「見本なら」と書くが、この2つの理由は見本・指示文・コードのどこにも無い（新しい事実を足している）",
+  "fix": "「たとえば『保守の問い合わせが前年の半分になった』のような…」と例として書く",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/resource.ts",
+  "url": "https://motytools.com/shiryo/resource/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "リソース配分とは？人やお金の割り振りを1枚",
+  "why": "resource.ts:11 の title は39字で「スライドの作り方【見本つき】」の途中で切れる",
+  "fix": "「リソース配分とは？人と予算の割り振りを1枚で見せる作り方」など35字前後にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/risk-register.ts",
+  "url": "https://motytools.com/shiryo/risk-register/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "担当は個人名ではなく部署名にするか",
+  "why": "risk-register.ts:179（cautions）は担当を部署名で書くとするが、similar（:184）は「リスク登録簿型の担当欄は、1人の責任者を書くだけです」と書き、食い違う。aka（:9）の「課題管理表」も、avoid の「すでに起きている問題は課題・原因・解決型」と合わない",
+  "fix": "similar を「担当欄には責任をもつ部署（または1人）を書くだけです」に直す。aka から「課題管理表」を外す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/risk-register.ts",
+  "url": "https://motytools.com/shiryo/risk-register/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "【見本・テンプレート】",
+  "why": "risk-register.ts:11 の title は40字で、全角30〜35字程度で「【見本・テンプレート】」が切れる。また記事にダウンロードできるテンプレートのファイルは無く（HTMLのコードと指示文だけ）、「テンプレート」は期待とずれるおそれがある",
+  "fix": "「リスク管理表とは？リスク登録簿をスライド1枚で見せる作り方【見本】」など35字前後にし、「テンプレート」を使うなら「コードをひな形に使える」と本文で説明する",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/roadmap.ts",
+  "url": "https://motytools.com/shiryo/roadmap/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "ロードマップとは？3か年計画を1枚で見せる",
+  "why": "roadmap.ts:11 の title は41字で「【PowerPoint・見本つき】」が切れる",
+  "fix": "「ロードマップとは？3か年計画を1枚で見せる作り方【見本】」など35字前後にする",
+  "confidence": "確実"
+ },
+ {
   "file": "src/data/shiryo/entries/roi.ts",
   "url": "https://motytools.com/shiryo/roi/",
   "kind": "日本語",
@@ -3444,9 +3874,9 @@
   "url": "https://motytools.com/guide/tochi-mukashi-shirabekata/",
   "kind": "古い",
   "severity": "低",
-  "where": "埼玉大学の谷謙二さんが公開している",
-  "why": "今昔マップ on the web の作者の谷謙二氏は2022年に亡くなったとされる（国土地理協会の助成報告 https://kokudo.or.jp/grant/pdf/2024/kuriyama.pdf）。:61 と FAQ（:12）が現在形で『公開している』と書いている",
-  "fix": "『埼玉大学の谷謙二さんが開発した「今昔マップ on the web」』のように、現在の運営主体を断定しない書き方にする。サイトの現在の運営者表記を確かめて添える",
+  "where": "谷謙二さんが公開している",
+  "why": "tochi-mukashi-shirabekata.md:61 と FAQ（:12）が、今昔マップ on the web の公開・運営の主体を現在形で言い切っている。現在の運営状況はこの点検では確かめられなかった",
+  "fix": "「埼玉大学の谷謙二さんが開発した『今昔マップ on the web』」のように、現在の運営主体を断定しない書き方にし、公式ページで確かめた日を添える",
   "confidence": "要確認"
  },
  {
@@ -3827,6 +4257,96 @@
   "where": "title: '地図分布型とは？都道府県ごとの数",
   "why": "map-distribution.ts:11。title の先頭が図鑑の中の名前「地図分布型」で、実際に検索されやすい言い方（日本地図の色分け・都道府県別の分布図）が後ろか aka にしかない",
   "fix": "title の先頭を「日本地図の色分け」側の言い方にする（例: 「日本地図の色分けとは？…」）。図鑑の型名は後ろか本文に回す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/next-step.ts",
+  "url": "https://motytools.com/shiryo/next-step/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「縦方向の曲線リスト」や「基本ステップのプロセス」",
+  "why": "next-step.ts:33。SmartArtのレイアウト名として書いているが、problem-solution.ts:33 では同じものを「基本ステップ」と書いており表記がそろわない。「縦方向の曲線リスト」は「リスト」分類のレイアウトの可能性があり、「手順」の中と言い切れるか確かめられない",
+  "fix": "Microsoftの「手順タイプのSmartArtグラフィックの説明」ページで名前を確かめ、確かでなければ「番号の丸と文章が縦に並ぶレイアウト」と見た目で言い換える（WRITING.md 第3弾「メニュー名は確かなものだけ」）",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/pie-chart.ts",
+  "url": "https://motytools.com/shiryo/pie-chart/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「最初のスライスの角度」が0度になっていれば",
+  "why": "pie-chart.ts:147（FAQ）。日本語版Office（PowerPoint・Excel）の「データ系列の書式設定」での項目名は「グラフの基線位置」と表示される版があり、「最初のスライスの角度」は英語版（Angle of first slice）の直訳の可能性がある。このコンテナでは画面を確かめられない",
+  "fix": "日本語版の画面で名前を確かめる。確かでなければ「『系列のオプション』にある、円の始まりの角度を決める欄が0度になっていれば」と見た目で言い換える",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/pie-chart.ts",
+  "url": "https://motytools.com/shiryo/pie-chart/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「円グラフ」で「ラベルを表示」を割合にし、",
+  "why": "pie-chart.ts:33。Googleスプレッドシートのグラフエディタでは円グラフの割合表示は「円グラフ」欄の「スライスのラベル」で選ぶ解説が多く（例 https://docs.kanaries.net/ja/charts/how-to-make-pie-chart-in-google-sheets ）、扇形ごとの色も「系列」ではなく「円グラフのスライス」欄で変える画面のはず。「ラベルを表示」「系列」という名前は確かめられない",
+  "fix": "画面で確かめて「スライスのラベル」を「パーセンテージ」に、色は「円グラフのスライス」で…と直す。確かでなければ見た目で言い換える",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/priority.ts",
+  "url": "https://motytools.com/shiryo/priority/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "ツールバーの「枠線のスタイル」（破線のマーク）",
+  "why": "priority.ts:34。Googleスライドの線のツールバーのボタン名は「枠線の破線」と表示されることが多く、「枠線のスタイル」という名前は確かめられない",
+  "fix": "画面で確かめて直す。確かでなければ「ツールバーの破線のマークのボタン」と見た目だけで書く",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/quote.ts",
+  "url": "https://motytools.com/shiryo/quote/",
+  "kind": "法令リスク",
+  "severity": "低",
+  "where": "株式会社ナカムラ設備　総務部 課長",
+  "why": "quote.ts:31・:49。架空のお客さまの声に、実在してもおかしくない社名（似た名前の「株式会社ナカムラ設備工業」等が企業データベースにある）と実名風の人名「山本 恵子さん」を組み合わせている。実在の会社の推薦の言葉に見えるおそれがある（WRITING.md 第3弾「実在の会社をまねない」）",
+  "fix": "next-step.ts の「株式会社サンプル商会（例）」のように社名に「（例）」を付けるか、明らかに架空と分かる名前にする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/radar.ts",
+  "url": "https://motytools.com/shiryo/radar/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "最小値を0、最大値を5、間隔を1にします",
+  "why": "radar.ts:32・FAQ（目盛りの間隔を1）。日本語版の「軸の書式設定」では目盛りの間隔の欄は「単位」の「主」と表示され、「間隔」という欄名は無い版がある（確かめられない）",
+  "fix": "「『境界値』の最小値を0・最大値を5、『単位』の『主』を1にします」と画面の名前で書くか、「目盛りの間隔を決める欄を1にする」と言い換える",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/ranking-bar.ts",
+  "url": "https://motytools.com/shiryo/ranking-bar/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "「軸を反転する」にチェックを入れると",
+  "why": "ranking-bar.ts:32（howTo）・FAQ、percent-stacked.ts:32。横棒グラフの縦軸で「軸を反転する」を入れると、目盛りの数字（横軸）が上に移る。「横軸との交点」を「最大項目」にしないと下に戻らない点が書かれていない",
+  "fix": "「目盛りが上に移ったら、同じ設定の『横軸との交点』で『最大項目』を選ぶ」の一文を足す（percent-stacked も同じ）",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/risk-register.ts",
+  "url": "https://motytools.com/shiryo/risk-register/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「表のデザイン」→「塗りつぶし」で灰色に",
+  "why": "risk-register.ts:33。option-table.ts:33 では同じタブを「テーブルデザイン」と書いている。Microsoft 365 版のタブ名は「テーブル デザイン」で、「表のデザイン」という名前は確かめられない",
+  "fix": "「テーブル デザイン」にそろえる",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/roadmap.ts",
+  "url": "https://motytools.com/shiryo/roadmap/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "SmartArt（図表を組み立てる機能）の「基本プロセ",
+  "why": "roadmap.ts:161（FAQ）。problem-solution.ts:33 では同じレイアウトを「基本ステップ」と書いており、どちらかが画面の名前と違う。また「PowerPointには専用の部品はありません」とするが、PowerPointの新規作成のテンプレートにはロードマップのひな形が用意されている版があり、言い切れるか確かめられない",
+  "fix": "日本語版の画面で名前を確かめて1つにそろえる。「専用の部品はありません」は「グラフのような専用の機能はありません」に弱める",
   "confidence": "要確認"
  },
  {
