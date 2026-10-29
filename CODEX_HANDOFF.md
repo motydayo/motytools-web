@@ -88,3 +88,9 @@
 - 図鑑記事のメタ欄「ほかの呼び方」が375pxで折れる不具合: ラベルを折り返さない（ZukanArticle.astro）。資料の図鑑 gantt の注記「濃い部分は〜」は、つまみ「進み具合の塗り」が表示しないのとき消える。
 - 安全マップの地図ページ（/anzen/ と6テーマ）の下に説明文は machi-anzen-map 側で追加（同リポジトリの CODEX_HANDOFF.md）。
 - 未デプロイ・未コミット。気づき: `/privacy`（フッターの「プライバシーポリシー」）の中身はメモびゅんのプライバシーポリシーで、サイト全体（AdSense・GA）の方針ページが無い。
+
+## 2026-10-29 毎週の記事更新（定期タスク）: ツール→記事の文中リンク
+- GSC実測（28日・90日）: 検索語0行、表示はトップと /en/ だけ。4〜15位の記事が無いので、診断の優先①（内部リンク）を実施。
+- /percent/・/days/・/genka-shokyaku/・/loan/・/tedori/ の「使いどころ」欄に、検索に出す記事7本（tanka-hikaku-keisan・handmade-nedan-kimekata・shomikigen-kanrihyo・gessha-hiwari-keisan・genka-shokyaku-fudousan・rimawari-keisan・handmade-kakuteishinkoku-ikurakara）への文中リンク。記事→ツールは既存なので往復になった。noindex の記事（chintai-shushi-keisan・fudousan-shotoku-keihi・yachin-nyukin-kakunin）には張っていない。/eigyobi/ は張れる記事が無いので見送り。
+- 記録: data/seo/new-articles.md（新設）。
+- 次回候補: ①検索に出す記事どうしで本文リンクが2本の記事（gyosei-shobun・koutsujiko-tashuu・shokuchudoku・tochi-mukashi・jibun-ate-mail-todokanai）に文脈の合う記事リンクを足す ②表示が出始めた記事があればその手直し。
