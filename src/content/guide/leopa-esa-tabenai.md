@@ -43,7 +43,7 @@ PetMDは、スティックテイルの症状のひとつとして、いつも最
 
 脱皮の前後に食欲が変わるかは、確認したレオパの獣医系の情報源には書かれていませんでした。一方、ヘビについては、RSPCAが脱皮の前に餌を食べなくなることがあるとしています（[RSPCA](https://www.rspca.org.uk/adviceandwelfare/pets/other/royalpython)）。レオパにも同じ傾向があるかは、断定できません。
 
-脱皮が近いか、終わっていない状態が続いていないかを見ます。脱皮不全（皮が残る状態）は、湿度の低さや温度の低さと結びつくことがあります（[PetMD](https://www.petmd.com/reptile/conditions/skin/dysecdysis-reptiles)）。指先や目のまわりに皮が残っているときは、無理に剥がさず、動物病院に相談してください。
+脱皮が近いか、終わっていない状態が続いていないかを見ます。脱皮不全（皮が残る状態）は、湿度の低さや温度の低さと結びつくことがあります（[PetMD](https://www.petmd.com/reptile/conditions/skin/dysecdysis-reptiles)）。指先や目のまわりに皮が残っているときは、無理に剥がさず、動物病院に相談してください。脱皮前のサインと周期のつかみ方は[レオパの脱皮の頻度とサイン](/guide/leopa-dappi/)にまとめました。
 
 ### お迎え直後・環境の変化
 

@@ -94,3 +94,7 @@
 - /percent/・/days/・/genka-shokyaku/・/loan/・/tedori/ の「使いどころ」欄に、検索に出す記事7本（tanka-hikaku-keisan・handmade-nedan-kimekata・shomikigen-kanrihyo・gessha-hiwari-keisan・genka-shokyaku-fudousan・rimawari-keisan・handmade-kakuteishinkoku-ikurakara）への文中リンク。記事→ツールは既存なので往復になった。noindex の記事（chintai-shushi-keisan・fudousan-shotoku-keihi・yachin-nyukin-kakunin）には張っていない。/eigyobi/ は張れる記事が無いので見送り。
 - 記録: data/seo/new-articles.md（新設）。
 - 次回候補: ①検索に出す記事どうしで本文リンクが2本の記事（gyosei-shobun・koutsujiko-tashuu・shokuchudoku・tochi-mukashi・jibun-ate-mail-todokanai）に文脈の合う記事リンクを足す ②表示が出始めた記事があればその手直し。
+
+## 2026-10-29 毎週の記事更新（定期タスク2回目）: 記事どうしの文中リンク
+- GSC 28日は変化なし（検索語0行）。入ってくるリンクが少ない検索対象の記事5本へ、関係する記事の本文から6本張った（hikkoshi-chian-shirabekata→shokuchudoku-joho・gyosei-shobun-shirabekata、fushinsha-joho-map→hanzai-hassei-map、leopa-esa-tabenai・leopa-taiju-meyasu→leopa-dappi、instagram-recipe-hozon→instagram-recipe-insatsu）。リンク追加だけなので updatedAt は据え置き。
+- 次回候補: ①tochi-mukashi-shirabekata・rimawari-keisan・yahoo-saiyasune-hyouji・gessha-hiwari-keisan・gessha-neage-oshirase（入るリンク1本）に文脈の合う記事から張る ②表示が出始めた記事があればその手直し。
