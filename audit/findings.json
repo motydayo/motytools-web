@@ -50,6 +50,26 @@
   "confidence": "確実"
  },
  {
+  "file": "src/content/guide/ballpython-esa-hindo.md",
+  "url": "https://motytools.com/guide/ballpython-esa-hindo/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "解凍マウス（ホッパー）、体の太さに合わせたもの",
+  "why": "記録の例の表（:110-113）で、体重1,240gの成体に『解凍マウス（ホッパー）』を組み合わせている。ホッパーは離乳前後の小さな子マウスで、本文:42-48 の『ヘビの体のいちばん太い所と同じくらい』という餌のサイズの基準と合わない。例をそのまま真似ると成体には小さすぎる餌になる",
+  "fix": "例の体重を幼体の値にするか、餌を成体の太さに合う大きさ（アダルトマウスや小さめのラットなど）に替える。架空の例であることも表の近くに書く",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/barcode-saiyasune-app.md",
+  "url": "https://motytools.com/guide/barcode-saiyasune-app/",
+  "kind": "検索の見え方",
+  "severity": "中",
+  "where": "| アプリ | 価格を見られる店 | バーコードの扱い |",
+  "why": "description は「比べる通販サイト、読み取りの手間、履歴と値下がり通知、広告と料金を表にまとめ」とするが、62行目の比較表は「価格を見られる店／バーコードの扱い／料金」の3項目だけで、履歴・値下がり通知・広告の列が無い。設計書（data/app-seo/briefs/price-scan/barcode-saiyasune-app.md）の「自社の弱み（Amazon価格は表示しない・生鮮は苦手・Android非対応）を表に」も表に入っていない",
+  "fix": "表に「履歴」「値下がり通知」「広告」「Android」の列を足し、確認できない所は「記載なし」と埋める。足せないなら description から「履歴と値下がり通知、広告」を消す",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/chomiryo-kaifugo-kigen.md",
   "url": "https://motytools.com/guide/chomiryo-kaifugo-kigen/",
   "kind": "広告リンク",
@@ -57,6 +77,76 @@
   "where": "ピッと期限というiPhoneアプリには",
   "why": "chomiryo-kaifugo-kigen.md:14 のFAQの答えで、自社アプリと分からない書き方で紹介している（本文:84 には運営者のアプリと書いてある）。FAQは構造化データとして検索結果に単独で出ることがあり、あるものレシピ系の記事のFAQは『自社アプリの』と書いているのとそろっていない",
   "fix": "FAQの答えを『自社アプリのピッと期限（iPhone）には〜』のように直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/drugstore-kakaku-hikaku.md",
+  "url": "https://motytools.com/guide/drugstore-kakaku-hikaku/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "毎日同じ価格を低くしている店",
+  "why": "チェーンの安さのタイプ（プライシーの分類）は nichiyouhin-matomegai.md:37-42 の表と同じ。Shufoo!・トクバイの説明（39〜40行目）は super-kakaku-hikaku.md:37-38 とほぼ同じ文。開発時の測定値・「できないこと」の段落も他記事と共通で、この記事だけの中身が少ない",
+  "fix": "nichiyouhin-matomegai と統合し、ドラッグストアでの比べ方は統合先の1章にする。統合しない場合は、タイプ分けとチラシアプリの説明を一方に寄せ、もう一方はリンクにする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/fushinsha-joho-mail.md",
+  "url": "https://motytools.com/guide/fushinsha-joho-mail/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "| 秋田県 | 確認中 |",
+  "why": "一覧で9県（秋田・石川・三重・山口・高知・佐賀・大分・鹿児島・沖縄）を『確認中』としているが、koegake-jian.md:42 は『秋田県警察は…不審者情報を配信して注意喚起』と書き、fushinsha-joho-map.md:53 は高知県不審者情報マップに、:110 は秋田・石川・三重・山口の不審者情報をアプリに載せていると書く。サイト内で受け取り方が分かっている県を『確認中』のまま公開している",
+  "fix": "少なくとも秋田・石川・三重・山口・高知は県警の配信サービス名とリンクを確かめて埋める。埋められない県は『確認中』ではなく『公式ページで配信サービスを確認できなかった（2026年10月時点）』と書き、県警トップへのリンクを置く",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/gessha-neage-oshirase.md",
+  "url": "https://motytools.com/guide/gessha-neage-oshirase/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "基準期間の課税売上高が1,000万円以下の事業者は",
+  "why": "gessha-neage-oshirase.md:46。免税の説明が「基準期間の課税売上高1,000万円以下」だけで、適格請求書発行事業者（インボイス）の登録をしている人は売上高に関係なく課税事業者になる点（国税庁 No.6501 の注記・インボイス制度）、特定期間の判定が抜けている。値上げ案内で「税込」と書かせる文脈なので、登録済みの講師が誤解しやすい",
+  "fix": "「インボイスの登録をしている場合は、売上高にかかわらず消費税の申告・納税が必要です」の1文を足し、国税庁のインボイス制度の案内へリンクする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/gessha-shukin-houhou.md",
+  "url": "https://motytools.com/guide/gessha-shukin-houhou/",
+  "kind": "法令リスク",
+  "severity": "中",
+  "where": "月謝の一部で保護者に上乗せする方法もあります",
+  "why": "gessha-shukin-houhou.md:79。カード決済の手数料をカードで払う人にだけ上乗せすることは、多くのカード会社の加盟店規約で禁止されている（国民生活センター https://www.kokusen.go.jp/t_box/data/t_box-faq_qa2013_44.html 「加盟店契約の規約によって禁止されていることがある」）。Square公式の解説も、会計への上乗せでなく価格全体で考えるよう案内している。記事は上乗せを選択肢として示し、規約に書けばよいと読める",
+  "fix": "「カード払いの人だけに手数料を上乗せすることは、カード会社や決済サービスの加盟店規約で禁止されていることが多い。手数料は月謝全体の価格の中で考え、上乗せを考える場合は契約先の規約を先に確認する」に書き換える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/gyosei-shobun-shirabekata.md",
+  "url": "https://motytools.com/guide/gyosei-shobun-shirabekata/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "掲載期間が過ぎた処分は載りません",
+  "why": "この記事:100 は『掲載期間が過ぎた処分は載りません』とする一方、shokuchudoku-joho.md:81 は食中毒の営業停止（これも行政処分）について『掲載期間が過ぎた記録も、消さずに残しています』と書く。同じアプリの処分記録の扱いが2記事で逆に読める",
+  "fix": "2記事で『行政処分』と『食中毒の処分』の扱いの違いと理由を同じ言葉で書く。方針を揃えられるなら揃える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/hachurui-joto-hikitsugi.md",
+  "url": "https://motytools.com/guide/hachurui-joto-hikitsugi/",
+  "kind": "法令リスク",
+  "severity": "中",
+  "where": "無償譲渡や個人間のやり取りの扱いは書かれていません",
+  "why": "動物愛護管理法には、営利でなくても、住居と区分できる飼養施設で一定数以上（爬虫類は中型なら合計10頭以上、それ以外は合計50頭以上）の動物を譲渡・展示などする場合の『第二種動物取扱業』の届出がある（環境省パンフレット https://www.env.go.jp/nature/dobutsu/aigo/2_data/pamph/1903/pdf/16.pdf、神奈川県 https://www.pref.kanagawa.jp/osirase/1594/awc/dealers/type2.html）。記事は第一種だけを説明し、非営利の譲渡について『書かれていません』としており、多頭飼育者の譲渡では届出が要る場合を読者が見落とす。hachurui-sns.md:88-92 も同じ",
+  "fix": "『営利でなくても、飼養施設を設けて一定数以上の動物を譲渡するなどの場合は第二種動物取扱業の届出が必要です（環境省）』と頭数の目安とともに足し、最終判断は都道府県・政令市の窓口に確かめるよう書く。hachurui-sns の該当段落も同じように直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/hachurui-shiiku-note.md",
+  "url": "https://motytools.com/guide/hachurui-shiiku-note/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "| 紙のノート | 世話の場で書ける。",
+  "why": "『紙・エクセル・アプリの違い』（:66-74）が hachurui-shiiku-kiroku-app.md:115-123 とほぼ同じ内容。アプリ紹介の段落（:76,:80）も hachurui-shiiku-kiroku-app.md:99 と同じ文（『記録の種類は、ほかに排泄、掃除、温湿度、健康メモがあります』）",
+  "fix": "紙・表計算・アプリの比較はこの記事に寄せ、hachurui-shiiku-kiroku-app 側はリンクにする（統合）。温湿度・健康メモの記述は実機確認まで外す（設計書の『書いてはいけないこと』）",
   "confidence": "確実"
  },
  {
@@ -100,6 +190,16 @@
   "confidence": "確実"
  },
  {
+  "file": "src/content/guide/idea-memo-app.md",
+  "url": "https://motytools.com/guide/idea-memo-app/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "記載なし（ストアはiPhone向け）",
+  "why": "48行目の比較表で Obsidian のパソコン欄を「記載なし」とするが、Obsidian は公式サイトでWindows・Mac・Linux版を配布しており、パソコンとの連携は他の行より強い。iphone-memo-pc-kyoyu.md:93 でもパソコンで使うメモとして紹介している。WRITING.md 7章（確認できた事実を正しく）",
+  "fix": "「Windows・Mac・Linux版あり（公式サイト）」と埋め、確認日を付ける",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/instagram-hozon-seiri.md",
   "url": "https://motytools.com/guide/instagram-hozon-seiri/",
   "kind": "薄い重複",
@@ -117,6 +217,16 @@
   "where": "保存したのに見つからない理由",
   "why": "本文が約1,600字（空白・記号除く）と担当25本で最も短く、WRITING.md 9章の目安（やり方解説4,000〜6,000字）を大きく下回る。主要語『インスタ レシピ 保存』の中心記事なのに、Instagramの操作（しおり・保存済みの場所・紙飛行機の共有）に確認日やバージョンの条件が無く、FAQも保存の通知・削除時の扱い以外の疑問（リールの保存、保存済みが消えた、コレクションの共有）に答えていない",
   "fix": "instagram-hozon-seiri のコレクション手順を統合して厚くし、Instagramの手順に『2026年10月時点のアプリ・ヘルプで確認』と条件を書く。FAQを1〜2問足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/jibun-ate-mail-todokanai.md",
+  "url": "https://motytools.com/guide/jibun-ate-mail-todokanai/",
+  "kind": "広告リンク",
+  "severity": "中",
+  "where": "Gmailが迷惑メールにする理由は、ヘルプに",
+  "why": "「公式ヘルプで確認できた対処」を売りにした記事（description）なのに、Gmail・Outlook.com・iCloudのヘルプへのリンクが1本も無く、30日・10〜30日・15分などの数字も出典が辿れない（WRITING.md 2章）",
+  "fix": "Gmail「正当なメールが［迷惑メール］に振り分けられる問題を解決する」（support.google.com/mail/answer/16457426）、Microsoft・Appleの該当ページへ、それぞれの段落でリンクを張る",
   "confidence": "確実"
  },
  {
@@ -150,6 +260,26 @@
   "confidence": "確実"
  },
  {
+  "file": "src/content/guide/kakaku-hikaku-site.md",
+  "url": "https://motytools.com/guide/kakaku-hikaku-site/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "価格比較サーチが楽天市場（楽天ブックスを含む）",
+  "why": "価格比較サーチ・ショップリーの説明、Amazon・価格.comのバーコード機能、開発時の測定値（67行目）が barcode-saiyasune-app.md:64-92,131-137 と重なる。「比べるときの注意」は net-yasuku-kau.md:43-52 と同じ内容",
+  "fix": "barcode-saiyasune-app と内容を分け、アプリの説明は1文にしてリンクで送る。家電・日用品・本の使い分け（57〜77行目）を厚くする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/kodomo-bouhan-tsugakuro.md",
+  "url": "https://motytools.com/guide/kodomo-bouhan-tsugakuro/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "地域には、子どもが危険に遭ったときなどに",
+  "why": "『子ども110番の家』の説明（:45 と tsugakuro-anzen-tenken.md:69）、防犯ブザーの付け方・電池・練習（:58 と tsugakuro-anzen-tenken.md:78）、警視庁の『やさしく声をかける』『些細なことでも連絡』（:94-95 と tsugakuro-anzen-tenken.md:89）、『こんなときは〇〇くんだったら』（:37 と tsugakuro-anzen-tenken.md:86）がほぼ同じ文。アプリ紹介の段落もほぼ同じ",
+  "fix": "重なる説明は tsugakuro-anzen-tenken（チェックリスト）に寄せ、この記事は合言葉・防犯グッズの種類・情報の伝え方に絞って該当箇所をリンクに置き換える（統合）",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/kondate-app-hikaku.md",
   "url": "https://motytools.com/guide/kondate-app-hikaku/",
   "kind": "薄い重複",
@@ -157,6 +287,66 @@
   "where": "ピタレシ（無料は食材選択が3つまで）",
   "why": "kondate-app-hikaku.md:67・:71 の他社紹介（ピタレシ・あるもんで・Mealio）が reizoko-amarimono-app.md:45-46・:63・:69 とほぼ同じ文。『あるもんで（150円）』は両記事とも出典リンクと確認日が無い（WRITING.md 2章）",
   "fix": "冷蔵庫型・AI型の詳細は reizoko-amarimono-app に寄せてリンクにする。残すなら『あるもんで』に App Store のリンクと確認日を付ける",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/memo-shukan.md",
+  "url": "https://motytools.com/guide/memo-shukan/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "金曜の夕方に10分のように日時を決めて",
+  "why": "「置き場所を1つ」「週1回・金曜の夕方に10分・カレンダーに入れる」「やる・寝かせる・捨てる」が memo-wasure-boushi.md:33-37,67-77 とほぼ同じで、idea-memo-app.md:94-100 にも同じ3点がある。2本が同じ疑問に同じ答えを出している",
+  "fix": "memo-wasure-boushi と統合する（統合先は memo-wasure-boushi。「書くまでの手間」と「最初の2週間」の表を統合先へ移す）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/memo-wasure-boushi.md",
+  "url": "https://motytools.com/guide/memo-wasure-boushi/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "金曜の夕方に10分",
+  "why": "方法1・方法4（33〜37、67〜77行目）が memo-shukan.md:47-61 と同じ内容（置き場所を1つ、週1回金曜10分、やる・寝かせる・捨てる）",
+  "fix": "memo-shukan をこの記事に統合し、習慣づけの部分を1章にまとめる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/net-tento-kakaku.md",
+  "url": "https://motytools.com/guide/net-tento-kakaku/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "楽天市場のSPUという仕組みは、倍率が会員の条件",
+  "why": "54行目のSPU（最大18.5倍・翌月15日ごろ付与）とYahoo!のPayPayポイントの段落が、net-yasuku-kau.md:58、rakuten-saiyasune.md:51、rakuten-yahoo-hikaku.md:57-62 とほぼ同じ文。「店頭でネット価格を確かめる」の手順も net-yasuku-kau.md:116-128 と重なる",
+  "fix": "ポイントの説明は rakuten-yahoo-hikaku に集め、この記事では1文にしてリンクを張る。家電の総額計算と交渉のマナーに中身を寄せる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/net-yasuku-kau.md",
+  "url": "https://motytools.com/guide/net-yasuku-kau/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "同じ商品でも、もらえるポイントは人によって違います",
+  "why": "SPU・PayPayポイントの段落（58行目）が net-tento-kakaku.md:54 などと同じ文。39ショップの送料（94行目）は rakuten-saiyasune.md:40・rakuten-yahoo-hikaku.md:45・nichiyouhin-matomegai.md:50 と同じ。「同じ条件にそろえる」は kakaku-hikaku-site.md:81 と同じ",
+  "fix": "重なる段落は1文に縮めて rakuten-yahoo-hikaku や net-tento-kakaku へリンクする。この記事は偽サイトの見分け方・最終確認画面など独自の部分を厚くする。net-tento-kakaku との統合も検討する",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/nichiyouhin-matomegai.md",
+  "url": "https://motytools.com/guide/nichiyouhin-matomegai/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "ドラッグストアは、チェーンによって安くなる仕組み",
+  "why": "37〜42行目のタイプ分けの表は drugstore-kakaku-hikaku.md:24-29 と同じ内容。100gあたりの計算・1回あたりの計算は tanka-hikaku-keisan.md と重なる",
+  "fix": "drugstore-kakaku-hikaku と統合する（統合先はこの記事）。単価計算は1例に絞り tanka-hikaku-keisan へリンクする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/rakuten-saiyasune.md",
+  "url": "https://motytools.com/guide/rakuten-saiyasune/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "楽天の中で最安値を探す基本",
+  "why": "並べ替え・「配送」での送料無料の絞り込み・39ショップ・SPU・実質価格の式・JANコード検索の手順が rakuten-yahoo-hikaku.md:36-93 とほぼ同じ。実質価格の計算例も同じ型で、この記事だけの中身が少ない",
+  "fix": "rakuten-yahoo-hikaku に統合し、楽天市場の手順はその1章にする。残す場合は、楽天の検索画面の具体的な操作（スマホアプリとPCの違いなど）を足して差を作る",
   "confidence": "確実"
  },
  {
@@ -220,6 +410,26 @@
   "confidence": "確実"
  },
  {
+  "file": "src/content/guide/yachin-kanri-excel-app.md",
+  "url": "https://motytools.com/guide/yachin-kanri-excel-app/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "家賃管理をエクセルからアプリに変える方法",
+  "why": "本文約1,600字で、大半が大家ノートの操作説明。登録項目・支払期日・通知・CSV の説明は yachin-kanri-app-hikaku.md:85〜87 と yachin-kanrihyo-template.md:141 とほぼ同じ。外部の出典や表計算の具体的な移し方（列の対応・式）が無い。ほかの記事へのリンクも1本だけ",
+  "fix": "yachin-kanri-app-hikaku に「エクセルから移すとき」の節として統合する（登録項目の表と「エクセルは残しておく」の注意だけ移す）。残すなら yachin-kanrihyo-template の列と大家ノートの登録項目の対応表を足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/yachin-nyukin-kakunin.md",
+  "url": "https://motytools.com/guide/yachin-nyukin-kakunin/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "入金確認表をつける",
+  "why": "yachin-nyukin-kakunin.md:65〜79 の入金確認表の列と「期日を過ぎた空白に色」は yachin-kanrihyo-template.md:41〜84 と同じ内容。大家ノートの説明（93〜97行目）も yachin-tainou-taiou.md:38 とほぼ同じ",
+  "fix": "この節は yachin-kanrihyo-template へのリンクだけにし、照合の手順（名義・金額が違うとき）を中心に残す。または yachin-kanrihyo-template に照合手順の節として統合する",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/youtube-recipe-hozon.md",
   "url": "https://motytools.com/guide/youtube-recipe-hozon/",
   "kind": "広告リンク",
@@ -237,6 +447,76 @@
   "where": "目に見える停止ボタンも置いてください",
   "why": "marquee.ts:109 で WCAG（2.2.2 一時停止・停止・非表示）を挙げて「目に見える停止ボタンも置いて」と書いているのに、marquee.ts:31 の prompt と CSS/HTML のコードには停止ボタンが無く、止める手段は :hover（マウスだけ）と prefers-reduced-motion（端末の設定。ページ上の操作手段ではない）だけ。コードをそのまま貼ると、記事自身が求める条件を満たさない",
   "fix": "HTMLに <button type=\"button\" aria-pressed=\"false\">流れを止める</button> を足し、押したら .marquee に is-paused クラスを付けて animation-play-state: paused にする数行のJSとCSSをコードに入れる。prompt にも「目に見える停止ボタンを置く」を足す。:focus-within でも止めると、キーボードの人にも効く",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/autocomplete.ts",
+  "url": "https://motytools.com/ui/autocomplete/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "const render = () => {",
+  "why": "autocomplete.ts:100-114 の render() が active を -1 に戻さず aria-activedescendant も外さない。矢印キーで2件目を選んだあと文字を打ち足すと、候補が作り直されて見た目はどれも未選択なのに active=1 が残り、Enter で見えていない候補が決定される（130行目）。候補が減って hits[active] が無いと 116行目 hits[i][0] で TypeError になる",
+  "fix": "render() の先頭で active = -1; input.removeAttribute('aria-activedescendant'); を入れる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/modal.ts",
+  "url": "https://motytools.com/ui/modal/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "() => dialog.showModal()",
+  "why": "modal.ts:93 開く前に returnValue を空に戻していない。<dialog> の returnValue は開き直しても残り、Escキーで閉じたときは値が変わらない（HTML仕様 close the dialog with null: https://html.spec.whatwg.org/multipage/interactive-elements.html#close-the-dialog ）。一度「予約する」(ok)で閉じたあとに開き直してEscで閉じると、close イベントで returnValue==='ok' のままになり、modal.ts:102-104 の「予約の処理」がもう一度走る。同じ図鑑の bottom-sheet.ts:113 は sheet.returnValue = '' で対策済みで、記事どうしで食い違っている",
+  "fix": "93行目を openBtn.addEventListener('click', () => { dialog.returnValue = ''; dialog.showModal(); }); にし、コメント「前回の結果を持ち越さない」を添える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/modal.ts",
+  "url": "https://motytools.com/ui/modal/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "を触れる見本で解説。",
+  "why": "UI図鑑30本のうち28本の description が「〇〇を触れる見本で解説。」で始まり（残り2本も「動く見本で解説」）、26本が「〜までまとめました／まで分かります」で終わる（manifest.json の desc で数えた）。title も「とは？」14本・末尾【見本】【見本つき】13本・「作り方」23本と同じ型が多い。WRITING.md:183 の「ほかの記事と型を少しずつ変え、同じ文面を量産しない」に反し、検索結果で並ぶと見分けにくい",
+  "fix": "description の書き出しを部品ごとに変える（例: 「○○と××の違いは？」「○○をHTMLだけで作るには」から始める）。決め台詞の「触れる見本で」は数本に絞り、末尾の【見本】は外して検索語を前に寄せる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/popover.ts",
+  "url": "https://motytools.com/ui/popover/",
+  "kind": "古い",
+  "severity": "中",
+  "where": "対応がまだそろっていない",
+  "why": "popover.ts:152（ほか :34・:138 も同趣旨）。CSSアンカー配置は Firefox 147（2026年1月）で既定で有効になり、Chrome・Edge・Safari 26 とあわせて主要ブラウザの現行版がそろった（https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/147 、https://web.dev/blog/web-platform-01-2026 ）。2026年10月時点で「そろっていない」は古い",
+  "fix": "「アンカー配置は2026年に主要ブラウザの現行版がそろいました。古い版のブラウザ向けに、位置を計算する予備を入れておくと安心です」に直す（:34・:138 も同様）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/pricing-table.ts",
+  "url": "https://motytools.com/ui/pricing-table/",
+  "kind": "法令リスク",
+  "severity": "中",
+  "where": "税込か税抜かもはっきり書きます",
+  "why": "pricing-table.ts:132。消費者向けの値段は消費税法63条の総額表示（税込価格の表示）が義務で、「税抜も選べる」と読める書き方は誤解を招く（国税庁 https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm ）。コードの例 :51・:63 の「0円/月」「1,500円」も税込・税抜の記載が無い",
+  "fix": "「個人向けのサービスは税込の総額で表示します（消費税法の総額表示）。事業者向けで税抜にする場合も『税抜』と明記します」に直し、コードの値段に「（税込）」を添える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/pricing-table.ts",
+  "url": "https://motytools.com/ui/pricing-table/",
+  "kind": "法令リスク",
+  "severity": "中",
+  "where": "上に「いちばん人気」の札",
+  "why": "pricing-table.ts:32 の指示文、:16・:60 の見本とコードで「いちばん人気」の札を勧めているが、実績の裏付けが要ることに触れていない。根拠の無い「人気No.1」型の表示は景品表示法の優良誤認・有利誤認のおそれがあると消費者庁が注意している（No.1表示に関する実態調査報告書 2024年9月 https://www.caa.go.jp/policies/policy/representation/fair_labeling/ ）。FAQ :149 は「本当に合うプランを勧める」とだけある",
+  "fix": "cautions に「『いちばん人気』は契約数などの実績があるときだけ。根拠が無いなら『おすすめ』と書く」を1つ足し、指示文の札の文言を「おすすめ」にするか、根拠の条件を添える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/sidebar.ts",
+  "url": "https://motytools.com/ui/sidebar/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": ".sidebar { display: none; }",
+  "why": "sidebar.ts:108-111。コメントは「サイドバーを隠してドロワーに切り替える」だが、コードは隠すだけでドロワーもハンバーガーボタンも無い。そのまま貼るとスマホ幅で管理メニューへの道が消える",
+  "fix": "コメントを「ここでは隠すだけ。スマホ用のドロワーは /ui/drawer/ のコードで別に用意する」に直し、本文 howTo か cautions :149 から drawer の記事へ誘導する",
   "confidence": "確実"
  },
  {
@@ -340,6 +620,86 @@
   "confidence": "確実"
  },
  {
+  "file": "src/data/shiryo/entries/exploded.ts",
+  "url": "https://motytools.com/shiryo/exploded/",
+  "kind": "検索の見え方",
+  "severity": "中",
+  "where": "title: '製品分解図とは？部品をばらして名前",
+  "why": "exploded.ts:11 の title は52字。32〜45字の決まりを超え、【PowerPoint・Googleスライド】が検索結果で切れる",
+  "fix": "【PowerPoint】だけにする、または「製品分解図とは？部品をばらして見せるスライドの作り方【見本】」程度に縮める",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/full-photo.ts",
+  "url": "https://motytools.com/shiryo/full-photo/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "帯の暗さを40〜80%にしておけば",
+  "why": "full-photo.ts:17 は濃さ40〜80%で「明るい写真でも…くっきり読めます」とするが、注意点（full-photo.ts:120）は「60〜75%が目安」、作り方とFAQは「透明度30〜40%」（＝濃さ60〜70%）、つまみは40〜90%、CSSの注記も「40〜80%なら明るい写真でも読める」。目安の数字が4通りあり、40%前後では明るい写真の白文字は読みにくい",
+  "fix": "目安を「濃さ60〜75%（PowerPointの透明度では25〜40%）」に統一し、what・CSSのコメント・作り方・FAQをそろえる。注意点の「会場が明るいときは濃く、プロジェクターが暗いときは薄くしすぎない」も意味が通るよう書き直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/gallery.ts",
+  "url": "https://motytools.com/shiryo/gallery/",
+  "kind": "検索の見え方",
+  "severity": "中",
+  "where": "title: '画像ギャラリー型とは？写真や画像を",
+  "why": "gallery.ts:11 の title は59字で担当25本中いちばん長い。32〜45字の決まりを大きく超え、「スライドの作り方」以降が検索結果で切れる。「画像ギャラリー型」は検索される言い方でもない",
+  "fix": "例「写真をきれいに並べるスライドの作り方｜画像ギャラリー型【PowerPoint】」のように検索語（写真 並べ方 スライド）を前に出し45字以内にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/gallery.ts",
+  "url": "https://motytools.com/shiryo/gallery/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "縦横比のずれも防げます",
+  "why": "gallery.ts:33。PowerPointの「図形の塗りつぶし」→「図」で入れた画像は、図形の大きさに合わせて引き伸ばされ、元の縦横比と違う枠だとゆがむ（防ぐには「図の形式」→「トリミング」→「塗りつぶし」や「縦横比」を使う）。FAQ「同じ大きさでそろえるには？」の答え（gallery.ts:124-125）も同じ前提で、ゆがみに触れていない。参考: https://www.microsoft.com/ja-jp/biz/smb/column-powerpoint-image-cropping.aspx",
+  "fix": "「画像を入れたあと『図の形式』→『トリミング』→『塗りつぶし』を押すと、縦横比を保ったまま枠いっぱいに収まります」と書き足し、「縦横比のずれも防げます」を削る。FAQの答えにも同じ一文を足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/gantt.ts",
+  "url": "https://motytools.com/shiryo/gantt/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "「テストは開発が終わってから」",
+  "why": "gantt.ts:17 の説明。同じ記事の予定では開発＝5月後半〜8月前半、テスト＝8月前半〜9月前半で、8月前半の半月が重なっている（コードでも開発 grid-column 5/11、テスト 10/13 で10列目が重複）。見本の図と本文が食い違う",
+  "fix": "テストの期間を「8月後半〜9月前半」（grid-column 11/13、指示文も同じ）に直すか、本文を「テストは開発の終わりと半月だけ重なる」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/gantt.ts",
+  "url": "https://motytools.com/shiryo/gantt/",
+  "kind": "検索の見え方",
+  "severity": "中",
+  "where": "title: 'ガントチャートとは？工程表をスライ",
+  "why": "gantt.ts:11 の title は50字（末尾 \" | motytools\" を除く）。WRITING.md 第3弾の「32〜45字」を超え、検索結果では全角30〜35字付近で切れて【PowerPoint・Googleスライド】が見えない",
+  "fix": "例「ガントチャートとは？工程表をスライド1枚で見せる作り方【PowerPoint】」(約41字)など、45字以内に縮める",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/image-left.ts",
+  "url": "https://motytools.com/shiryo/image-left/",
+  "kind": "検索の見え方",
+  "severity": "中",
+  "where": "title: '左図右文型とは？写真と説明文を左右",
+  "why": "image-left.ts:11 の title は52字。32〜45字の決まりを超える。「左図右文型」は検索されにくい名前で、検索語（写真と文字 レイアウト スライド）が後ろにある",
+  "fix": "例「写真と説明文を左右に並べるスライドの作り方｜左図右文型【見本】」のように45字以内・検索語を前に",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/kpi-dashboard.ts",
+  "url": "https://motytools.com/shiryo/kpi-dashboard/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "「減って良かった」と読み間違えられない",
+  "why": "kpi-dashboard.ts:175（注意点4つ目）。解約率は下がるほど良い指標で、見本の −0.4pt は実際に「減って良かった」。読み間違えてほしくないのは逆（−を悪化と読むこと）で、文の論理が反対になっている",
+  "fix": "「−0.4ptを『悪化』と読み間違えられないようにします」または「『減って良かった』と正しく読めるようにします」に直す",
+  "confidence": "確実"
+ },
+ {
   "file": "src/data/shiryo/entries/roi.ts",
   "url": "https://motytools.com/shiryo/roi/",
   "kind": "誤り",
@@ -400,6 +760,56 @@
   "confidence": "確実"
  },
  {
+  "file": "src/data/ui/entries-en/badge.ts",
+  "url": "https://motytools.com/en/ui/badge/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "screen readers never see it",
+  "why": "badge.ts:17 と 127行で「読み上げソフトは重ねた数字を読まない／見えない」と言い切るが、aria-hidden を付けない限り、ボタンの中の「3」はふつうに読まれる（アイコンだけのボタンでは「3, button」になる）。日本語版 entries/badge.ts:17 は「札の数字だけでは『2』とだけ読まれ、何の数か分からない」と正しく書いており、食い違っている",
+  "fix": "「screen readers read it as a bare “3” with no context」に直し、だから aria-hidden=\"true\" にして件数をボタンの名前（aria-label）に入れる、という流れにする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/cookie-banner.ts",
+  "url": "https://motytools.com/en/ui/cookie-banner/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "{ banner.hidden = false; }",
+  "why": "cookie-banner.ts:135 の「Cookie settings」は帯を出し直すだけで、保存済みの選択をスイッチに反映しない（再読み込み後は常にオフ表示）。さらに一度 Accept した後に Reject を選んでも、110〜113行の apply() は読み込み済みの analytics.js・ads.js を止められず、同じタグを二重に読み込むこともある。本文149行の「いつでも変更・撤回できる」を、このコードだけでは満たせない",
+  "fix": "開き直すときに saved の stats/ads を checkbox の checked に入れて cats を表示する。撤回（オンからオフ）を検知したら location.reload() で読み直し、apply() には読み込み済みの印を付けて二重読み込みを防ぐ。コメントで「既に保存されたCookieの削除はツールごとに行う」と添える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/popover.ts",
+  "url": "https://motytools.com/en/ui/popover/",
+  "kind": "古い",
+  "severity": "中",
+  "where": "support is still uneven",
+  "why": "popover.ts:34・139・153 で「アンカー配置は対応がそろっていない」とするが、Firefox 147（2026年1月）で対応し、Chrome 125・Safari 26 と合わせて Baseline（Newly available）になった（https://web.dev/blog/web-platform-01-2026）。公開日 2026-10-15 の時点で古い。日本語版 entries/popover.ts:138・152 も同じ",
+  "fix": "「CSS anchor positioning has worked in all major browsers since early 2026 (Baseline 2026). Keep the JavaScript fallback only if you support older browsers」に書き換え、FAQ の答えも同様に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/range-slider.ts",
+  "url": "https://motytools.com/en/ui/range-slider/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "updateResults(Number(slider",
+  "why": "range-slider.ts:104 のJSは定義されていない関数 updateResults() を呼び、107行の update() で読み込み直後に必ず実行されるため、そのまま貼ると ReferenceError で止まる（値の表示・--p の更新もその時点で済んでいるが、以降のスクリプトも止まる）。日本語版 entries/range-slider.ts:104 も同じ",
+  "fix": "function updateResults(max) { /* 一覧を絞り込む */ } の空の定義を先に置くか、行を「// updateResults(Number(slider.value)); ← 一覧の更新はここで」とコメントにする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/barcode-saiyasune-app.md",
+  "url": "https://motytools.com/guide/barcode-saiyasune-app/",
+  "kind": "法令リスク",
+  "severity": "中",
+  "where": "ネットの最安値がわかるアプリを比べました",
+  "why": "description（3行目）と導入で「ネットの最安値」と書くが、本文121行目で「最安値」は楽天市場とYahoo!ショッピングの本体価格だけで並べた結果（送料・ポイント・Amazonは含まない）と説明している。kakaku-hikaku-site.md:75 では中古が最安値として出た例もある。自社アプリの紹介を含む広告的な記事で、比べる範囲を限定せずに「ネットの最安値」とすると、アプリの性能を実際より良く見せる表示（優良誤認）と受け取られるおそれがある",
+  "fix": "description と導入の「ネットの最安値」を「楽天市場・Yahoo!ショッピングの最安値（本体価格）」など範囲が分かる言い方にする。「最安値を見るときの注意」に、中古品やセット品が最安値に出ることがある点を1行足す",
+  "confidence": "要確認"
+ },
+ {
   "file": "src/content/guide/chomiryo-kaifugo-kigen.md",
   "url": "https://motytools.com/guide/chomiryo-kaifugo-kigen/",
   "kind": "誤り",
@@ -407,6 +817,36 @@
   "where": "冷蔵庫 | 約2か月",
   "why": "chomiryo-kaifugo-kigen.md:36（表）と:10（FAQ）で通常容器のしょうゆを『冷蔵庫で約2か月』としているが、キッコーマンの回答を引いた複数の記事では、ペットボトル・びんは開栓後『冷蔵庫で約1か月』が目安とされている。公式ページ（customer.kikkoman.co.jp）はこの環境から開けず未照合。食品の保存期間の目安なので、長い側に誤っていると読者が損をする",
   "fix": "キッコーマンの出典ページを開いて数字を確かめ、違えば表とFAQを『約1か月』に直す。確認日も書き直す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/fudousan-shotoku-keihi.md",
+  "url": "https://motytools.com/guide/fudousan-shotoku-keihi/",
+  "kind": "法令リスク",
+  "severity": "中",
+  "where": "取得価額10万円未満の備品 | 消耗品費",
+  "why": "fudousan-shotoku-keihi.md:45・72（10万円以上20万円未満の3年均等償却も）。令和4年度税制改正で、2022年4月1日以後に取得し「貸付け（主要な業務として行われるものを除く）」の用に供した資産は、少額減価償却資産・一括償却資産の特例の対象外になった。賃貸物件に置くエアコンなどを大家が10万円未満で一括経費にできるかは、業務の規模などで変わるが、記事は無条件に経費になるように読める。個人の不動産所得での「主要な業務」の判定は国税庁の所得税の案内で確かめきれなかった",
+  "fix": "表の該当行と72行目に「2022年4月以後に取得し、貸付けに使う資産は、事業的規模かどうかなどでこの扱いが使えない場合があります。税務署か税理士に確認してください」と注記し、国税庁の該当ページへリンクする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/fushinsha-joho-map.md",
+  "url": "https://motytools.com/guide/fushinsha-joho-map/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "載せているのは、北海道、青森県、宮城県",
+  "why": "不審者情報の27都道府県の内訳と、載せていない県の理由（『公開元が転載を認めていない』など）は、public/machi-anzen-map/index.html・src/data/apps.ts・設計書の『書いてよい事実』のどこにも無い（どれも『27都道府県』の数だけ）。内訳は変わりやすく、記事だけ古くなるおそれがある",
+  "fix": "Web版の出典ページ（/anzen/about/data/）の県別出典と照合して一致を確かめる。記事では県名の羅列をやめ『対象の県はデータの出典ページに一覧があります』とリンクする形にすると、ずれが起きない",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/gyosei-shobun-shirabekata.md",
+  "url": "https://motytools.com/guide/gyosei-shobun-shirabekata/",
+  "kind": "法令リスク",
+  "severity": "中",
+  "where": "掲載情報を、無断で転載や改変することはできません",
+  "why": "記事自身が:59 でネガティブ情報等検索サイトの注意事項として無断転載・改変の禁止を紹介している一方、:91・:95 でアプリが国土交通省などの処分を地図に載せ『処分内容や理由の要約』を見せると書いている。読者には自社アプリが注意事項に反しているように読める。転載の許諾や利用条件の根拠は記事にもLPにも無い",
+  "fix": "国交省の利用条件（許諾の有無、政府標準利用規約の適用範囲）を確かめ、アプリの出典ページに根拠を書いたうえで、記事の:95 に『〇〇の利用条件に沿って要約・出典表示しています』と一文足す。確認できるまでは『要約』の表現を外す",
   "confidence": "要確認"
  },
  {
@@ -420,6 +860,46 @@
   "confidence": "要確認"
  },
  {
+  "file": "src/content/guide/hanzai-hassei-map.md",
+  "url": "https://motytools.com/guide/hanzai-hassei-map/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "上の表に無い県は、確認できていないだけで",
+  "why": "一覧に大阪府が無い。設計書 data/app-seo/briefs/machi-anzen-map/hanzai-hassei-map.md の副語に『犯罪 マップ 大阪』があり、同じサイトの bouhan-app-hikaku.md:45 は大阪府警察『安まちアプリ』に『あり（防犯マップ）』と書いている。大阪府警は府内の犯罪発生情報をアプリと犯罪オープンデータで公開している（https://www.police.pref.osaka.lg.jp/seikatsu/11608.html）",
+  "fix": "表に大阪府の行を足し、安まちアプリの防犯マップと府警の犯罪オープンデータの案内ページへリンクする（確認日を添える）",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/iphone-memo-pc-kyoyu.md",
+  "url": "https://motytools.com/guide/iphone-memo-pc-kyoyu/",
+  "kind": "薄い重複",
+  "severity": "中",
+  "where": "パソコンでどう見えるかは、この記事の筆者が",
+  "why": "見出し「Gmailとメモを同期する」（63行目）で、パソコンでの見え方を「確認していません」と書いて終わっており、見出しの疑問に答えていない。Gmailに保存したメモはGmailの「Notes」ラベルに入り、パソコンのGmailで読めるとされる（未確認）",
+  "fix": "Googleのヘルプで確かめ、パソコンのGmailでどこに出るか（読めるだけか、編集できるか）を書く。確かめられなければ見出しを「iCloud以外のアカウントに保存する」に変え、PCで見る方法としては扱わない",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/iphone-onsei-memo.md",
+  "url": "https://motytools.com/guide/iphone-onsei-memo/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "ピリオド、点、ドット、フルストップ",
+  "why": "53〜59行目の表は英語の音声入力コマンド（period, point, dot, full stop 等）を訳した一覧に見え、日本語で話したときに「.」が入るとは限らない。65行目で日本語の言い方は確認できていないと認めており、題名の「句読点」の答えになっていない（筆者は実機で試していない）",
+  "fix": "実機で日本語の音声入力を試して「まる」「てん」「かいぎょう」などの結果を表にする。試せないなら表を消し、題名・description から「句読点」を外す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/jibun-ate-mail-todokanai.md",
+  "url": "https://motytools.com/guide/jibun-ate-mail-todokanai/",
+  "kind": "古い",
+  "severity": "中",
+  "where": "到着後10日から30日の間に自動で削除される",
+  "why": "FAQ（16行目）と59行目。Outlook.comの迷惑メールフォルダは、現在のMicrosoftのサポート（日本語）では30日後に自動削除と案内されているとの検索結果があり、10日は古い案内の可能性が高い（このコンテナからは support.microsoft.com を開けず未確認）",
+  "fix": "Microsoftのサポート「Outlook.com でのメッセージ フォルダーの操作」を確かめ、日数と確認日を書き直してリンクを張る",
+  "confidence": "要確認"
+ },
+ {
   "file": "src/content/guide/kondate-reizoko.md",
   "url": "https://motytools.com/guide/kondate-reizoko/",
   "kind": "誤り",
@@ -430,6 +910,16 @@
   "confidence": "要確認"
  },
  {
+  "file": "src/content/guide/nichiyouhin-matomegai.md",
+  "url": "https://motytools.com/guide/nichiyouhin-matomegai/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "セット品は、アプリが1個あたりの価格も表示する",
+  "why": "100行目の「1個あたりの価格も表示する場合がある」は、LP（public/price-scan/index.html）にも src/data/apps.ts:248-273 の features にも、設計書の「書いてよい事実」にも無い。WRITING.md 1章4「LPに無い機能は、実機で確かめられるまで書かない」。tanka-hikaku-keisan.md:94 にも同じ記述がある",
+  "fix": "実機で確かめられるまでこの一文を消す。確かめられたら、どの画面にどう出るかを具体的に書き、LP にも載せる",
+  "confidence": "要確認"
+ },
+ {
   "file": "src/content/guide/recipe-hozon-app-hikaku.md",
   "url": "https://motytools.com/guide/recipe-hozon-app-hikaku/",
   "kind": "誤り",
@@ -437,6 +927,26 @@
   "where": "設定の「レシピを書き出す」でファイルに保存",
   "why": "LP（public/recipescrap/index.html）と設計書の『書いてよい事実』に無い機能を、機種変更の対策や比較表の事実として書いている: 『レシピを書き出す』（:14,:58,:86）、取り込み元の『本文の貼り付け』『手入力』（:58）。比較表では他社と並べて自社の長所として扱っているので、無い場合は読者がデータを失う。同じ未記載機能（『本文を貼り付けて取り込む』『自分で入力する』『取り込み件数に数えない』『メモ欄』）が instagram-recipe-comment.md:14,76-79、tiktok-recipe-hozon.md:93、youtube-recipe-hozon.md:94、recipe-note-app.md:14,106,113、recipe-bookmark.md:14,88 にもある（ほか5本）",
   "fix": "実機で確かめ、あるならLPの機能一覧に足してから記事に残す。確かめられない機能（特に書き出し＝機種変更の引き継ぎ、無料の件数に数えない扱い）は記事から外し、比較表の『データの保存先』は『端末内のみ』だけにする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/shokuchudoku-joho.md",
+  "url": "https://motytools.com/guide/shokuchudoku-joho/",
+  "kind": "法令リスク",
+  "severity": "中",
+  "where": "自治体の掲載期間が過ぎた記録も、消さずに残しています",
+  "why": "shokuchudoku-joho.md:58-62 で自ら示すとおり、札幌市は原則14日・大田区は原則7日で削除し、新宿区も公表期間を原則7日としている（:48）。自治体が店の信用への配慮から掲載期間を限っている記録を、期間後も屋号つきで地図に残すと書いており、保持期間の上限が書かれていない。個人経営の店は屋号と場所から営業者個人が分かるおそれもある（新宿区は営業者の氏名も公表内容に含むと:42で紹介）。削除依頼に応じる旨（:83）はあるが、依頼が来るまで残る",
+  "fix": "保持する期間の上限（例: 公表日から何年）と、その間の表示方法（例: 期間後は店名を伏せて件数だけ）をアプリの出典ページで決め、記事の:81にも書く。屋号に個人名を含む場合の扱いも明記する。決まるまでは『消さずに残しています』を『期間が過ぎた記録は〜と添えて表示します（保持期間は出典ページを参照）』に弱める",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/tanka-hikaku-keisan.md",
+  "url": "https://motytools.com/guide/tanka-hikaku-keisan/",
+  "kind": "誤り",
+  "severity": "中",
+  "where": "セット品は、1個あたりの価格も出る場合があります",
+  "why": "94行目の「1個あたりの価格も出る」は LP（public/price-scan/index.html）と src/data/apps.ts の features に無い機能（nichiyouhin-matomegai.md:100 と同じ）。なお計算例はすべて検算し合っていた（155.1円・138.0円・11.0％・276円・86.3円・74.8円・147.5円・0.66円/0.82円）",
+  "fix": "実機で確かめられるまでこの一文を消す",
   "confidence": "要確認"
  },
  {
@@ -477,6 +987,16 @@
   "where": "lower part becomes unreachable",
   "why": "scroll-snap.ts:105。CSS Scroll Snap Module Level 1 は、スナップ領域が画面より大きい場合はその中を自由にスクロールできるようにすることをブラウザに求めている（https://www.w3.org/TR/css-scroll-snap-1/ の oversized snap area の項）。主要ブラウザも mandatory のまま長い区画の下まで読める実装。「届かなくなる」と言い切るのは古い/過剰。日本語版 entries/scroll-snap.ts の同じ注意も同趣旨",
   "fix": "「mandatory でも長い区画の中はスクロールできるが、指を離すたびに区画の頭や次の区画へ引き戻されて読みにくい」程度に書き直す。対処（height: auto や proximity）はそのまま",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/ui/entries-en/cookie-banner.ts",
+  "url": "https://motytools.com/en/ui/cookie-banner/",
+  "kind": "古い",
+  "severity": "中",
+  "where": "such as the EU and UK",
+  "why": "cookie-banner.ts:21（ほか165行のFAQ）で英国を「同意が必要な地域」としてEUと同列に扱う。英国は Data (Use and Access) Act 2025 によるPECRの改正で、条件を満たす統計（アクセス解析）用Cookieは事前同意なし（通知とオプトアウトは必要）で使えるようになり、2026年2月5日に施行と報じられている（https://www.cliffordchance.com/insights/resources/blogs/talking-tech/en/articles/2026/02/key-aspects-of-the-data--use-and-access--act-take-effect.html）。広告用は引き続き同意が必要",
+  "fix": "「In the UK, some low-risk analytics cookies no longer need prior consent since 2026 (with notice and an opt-out), but advertising cookies still do」のような1文を cautions か FAQ に足し、ICO の最新指針で条件を確かめてから載せる",
   "confidence": "要確認"
  },
  {
@@ -530,6 +1050,36 @@
   "confidence": "確実"
  },
  {
+  "file": "src/content/guide/barcode-saiyasune-app.md",
+  "url": "https://motytools.com/guide/barcode-saiyasune-app/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "各30件前後の見本で",
+  "why": "131行目で「各30件前後の見本」とするが、直後の表は30件・40件・26件で、食品40件は「30件前後」と言いにくい",
+  "fix": "「26〜40件の見本」と実数の幅で書く",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/barcode-saiyasune-app.md",
+  "url": "https://motytools.com/guide/barcode-saiyasune-app/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "複数のサイトの価格を取ってきて並べる",
+  "why": "価格比較サーチ・ショップリーの説明、開発時の測定表、「できないこと」の列挙が kakaku-hikaku-site.md:34,67 とほぼ同じ。測定値の一文と「できないこと」の段落は drugstore-kakaku-hikaku・nichiyouhin-matomegai・super-kakaku-hikaku・net-yasuku-kau にも同じ文で入っている",
+  "fix": "測定値の詳しい表はこの記事にだけ置き、ほかの記事は1文に縮めてこの記事の「見つからない商品」へリンクを張る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/captio-kawari.md",
+  "url": "https://motytools.com/guide/captio-kawari/",
+  "kind": "広告リンク",
+  "severity": "低",
+  "where": "Gmailの公式ヘルプには、差出人を確認できない",
+  "why": "48行目で Gmail ヘルプの内容を紹介するがリンクが無い。比較表（54〜60行目）の他社アプリもストアページへのリンクが無い（WRITING.md 2章）",
+  "fix": "Gmailヘルプ「正当なメールが迷惑メールに振り分けられる」等のページにリンクを張る",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/creema-tesuryo-keisan.md",
   "url": "https://motytools.com/guide/creema-tesuryo-keisan/",
   "kind": "検索の見え方",
@@ -547,6 +1097,176 @@
   "where": "[Creemaの出店プランのページ](http://",
   "why": ":23 の出典リンクが http:// で張られている（handmade-hanbai-site-hikaku.md:34 も同じ）。他の公式リンクは https",
   "fix": "https://www.creema.jp/static_secure/planguide に直す（リンク先がhttpsで開けることを確かめてから）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/drugstore-kakaku-hikaku.md",
+  "url": "https://motytools.com/guide/drugstore-kakaku-hikaku/",
+  "kind": "広告リンク",
+  "severity": "低",
+  "where": "比較メディアのプライシーは、2026年8月版",
+  "why": "24行目で他社記事（プライシー）の分類を紹介しているが、この記事にはリンクが無い（同じ内容の nichiyouhin-matomegai.md:35 にはリンクがある）。39〜40行目の Shufoo!・トクバイの数字（12万店以上、72,000店以上）も出典リンクが無い。WRITING.md 2章「出典は本文中に、その数字の近くでリンクする」",
+  "fix": "プライシーの記事、Shufoo!・トクバイの公式ページ（またはApp Storeの掲載ページ）へ、数字の近くでリンクを張る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/drugstore-kakaku-hikaku.md",
+  "url": "https://motytools.com/guide/drugstore-kakaku-hikaku/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "72,000店以上（2024年1月調べ）",
+  "why": "トクバイの掲載店舗数が2024年1月時点の数字で、2026年10月末の記事としては古い。super-kakaku-hikaku.md:38 にも同じ数字がある",
+  "fix": "公式サイトの最新の数字と調べた時点に差し替える。無ければ店舗数の記述を消す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/drugstore-kakaku-hikaku.md",
+  "url": "https://motytools.com/guide/drugstore-kakaku-hikaku/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "店頭で撮った商品の写真や",
+  "why": "100行目で店頭で撮った写真での再確認をすすめるが、64〜66行目と FAQ（11〜12行目）では「店内の撮影を禁止している店がある」と注意している。読む人が迷う",
+  "fix": "「店頭でメモした内容量や、アプリの結果画面で」に変える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/fudousan-shotoku-chobo.md",
+  "url": "https://motytools.com/guide/fudousan-shotoku-chobo/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "白色申告 | 青色申告（簡易帳簿）",
+  "why": "fudousan-shotoku-chobo.md:30〜34 の白色・青色の比較表（帳簿・特別控除・保存期間）は ooya-kakuteishinkoku.md:38〜43 とほぼ同じ。保存期間の説明は fudousan-shotoku-keihi.md:76 にもある",
+  "fix": "比較表は ooya-kakuteishinkoku に置き、こちらは帳簿の項目とエクセル例に絞ってリンクで渡す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/furikae-mail-bunrei.md",
+  "url": "https://motytools.com/guide/furikae-mail-bunrei/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "振替権の期限は、生徒ごとの「振替",
+  "why": "furikae-mail-bunrei.md:116〜126 のアプリの手順・期限・できないことが furikae-lesson-rule.md:104〜114 とほぼ同文",
+  "fix": "アプリの手順はどちらか1本に置き、もう一方は文例・ルールに必要な1〜2文とリンクにする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/fushinsha-joho-mail.md",
+  "url": "https://motytools.com/guide/fushinsha-joho-mail/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "ちば安全・安心メール（警察署ごとに配信）",
+  "why": "表の前文（:31）は『各県警察や県の公式ページ…で確認』とするが、千葉県の行のリンク先は船橋市のページ（city.funabashi.lg.jp）で、県警・県のページではない。埼玉県の行も県警トップページだけで、サービスの案内ページではない",
+  "fix": "千葉県警察の『ちば安全・安心メール』案内ページ、埼玉県警察の『犯罪情報官NEWS』登録ページに張り替える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/fushinsha-joho-map.md",
+  "url": "https://motytools.com/guide/fushinsha-joho-map/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "| 北海道 | [北海道警察犯罪発生マップ]",
+  "why": "この記事の地図の表（:37-53）の15行のうち13行が、hanzai-hassei-map.md:29-55 の表と同じ地図・同じURL。北海道警察の『付近』の説明（:67）や件数の注意も hanzai-hassei-map.md:84-86・hikkoshi-chian-shirabekata.md:98 と同じ内容",
+  "fix": "表を『不審者情報の表示があるか』『掲載期間』の列に絞って hanzai-hassei-map との違いを出すか、県警マップの一覧は hanzai-hassei-map にまとめてリンクし、この記事は不審者専用の地図（島根・高知など）と読み方に絞る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/gessha-hiwari-keisan.md",
+  "url": "https://motytools.com/guide/gessha-hiwari-keisan/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "出た数に1を足します",
+  "why": "gessha-hiwari-keisan.md:36。リンク先の日数計算ツール（dist/days/）には「初日を含める」の切り替えがあり、1を足さなくても両端を含めた日数が出る。手で足すと二重に足す人が出る",
+  "fix": "「数え方で『初日を含める』を選ぶと、21日から30日まで10日と出ます」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/gessha-kanri-app.md",
+  "url": "https://motytools.com/guide/gessha-kanri-app/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "並び順は読みの五十音順で",
+  "why": "gessha-kanri-app.md:62 で五十音順と書いているが、64〜68行目の表は「かんたん月謝帳→できた！DEKITA→月謝袋アプリ→レッスン手帳」。月謝袋（げっしゃ＝か行）はできた（た行）より前になる。「アプリごとの特徴」（74〜101行目）の順も同じ",
+  "fix": "表と見出しの順を「かんたん月謝帳→月謝袋アプリ→できた！DEKITA→レッスン手帳→LessonMate」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/gessha-kanri-app.md",
+  "url": "https://motytools.com/guide/gessha-kanri-app/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "個人講師の悩みが最も大きいのは振替です",
+  "why": "gessha-kanri-app.md:40。根拠の無い断定（WRITING.md 4章「根拠の無い強調」）",
+  "fix": "「振替は、表や紙では管理が抜けやすい項目です」など根拠の要らない言い方にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/gessha-kanrihyo-excel.md",
+  "url": "https://motytools.com/guide/gessha-kanrihyo-excel/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "`=EDATE(E3,1)` をE3から右へコピー",
+  "why": "gessha-kanrihyo-excel.md:53。F3に入れる式をE3から右へコピーと書いていて手順が読みにくい",
+  "fix": "「F3に =EDATE(E3,1) を入れ、P3まで右へコピー」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/gessha-mibarai-saisoku.md",
+  "url": "https://motytools.com/guide/gessha-mibarai-saisoku/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "行き違いですのでご容赦ください",
+  "why": "gessha-mibarai-saisoku.md:51。「すでにお済みの場合は、行き違いですので」は因果がねじれた言い方",
+  "fix": "「行き違いでしたら、ご容赦ください」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/gessha-neage-oshirase.md",
+  "url": "https://motytools.com/guide/gessha-neage-oshirase/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "突然のお知らせとなり、申し訳ありません",
+  "why": "gessha-neage-oshirase.md:64。記事は2〜3か月前の案内をすすめ（18行目）、41行目で「必要以上のお詫び」を避けるとしているのに、文例が「突然」とお詫びしていて食い違う",
+  "fix": "「ご理解のほど、よろしくお願いいたします」などに差し替える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/gessha-neage-oshirase.md",
+  "url": "https://motytools.com/guide/gessha-neage-oshirase/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "の「兄弟割引」を参照してください",
+  "why": "gessha-neage-oshirase.md:117。リンク先 gessha-kanrihyo-excel.md:112〜114 の「兄弟割引」は割引額の列の説明だけで、改定月から請求額の列を分ける数式は無い",
+  "fix": "リンク先の節名を「月途中の入会・退会」に変えるか、「割引額の列で金額を調整する」と説明を合わせる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/hachurui-joto-hikitsugi.md",
+  "url": "https://motytools.com/guide/hachurui-joto-hikitsugi/",
+  "kind": "法令リスク",
+  "severity": "低",
+  "where": "罰則の対象になる遺棄にあたります",
+  "why": "FAQ（:10）は『捨てたり野外に放したりすることは…遺棄にあたります』と断定するが、本文:59 は『野外に放すことも、捨てることにあたるおそれがあります』と書き、強さが食い違う",
+  "fix": "FAQ を本文に合わせ『野外に放すことも遺棄にあたるおそれがあり』とするか、環境省『愛護動物の遺棄の考え方』を出典に本文を断定に揃える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/hachurui-shiiku-kiroku-app.md",
+  "url": "https://motytools.com/guide/hachurui-shiiku-kiroku-app/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "アプリにも質問画面にその注意を出しています",
+  "why": ":111 の『アプリにも質問画面に』は助詞が重なって意味が取りにくい",
+  "fix": "『アプリの質問画面にも、同じ注意を出しています』にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/hachurui-taiju-sokutei.md",
+  "url": "https://motytools.com/guide/hachurui-taiju-sokutei/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "「＋」から体重を選び、数字を入れて保存します",
+  "why": "アプリ紹介の段落（:95）が leopa-taiju-meyasu.md:92 と一字一句同じ。風袋引きの手順（:55-61 と leopa-taiju-meyasu.md:44-48）、厚労省の手洗いの案内（:89 と leopa-taiju-meyasu.md:51）も重なる",
+  "fix": "秤の選び方・風袋引きはこの記事に寄せ、leopa-taiju-meyasu 側は手順を短くしてリンクする。アプリ紹介の文は記事ごとに書き分ける",
   "confidence": "確実"
  },
  {
@@ -610,6 +1330,36 @@
   "confidence": "確実"
  },
  {
+  "file": "src/content/guide/hikkoshi-chian-shirabekata.md",
+  "url": "https://motytools.com/guide/hikkoshi-chian-shirabekata/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "交通事故、不審者情報、行政処分、食中毒の記録が何件",
+  "why": "警察庁は2025年分まで公開済み（:54、koutsujiko-tashuu.md:23）だが、アプリの交通事故は2024年のデータ（public/machi-anzen-map/index.html『2024年の全国282,376件』）。koutsujiko-tashuu.md:14,59 は年を明記しているが、この記事:72、tsugakuro-anzen-tenken.md:27、hanzai-hassei-map.md:98 は年を書いておらず、最新年と誤解されうる",
+  "fix": "アプリ紹介の段落に『交通事故は2024年の記録』と年を書き足す（tsugakuro-anzen-tenken・hanzai-hassei-map も同様）。アプリのデータを2025年分に更新したら記事も直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/idea-memo-app.md",
+  "url": "https://motytools.com/guide/idea-memo-app/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "書き始めるまでの速さ、音声入力、あとで見返す",
+  "why": "description は「書き始めるまでの速さ…を表にまとめ」とするが、44行目の表の列は「見返す場所／音声／パソコン／料金」で、速さの列が無い（FAQ 10行目でも計測していないと書いている）",
+  "fix": "description から「書き始めるまでの速さ」を外すか、表に「起動から入力までの操作数（目安）」の列を足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/idea-memo-app.md",
+  "url": "https://motytools.com/guide/idea-memo-app/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "2点で選ぶと失敗しません",
+  "why": "21行目の「失敗しません」は根拠の無い断定（WRITING.md 4章）",
+  "fix": "「2点で選ぶと選びやすくなります」とする",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/instagram-recipe-hozon.md",
   "url": "https://motytools.com/guide/instagram-recipe-hozon/",
   "kind": "広告リンク",
@@ -627,6 +1377,86 @@
   "where": "取り込めるのは投稿の説明文に書かれた内容",
   "why": "記事どうしで読み取り範囲の説明が食い違う。instagram-recipe-comment.md:74 は『コメント欄の文章が入るかどうかは、投稿による』、本記事:80 と instagram-recipe-insatsu.md:78 は『説明文にレシピがない投稿は、取り込めません（保存できません）』と言い切っている",
   "fix": "LPの表現（『投稿の本文を読み取る』）に合わせ、全記事で『説明文にレシピがない投稿は、取り込めないことがあります』にそろえる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/iphone-memo-pc-kyoyu.md",
+  "url": "https://motytools.com/guide/iphone-memo-pc-kyoyu/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "Windowsにはメモアプリがありませんが",
+  "why": "47行目。Windowsには付箋やメモ帳があるので、「メモアプリが無い」は誤解を招く。言いたいのは「iPhoneの『メモ』のWindows版が無い」こと。また FAQ（15〜16行目）の問い「サインインできません」に、答えはメモが見えないときの確認点になっていて問いと答えが合わない",
+  "fix": "「WindowsにはiPhoneの『メモ』アプリがありませんが」とする。FAQの問いを「iCloud.comでメモが見えません」に変える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/iphone-memo-pc-kyoyu.md",
+  "url": "https://motytools.com/guide/iphone-memo-pc-kyoyu/",
+  "kind": "広告リンク",
+  "severity": "低",
+  "where": "Appleのユーザガイドで次のように案内されています",
+  "why": "Appleのユーザガイド・LINEのヘルプを根拠にした手順が続くが、本文に出典リンクが1本も無い（WRITING.md 2章）",
+  "fix": "Apple「iPhoneでiCloudのメモを設定する」、iCloud.comのメモのガイド、LINEヘルプへ、該当の段落でリンクを張る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/iphone-onsei-memo.md",
+  "url": "https://motytools.com/guide/iphone-onsei-memo/",
+  "kind": "広告リンク",
+  "severity": "低",
+  "where": "Appleのユーザガイドによると、多くの言語の",
+  "why": "Appleのユーザガイドを何度も根拠にするが、本文に出典リンクが無い（WRITING.md 2章）",
+  "fix": "Apple「iPhoneで音声入力する」のページに、手順と句読点の段落でリンクを張る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/jibun-ate-mail-furiwake.md",
+  "url": "https://motytools.com/guide/jibun-ate-mail-furiwake/",
+  "kind": "広告リンク",
+  "severity": "低",
+  "where": "Gmailのヘルプには、パソコンでの作り方が",
+  "why": "Gmail・Microsoft・Appleのヘルプを根拠にした手順や数字（iCloudのルール最大500個、反映まで15分）が並ぶが、出典リンクが1本も無い（WRITING.md 2章）",
+  "fix": "各社のヘルプページへ、該当の手順・数字の近くでリンクを張る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/jibun-ate-mail-furiwake.md",
+  "url": "https://motytools.com/guide/jibun-ate-mail-furiwake/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "使うアプリやメールが何でも使える",
+  "why": "29行目の表の文が「〜が何でも使える」と主語と述語がかみ合わず不自然",
+  "fix": "「使うアプリやメールを問わない」とする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/jibun-line-memo-hikaku.md",
+  "url": "https://motytools.com/guide/jibun-line-memo-hikaku/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "公式ヘルプで確認できなかったので、この記事",
+  "why": "64行目（トーク内の検索）、66行目（送信取消の時間）、48行目（ひとりグループの作り方）と、読む人が知りたい点を「確認できなかったので書かない」が3か所あり、比較の記事として薄い。LINEのヘルプへのリンクも無い",
+  "fix": "LINEヘルプで検索と送信取消の条件を確かめて書き、ヘルプへリンクを張る。確かめられない点は見出しから外す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/jibun-ni-mail-iphone.md",
+  "url": "https://motytools.com/guide/jibun-ni-mail-iphone/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "iPhoneの「ショートカット」アプリで、宛先を",
+  "why": "ショートカットでの自作（54〜69行目）は captio-kawari.md:66-70 と、メモの「コピーを送信」（46〜52行目）は memo-mail-okuru-iphone.md:23-33 と重なる。ショートカットは筆者が組んでいないと書いており（65行目）、手順の確かさが弱い",
+  "fix": "手順の詳細はこの記事に集め、captio-kawari はリンクで送る。ショートカットは実機で組んでから手順を確定する",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/jishu-kanri-ooya.md",
+  "url": "https://motytools.com/guide/jishu-kanri-ooya/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "退去の連絡 | 解約の通知期限を契約書",
+  "why": "jishu-kanri-ooya.md:69・72。敷金の精算と原状回復は国交省ガイドラインだけを示し、2020年4月施行の改正民法621条（通常の損耗・経年変化は借主の原状回復義務に含まれない）と622条の2（敷金の定義と返還）に触れていない",
+  "fix": "72行目に「2020年4月施行の民法で、通常の使用による損耗や経年変化は借主の原状回復の範囲に含まれないこと、敷金は未払い賃料などを差し引いて返すことが明記されました」と足し、e-Gov の民法へリンクする",
   "confidence": "確実"
  },
  {
@@ -650,6 +1480,66 @@
   "confidence": "確実"
  },
  {
+  "file": "src/content/guide/kakaku-hikaku-site.md",
+  "url": "https://motytools.com/guide/kakaku-hikaku-site/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "型番の末尾が違う物は別のモデルかもしれない",
+  "why": "81〜84行目の箇条書きが「合わせる」「かもしれない」「説明している」「まとめている」と常体で終わり、本文の「です・ます」と混ざっている（WRITING.md 10章）",
+  "fix": "「〜合わせます」「〜かもしれません」「〜説明しています」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/keiyaku-koushin-kanri.md",
+  "url": "https://motytools.com/guide/keiyaku-koushin-kanri/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "書面による契約と事前の書面での説明が必要",
+  "why": "keiyaku-koushin-kanri.md:29。借地借家法38条は2022年5月18日施行の改正で、定期借家の契約・事前説明を電磁的方法（電子契約・電子交付）でも行えるようになった（同条2項・4項）。記事は書面だけが条件のように読める",
+  "fix": "「書面（電子契約など電磁的方法も可）による契約と、事前の説明（書面または電磁的方法）」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/koutsujiko-tashuu.md",
+  "url": "https://motytools.com/guide/koutsujiko-tashuu/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "警察庁の統計を引用した[犯罪被害者白書の表]",
+  "why": "全国の人身事故件数・死者数（:29）を、警察庁交通局の統計そのものではなく犯罪被害者白書の表で確かめている。WRITING.md 2章『一次資料から』『孫引きしない』に沿わない（数字自体は令和6年 290,895件・2,663人で警察庁発表と一致）",
+  "fix": "出典を警察庁『令和6年中の交通事故の発生状況』などの交通局の統計ページに差し替える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/leopa-jumyou.md",
+  "url": "https://motytools.com/guide/leopa-jumyou/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "あとから効いてくると考えています",
+  "why": ":94 は根拠の無い自社機能の評価で、記事の中で浮いている（WRITING.md 4章の『根拠の無い強調』に近い）",
+  "fix": "段落ごと削るか、『非公開のまま残すこともできます』と事実だけにする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/memo-mail-okuru-iphone.md",
+  "url": "https://motytools.com/guide/memo-mail-okuru-iphone/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "メモを開いて共有ボタンをタップし",
+  "why": "「コピーを送信」の手順は jibun-ni-mail-iphone.md:48 と iphone-memo-pc-kyoyu.md:77 にも同じ説明があり、Appleのガイドの言い換えが中心。出典リンクも無い",
+  "fix": "Appleのガイドへリンクを張り、送れないときの確認点など独自の部分を厚くする。他の2本からはこの記事へのリンクにまとめる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/memo-wasure-boushi.md",
+  "url": "https://motytools.com/guide/memo-wasure-boushi/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "場所にあることがほとんどです",
+  "why": "21行目の「ほとんどです」は根拠の無い断定（WRITING.md 4章・5章）",
+  "fix": "「場所にあることが多いものです」など幅を持たせる",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/minne-tesuryo-keisan.md",
   "url": "https://motytools.com/guide/minne-tesuryo-keisan/",
   "kind": "誤り",
@@ -660,6 +1550,26 @@
   "confidence": "確実"
  },
  {
+  "file": "src/content/guide/net-tento-kakaku.md",
+  "url": "https://motytools.com/guide/net-tento-kakaku/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "全41店舗に導入する予定だと2019年に報じられました",
+  "why": "電子棚札の話が2019年の報道、価格方針の説明が2020年11月のBCN記事（28・99行目）で、2026年10月時点の各社の方針としては古い。本文でも「今の各社の方針とは違う可能性」と認めている。BCN・ヨドバシ.comのヘルプ（26行目）はリンクも無い",
+  "fix": "各社の現在の公式案内（ヨドバシ.com・ビックカメラのヘルプ等）に差し替えてリンクを張る。古い報道を残すなら年を見出し近くに出し、BCNの記事にもリンクを張る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/nichiyouhin-matomegai.md",
+  "url": "https://motytools.com/guide/nichiyouhin-matomegai/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "約11.6％の減少と出ます（画面には小数第2位",
+  "why": "パーセント計算（src/pages/percent/index.astro:20）は小数第2位まで表示するので、55.3→48.9 を入れると画面には「-11.57%」と出る。「約11.6％と出ます」と画面の表示が食い違う",
+  "fix": "「-11.57%（約11.6％の減少）と出ます」とする",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/nokorimono-remake.md",
   "url": "https://motytools.com/guide/nokorimono-remake/",
   "kind": "日本語",
@@ -667,6 +1577,46 @@
   "where": "菌が出す耐熱性の殻",
   "why": "nokorimono-remake.md:31。芽胞は菌が環境の悪いときに形を変えた耐久型で、『菌が出す殻』は不正確（農林水産省のウェルシュ菌のページの説明と言い方が違う）",
   "fix": "『芽胞（熱や乾燥に強い休眠状態の形）』などに直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/obsidian-iphone-memo.md",
+  "url": "https://motytools.com/guide/obsidian-iphone-memo/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "アプリの起動を待たずに書き込む方法が3つあります",
+  "why": "19行目で「起動を待たずに書き込む方法が3つ」とするが、方法1は49行目で「追記のたびにObsidianが前面に開き、起動待ちが完全にはなくならない」、方法3は後でObsidianを開いて取り込む方法で、導入と本文が食い違う",
+  "fix": "「起動待ちを減らす方法が3つあります」とする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/obsidian-iphone-memo.md",
+  "url": "https://motytools.com/guide/obsidian-iphone-memo/",
+  "kind": "広告リンク",
+  "severity": "低",
+  "where": "Obsidianの公式ヘルプによると、「daily」",
+  "why": "ObsidianのURIの仕様（29、37行目）と、個人ブログ（Akrabat、47行目）を根拠にしているがリンクが無い。筆者はショートカットもObsidian側の表示も実機で確かめていない（47、68行目）",
+  "fix": "Obsidianヘルプ「Obsidian URI」へリンクを張り、ショートカットを実機で組んで手順を確定する",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/piano-gessha-souba.md",
+  "url": "https://motytools.com/guide/piano-gessha-souba/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "基準期間の課税売上高が1,000万円以下の事業者は",
+  "why": "piano-gessha-souba.md:108。gessha-neage-oshirase.md:46 と同じく、インボイス登録済みの人は免税にならない点が抜けている",
+  "fix": "gessha-neage-oshirase と同じ1文を足す（または消費税の説明はどちらか1本にまとめてリンクする）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/piano-gessha-souba.md",
+  "url": "https://motytools.com/guide/piano-gessha-souba/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "ピアノ教室の月謝の全国平均は",
+  "why": "piano-gessha-souba.md:18。Chordiq の数字は公開料金を集めたデータの平均で、34行目で記事自身が「教室全般」「目安」と注意している。冒頭で「全国平均」と言い切ると統計のように読める",
+  "fix": "「公開料金を集めた調査（2026年9月、Chordiq）では、ピアノの月謝の平均は8,080円でした」に直す",
   "confidence": "確実"
  },
  {
@@ -730,6 +1680,36 @@
   "confidence": "確実"
  },
  {
+  "file": "src/content/guide/seito-kanri-kojin.md",
+  "url": "https://motytools.com/guide/seito-kanri-kojin/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "在籍中の人数（状態が列Cの場合）",
+  "why": "seito-kanri-kojin.md:52〜54。26〜38行目の項目表どおりに作ると状態は10列目（J列）、コース・曜日は7列目（G列）だが、数式例は状態C列・コースB列・生年月日D列で書かれ、表の並びと合わない。そのまま写すと結果がずれる",
+  "fix": "数式を項目表の列に合わせる（例: =COUNTIF(J2:J51,\"在籍\")、=COUNTIFS(G2:G51,\"月*\",J2:J51,\"在籍\")、=DATEDIF(D2,TODAY(),\"Y\")）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/seito-kanri-kojin.md",
+  "url": "https://motytools.com/guide/seito-kanri-kojin/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "生徒管理表に入れる項目",
+  "why": "seito-kanri-kojin.md:26〜38 の台帳の列、60行目のINDEX/MATCHの説明、104行目の個人情報保護委員会Q&Aの段落が gessha-kanrihyo-excel.md:26〜41・66・140 と重なる",
+  "fix": "gessha-kanrihyo-excel の生徒一覧の表をこの記事の項目表への参照にし、個人情報の段落はこちらに一本化してリンクする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/shokuchudoku-joho.md",
+  "url": "https://motytools.com/guide/shokuchudoku-joho/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "すでに営業を再開している店も多くあります",
+  "why": "FAQ（:16）の『多くあります』は根拠が示されていない。本文:70 は『営業を再開していることがあります』と弱い書き方で、FAQ と本文で強さが違う",
+  "fix": "FAQ を本文に合わせ『処分の期間が終わり、営業を再開している店もあります』にする",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/shomikigen-kanri-app.md",
   "url": "https://motytools.com/guide/shomikigen-kanri-app/",
   "kind": "日本語",
@@ -750,6 +1730,26 @@
   "confidence": "確実"
  },
  {
+  "file": "src/content/guide/super-kakaku-hikaku.md",
+  "url": "https://motytools.com/guide/super-kakaku-hikaku/",
+  "kind": "広告リンク",
+  "severity": "低",
+  "where": "Zaimは公式サイトで、レシートを撮影すると",
+  "why": "46行目のZaimの無料・プレミアムの範囲、37〜38行目のShufoo!・トクバイの店舗数に出典リンクが無い（WRITING.md 2章）。他社の料金・機能は確認日と公式ページへのリンクが要る",
+  "fix": "Zaim・Shufoo!・トクバイの公式ページ（またはApp Store）へ、数字の近くでリンクを張る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/super-kakaku-hikaku.md",
+  "url": "https://motytools.com/guide/super-kakaku-hikaku/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "全国12万店以上のスーパーやドラッグストアの",
+  "why": "Shufoo!・トクバイの段落が drugstore-kakaku-hikaku.md:39-40 とほぼ同じ文。開発時の測定値・「苦手なもの」の列挙も他の price-scan 記事と共通",
+  "fix": "チラシアプリの説明はこの記事に置き、drugstore-kakaku-hikaku からはリンクで送る",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/tiktok-recipe-hozon.md",
   "url": "https://motytools.com/guide/tiktok-recipe-hozon/",
   "kind": "薄い重複",
@@ -757,6 +1757,36 @@
   "where": "方法ごとの違い",
   "why": "4つの方法（保存機能・端末保存/スクショ・メモに書き写す・レシピスクラップ）を比べる構成と比較表（:99-106）が instagram-recipe-hozon.md:60-67 とほぼ同じ列・同じ評価。youtube-recipe-hozon も『動画へのしおり』『メモに書き写す』の説明が重なる",
   "fix": "TikTok固有の内容（保存できない動画の理由、字幕・口頭だけの材料の残し方）を前に出し、共通部分は instagram-recipe-hozon へのリンクで短くする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/yachin-kanri-app-hikaku.md",
+  "url": "https://motytools.com/guide/yachin-kanri-app-hikaku/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "2026年12月に料金体系の一部改定を予定",
+  "why": "yachin-kanri-app-hikaku.md:65。59行目の表のマネーフォワードの料金（月900円から等）は、記事自身が書くとおり2026年12月に改定予定で、公開から2か月で古くなる",
+  "fix": "2026年12月以降に公式ページで確かめ直し、表と確認日を更新する",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/yachin-kanri-excel-app.md",
+  "url": "https://motytools.com/guide/yachin-kanri-excel-app/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "表を開き忘れる心配がなくなります",
+  "why": "yachin-kanri-excel-app.md:60。通知があっても見落としは起こるので言い切り。70行目「続けやすいはずです」も推量",
+  "fix": "「表を開かなくても、確認の日に通知で気づけます」などに直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/content/guide/yahoo-saiyasune-hyouji.md",
+  "url": "https://motytools.com/guide/yahoo-saiyasune-hyouji/",
+  "kind": "広告リンク",
+  "severity": "低",
+  "where": "Yahoo!知恵袋には、商品ページにJANコードが",
+  "why": "49行目で利用者の回答（Yahoo!知恵袋、2023年10月）を条件の説明に使っている。本文で「公式の説明ではない」と断っているが、WRITING.md 2章は一次資料からの確認を求め、まとめや個人の回答の孫引きをしない方針",
+  "fix": "この段落を消す。61行目の「考えられます」の段落だけで足りる",
   "confidence": "確実"
  },
  {
@@ -887,6 +1917,166 @@
   "where": "下線は文字の長さに合わせて幅も変わります",
   "why": "tab-indicator.ts:16 で「下線は文字の長さに合わせて幅も変わる」と書いているが、コードは tab-indicator.ts:59 で全タブを flex: 1（同じ幅）にしているので、下線の幅は常に同じになる。tab-indicator.ts:167 の「この記事のコードは両方に対応」とも読み合わせにくい",
   "fix": "コードの flex: 1 を flex: none ＋左右の padding にして文字幅に合わせるか、本文を「下線はタブの幅に合わせて付く（見本は文字幅のタブ）」と書き分ける。あわせて APG の作法どおり tabpanel に tabindex=\"0\" を付けると親切",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/autocomplete.ts",
+  "url": "https://motytools.com/ui/autocomplete/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "都道府県のように47個程度までなら",
+  "why": "autocomplete.ts:17 は「47個程度までならセレクトで十分」、:27 は「10個以下ならセレクト」、FAQ :160 は「十数個まで…セレクト、数百個以上ならオートコンプリート」と目安が3通りで読み手が迷う",
+  "fix": "目安を1つに統一する（例: 本文も FAQ も「数十個まではセレクト、それ以上や自由入力ありならオートコンプリート」）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/breadcrumb.ts",
+  "url": "https://motytools.com/ui/breadcrumb/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "スマホでは出ない場合が多くなっています",
+  "why": "breadcrumb.ts:132。Google は2025年1月23日からスマホの検索結果でパンくずを出さず、ドメインだけの表示にした（パソコンでは引き続き表示）。https://developers.google.com/search/blog/2025/01/simplifying-breadcrumbs",
+  "fix": "「（パソコンの検索結果で表示されることがあります。スマホでは2025年1月からドメインだけの表示になりました）」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/cookie-banner.ts",
+  "url": "https://motytools.com/ui/cookie-banner/",
+  "kind": "法令リスク",
+  "severity": "低",
+  "where": "外部送信規律。対象になる事業者は限",
+  "why": "cookie-banner.ts:168・:154。電気通信事業法の外部送信規律（27条の12、2023年6月施行）は、送信される情報の内容・送信先・利用目的を通知または公表する仕組みで、バナーの一文（:42「サイトの改善と広告の効果測定のために…」）だけでは足りない。また広告タグで提供先が個人データとひも付ける場合の個人情報保護法31条（個人関連情報の第三者提供＝提供先が本人同意を得ていることの確認）に触れていない。EUのCookie同意の根拠はGDPRだけでなくePrivacy指令5条3項。断定は避けていて方向は正しいが情報が足りない（https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/gaibusoushin_kiritsu.html 、https://www.ppc.go.jp/personalinfo/legal/ ）",
+  "fix": "FAQ :168 に「公表するのは、送る情報・送り先・使い道」「広告のタグでは個人情報保護法の個人関連情報の決まりも関わることがある」を各1文で足し、:17 を「GDPRやePrivacy指令（Cookieの規則）」にする。専門家に確かめる旨の結びは残す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/cookie-banner.ts",
+  "url": "https://motytools.com/ui/cookie-banner/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "{ banner.hidden = false; });",
+  "why": "cookie-banner.ts:137-138。「Cookieの設定」から開き直しても、保存済みの選択がスイッチに反映されず、ボタンの文字も前回の「選んだ内容で保存」のまま残る。撤回のつもりで開いた人に、今の状態が正しく見えない",
+  "fix": "開くときに saved を読み、cats.elements.stats.checked / ads.checked に入れ、項目の画面を開いた状態で出す（ボタンの文字もそろえる）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/cookie-banner.ts",
+  "url": "https://motytools.com/ui/cookie-banner/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "（similar への被リンク無し）",
+  "why": "UI図鑑のほかの29本の similar から cookie-banner・empty-state・pricing-table・star-rating・timeline の5本へはリンクが1本も無い（src/data/ui/entries/*.ts の similar を集計）。sticky-cta.ts:159 は cookie-banner に触れるが、similar に入っているのは逆向き（cookie-banner→sticky-cta）だけ",
+  "fix": "sticky-cta・bottom-nav・fab の similar か cautions から cookie-banner へ、chips・autocomplete から empty-state へ、segmented-control・toggle-switch から pricing-table へ、stepper から timeline へ、range-slider から star-rating へリンクを張る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/date-picker.ts",
+  "url": "https://motytools.com/ui/date-picker/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "max=\"2026-12-31\" required",
+  "why": "date-picker.ts:44。max が2026年末に固定で、JS（:74）は min だけ今日に書き換える。2027年以降にこのまま貼ると min が max を越えて1日も選べない",
+  "fix": "max も JS で「今日から○か月後」を入れるか、HTMLの例の値に「例:」のコメントを添える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/drawer.ts",
+  "url": "https://motytools.com/ui/drawer/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "左へのスワイプのどれでも閉じられ",
+  "why": "drawer.ts:16 と description（:13「スワイプで閉じる…決まりごと」）はスワイプで閉じると書くが、コード（:111-128）と指示文（:31「閉じ方は…3つ」）にスワイプは無い。cautions :140 は「余裕があれば付けます」と任意扱いで、記事内で扱いがぶれている",
+  "fix": "description と what を「×・暗幕・Escキーで閉じ、スマホでは左へのスワイプも付けられます」にそろえるか、bottom-sheet.ts のようにスワイプのコードを足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/dropdown-menu.ts",
+  "url": "https://motytools.com/ui/dropdown-menu/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "'コンテキストメニュー'",
+  "why": "dropdown-menu.ts:9 の別名。コンテキストメニューは右クリックや長押しで開く別の部品で、ボタンで開くドロップダウンメニューの言い換えではない",
+  "fix": "aka から外すか、similar やFAQで「右クリックで開くものはコンテキストメニュー」と区別して書く",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/fab.ts",
+  "url": "https://motytools.com/ui/fab/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "location.href = '/notes/new/';",
+  "why": "fab.ts:104-106。別の画面へ移るだけの操作を <button> と location.href で作っており、新しいタブで開く・URLのコピーができず、読み上げでも「リンク」と伝わらない。pagination.ts:34 では「リンクで作る」と勧めていて方針が食い違う",
+  "fix": "画面を移るなら <a href=\"/notes/new/\" class=\"fab\" aria-label=\"項目を追加\"> にし、その場で項目を足すときだけ <button> にする、と howTo に1文足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/hamburger-menu.ts",
+  "url": "https://motytools.com/ui/hamburger-menu/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "開いたメニューの項目を押したら閉じます",
+  "why": "hamburger-menu.ts:141 で項目を押したら閉じると勧めているが、JavaScript（:107-129）に項目のクリックで閉じる処理が無い。ページ内リンク（#〜）でメニューが開いたままになる事故を自分のコードで起こす",
+  "fix": "menu.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); }); をコードに足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/modal.ts",
+  "url": "https://motytools.com/ui/modal/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "11月3日（月）から1泊",
+  "why": "modal.ts:45 のコードの例。2026年11月3日は火曜日で、date-picker.ts:16・32 では「2026年11月3日（火）」と書いている。見本の ui-demos/modal.astro:18・stepper.astro:17・dropdown-menu.astro:19・bottom-nav.astro:18（12月20日（土）も2026年は日曜）も2025年の暦のまま",
+  "fix": "「11月3日（火）」にそろえる（見本の .astro も同様。12月20日は（日））",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/popover.ts",
+  "url": "https://motytools.com/ui/popover/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "ポップオーバーとは？ツールチップ・モーダル",
+  "why": "manifest.json の実測で title が 51字（末尾「 | motytools」込み）。date-picker 52・breadcrumb 50・carousel 50 も同様に長く、日本語の検索結果で切れる全角30〜35字を大きく超え、「popover属性の使い方」など後半の検索語が見えない",
+  "fix": "例: 「ポップオーバーとは？popover属性の使い方とツールチップとの違い」のように検索語を前へ寄せ、35字前後に縮める（date-picker・breadcrumb・carousel も同様）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/quantity-stepper.ts",
+  "url": "https://motytools.com/ui/quantity-stepper/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "dec.disabled = q <= num.min;",
+  "why": "quantity-stepper.ts:94-95。キーボードで「−」を押し続けて1になると、焦点のあるボタンが disabled になり焦点が消える（ページの先頭へ戻る）。同じ図鑑の carousel.ts:36 は「disabled にすると押した直後に焦点が消えるので、aria-disabled を使います」と書いており、記事どうしで扱いが逆",
+  "fix": "aria-disabled=\"true\" と見た目の変更にして、押されたら何もしない作りにする。または disabled にした直後に焦点を真ん中の数字の欄へ移す。cautions にその理由を1文足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/sidebar.ts",
+  "url": "https://motytools.com/ui/sidebar/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "title=\"ダッシュボード\"",
+  "why": "sidebar.ts:49（ほか :52・:55、指示文 :32「title 属性で名前が出るように」）。同じ図鑑の tooltip.ts:146 は「title属性でツールチップを出すのは…おすすめしません（キーボードの焦点では出ず、スマホでも出ない）」と書いており、食い違う。名前の文字が残ったまま title も付けると、読み上げで名前が二重になることもある",
+  "fix": "畳んだときの名前は /ui/tooltip/ の作り方（role=\"tooltip\"）で出すよう本文と指示文を直し、コードの title を外す。残すなら「手軽な代わり。キーボードでは出ない」と断る",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/stepper.ts",
+  "url": "https://motytools.com/ui/stepper/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "段が7つ以上あるとき",
+  "why": "stepper.ts:28 は「7つ以上」を避ける場面とし、FAQ :187 は「6段以上になると…やめる人が増えます」。目安が1段ずれている。FAQ の「増えます」も根拠の無い断定",
+  "fix": "どちらも「6段以上」にそろえ、FAQ は「増えやすくなります」程度に弱める",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries/timeline.ts",
+  "url": "https://motytools.com/ui/timeline/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "読んだところまで線がオレンジ色に伸び",
+  "why": "timeline.ts:16・:35・:152 は「読み進めたところまで線を色づける」と書くが、JavaScript（:114-122）は印に is-past を付けるだけで線は伸びない。コードのコメントも「印を塗る」",
+  "fix": "howTo と FAQ を「通り過ぎた印を塗る演出」に合わせるか、線を伸ばすコード（色の線を ::after で重ね scaleY で伸ばす）を足す",
   "confidence": "確実"
  },
  {
@@ -1120,6 +2310,146 @@
   "confidence": "確実"
  },
  {
+  "file": "src/data/shiryo/entries/donut.ts",
+  "url": "https://motytools.com/shiryo/donut/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "（中の文字が入る太さ）",
+  "why": "donut.ts:17。「細すぎず」の説明に「中の文字が入る太さ」と添えているが、輪を太くするほど中の空きは狭くなるので、太さの上限の話と下限の話が混ざって読める",
+  "fix": "「輪の太さは、色の違いが見分けられる太さにしつつ、真ん中の数字が入る余白を残す」と分けて書く",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/donut.ts",
+  "url": "https://motytools.com/shiryo/donut/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "を見本で解説",
+  "why": "donut.ts:13。担当25本すべての description が「〜を見本で解説。…PowerPoint・Googleスライドでの作り方、AIへの指示文とHTMLまでまとめました。」の同じ型で、作り方の3段落目も全本「AIにHTMLでスライドを作ってもらう場合は、下のコードがそのまま1枚のスライドになります」で始まる。title も25本とも「〜とは？〜の作り方【…】」。検索結果で並ぶと見分けにくく量産感が出る",
+  "fix": "description の後半を型ごとの具体（例: donut なら「8,400万円の販売費を5項目で見せる例」）に差し替え、「見本で解説」「までまとめました」の定型句を減らす",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/exploded.ts",
+  "url": "https://motytools.com/shiryo/exploded/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "注記（12pt以上）を入れてください",
+  "why": "exploded.ts:31。WRITING.md 第3弾の決まりは注記13（コードも13px）だが、指示文は「12pt以上」。faq.ts:31・gallery.ts:31・hypothesis.ts:31・interview.ts:31 の指示文も同じ（ほか4本）。他の21本は13pt",
+  "fix": "5本の指示文を「注記（13pt）」にそろえる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/faq.ts",
+  "url": "https://motytools.com/shiryo/faq/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "質問は3〜6個に絞ります",
+  "why": "faq.ts:17 は3〜6個、FAQ「いくつの質問を載せれば」の答え（faq.ts:144）は「1枚につき4〜6個まで」で数がずれる",
+  "fix": "どちらかにそろえる（例: 「3〜6個」に統一）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/fishbone.ts",
+  "url": "https://motytools.com/shiryo/fishbone/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "強調したい骨に hot を書き足して",
+  "why": "fishbone.ts:35。下のコードでは強調のクラス名は「fb-hot」で（fishbone.ts:47 など）、「hot」を書き足しても色は付かない",
+  "fix": "「強調したい骨の g に fb-hot を書き足してください」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/fishbone.ts",
+  "url": "https://motytools.com/shiryo/fishbone/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "M11.599999999999994 66 H187.6",
+  "why": "fishbone.ts:49 ほかコード内に 11.599999999999994、32.80000000000001 などの計算誤差の桁が12か所ある。読者がそのまま写すコードとして読みにくい（表示は動く）",
+  "fix": "小数1桁に丸める（11.6、32.8、54.1 など）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/glossary.ts",
+  "url": "https://motytools.com/shiryo/glossary/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「レイアウト」→「行の高さをそろえる」",
+  "why": "glossary.ts:33。PowerPointの表の「レイアウト」タブのボタン名は「高さを揃える」（行の高さを均等にする）。参考: https://biz.moneyforward.com/work-efficiency/basic/23089/",
+  "fix": "「『レイアウト』→『高さを揃える』」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/glossary.ts",
+  "url": "https://motytools.com/shiryo/glossary/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "意味の書き方をそろえてください",
+  "why": "glossary.ts:130（注意点2つ目）は語尾を「〜こと」などに統一せよと言うが、見本自身が「記録すること」「承認をもらう手続き」「分けること」「払っておくこと」「区切る日」と語尾がばらばら（glossary.ts:31 の指示文）",
+  "fix": "見本の意味を「〜こと」でそろえる（例: 稟議＝書類を回して承認をもらうこと／締め日＝その月の記録を区切る日のこと）か、注意点を「名詞で終わる形か『〜こと』のどちらかにそろえる」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/hub-spoke.ts",
+  "url": "https://motytools.com/shiryo/hub-spoke/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "（「関連」の中の放射状の図）",
+  "why": "hub-spoke.ts:34。PowerPoint日本語版のSmartArtの分類は「リスト・手順・循環・階層構造・集合関係・マトリックス・ピラミッド・図」で、「関連」という分類はない。放射状の図は「集合関係」（または「循環」の「基本放射」）にある。参考: https://support.microsoft.com/ja-JP/Office/graphics-visuals/choose-a-smartart-graphic",
+  "fix": "「『集合関係』の中の、中心から放射状に広がる図（『放射ボックス』など）」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/image-left.ts",
+  "url": "https://motytools.com/shiryo/image-left/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「コンテンツとタイトル」や",
+  "why": "image-left.ts:33。PowerPointのレイアウト名は「タイトルとコンテンツ」「2つのコンテンツ」「タイトル付きの図」などで、「コンテンツとタイトル」という名前はない",
+  "fix": "「『2つのコンテンツ』や『タイトル付きの図』のレイアウトを選ぶと」に直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/image-left.ts",
+  "url": "https://motytools.com/shiryo/image-left/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "文字側は4〜5行の見出しと3つの説明に",
+  "why": "image-left.ts:17 の「4〜5行の見出し」は見出しが4〜5行あるように読める。FAQ（image-left.ts:157）では「見出しが3行にもなりがち」を悪い例としており食い違う",
+  "fix": "「文字側は、2行までの見出しと3つの説明に収めると」などに直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/kanban.ts",
+  "url": "https://motytools.com/shiryo/kanban/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "4列が見やすい限度で、6列を超えると",
+  "why": "kanban.ts:145（注意点1つ目）。「4列が限度」と「6列を超えると読めない」が1文の中で食い違い、what（kanban.ts:18）の「列を3〜5つにする」とも合わない",
+  "fix": "「列は3〜5つまで。6列以上になると札が細かくなって読めません」にそろえる",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/logic-tree.ts",
+  "url": "https://motytools.com/shiryo/logic-tree/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "掛け算や足し算で元の数に戻ると",
+  "why": "logic-tree.ts:17 は「数で元に戻れば分け方が正しい」とするが、見本の入会率の下（声かけ・特典・申込の手順）は掛け算・足し算で4.0%に戻らない「要因の洗い出し」。見本の中でこの決まりが守られていない段がある",
+  "fix": "3段目の入会率の枝について「ここは数で分けられないので、声かけした人・しない人の入会率を比べて確かめる」など、確かめ方を一言添える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/shiryo/entries/map-distribution.ts",
+  "url": "https://motytools.com/shiryo/map-distribution/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "段階ごとの都道府県の数がほとんど同じ",
+  "why": "map-distribution.ts:364（注意点2つ目）。「覚えやすい区切り」と「段階ごとの件数をほぼ同数にする」は別の決め方で両立しにくく、見本自身も1〜4店26件・5〜9店11件・10〜19店5件・20店以上5件と同数になっていない",
+  "fix": "「覚えやすい切りのいい数字で区切る。どの段階にも都道府県が入るか（空の段階がないか）を確かめる」に直す",
+  "confidence": "確実"
+ },
+ {
   "file": "src/data/shiryo/entries/roi.ts",
   "url": "https://motytools.com/shiryo/roi/",
   "kind": "日本語",
@@ -1314,7 +2644,7 @@
   "url": "https://motytools.com/shiryo/value-chain/",
   "kind": "日本語",
   "severity": "低",
-  "where": "販売・営業・サービスの5つの活動を矢じり形",
+  "where": "の5つの活動を矢じり形で並べ",
   "why": "value-chain.ts:16。「購買物流・製造・出荷物流・販売・営業・サービス」と中黒だけで並べているため6つに読めるのに「5つ」と書いている",
   "fix": "「購買物流／製造／出荷物流／販売・営業／サービス」と区切りを変える",
   "confidence": "確実"
@@ -1540,6 +2870,256 @@
   "confidence": "確実"
  },
  {
+  "file": "src/data/ui/entries-en/autocomplete.ts",
+  "url": "https://motytools.com/en/ui/autocomplete/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "Match case-insensitively",
+  "why": "autocomplete.ts:151 は「IMEは確定前にも input を送り、自動修正で文字が変わる」から「大文字小文字を区別せず照合する」と続くが、前後がつながらない（大文字小文字は IME の問題と無関係）。日本語版の「読み仮名でも探す」を英語向けに置き換えた際に論理が抜けた",
+  "fix": "「While an IME is composing, skip filtering (check event.isComposing) or filter on compositionend; match case-insensitively and test on real devices」のように、IME への対処と照合の話を分けて書く",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/autocomplete.ts",
+  "url": "https://motytools.com/en/ui/autocomplete/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "suggestions available",
+  "why": "autocomplete.ts:115 は読み上げに hits.length（全件数）を流すが、110行で表示するのは最大 MAX 件だけで、プロンプト（32行）の「N more」表示もコードに無い。「12 suggestions available」と読まれて矢印キーでは5件しか回れず、聞こえる数と操作できる数が食い違う",
+  "fix": "表示件数を伝える（`${Math.min(hits.length, MAX)} of ${hits.length} suggestions`）か、MAX を超えるときは「N more, keep typing」の行を足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/badge.ts",
+  "url": "https://motytools.com/en/ui/badge/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "99+ and Screen Readers",
+  "why": "title の本文だけで63字（manifest.json の tlen は「 | motytools」込みで75字）。英語の検索結果は約60字で切れるため、末尾の「99+ and Screen Readers」の一部まで省略される（src/data/ui/entries-en/badge.ts:11）",
+  "fix": "60字以内に縮める。例「Notification Badge CSS: Counts, Dots, 99+, Screen Readers」（57字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/bottom-sheet.ts",
+  "url": "https://motytools.com/en/ui/bottom-sheet/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "and Swipe to Dismiss",
+  "why": "title の本文だけで62字（manifest.json の tlen は「 | motytools」込みで74字）。英語の検索結果は約60字で切れるため、末尾の「and Swipe to Dismiss」の一部まで省略される（src/data/ui/entries-en/bottom-sheet.ts:11）",
+  "fix": "60字以内に縮める。例「Bottom Sheet with <dialog>: Slide-Up and Swipe to Dismiss」（57字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/breadcrumb.ts",
+  "url": "https://motytools.com/en/ui/breadcrumb/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "position in search results",
+  "why": "breadcrumb.ts:35 と 132行で「Google が検索結果にパンくずを表示することがある」とだけ書くが、Google は2025年1月からスマホの検索結果ではパンくずを出さず、ドメインだけを表示している（パソコンは従来どおり。https://developers.google.com/search/blog/2025/01/simplifying-breadcrumbs）。読者の多いスマホでは出ないことが書かれていない",
+  "fix": "「Since January 2025 Google shows the trail only on desktop results; mobile results show just the domain」を FAQ の答えに足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/chips.ts",
+  "url": "https://motytools.com/en/ui/chips/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "Accessible Chips in HTML & CSS",
+  "why": "title の本文だけで62字（manifest.json の tlen は「 | motytools」込みで74字）。英語の検索結果は約60字で切れるため、末尾の「Accessible Chips in HTML & CSS」の一部まで省略される（src/data/ui/entries-en/chips.ts:11）",
+  "fix": "60字以内に縮める。例「Filter Chips vs Tags vs Badges: Accessible Chips in CSS」（55字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/cookie-banner.ts",
+  "url": "https://motytools.com/en/ui/cookie-banner/",
+  "kind": "法令リスク",
+  "severity": "低",
+  "where": "the GDPR’s approach to consent",
+  "why": "cookie-banner.ts:17・148・161 では、Cookie同意の決まりをすべて「GDPRの考え方」として説明している。Cookieなどの保存に同意を求める根拠は ePrivacy 指令5条3項（英国は PECR）で、GDPR は同意の質（自由・撤回の容易さ）を決める側。また米国の説明（165行）は opt-out の義務にとどまり、カリフォルニア州などで求められる Global Privacy Control（GPC）信号の扱いに触れていない。断定は避けているが、法令の名前が不正確",
+  "fix": "「Cookie consent rules come from the EU ePrivacy Directive (PECR in the UK), and the GDPR sets the standard for valid consent」と言い直し、FAQ の米国の答えに「some states also require honoring Global Privacy Control signals」を足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/date-picker.ts",
+  "url": "https://motytools.com/en/ui/date-picker/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "max=\"2026-12-31\" required",
+  "why": "date-picker.ts:44 の max が 2026-12-31 に固定され、76行で min を「今日」に上書きするため、2027年以降にこのコードを貼ると min が max を超えて選べる日が無くなる。記事は今後も読まれる",
+  "fix": "max もJSで「今日から1年後」などに設定するか、HTMLの例の日付は「例」とコメントで示す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/drawer.ts",
+  "url": "https://motytools.com/en/ui/drawer/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "with HTML <dialog> and CSS",
+  "why": "title の本文だけで62字（manifest.json の tlen は「 | motytools」込みで74字）。英語の検索結果は約60字で切れるため、末尾の「with HTML <dialog> and CSS」の一部まで省略される（src/data/ui/entries-en/drawer.ts:11）",
+  "fix": "60字以内に縮める。例「Navigation Drawer (Off-Canvas Menu) with <dialog> and CSS」（57字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/dropdown-menu.ts",
+  "url": "https://motytools.com/en/ui/dropdown-menu/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "& Keyboard Support",
+  "why": "title の本文だけで64字（manifest.json の tlen は「 | motytools」込みで76字）。英語の検索結果は約60字で切れるため、末尾の「& Keyboard Support」の一部まで省略される（src/data/ui/entries-en/dropdown-menu.ts:11）",
+  "fix": "60字以内に縮める。例「Accessible Dropdown Menu: Menu Button & Keyboard Support」（56字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/empty-state.ts",
+  "url": "https://motytools.com/en/ui/empty-state/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "fetch('/api/saved')",
+  "why": "empty-state.ts:35 で「読み込み中・エラー・空・中身ありの4状態に分ける」と書くが、106〜108行のコードは失敗時の処理が無く、通信エラーや res.ok でない応答では何も表示されないか例外になる（29行の avoid でも「失敗時は別の画面」と言っている）",
+  "fix": ".then((res) => { if (!res.ok) throw new Error(); return res.json(); }).then(render).catch(showError) のように失敗の分岐と、読み込み中の表示を足す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/lightbox.ts",
+  "url": "https://motytools.com/en/ui/lightbox/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "<dialog> + Zoom Animation",
+  "why": "title の本文だけで61字（manifest.json の tlen は「 | motytools」込みで73字）。英語の検索結果は約60字で切れるため、末尾の「<dialog> + Zoom Animation」の一部まで省略される（src/data/ui/entries-en/lightbox.ts:11）",
+  "fix": "60字以内に縮める。例「Lightbox Gallery Without a Library: <dialog> + Zoom Effect」（58字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/mega-menu.ts",
+  "url": "https://motytools.com/en/ui/mega-menu/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "set(panel.hidden)",
+  "why": "mega-menu.ts:126 と 130〜134行の組み合わせでは、マウス利用者がボタンに乗せて0.15秒で開いた直後にボタンをクリックすると、トグルで閉じてしまう（ホバーで開いてからクリックする人は多い）。35行の説明「Clicks and keyboard input open it immediately」とも合わない",
+  "fix": "click では「ホバーで開いた直後（例: 開いてから500ms以内）」や pointerType が mouse で既に開いているときは閉じない、または click は開くだけにして閉じるのは Esc・外側・ポインタが離れたときにする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/mega-menu.ts",
+  "url": "https://motytools.com/en/ui/mega-menu/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "Click and Keyboard Support",
+  "why": "title の本文だけで62字（manifest.json の tlen は「 | motytools」込みで74字）。英語の検索結果は約60字で切れるため、末尾の「Click and Keyboard Support」の一部まで省略される（src/data/ui/entries-en/mega-menu.ts:11）",
+  "fix": "60字以内に縮める。例「Mega Menu: Hover Intent, Click & Keyboard Support」（49字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/modal.ts",
+  "url": "https://motytools.com/en/ui/modal/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "What a modal dialog is, how",
+  "why": "description の書き出しが「What a X is, how it differs from a Y or a Z, and how to build…」の同じ型で7本そろっている（modal.ts:13・drawer.ts:13・bottom-sheet.ts:13・dropdown-menu.ts:13・lightbox.ts:13・popover.ts:13・tooltip.ts:13）。src/data/ugoki/WRITING.md の「ほかの記事と型を少しずつ変え、同じ文面を量産しない」に反し、検索結果で並ぶと見分けにくい",
+  "fix": "部品ごとに検索されそうな語を先頭に置く（例 modal:「Build an accessible modal with HTML <dialog>: …」、tooltip:「Show a short hint on hover and focus…」）など、7本の書き出しを変える",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/modal.ts",
+  "url": "https://motytools.com/en/ui/modal/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "with <dialog>",
+  "why": "title の本文だけで65字（manifest.json の tlen は「 | motytools」込みで77字）。英語の検索結果は約60字で切れるため、末尾の「with <dialog>」の一部まで省略される（src/data/ui/entries-en/modal.ts:11）",
+  "fix": "60字以内に縮める。例「Accessible Modal Dialog with HTML <dialog>: Modal vs Popup」（58字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/popover.ts",
+  "url": "https://motytools.com/en/ui/popover/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "CSS Anchor Positioning",
+  "why": "title の本文だけで63字（manifest.json の tlen は「 | motytools」込みで75字）。英語の検索結果は約60字で切れるため、末尾の「CSS Anchor Positioning」の一部まで省略される（src/data/ui/entries-en/popover.ts:11）",
+  "fix": "60字以内に縮める。例「Popover API: popover Attribute and CSS Anchor Positioning」（57字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/pricing-table.ts",
+  "url": "https://motytools.com/en/ui/pricing-table/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "Make Comparing Easy",
+  "why": "title の本文だけで61字（manifest.json の tlen は「 | motytools」込みで73字）。英語の検索結果は約60字で切れるため、末尾の「Make Comparing Easy」の一部まで省略される（src/data/ui/entries-en/pricing-table.ts:11）",
+  "fix": "60字以内に縮める。例「Pricing Table Design: Highlight One Plan, Easy to Compare」（57字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/quantity-stepper.ts",
+  "url": "https://motytools.com/en/ui/quantity-stepper/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "inc.disabled = q >= num.max;",
+  "why": "quantity-stepper.ts:94〜95 は上限・下限で押したボタンに disabled を付けるため、キーボードで＋を押し続けて上限に達すると焦点がボタンから外れてページの先頭（body）に飛ぶ。同じ図鑑の carousel.ts:36 は「disabled でなく aria-disabled を使う。焦点を持ったボタンを disabled にするとキーボード利用者が先頭に戻される」と書いており、記事どうしで逆のことをしている",
+  "fix": "aria-disabled=\"true\" に替えてクリック時に範囲外なら何もしない作りにするか、disabled にする直前に焦点を数値欄（.step-num）へ移す。CSS も [aria-disabled=\"true\"] で灰色にする",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/sidebar.ts",
+  "url": "https://motytools.com/en/ui/sidebar/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "Icon Rail (HTML, CSS, JS)",
+  "why": "title の本文だけで64字（manifest.json の tlen は「 | motytools」込みで76字）。英語の検索結果は約60字で切れるため、末尾の「Icon Rail (HTML, CSS, JS)」の一部まで省略される（src/data/ui/entries-en/sidebar.ts:11）",
+  "fix": "60字以内に縮める。例「Collapsible Sidebar Nav with an Icon Rail (HTML, CSS, JS)」（57字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/stepper.ts",
+  "url": "https://motytools.com/en/ui/stepper/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "Multi-Step Forms (HTML, CSS, J",
+  "why": "title の本文だけで63字（manifest.json の tlen は「 | motytools」込みで75字）。英語の検索結果は約60字で切れるため、末尾の「Multi-Step Forms (HTML, CSS, J」の一部まで省略される（src/data/ui/entries-en/stepper.ts:11）",
+  "fix": "60字以内に縮める。例「Stepper UI: Multi-Step Form Progress Steps in HTML & CSS」（56字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/sticky-cta.ts",
+  "url": "https://motytools.com/en/ui/sticky-cta/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "and How to Build It",
+  "why": "title の本文だけで61字（manifest.json の tlen は「 | motytools」込みで73字）。英語の検索結果は約60字で切れるため、末尾の「and How to Build It」の一部まで省略される（src/data/ui/entries-en/sticky-cta.ts:11）",
+  "fix": "60字以内に縮める。例「Sticky CTA Bar on Mobile: When to Show It, How to Build It」（58字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/tooltip.ts",
+  "url": "https://motytools.com/en/ui/tooltip/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "can be dismissed with Esc",
+  "why": "tooltip.ts:34 で「WCAG 1.4.13 は Esc で閉じられることを求める」、131行で「dismissed (Esc)」とするが、1.4.13 の要件は「ポインタや焦点を動かさずに消せる仕組み」で、Esc は代表的な方法の一つ。ほかの内容を隠さない場合などの例外もある（https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus.html）",
+  "fix": "「WCAG 1.4.13 requires a way to dismiss it without moving the pointer or focus; the Esc key is the usual way」に言い直す",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/data/ui/entries-en/tooltip.ts",
+  "url": "https://motytools.com/en/ui/tooltip/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "SS Tooltip with role=\"tooltip\"",
+  "why": "title の本文だけで62字（manifest.json の tlen は「 | motytools」込みで74字）。英語の検索結果は約60字で切れるため、末尾の「SS Tooltip with role=\"tooltip\"」の一部まで省略される（src/data/ui/entries-en/tooltip.ts:11）",
+  "fix": "60字以内に縮める。例「Tooltip vs Popover: CSS Tooltip with role=\"tooltip\"」（51字）",
+  "confidence": "確実"
+ },
+ {
+  "file": "src/components/ugoki/ui-demos/autocomplete.astro",
+  "url": "https://motytools.com/en/ui/autocomplete/",
+  "kind": "日本語",
+  "severity": "低",
+  "where": "Searching stays in {v}",
+  "why": "英語版ページの見本（src/components/ugoki/ui-demos/autocomplete.astro:43）の選択後の文が「Searching stays in Boston, MA」で、英語として不自然（stays を他動詞のように使っている）",
+  "fix": "「Showing stays in {v}」または「Searching for stays in {v}」にする",
+  "confidence": "確実"
+ },
+ {
   "file": "src/content/guide/amarimono-gohan-recipe.md",
   "url": "https://motytools.com/guide/amarimono-gohan-recipe/",
   "kind": "誤り",
@@ -1560,6 +3140,26 @@
   "confidence": "要確認"
  },
  {
+  "file": "src/content/guide/ballpython-esa-hindo.md",
+  "url": "https://motytools.com/guide/ballpython-esa-hindo/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "餌のサイズを入れる専用の欄はないので",
+  "why": "給餌の餌の種類の並び（ボールパイソンの部屋ではマウスが先頭など）、『健康メモ』、質問カテゴリ『食べない』（:123,:127）は、public/reptile-sns/index.html・src/data/apps.ts・設計書 data/app-seo/briefs/reptile-sns/ の『書いてよい事実』に無い",
+  "fix": "実機で確かめ、確認できない項目は削る。確認できたら設計書の『書いてよい事実』に追記する",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/captio-kawari.md",
+  "url": "https://motytools.com/guide/captio-kawari/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "送れる通数の制限はありません",
+  "why": "FAQ（12行目）と56・68行目で、ショートカット自作は「通数の制限なし」とするが、送信はメールアカウント側の1日の送信上限に従う（例: Gmailにも1日の送信上限がある）。アプリ側の制限が無いだけ",
+  "fix": "「アプリによる通数の制限はありません（メールサービス側の送信上限はあります）」とする",
+  "confidence": "要確認"
+ },
+ {
   "file": "src/content/guide/chomiryo-kaifugo-kigen.md",
   "url": "https://motytools.com/guide/chomiryo-kaifugo-kigen/",
   "kind": "誤り",
@@ -1567,6 +3167,56 @@
   "where": "削除して登録し直すと確実です",
   "why": "chomiryo-kaifugo-kigen.md:93。LP（public/pitto-kigen/index.html）には『手直しもワンタップ』とあり、登録後に日付を直せないかのように読める。登録後の編集の可否は LP・設計書では確かめられない",
   "fix": "登録後に期限を編集できるならその操作を書き、できないなら『編集はできないので』と理由を添える",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/drugstore-kakaku-hikaku.md",
+  "url": "https://motytools.com/guide/drugstore-kakaku-hikaku/",
+  "kind": "法令リスク",
+  "severity": "低",
+  "where": "ネットの最安値と並べる、の3つです",
+  "why": "20行目・3行目の「ネットの最安値」は、アプリが出すのは楽天市場とYahoo!ショッピングの本体価格の最安（50行目）なので、範囲を限らない言い方は性能を良く見せる表示と受け取られるおそれがある（barcode-saiyasune-app と同じ問題）",
+  "fix": "「ネット通販（楽天市場・Yahoo!ショッピング）の価格と並べる」とする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/fudousan-shotoku-chobo.md",
+  "url": "https://motytools.com/guide/fudousan-shotoku-chobo/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "事業的規模なら最高55万円または65万円",
+  "why": "fudousan-shotoku-chobo.md:33。令和8年分（2027年に申告）まではこの区分で正しいが、令和8年度税制改正で令和9年分以後は、優良な電子帳簿保存＋e-Taxで75万円、e-Taxで65万円、書面提出は10万円（55万円の区分がなくなる）に変わると解説されている（税理士法人等の解説で確認。国税庁の一次資料は未確認）。記事は「年分ごとに見直される」とは書いているが、決まった改正に触れていない",
+  "fix": "表の下に「令和9年分以後は控除額の区分が変わる予定です（75万円・65万円・10万円）。申告する年分の国税庁の案内を確認してください」と足し、国税庁の公表が出たらリンクする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/gessha-kakuteishinkoku.md",
+  "url": "https://motytools.com/guide/gessha-kakuteishinkoku/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "最高で65万円・55万円・10万円の特別控除",
+  "why": "gessha-kakuteishinkoku.md:40。令和8年分（2027年に申告）まではこの区分で正しいが、令和8年度税制改正で令和9年分以後は、優良な電子帳簿保存＋e-Taxで75万円、e-Taxで65万円、書面提出は10万円（55万円の区分がなくなる）に変わると解説されている（税理士法人等の解説で確認。国税庁の一次資料は未確認）。記事は「年分ごとに見直される」とは書いているが、決まった改正に触れていない",
+  "fix": "表の下に「令和9年分以後は控除額の区分が変わる予定です（75万円・65万円・10万円）。申告する年分の国税庁の案内を確認してください」と足し、国税庁の公表が出たらリンクする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/hachurui-shiiku-kiroku-app.md",
+  "url": "https://motytools.com/guide/hachurui-shiiku-kiroku-app/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "うちの爬虫類も暖側・冷側の温度と湿度を記録",
+  "why": "温湿度の記録（FAQ:12、表:69、:71、:99）と『健康メモ』（:99）は、設計書 data/app-seo/briefs/reptile-sns/hachurui-shiiku-kiroku-app.md の『書いてはいけないこと』に『LPに無い。書かない』とある。比較表で他社と並べて『記録できる』と書く根拠がLPに無い（apps.ts とプライバシーポリシーには記載）",
+  "fix": "実機で確かめ、LPに温湿度の記録を足すか設計書を更新する。それまでは表の自社の温湿度欄を外すか『LPに記載なし』とする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/hachurui-shiiku-note.md",
+  "url": "https://motytools.com/guide/hachurui-shiiku-note/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「みんなに見せる」か「自分だけ」かを選べます",
+  "why": "記録ごとの公開範囲の選択（:91）は public/reptile-sns/index.html・src/data/apps.ts・設計書の『書いてよい事実』に無い",
+  "fix": "実機で選択肢の名前を確かめ、確認できなければ削る",
   "confidence": "要確認"
  },
  {
@@ -1610,6 +3260,156 @@
   "confidence": "要確認"
  },
  {
+  "file": "src/content/guide/jan-code-kensaku.md",
+  "url": "https://motytools.com/guide/jan-code-kensaku/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "国際的にはGTINと呼ばれる商品識別の仕組みで",
+  "why": "GS1 Japan（https://www.gs1jp.org/code/jan/about_jan.html）は、JANコードを国際的には「EANコード」と呼ぶと説明し、GTIN は番号の総称（GTIN-13/GTIN-8）。また運営するGS1 Japanは日本の番号を管理する機関で、国際的な仕組みの運営はGS1（本部）",
+  "fix": "「国際的にはEANコードと呼ばれ、番号はGTIN（GTIN-13・GTIN-8）にあたります。日本で事業者コードを貸し出しているのは流通システム開発センター（GS1 Japan）です」と直す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/jibun-ate-mail-furiwake.md",
+  "url": "https://motytools.com/guide/jibun-ate-mail-furiwake/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "同じ欄で、メモの末尾に付ける署名を決められます",
+  "why": "96行目は署名を誰でも変えられるように読めるが、メモびゅんのLPのFAQ（public/memomail/_next/static/chunks/app/page-*.js の「無料で使えますか？」）では「Proプランにアップグレードすると1日30通、署名カスタマイズなど」と、署名の変更はProの機能としている",
+  "fix": "実機で無料プランでも署名を変えられるか確かめ、Pro限定なら「署名の変更はPro」と書く",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/jibun-ni-mail-iphone.md",
+  "url": "https://motytools.com/guide/jibun-ni-mail-iphone/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "件名と署名は、設定で変えられる",
+  "why": "79行目は署名を誰でも変えられるように読めるが、メモびゅんのLPのFAQでは「署名カスタマイズ」はProの機能としている（jibun-ate-mail-furiwake と同じ）",
+  "fix": "実機で確かめ、Pro限定なら「署名の変更はPro」と書く",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/jishu-kanri-ooya.md",
+  "url": "https://motytools.com/guide/jishu-kanri-ooya/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「カスタム期日」として物件に登録でき",
+  "why": "jishu-kanri-ooya.md:104。カスタム期日（30日前・7日前の通知）は src/data/apps.ts・LP（public/ooya-note/index.html）・設計書の「書いてよい事実」のどれにも無い（WRITING.md 1章4「LPに無い機能は実機で確かめられるまで書かない」）",
+  "fix": "アプリ本体で確かめてLPか設計書に追記する。確かめられない間は、この1文を削る",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/koegake-jian.md",
+  "url": "https://motytools.com/guide/koegake-jian/",
+  "kind": "法令リスク",
+  "severity": "低",
+  "where": "「お菓子を買ってあげる」「遊びにいこう」",
+  "why": "『どんな行為が含まれる？』の6項目（:31-36）は島根県警察のページの例示をほぼそのまま並べており、かぎかっこによる引用の形になっていない。官公庁のページも法令・告示等でなければ著作物にあたる（著作権法13条）。出典リンクは:21にしかない",
+  "fix": "引用であることが分かる形（『島根県警察は次の例を挙げています』の直後に出典リンク、引用部をかぎかっこか引用ブロックに）にするか、自分の言葉で短く要約する。秋田県警察の説明（:42）にも出典リンクを足す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/leopa-dappi.md",
+  "url": "https://motytools.com/guide/leopa-dappi/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "湿度は、記録の種類の「温湿度」で別に残せます",
+  "why": "設計書の『書いてはいけないこと』に温湿度の記録は『LPに無い。書かない』とある（data/app-seo/briefs/reptile-sns/leopa-dappi.md）。apps.ts とプライバシーポリシーには記載があるが public/reptile-sns/index.html には無い",
+  "fix": "実機で確かめ、LPか設計書を更新するまでこの一文を外す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/leopa-esa-hindo.md",
+  "url": "https://motytools.com/guide/leopa-esa-hindo/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "食べ残した虫は取り除く（RSPCA。",
+  "why": ":59 の出典リンクが寿命の記事（how-long-do-leopard-geckos-live）を指しており、『10〜15分で取り除く』の出どころとして合っているか確かめられない。同じPetMDの飼育シート（:26 の leopard-gecko-care-sheet）の方が自然",
+  "fix": "リンク先の記述を確かめ、書かれているページに張り替える",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/leopa-esa-tabenai.md",
+  "url": "https://motytools.com/guide/leopa-esa-tabenai/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "給餌・体重・脱皮・排泄・温湿度を記録できます",
+  "why": "設計書 data/app-seo/briefs/reptile-sns/leopa-esa-hindo.md ほかの『書いてはいけないこと』に『温度・湿度の記録…はLPに無い。書かない（実機で確認できたら書いてよい）』とある。src/data/apps.ts の features と public/reptile-sns/privacy/index.html 5章（カルテに温湿度）には記載があり機能はある可能性が高いが、LPには無い。質問カテゴリ『食べない』（:108）もLPに無い",
+  "fix": "実機で確かめたうえで、LPに温湿度の記録を足すか設計書を更新する。それまでは温湿度・カテゴリ名の記述を外す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/leopa-sanran.md",
+  "url": "https://motytools.com/guide/leopa-sanran/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "記録の種類の「健康メモ」に文章で残せます",
+  "why": "『健康メモ』という記録の種類（:98、FAQ:14）は public/reptile-sns/index.html・src/data/apps.ts・設計書の『書いてよい事実』に無い",
+  "fix": "実機で記録の種類の名前を確かめ、確認できなければ『メモ』など一般的な書き方にするか削る",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/leopa-taiju-meyasu.md",
+  "url": "https://motytools.com/guide/leopa-taiju-meyasu/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "| 2か月ごろ | 12〜30g |",
+  "why": "『2つの表がおさまる幅』（:22）としているが、ReptileDirect の表は2か月で約15〜20g、同系統の Vet Desk（pangovet）の表は18〜30gで、下限12gの根拠が見当たらない",
+  "fix": "2つの表の値を確かめ直し、幅を表の値どおり（例: 15〜30g）にするか、表ごとの値を備考に併記する",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/leopa-taiju-meyasu.md",
+  "url": "https://motytools.com/guide/leopa-taiju-meyasu/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "体重は0.1gから入力でき、前回の値が",
+  "why": "『0.1gから入力できる』（:92、FAQ:14）はLP・apps.ts・設計書に無い（LPは『前回の値が初期値』のみ）。hachurui-taiju-sokutei.md:95・FAQ:14 も同じ",
+  "fix": "実機で入力の単位を確かめ、確認できたら設計書に追記、できなければ削る",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/memo-mail-okuru-iphone.md",
+  "url": "https://motytools.com/guide/memo-mail-okuru-iphone/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "「マークダウンとして書き出す」を選ぶ方法",
+  "why": "61行目。メモのMarkdown書き出しは新しいiOS（iOS 26）で加わった機能で、古いiOSでは出ない。対応するiOSの条件が書かれていない（obsidian-iphone-memo.md:84 も同じ）。筆者は実機で手順を試していない（33行目）",
+  "fix": "「iOS 26以降」など対応バージョンを書き、Appleのユーザガイドへリンクを張る",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/ooya-kakuteishinkoku.md",
+  "url": "https://motytools.com/guide/ooya-kakuteishinkoku/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "事業的規模なら最高55万円または65万円",
+  "why": "ooya-kakuteishinkoku.md:42・45。令和8年分（2027年に申告）まではこの区分で正しいが、令和8年度税制改正で令和9年分以後は、優良な電子帳簿保存＋e-Taxで75万円、e-Taxで65万円、書面提出は10万円（55万円の区分がなくなる）に変わると解説されている（税理士法人等の解説で確認。国税庁の一次資料は未確認）。記事は「年分ごとに見直される」とは書いているが、決まった改正に触れていない",
+  "fix": "表の下に「令和9年分以後は控除額の区分が変わる予定です（75万円・65万円・10万円）。申告する年分の国税庁の案内を確認してください」と足し、国税庁の公表が出たらリンクする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/rakuten-saiyasune.md",
+  "url": "https://motytools.com/guide/rakuten-saiyasune/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "登録時の価格と現在の価格を見比べられ",
+  "why": "88行目とFAQ（12行目）の「登録時の価格と現在の価格を見比べられる」は、LP（public/price-scan/index.html）と src/data/apps.ts の features には「値下がりしたら通知」しか無い",
+  "fix": "LP に書かれている「値下がりしたら通知」だけにする。実機で確かめたなら画面の表記どおりに書く",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/rakuten-yahoo-hikaku.md",
+  "url": "https://motytools.com/guide/rakuten-yahoo-hikaku/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "エントリーが要るのが楽天モバイルなど3つのサービス",
+  "why": "62行目のSPUのエントリーが要るサービスの数は、出典リンク（event.rakuten.co.jp）で確かめた日付が近くに無く、SPUは2026年7月にもファミリーマートが加わるなど対象がよく変わる。18.5倍の数字は2026年7月時点の報道と合っている",
+  "fix": "「（2026年10月12日に公式ページで確認）」をこの文にも付け、数を書かずに「一部のサービスはエントリーが要る」とする方法も検討する",
+  "confidence": "要確認"
+ },
+ {
   "file": "src/content/guide/reizoko-kazoku-kyoyu.md",
   "url": "https://motytools.com/guide/reizoko-kazoku-kyoyu/",
   "kind": "誤り",
@@ -1617,6 +3417,76 @@
   "where": "招待コード（6桁、7日間有効）",
   "why": "reizoko-kazoku-kyoyu.md:61・:76（hijoushoku-kigen-kanri.md:102 も）。コードの桁数・有効期限、『このコードは期限切れです』の表示、作成者が抜けると世帯が消える仕様（:97）は LP・apps.ts・設計書の『書いてよい事実』に無い。WRITING.md 1章4項はLPに無い機能は実機で確かめるまで書かないとしている",
   "fix": "実機で確かめた日付を添えるか、設計書の『書いてよい事実』に追記してから残す。確かめられなければ桁数・日数を外す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/shokuchudoku-joho.md",
+  "url": "https://motytools.com/guide/shokuchudoku-joho/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "お店からの削除のご希望には、1件ずつ対応します",
+  "why": "削除依頼への対応、出典リンクを『公表時のページ』と表記すること、営業者の個人名を出さないこと（:81,:83）は、public/machi-anzen-map/index.html・src/data/apps.ts・設計書 data/app-seo/briefs/machi-anzen-map/shokuchudoku-joho.md の『書いてよい事実』のどれにも無い",
+  "fix": "Web版の出典ページ（/anzen/about/data/）か実機で確かめ、確認できた表記に合わせる。確認できないものは削る",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/tanka-hikaku-keisan.md",
+  "url": "https://motytools.com/guide/tanka-hikaku-keisan/",
+  "kind": "法令リスク",
+  "severity": "低",
+  "where": "ネットの最安値を調べられます。ピッと最安なら",
+  "why": "FAQ（14行目）と description で「ネットの最安値」と書くが、アプリが出すのは楽天市場とYahoo!ショッピングの本体価格の最安。FAQは検索結果にそのまま出ることがあり、範囲が分からない言い方になっている",
+  "fix": "「楽天市場とYahoo!ショッピングの価格を調べられます」とする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/tochi-mukashi-shirabekata.md",
+  "url": "https://motytools.com/guide/tochi-mukashi-shirabekata/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "埼玉大学の谷謙二さんが公開している",
+  "why": "今昔マップ on the web の作者の谷謙二氏は2022年に亡くなったとされる（国土地理協会の助成報告 https://kokudo.or.jp/grant/pdf/2024/kuriyama.pdf）。:61 と FAQ（:12）が現在形で『公開している』と書いている",
+  "fix": "『埼玉大学の谷謙二さんが開発した「今昔マップ on the web」』のように、現在の運営主体を断定しない書き方にする。サイトの現在の運営者表記を確かめて添える",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/tochi-mukashi-shirabekata.md",
+  "url": "https://motytools.com/guide/tochi-mukashi-shirabekata/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "国土地理院の地図の色を機械で読み取った判定",
+  "why": "判定の方法、『〜の可能性があります』と書く仕様、明治期の地図が数十〜数百mずれる地域（特に関東・近畿）の説明（:87）は、public/machi-anzen-map/index.html・src/data/apps.ts・設計書の『書いてよい事実』に無い",
+  "fix": "Web版の出典ページか実機で確かめ、確認できない部分は削るか『アプリの出典ページの説明では』と出どころを示す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/tsugakuro-anzen-tenken.md",
+  "url": "https://motytools.com/guide/tsugakuro-anzen-tenken/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "通学路は、法令で、児童が1日におおむね40人以上",
+  "why": "『法令で…とされ』と書きながら法令名がなく、根拠は町田市の資料の孫引き。『おおむね40人以上』は交通安全施設の整備などの対象を決める基準として使われる数字で、通学路一般の法令上の定義と読める書き方は誤解を招くおそれがある",
+  "fix": "法令名を確かめて明記するか、『町田市の資料では、〜と説明されています』と範囲を限って書く",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/yachin-nyukin-kakunin.md",
+  "url": "https://motytools.com/guide/yachin-nyukin-kakunin/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "支払期日の翌日の朝9時に「今月の入金",
+  "why": "yachin-nyukin-kakunin.md:95（FAQ 15行目も）。入金チェックの通知はLP・apps.ts・設計書の「書いてよい事実」に無い。同じ記述が yachin-tainou-taiou.md:38、yachin-kanri-excel-app.md:60、yachin-kanri-app-hikaku.md:62 にもある",
+  "fix": "アプリ本体で確かめ、LPか設計書に追記する。確かめられない間は通知の記述を外す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/content/guide/yahoo-saiyasune-hyouji.md",
+  "url": "https://motytools.com/guide/yahoo-saiyasune-hyouji/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "表示価格が税込かどうかの記載がなく",
+  "why": "65行目は税込かどうか分からないように読めるが、消費者向けの価格表示は2021年4月から総額表示（税込）が義務になっている（国税庁「総額表示」 https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm ）。読む人が不要な疑いを持つ",
+  "fix": "「消費者向けの価格は税込の総額で表示する決まりです。送料は別の項目なので、商品ページで送料を確かめてください」とし、国税庁の案内にリンクする",
   "confidence": "要確認"
  },
  {
@@ -1657,6 +3527,46 @@
   "where": "気になるなら3周したら止めるのも手です",
   "why": "typewriter.ts:114。言葉を入れ替え続ける見出しは5秒以上続く自動の更新で、WCAG 2.2.2（一時停止・停止・非表示）の対象になりうるが、コード（typewriter.ts:102 の loop()）は無限に回り、止める手段は端末の動きを減らす設定だけ。marquee.ts では停止手段を求めているのに、こちらは「止めるのも手」と弱い",
   "fix": "「何周かしたら最初の言葉で止める」をコードの既定にする（for 文を3周で抜ける）か、止めるボタンを置く書き方を足し、WCAGの目安にも一言触れる",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/ui/entries/drawer.ts",
+  "url": "https://motytools.com/ui/drawer/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "AndroidのMaterial Designも",
+  "why": "drawer.ts:154。Material 3 Expressive（2025年5月）でナビゲーションドロワーは非推奨になり、広げたナビゲーションレール（expanded navigation rail）に置き換えるよう案内されている（https://9to5google.com/2025/05/14/material-3-expressive-navigation/ 、Material Components for Android の NavigationDrawer.md）。根拠として挙げるには古い",
+  "fix": "「Material Design（Androidの指針）でも、ナビゲーション用の板は画面の始まりの側（左。右から左に読む言語では右）に置きます」のように部品名に依らない書き方にするか、2025年の変更に一言触れる",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/ui/entries/lightbox.ts",
+  "url": "https://motytools.com/ui/lightbox/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "if (Math.abs(dx) > 40) show",
+  "why": "lightbox.ts:177-185。マウスで写真の外（.lb-inner）を40px以上ドラッグすると、pointerup で次の写真へ送られたうえ、同じ場所での click が :165 の「外を押したら閉じる」にも当たり閉じてしまう。指の場合も touch-action を指定していないため、ブラウザがスクロールとして扱うと pointercancel になり pointerup が届かないことがある",
+  "fix": "スワイプしたときは直後の click を無視する（フラグを立てて :164 の判定で除外）。.lb-inner に touch-action: pan-y pinch-zoom を付け、ピンチでの拡大は残す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/ui/entries/pagination.ts",
+  "url": "https://motytools.com/ui/pagination/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "aria-label=\"3ページ目\">3</a>",
+  "why": "pagination.ts:46。href の無い <a> には役割が無く（generic）、ARIA 1.2 では generic に aria-label を付けることは認められていないため、読み上げで「3ページ目」が読まれないことがある",
+  "fix": "今のページは <a href=\"?page=3\" aria-current=\"page\" aria-label=\"3ページ目\"> と href を残すか、aria-label を外して見える文字「3」と aria-current だけにする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/ui/entries/timeline.ts",
+  "url": "https://motytools.com/ui/timeline/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "読み上げソフトでは「7項目のリスト」",
+  "why": "timeline.ts:131。コード :71 は list-style: none。Safari と VoiceOver は list-style: none のリストをリストとして伝えないことがあり、「7項目のリスト」と読まれない場合がある",
+  "fix": "<ol class=\"timeline\" role=\"list\"> にするか、cautions に「list-style: none にするなら role=\"list\" を足す」と書く",
   "confidence": "要確認"
  },
  {
@@ -1746,7 +3656,7 @@
   "severity": "低",
   "where": "ネット・プロモーター・スコア",
   "why": "definition.ts:16・31・45。Net Promoter／NPS は Bain & Company・Satmetrix・Fred Reichheld の登録商標として扱われる名前。記事中に商標である旨の記載がない（計算の説明：推奨者45%−批判者15%＝+30、中立40%で合計100%は検算して正しい）",
-  "fix": "注記かFAQに「Net Promoter®・NPS®は Bain & Company, Inc.・NICE Systems, Inc.（旧Satmetrix）・Fred Reichheld の登録商標」などの一文を足す",
+  "fix": "注記かFAQに「Net Promoter®・NPS®は Bain & Company・Satmetrix Systems・Fred Reichheld の登録商標」などの一文を足す",
   "confidence": "要確認"
  },
  {
@@ -1757,6 +3667,166 @@
   "where": "「曲線」または「矢印」で結びます",
   "why": "dependency.ts:34。Googleスライドの「線」→「曲線」は自由に描く曲線で、図形の点に吸い付かない。吸い付いて図形を動かしても付いてくるのは「曲線コネクタ」「カギ線コネクタ」（decision-tree.ts:34 ではカギ線コネクタと正しく書いている）",
   "fix": "「『挿入』→『線』→『曲線コネクタ』で結びます」に直す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/donut.ts",
+  "url": "https://motytools.com/shiryo/donut/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「ドーナツ型」にチェックを入れます",
+  "why": "donut.ts:33。Googleスプレッドシートのグラフ編集では、ドーナツは「グラフの種類」の「ドーナツグラフ」を選ぶか、「カスタマイズ」→「円グラフ」の「ドーナツの穴」で穴の大きさを選ぶ形で、「ドーナツ型」のチェックボックスは確認できない",
+  "fix": "「『設定』→『グラフの種類』で『ドーナツグラフ』を選び、穴の大きさは『カスタマイズ』→『円グラフ』の『ドーナツの穴』で変えます」に直す（画面で表示名を確認）",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/dumbbell.ts",
+  "url": "https://motytools.com/shiryo/dumbbell/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "横の目盛りを0から始めることです",
+  "why": "dumbbell.ts:17 と注意点1つ目（dumbbell.ts:171）。点の位置で見せる図（ダンベル・ドットプロット）は棒グラフと違い0始まりが必須とはされない。目盛りを途中から始めても行どうしの線の長さの比は変わらないため、「線の長さの差が大きく見える」という説明は正確ではない（大きく見えるのは元の値に対する減り方）",
+  "fix": "「0から始めると、元の残業時間に対してどれだけ減ったかが正しい感覚で伝わる」と理由を直す。必須とするなら「この資料では0から始める」と決まりの範囲を限定する",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/dumbbell.ts",
+  "url": "https://motytools.com/shiryo/dumbbell/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "title: 'ダンベル比較型とは？2つの値の差",
+  "why": "dumbbell.ts:11。title の先頭が図鑑の中の名前「ダンベル比較型」で、実際に検索されやすい言い方（ダンベルチャート）が後ろか aka にしかない",
+  "fix": "title の先頭を「ダンベルチャート」側の言い方にする（例: 「ダンベルチャートとは？…」）。図鑑の型名は後ろか本文に回す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/exploded.ts",
+  "url": "https://motytools.com/shiryo/exploded/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「配置」メニューの「均等に分布」",
+  "why": "exploded.ts:34。同じGoogleスライドの操作を executive-summary.ts:34・faq.ts:34・layer.ts:34 などでは「均等に配置」と書いており、この記事だけ名前が違う",
+  "fix": "「『配置』→『均等に配置』→『縦方向』」にそろえる",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/flow.ts",
+  "url": "https://motytools.com/shiryo/flow/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "title: 'フロー型とは？手順や流れを矢印",
+  "why": "flow.ts:11。title の先頭が図鑑の中の名前「フロー型」で、実際に検索されやすい言い方（フローチャート・業務フロー図）が後ろか aka にしかない",
+  "fix": "title の先頭を「フローチャート」側の言い方にする（例: 「フローチャートとは？…」）。図鑑の型名は後ろか本文に回す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/full-photo.ts",
+  "url": "https://motytools.com/shiryo/full-photo/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「透明度」を30〜40%にします",
+  "why": "full-photo.ts:33。リボンの「図形の塗りつぶし」の一覧には透明度の項目がなく、透明度は図形を右クリック→「図形の書式設定」の「塗りつぶし」で設定する（メニューの道順が要確認）",
+  "fix": "「図形を右クリック→『図形の書式設定』→『塗りつぶし』で色を紺にし、『透明度』を30〜40%にします」と道順を書き直す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/heatmap.ts",
+  "url": "https://motytools.com/shiryo/heatmap/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「リンクしない」にすると",
+  "why": "heatmap.ts:33。Googleスライドにスプレッドシートの表やグラフを貼ると出る選択肢は「スプレッドシートにリンク」「リンクなしで貼り付け」で、「リンクしない」という表示ではない",
+  "fix": "「『リンクなしで貼り付け』を選ぶと」に直す（画面で確認）",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/hub-spoke.ts",
+  "url": "https://motytools.com/shiryo/hub-spoke/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "もとは航空会社が、中心の空港から",
+  "why": "hub-spoke.ts:165（FAQ）。ハブ＆スポークは車輪の言葉から来ており、航空だけでなく物流でも使われてきた。「もとは航空会社が」と起源を言い切る根拠がない",
+  "fix": "「航空会社や物流で、中心の拠点から各地へ路線を広げる仕組みを指す言葉として広まり」のように起源を断定しない書き方にする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/hypothesis.ts",
+  "url": "https://motytools.com/shiryo/hypothesis/",
+  "kind": "薄い重複",
+  "severity": "低",
+  "where": "試した人数・期間・条件を、必ず",
+  "why": "hypothesis.ts:150（注意点4つ目）。ABテスト報告を名乗るが、差が偶然かどうか（有意差・信頼区間）の確かめ方に触れていない。見本の購入率2.8%→3.4%（各約1万2,000人）は確かめられる規模なので、書き添える価値がある",
+  "fix": "注意点かFAQに「差が偶然でないかは、表計算の検定や有意差の計算ツールで確かめ、結果を注記に書く」と1文足す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/image-left.ts",
+  "url": "https://motytools.com/shiryo/image-left/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "写真を選んで「画像をトリミング」を",
+  "why": "image-left.ts:34。gallery.ts:34 では同じGoogleスライドのボタンを「画像を切り抜く」と書いており、記事どうしで名前が違う。Googleスライドの表示名は要確認",
+  "fix": "実際の表示名を確かめ、gallery と同じ名前（「画像を切り抜く」と思われる）にそろえる",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/input-output.ts",
+  "url": "https://motytools.com/shiryo/input-output/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "title: '入出力モデル型とは？入力・処理",
+  "why": "input-output.ts:11。title の先頭が図鑑の中の名前「入出力モデル型」で、実際に検索されやすい言い方（IPO図・インプットアウトプット図）が後ろか aka にしかない",
+  "fix": "title の先頭を「IPO図」側の言い方にする（例: 「IPO図とは？…」）。図鑑の型名は後ろか本文に回す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/interview.ts",
+  "url": "https://motytools.com/shiryo/interview/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "（「A」に線のアイコン）",
+  "why": "interview.ts:33。「A」の下に色の線があるアイコンは「フォントの色」で、蛍光ペンの色は「ab」とペンのアイコン。取り違えると文字の色が変わる",
+  "fix": "「（『ab』とペンのアイコン）」に直すか、アイコンの説明を削る",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/kpi-dashboard.ts",
+  "url": "https://motytools.com/shiryo/kpi-dashboard/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「スプレッドシートへのリンク」を選ぶと",
+  "why": "kpi-dashboard.ts:34。貼り付けの選択肢の表示は「スプレッドシートにリンク」と思われる",
+  "fix": "「『スプレッドシートにリンク』を選ぶと」に直す（画面で確認）",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/layer.ts",
+  "url": "https://motytools.com/shiryo/layer/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "（「縦方向リスト」など）",
+  "why": "layer.ts:33。PowerPointのSmartArt「リスト」にあるのは「縦方向箇条書きリスト」「縦方向ボックス リスト」などで、「縦方向リスト」という名前は確認できない",
+  "fix": "実在の名前（例: 「縦方向ボックス リスト」）に直すか、「横長の帯が縦に積まれる図」と見た目で言う",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/line-chart.ts",
+  "url": "https://motytools.com/shiryo/line-chart/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "「データポイントの書式設定」で点を追加",
+  "why": "line-chart.ts:33。Googleスプレッドシートの「データポイントの書式設定」は点の色・大きさを変える機能で、特定の点だけに数値ラベルを出す機能としては確認できない",
+  "fix": "実際の画面で確かめ、できないなら「ラベルは系列全体の『データラベル』で出すか、スライド上でテキストボックスを重ねる」と書く",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/shiryo/entries/map-distribution.ts",
+  "url": "https://motytools.com/shiryo/map-distribution/",
+  "kind": "検索の見え方",
+  "severity": "低",
+  "where": "title: '地図分布型とは？都道府県ごとの数",
+  "why": "map-distribution.ts:11。title の先頭が図鑑の中の名前「地図分布型」で、実際に検索されやすい言い方（日本地図の色分け・都道府県別の分布図）が後ろか aka にしかない",
+  "fix": "title の先頭を「日本地図の色分け」側の言い方にする（例: 「日本地図の色分けとは？…」）。図鑑の型名は後ろか本文に回す",
   "confidence": "要確認"
  },
  {
@@ -1877,6 +3947,36 @@
   "where": "not work in Safari or Firefox?",
   "why": "page-transition.ts:143。答え（:144）にある通り Safari は 18.2 以降で別ページ間の遷移に対応済みなので、問いが「Safari では動かない」と読める。また Firefox は 144（2025年10月）で同一ページの startViewTransition に対応済み（https://web.dev/blog/same-document-view-transitions-are-now-baseline-newly-available）で、howTo :34 のJS版は Firefox でも動く。別ページ間（@view-transition）は Firefox 未対応の可能性が高いが2026年の状況は要確認",
   "fix": "問いを \"Why do view transitions not work in Firefox or older Safari?\" にし、答えに「同一ページの document.startViewTransition() は Firefox 144+ でも動く。未対応なのは別ページ間の @view-transition」と1文足す",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/ui/entries-en/drawer.ts",
+  "url": "https://motytools.com/en/ui/drawer/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "<dialog> does not include",
+  "why": "drawer.ts:34 も modal.ts:33 と同じく「暗幕クリックは <dialog> に無い」と言い切る。closedby=\"any\" が Chrome 134 以降で使える（https://caniuse.com/mdn-html_elements_dialog_closedby、Safari は未対応）",
+  "fix": "closedby=\"any\" を紹介し、JavaScript は未対応ブラウザ向けの予備として残すと書く",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/ui/entries-en/lightbox.ts",
+  "url": "https://motytools.com/en/ui/lightbox/",
+  "kind": "誤り",
+  "severity": "低",
+  "where": "(e) => (sx = e.clientX));",
+  "why": "lightbox.ts:177〜182 のスワイプ判定は touch-action を指定していないため、タッチ端末では横に指を動かすとブラウザが pointercancel を送り、pointerup が来ずにスワイプが効かない場合がある（同じ図鑑の bottom-sheet.ts:90 は touch-action: none を付けている）。また写真の上で押して写真の外で離すと click が lb-inner に届き、165行の判定で閉じてしまう",
+  "fix": ".lb-inner { touch-action: pan-y pinch-zoom; } を足して横方向を自前で扱い、スワイプとして扱ったときはフラグを立てて直後の click で閉じないようにする",
+  "confidence": "要確認"
+ },
+ {
+  "file": "src/data/ui/entries-en/modal.ts",
+  "url": "https://motytools.com/en/ui/modal/",
+  "kind": "古い",
+  "severity": "低",
+  "where": "<dialog> does not include",
+  "why": "modal.ts:33 で「暗幕クリックで閉じるのは <dialog> にない唯一の動き」とするが、HTML の closedby=\"any\" 属性で暗幕クリック（light dismiss）が使える（Chrome 134 以降。Safari は2026年時点で未対応: https://caniuse.com/mdn-html_elements_dialog_closedby）。完全に「無い」わけではない",
+  "fix": "「Add closedby=\"any\" for light dismiss where supported, and keep the few lines of JavaScript as a fallback for Safari」のように両方を書く",
   "confidence": "要確認"
  }
 ]
