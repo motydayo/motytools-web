@@ -6,3 +6,4 @@
 |---|---|---|---|
 | 2026-10-29 | 内部リンク | ツール5ページ（/percent/・/days/・/genka-shokyaku/・/loan/・/tedori/）の「使いどころ」から、検索に出す記事7本へ文中リンク | GSC 28日・90日とも検索語0行、表示はトップと/en/だけ（4〜15位の記事なし）。診断10/17の優先①。記事→ツールは既にあり、ツール→記事が無かったので往復にした。リンク先は noindex でない記事だけ（data/app-seo/linking.md 4章の案のうち noindex の3本は除外） |
 | 2026-10-29 | 内部リンク（2回目） | 記事どうし6本：引っ越し治安→食中毒・行政処分、不審者マップ→犯罪発生マップ、レオパ餌・体重→脱皮、インスタ保存→印刷 | GSC 28日は前回と同じ（検索語0行、表示はトップ26回・/en/6回）。検索に出す記事のうち、ほかの検索に出す記事からの文中リンクが0〜1本だった5本（leopa-dappi・instagram-recipe-insatsu・shokuchudoku-joho・gyosei-shobun-shirabekata・hanzai-hassei-map）へ、話が続く箇所だけに張った。リンク追加だけなので updatedAt は変えていない |
+| 2026-10-29 | 内部リンク（3回目） | 記事どうし4本：月謝未払い→日割り、集金方法→値上げ文例、JANコード検索→Yahoo最安値、減価償却→利回り | GSC 28日は変化なし（検索語0行、表示はトップ26回・/en/6回）。検索に出す記事のうち、ほかの検索に出す記事からの文中リンクが1本以下だった4本（gessha-hiwari-keisan・gessha-neage-oshirase・yahoo-saiyasune-hyouji・rimawari-keisan）へ、話が続く箇所だけに張った。tochi-mukashi-shirabekata は自然に噛み合う箇所が無く見送り。updatedAt は据え置き |

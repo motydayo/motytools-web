@@ -98,3 +98,7 @@
 ## 2026-10-29 毎週の記事更新（定期タスク2回目）: 記事どうしの文中リンク
 - GSC 28日は変化なし（検索語0行）。入ってくるリンクが少ない検索対象の記事5本へ、関係する記事の本文から6本張った（hikkoshi-chian-shirabekata→shokuchudoku-joho・gyosei-shobun-shirabekata、fushinsha-joho-map→hanzai-hassei-map、leopa-esa-tabenai・leopa-taiju-meyasu→leopa-dappi、instagram-recipe-hozon→instagram-recipe-insatsu）。リンク追加だけなので updatedAt は据え置き。
 - 次回候補: ①tochi-mukashi-shirabekata・rimawari-keisan・yahoo-saiyasune-hyouji・gessha-hiwari-keisan・gessha-neage-oshirase（入るリンク1本）に文脈の合う記事から張る ②表示が出始めた記事があればその手直し。
+
+## 2026-10-29 毎週の記事更新（定期タスク3回目）: 記事どうしの文中リンク
+- GSC 28日は変化なし（検索語0行）。入るリンクが1本以下の検索対象記事4本へ文中リンク（gessha-mibarai-saisoku→gessha-hiwari-keisan、gessha-shukin-houhou→gessha-neage-oshirase、jan-code-kensaku→yahoo-saiyasune-hyouji、genka-shokyaku-fudousan→rimawari-keisan）。updatedAt は据え置き。
+- 次回候補: ①表示が出始めた記事があればその手直し ②需要が確かめられる検索語があれば新しいガイド1本（内部リンクは主な不足をほぼ埋めた。tochi-mukashi-shirabekata は張れる文脈が無い）。
