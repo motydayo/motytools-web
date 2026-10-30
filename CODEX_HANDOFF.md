@@ -102,3 +102,9 @@
 ## 2026-10-29 毎週の記事更新（定期タスク3回目）: 記事どうしの文中リンク
 - GSC 28日は変化なし（検索語0行）。入るリンクが1本以下の検索対象記事4本へ文中リンク（gessha-mibarai-saisoku→gessha-hiwari-keisan、gessha-shukin-houhou→gessha-neage-oshirase、jan-code-kensaku→yahoo-saiyasune-hyouji、genka-shokyaku-fudousan→rimawari-keisan）。updatedAt は据え置き。
 - 次回候補: ①表示が出始めた記事があればその手直し ②需要が確かめられる検索語があれば新しいガイド1本（内部リンクは主な不足をほぼ埋めた。tochi-mukashi-shirabekata は張れる文脈が無い）。
+
+## 2026-10-30 点検の直しを取り込み・公開
+- origin/fix/2026-10 を main に取り込み（直し43件。ページの削除・URL変更・新規ページなし。public/・vercel.json の変更なし＝LP・プライバシーは不変）。audit/ はリポジトリ直下で配信物に入らない。
+- 公開日（publishedAt）の変更なし。資料の図鑑は未公開分（pricing・question は 10/31）を含め、日付どおり段階公開のまま。10/31・11/7 は再ビルド＋公開で増える。
+- npm run build（333ページ）・check-zukan 問題なし。`npx vercel deploy --prod --yes`（サンドボックス外）で本番反映、直したページの200と直した文を確認。
+- 残り: fix-log の見送り407件（要確認・低・日本語/薄い重複/検索の見え方）。詳細は audit/fix-log.md。
