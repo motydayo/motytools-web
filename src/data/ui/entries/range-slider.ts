@@ -94,6 +94,10 @@ export default {
       code: `const slider = document.querySelector('#budget');
 const out = document.querySelector('.budget-value');
 const yen = (v) => Number(v).toLocaleString('ja-JP') + '円';
+// 一覧の絞り込み（中身はサイトに合わせて書き換える）
+const updateResults = (max) => {
+  console.log(max + '円以下で絞り込み');
+};
 
 const update = () => {
   const p = (slider.value - slider.min) / (slider.max - slider.min);

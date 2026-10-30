@@ -28,7 +28,7 @@ export default {
     'Several marquees on one page — nothing stands out and the page feels restless',
   ],
   prompt:
-    'Turn the row of client names into a marquee (infinite scrolling ticker). Duplicate the list so the same set appears twice in a row, then animate the track with CSS @keyframes from transform: translateX(0) to translateX(-50%), {{dur:t}} per loop, linear, infinite, so there is no visible seam. Scroll direction: {{dir:t}}. Use a {{gap:t}} gap between items and the same gap between the two copies. Add aria-hidden="true" to the duplicate so screen readers do not read it twice, and pause the animation on hover with animation-play-state: paused. Stop the animation entirely under prefers-reduced-motion: reduce. No JavaScript and no libraries.',
+    'Turn the row of client names into a marquee (infinite scrolling ticker). Duplicate the list so the same set appears twice in a row, then animate the track with CSS @keyframes from transform: translateX(0) to translateX(-50%), {{dur:t}} per loop, linear, infinite, so there is no visible seam. Scroll direction: {{dir:t}}. Use a {{gap:t}} gap between items and the same gap between the two copies. Add aria-hidden="true" to the duplicate so screen readers do not read it twice, and pause the animation with animation-play-state: paused on hover, while keyboard focus is inside the strip (:focus-within), and when a visible "Pause" checkbox above the strip is checked (detected with :has()). Stop the animation entirely under prefers-reduced-motion: reduce. No JavaScript and no libraries.',
   howTo: [
     'The trick is to render the list twice, back to back. Slide the whole track left, and the moment it has moved exactly half its width (one full copy) the animation snaps back to the start. Because the second copy is identical to the first, the jump is invisible and the strip appears to scroll forever. All of this is CSS @keyframes plus transform — no JavaScript needed.',
     'Since it never stops, use linear timing so the speed stays constant. Pause it on hover with animation-play-state: paused so people can read it, and hide the duplicate list from screen readers with aria-hidden.',
@@ -38,6 +38,8 @@ export default {
       lang: 'html',
       label: 'HTML',
       code: `<div class="marquee">
+  <!-- Visible pause control (works for touch and keyboard users) -->
+  <label class="marquee-pause"><input type="checkbox"> Pause</label>
   <div class="marquee-track">
     <ul class="marquee-set">
       <li>Pine Ridge Lodge</li>
@@ -79,8 +81,10 @@ export default {
   to { transform: translateX(-50%); }
 }
 
-/* Pause on hover so people can read it */
-.marquee:hover .marquee-track {
+/* Pause on hover, on keyboard focus, or when the pause box is checked */
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track,
+.marquee:has(.marquee-pause input:checked) .marquee-track {
   animation-play-state: paused;
 }
 

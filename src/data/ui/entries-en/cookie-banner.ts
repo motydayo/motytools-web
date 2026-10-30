@@ -105,6 +105,9 @@ export default {
       code: `const KEY = 'cookie-consent';
 const banner = document.querySelector('.cookie');
 const cats = banner.querySelector('.cookie-cats');
+const more = banner.querySelector('.cookie-more');
+const loaded = new Set(); // scripts already added (never add twice)
+let saved = JSON.parse(localStorage.getItem(KEY) || 'null');
 
 // Load analytics and ad scripts only with consent
 function apply(c) {
@@ -112,15 +115,22 @@ function apply(c) {
   if (c.ads) loadScript('https://example.com/ads.js');
 }
 function loadScript(src) {
+  if (loaded.has(src)) return;
+  loaded.add(src);
   const s = document.createElement('script');
   s.src = src;
   s.async = true;
   document.head.append(s);
 }
 function save(c) {
-  localStorage.setItem(KEY, JSON.stringify({ ...c, at: Date.now() }));
+  const withdrawn = saved && ((saved.stats && !c.stats) || (saved.ads && !c.ads));
+  saved = { ...c, at: Date.now() };
+  localStorage.setItem(KEY, JSON.stringify(saved));
   banner.hidden = true;
-  apply(c);
+  // A loaded script cannot be unloaded, so reload the page after a withdrawal.
+  // Cookies a tool has already set must be deleted the way that tool documents.
+  if (withdrawn) location.reload();
+  else apply(c);
 }
 
 banner.addEventListener('click', (e) => {
@@ -131,11 +141,18 @@ banner.addEventListener('click', (e) => {
     else save({ stats: cats.elements.stats.checked, ads: cats.elements.ads.checked });
   }
 });
-document.querySelector('.cookie-open')
-  .addEventListener('click', () => { banner.hidden = false; });
+document.querySelector('.cookie-open').addEventListener('click', () => {
+  // Show the saved choice in the switches
+  if (saved) {
+    cats.elements.stats.checked = !!saved.stats;
+    cats.elements.ads.checked = !!saved.ads;
+    cats.hidden = false;
+    more.textContent = 'Save my choices';
+  }
+  banner.hidden = false;
+});
 
 // Only ask people who have not answered yet
-const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
 if (saved) apply(saved); else banner.hidden = false;`,
     },
   ],

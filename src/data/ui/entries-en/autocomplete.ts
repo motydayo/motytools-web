@@ -98,6 +98,9 @@ const setActive = (i) => {
   input.setAttribute('aria-activedescendant', \`opt-\${i}\`);
 };
 const render = () => {
+  // The list is rebuilt, so clear the old selection
+  active = -1;
+  input.removeAttribute('aria-activedescendant');
   const q = input.value.trim().toLowerCase();
   hits = q ? CITIES.filter((c) => c.toLowerCase().startsWith(q)) : [];
   active = -1; // a new list has no highlighted option yet

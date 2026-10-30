@@ -90,7 +90,10 @@ body:has(dialog[open]) { overflow: hidden; }
       code: `const dialog = document.querySelector('.modal');
 const openBtn = document.querySelector('.open-btn');
 
-openBtn.addEventListener('click', () => dialog.showModal());
+openBtn.addEventListener('click', () => {
+  dialog.returnValue = ''; // 前回の結果を持ち越さない
+  dialog.showModal();
+});
 
 // 暗幕を押したら閉じる（dialog 自体に余白が無いので、ここに届くのは暗幕だけ）
 dialog.addEventListener('click', (e) => {

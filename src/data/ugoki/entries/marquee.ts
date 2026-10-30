@@ -28,7 +28,7 @@ export default {
     '1ページに何本も流す（どこを見ればいいか分からず、落ち着かないページになる）',
   ],
   prompt:
-    '導入企業の名前を並べた帯を「マーキー（marquee）」にしてください。同じ並びを2回続けて並べ、CSSの @keyframes で transform: translateX(0) から translateX(-50%) へ、1周{{dur:t}}・linear・無限に動かして、つなぎ目が見えないようにしてください。流れる向きは{{dir:t}}、項目と項目の間隔は{{gap:t}}にし、2つの並びの間にも同じ間隔を空けてください。2回目の並びには aria-hidden="true" を付けて読み上げが重複しないようにし、マウスを乗せたら animation-play-state: paused で止めてください。prefers-reduced-motion が reduce の人にはアニメーションを止めてください。JavaScriptやライブラリは使わないでください。',
+    '導入企業の名前を並べた帯を「マーキー（marquee）」にしてください。同じ並びを2回続けて並べ、CSSの @keyframes で transform: translateX(0) から translateX(-50%) へ、1周{{dur:t}}・linear・無限に動かして、つなぎ目が見えないようにしてください。流れる向きは{{dir:t}}、項目と項目の間隔は{{gap:t}}にし、2つの並びの間にも同じ間隔を空けてください。2回目の並びには aria-hidden="true" を付けて読み上げが重複しないようにし、マウスを乗せたとき、帯の中にキーボードのフォーカスがあるとき（:focus-within）、帯の上に置いた「流れを止める」のチェックボックスにチェックを入れたとき（:has() で判定）は、animation-play-state: paused で止めてください。prefers-reduced-motion が reduce の人にはアニメーションを止めてください。JavaScriptやライブラリは使わないでください。',
   howTo: [
     'コツは「同じ並びを2回続けて並べる」ことです。全体を左へ動かし、ちょうど半分（1回分）動いたところで最初の位置に戻すと、戻った瞬間の見た目がまったく同じなので、つなぎ目なく永遠に流れているように見えます。動きは CSS の @keyframes と transform（要素を動かす指定）だけで作れ、JavaScript は要りません。',
     '流し続ける動きなので、緩急を付けない等速（linear）にします。マウスを乗せたら animation-play-state: paused で止め、読みたい人が読めるようにします。2回目の並びは読み上げソフトに同じ言葉を2度読ませないよう aria-hidden で隠します。',
@@ -38,6 +38,8 @@ export default {
       lang: 'html',
       label: 'HTML',
       code: `<div class="marquee">
+  <!-- 目に見える停止ボタン（スマホやキーボードでも止められる） -->
+  <label class="marquee-pause"><input type="checkbox"> 流れを止める</label>
   <div class="marquee-track">
     <ul class="marquee-set">
       <li>山の宿</li>
@@ -79,8 +81,10 @@ export default {
   to { transform: translateX(-50%); }
 }
 
-/* マウスを乗せたら止める */
-.marquee:hover .marquee-track {
+/* マウスを乗せたとき・フォーカスがあるとき・停止にチェックしたときは止める */
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track,
+.marquee:has(.marquee-pause input:checked) .marquee-track {
   animation-play-state: paused;
 }
 
