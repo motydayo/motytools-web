@@ -60,6 +60,16 @@
       "totalQueries": 0,
       "rows": {},
       "unregistered": []
+    },
+    {
+      "recordedAt": "2026-11-05",
+      "startDate": "2026-10-06",
+      "endDate": "2026-11-02",
+      "days": 28,
+      "totalRows": 0,
+      "totalQueries": 0,
+      "rows": {},
+      "unregistered": []
     }
   ]
 }
