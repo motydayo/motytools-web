@@ -1,0 +1,16 @@
+/* アプリLPの操作画面（共通部品）。色はLP側の --accent を使う */
+.lps { padding: 64px 0 72px; background: #fff; border-top: 1px solid #ececea; font-family: 'Inter','Noto Sans JP',sans-serif; }
+.lps *, .lps *::before, .lps *::after { box-sizing: border-box; }
+.lps-in { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+.lps-title { font-size: clamp(22px, 4vw, 30px); font-weight: 800; letter-spacing: -0.02em; text-align: center; margin: 0 0 32px; color: #1d1d1f; }
+.lps-row { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.lps-row.lps-n3 { grid-template-columns: repeat(3, 1fr); max-width: 720px; margin: 0 auto; }
+.lps-row.lps-n5 { grid-template-columns: repeat(5, 1fr); }
+.lps-row li { margin: 0; }
+.lps-shot { display: block; width: 100%; height: auto; aspect-ratio: 560 / 1212; border-radius: 16px; border: 1px solid #ececea; box-shadow: 0 8px 24px rgba(0,0,0,0.08); background: #f5f5f7; }
+.lps-hero { margin: 40px auto 0; width: 260px; max-width: 70%; }
+@media (max-width: 767px) {
+  .lps-row, .lps-row.lps-n3, .lps-row.lps-n5 { display: flex; max-width: none; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin: 0 -24px; padding: 4px 24px 16px; -webkit-overflow-scrolling: touch; }
+  .lps-row li { flex: 0 0 200px; scroll-snap-align: center; }
+}
+@media (min-width: 768px) and (max-width: 1023px) { .lps-row.lps-n5 { grid-template-columns: repeat(3, 1fr); } }

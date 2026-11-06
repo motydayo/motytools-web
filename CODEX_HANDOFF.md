@@ -112,3 +112,11 @@
 ## 2026-11-05 毎週の記事更新（定期タスク4回目）: 記事どうしの文中リンク
 - GSC 28日は変化なし（検索語0行）。検索に出す記事への内部リンクが0本だった7本へ文中リンク（家賃管理表⇄家賃滞納、材料からレシピ→余り物簡単レシピ、インスタ保存→クラシル保存上限、自分にメール→届かない確認点、JANコード⇄グラム単価）。updatedAt は据え置き。build 360ページ・check-zukan 問題なし。
 - 次回候補: ①入るリンクが1本の記事（tochi-mukashi・instagram-recipe-insatsu 等）②表示が出始めた記事の手直し／需要が確かめられた新ガイド1本。
+
+## 2026-11-06 アプリLPに操作画面を入れた（共通部品化）
+- 対象: 配信中アプリ11本のLP。画像なしだった6本（レッスン手帳・大家ノート・つくログ・レシピスクラップ・ピッと最安・メモびゅん）と、ダミー画像1枚だった うちの爬虫類 に、App Store掲載用スクリーンショット（ASC APIで取得したjaの最新版）を幅560のWebP（各150KB以内）にして4〜5枚入れた。そだち（apps/sodachi）は指示で対象外。アトイチ・あるものレシピ・まちの安全マップ・ピッと期限は既存の画像を使い続ける（ピッと期限はwidth/heightだけ追記）。
+- 仕組み: 一覧 `data/lp-shots.json`（apps=差し込み対象・existing=既存画像・exempt=対象外）／部品CSS `public/assets/lp-shots.v1.css`／`scripts/lp-shots.mjs`（inject=LPへ差し込み・check=検品）／`scripts/lp-shots-convert.mjs`（PNG→WebP）。`npm run build` の前に自動で inject→check が走り、App Storeリンクがあるのに一覧に無いLP・画像3枚未満・alt/width/height欠け・150KB超・最初の1枚以外がlazyでない、のどれかでビルドが止まる。
+- 新しいアプリ: ストア画像を取得→`data/lp-shots.json` の apps に slug・名前・alt付きで足す→`node scripts/lp-shots-convert.mjs <画像の親フォルダ>`→`npm run lp:shots`。
+- メモびゅん（/memomail/）はNext書き出し。差し込み式だと画面の再構築で消えるため、画像は別リポジトリ `/Users/moty/Documents/New project/apps/memomail-lp` の `app/page.tsx`（SCREENSHOTS・画面の見出し）と `public/shots/` に入れ、build→rsync→`node scripts/sync-lp.ts` で反映した。一覧では source:next にして差し込みを飛ばし、検品だけ行う。
+- reptile-sns の飾り用の空の端末イラスト（hero-shot）は外し、操作画面に置き換えた（hero.jpg/webpは残置・未参照）。
+- 画像はストア用の販促画像（見出し文入り）をそのまま使用。実名・住所・電話・メールは写っていない（メモびゅんはexample.comのダミー）。

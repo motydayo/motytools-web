@@ -1,0 +1,79 @@
+{
+  "_doc": "アプリLPの操作画面。src=ストア用画像(asc取得元)。LPのhtmlへ scripts/lp-shots.mjs inject が差し込み、check が枚数・alt・サイズ・重さを検品する。新しいアプリはここに足すだけ。",
+  "exempt": {
+    "apps/sodachi": "オーナー指示で今回対象外",
+    "souba-watch": "保留中(配信なし)",
+    "pitto-hosho": "保留中(配信なし・画像あり)"
+  },
+  "apps": {
+    "apps/lesson-techo": {
+      "name": "レッスン手帳", "hero": true,
+      "shots": [
+        {"src": "lesson-techo/APP_IPHONE_65/01.png", "alt": "今日のレッスン3件のホーム画面。未納の月謝3件と期限が近い振替権2件が上に出て、14時・16時・17時30分のレッスンが並ぶ"},
+        {"src": "lesson-techo/APP_IPHONE_65/02.png", "alt": "生徒の振替権の画面。未使用の欠席ごとに期限が出て、この権利で振替を予約するボタンがある"},
+        {"src": "lesson-techo/APP_IPHONE_65/03.png", "alt": "レッスンの詳細画面。出欠を予定・実施・欠席・中止から選び、カルテメモに前回の進み具合を書いて保存できる"},
+        {"src": "lesson-techo/APP_IPHONE_65/04.png", "alt": "2026年8月のカレンダー画面。毎週のレッスンが日付ごとに印で並び、選んだ日の予定が下に出る"},
+        {"src": "lesson-techo/APP_IPHONE_65/05.png", "alt": "月謝の画面。生徒ごとの金額と未納・入金済みが並び、都度払いの未収分と入金済みにするボタンがある"}
+      ]
+    },
+    "ooya-note": {
+      "name": "大家ノート", "hero": true,
+      "shots": [
+        {"src": "ooya-note/APP_IPHONE_67/03.png", "alt": "ホーム画面。今月の入金状況が5件中3件入金済みと表示され、滞納の警告と直近の期日が並ぶ"},
+        {"src": "ooya-note/APP_IPHONE_67/01.png", "alt": "家賃の画面。部屋ごとに入金済み・未確認・一部入金が分かれ、期日を過ぎた部屋は赤で出る"},
+        {"src": "ooya-note/APP_IPHONE_67/04.png", "alt": "契約更新・火災保険・点検の期限の一覧。満了までの日数が近い順に並ぶ"},
+        {"src": "ooya-note/APP_IPHONE_67/05.png", "alt": "収支の画面。修繕費や税金などの支出と駐車場の収入を、物件ごとに月別で記録している"},
+        {"src": "ooya-note/APP_IPHONE_67/02.png", "alt": "年間レポートの画面。家賃収入・経費・不動産所得の参考額が物件別に集計されている"}
+      ]
+    },
+    "apps/tsukulog": {
+      "name": "つくログ", "hero": true,
+      "shots": [
+        {"src": "tsukulog/APP_IPHONE_65/01.png", "alt": "値付けの画面。希望の手取り額から売る値段が出て、材料・梱包・工賃・送料・手数料の内訳が並ぶ"},
+        {"src": "tsukulog/APP_IPHONE_65/02.png", "alt": "材料の画面。在庫と単価が一覧になり、残りわずかの材料に印が付く"},
+        {"src": "tsukulog/APP_IPHONE_65/03.png", "alt": "作品の原価の画面。材料費と工賃を含めた原価が内訳つきで計算されている"},
+        {"src": "tsukulog/APP_IPHONE_65/04.png", "alt": "売上の画面。作品ごとの売上と利益が並び、月のまとめが下に出る"},
+        {"src": "tsukulog/APP_IPHONE_65/05.png", "alt": "月のレポート画面。販売先ごとの成績と、申告用のCSVや棚卸レポートの書き出しボタン"}
+      ]
+    },
+    "recipescrap": {
+      "name": "レシピスクラップ", "hero": true,
+      "shots": [
+        {"src": "recipe-clip/APP_IPHONE_67/01.png", "alt": "SNSのレシピ動画の投稿から、材料と手順だけを取り込んで保存したレシピの画面"},
+        {"src": "recipe-clip/APP_IPHONE_67/02.png", "alt": "確認して保存の画面。元の投稿に書かれていない分量の曖昧な箇所が示され、その場で直せる"},
+        {"src": "recipe-clip/APP_IPHONE_67/03.png", "alt": "レシピの画面。人数を変えると材料の量が計算し直される"},
+        {"src": "recipe-clip/APP_IPHONE_67/04.png", "alt": "レシピスクラップの一覧。卵で検索して、写真つきのレシピが並ぶ"},
+        {"src": "recipe-clip/APP_IPHONE_67/05.png", "alt": "作り置きやお弁当などのフォルダで、保存したレシピを分けた一覧の画面"}
+      ]
+    },
+    "price-scan": {
+      "name": "ピッと最安", "hero": true,
+      "shots": [
+        {"src": "price-scan/APP_IPHONE_65/01.png", "alt": "スキャン画面。商品のバーコードをカメラの枠に合わせると最安値が分かる"},
+        {"src": "price-scan/APP_IPHONE_65/02.png", "alt": "見つかった価格の一覧。楽天市場とYahoo!ショッピングの価格が安い順に並ぶ"},
+        {"src": "price-scan/APP_IPHONE_65/03.png", "alt": "商品のバーコードを読み取っている画面。番号を入力しなくても合わせるだけで読める"},
+        {"src": "price-scan/APP_IPHONE_65/04.png", "alt": "スキャン結果の画面。最安値とそのお店を開くボタンが出て、下に見つかった価格が並ぶ"}
+      ]
+    },
+    "memomail": {
+      "name": "メモびゅん", "hero": false, "source": "next",
+      "shots": [
+        {"src": "memomail/APP_IPHONE_67/01.png", "alt": "メモの入力画面。文を書いて右上の送信を押すと、自分宛のメールで届く"},
+        {"src": "memomail/APP_IPHONE_67/02.png", "alt": "送信履歴の一覧。いつ、どの宛先に送ったメモかが並ぶ"},
+        {"src": "memomail/APP_IPHONE_67/03.png", "alt": "宛先を選ぶ画面。自分用と仕事用のメールアドレスから届け先を選んで送れる"},
+        {"src": "memomail/APP_IPHONE_67/04.png", "alt": "買い物メモを箇条書きで書いている入力画面"}
+      ]
+    },
+    "reptile-sns": {
+      "name": "うちの爬虫類", "hero": true,
+      "shots": [
+        {"src": "reptile-sns/APP_IPHONE_67/01.png", "alt": "投稿の画面。ボールパイソンの写真つき投稿と、みんなの投稿の一覧"},
+        {"src": "reptile-sns/APP_IPHONE_67/02.png", "alt": "なにを記録する？の画面。給餌・体重・脱皮・排泄・掃除・温湿度・健康メモ・投稿から選べる"},
+        {"src": "reptile-sns/APP_IPHONE_67/03.png", "alt": "1匹ごとの飼育管理ページ。ヒョウモントカゲモドキの写真と体重、給餌・体重・投稿の記録が並ぶ"},
+        {"src": "reptile-sns/APP_IPHONE_67/04.png", "alt": "ほかの飼い主のプロフィール。飼っている3匹の写真と、フォローするボタンがある"},
+        {"src": "reptile-sns/APP_IPHONE_67/05.png", "alt": "自分のプロフィール画面。飼っている子が並び、写真を個体ごとに見返せる"}
+      ]
+    }
+  },
+  "existing": ["atoichi", "arumono-recipe", "machi-anzen-map", "pitto-kigen"]
+}
