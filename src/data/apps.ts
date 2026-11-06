@@ -19,7 +19,7 @@ export const APP_CATEGORIES: AppCategory[] = [
   { id: 'food', name: '料理・食品', description: 'レシピの保存、冷蔵庫の残り物、賞味期限の管理。' },
   { id: 'money', name: 'お金・仕事', description: '家賃・月謝・原価など、個人で稼ぐ人の台帳。' },
   { id: 'life', name: '暮らし', description: '買い物の値段、まちの安全、子どもの成長、思いついたことのメモ。' },
-  { id: 'hobby', name: '趣味', description: '生きものの飼育記録と、同じ趣味の仲間。' },
+  { id: 'hobby', name: '趣味', description: '生きものの飼育記録、筋トレの記録など、趣味の記録。' },
 ];
 
 /** schema.org の applicationCategory（Googleが受け付ける値だけ） */
@@ -27,6 +27,7 @@ export type SchemaAppCategory =
   | 'LifestyleApplication'
   | 'BusinessApplication'
   | 'FinanceApplication'
+  | 'HealthApplication'
   | 'ShoppingApplication'
   | 'SocialNetworkingApplication'
   | 'UtilitiesApplication';
@@ -382,6 +383,34 @@ export const APPS: AppEntry[] = [
     lpTitle: '爬虫類の飼育記録アプリ・SNS「うちの爬虫類」｜給餌・体重・脱皮を3タップで記録',
     lpDescription:
       'レオパ・フトアゴ・ボールパイソンなど爬虫類・両生類の飼育記録アプリ「うちの爬虫類」。給餌・体重・脱皮を3タップで記録でき、記録がそのまま投稿に。同じ種類の飼い主が集まる「部屋」で相談もできるiPhoneアプリです。',
+  },
+  {
+    slug: 'atoichi',
+    name: 'アトイチ',
+    storeName: 'アトイチ - 1RM・プレート計算もできる筋トレ記録',
+    tagline: '前回の記録から今日の目標が出る。チェック1回で記録できる筋トレ記録。',
+    audience: 'ジムで筋トレを続けていて、毎回の重さと回数を前回より少しずつ伸ばしたい人',
+    features: [
+      '前回の記録から「今日の目標（重さ×回数）」が先に出る',
+      '目標どおりならチェックを押すだけで1セット記録',
+      '休憩タイマーはロック画面とダイナミックアイランドに表示',
+      '自己ベスト・成長グラフ・1RMとプレートの計算つき',
+      'アカウント登録なし。記録は端末の中だけ',
+    ],
+    pricing: '無料。広告を消すのは買い切り480円',
+    appId: '6821775093',
+    storeUrl: store('6821775093'),
+    lpPath: '/atoichi/',
+    icon: icon('atoichi'),
+    icon512: icon512('atoichi'),
+    category: 'hobby',
+    schemaCategory: 'HealthApplication',
+    genre: 'ヘルスケア／フィットネス',
+    minIos: '16.4',
+    relatedTools: ['1rm'],
+    lpTitle: '筋トレ記録アプリ「アトイチ」｜前回の記録から今日の目標が出る・1RM計算つき',
+    lpDescription:
+      '前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できるiPhoneの筋トレ記録アプリ「アトイチ」。休憩タイマー・自己ベスト・成長グラフ・1RMとプレートの計算つき。記録は無料・登録不要・端末内保存。',
   },
 ];
 

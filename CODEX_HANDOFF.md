@@ -120,3 +120,13 @@
 - メモびゅん（/memomail/）はNext書き出し。差し込み式だと画面の再構築で消えるため、画像は別リポジトリ `/Users/moty/Documents/New project/apps/memomail-lp` の `app/page.tsx`（SCREENSHOTS・画面の見出し）と `public/shots/` に入れ、build→rsync→`node scripts/sync-lp.ts` で反映した。一覧では source:next にして差し込みを飛ばし、検品だけ行う。
 - reptile-sns の飾り用の空の端末イラスト（hero-shot）は外し、操作画面に置き換えた（hero.jpg/webpは残置・未参照）。
 - 画像はストア用の販促画像（見出し文入り）をそのまま使用。実名・住所・電話・メールは写っていない（メモびゅんはexample.comのダミー）。
+
+## 2026-11-06 アプリ誘導記事・第0段（検索登録の手当て・アイキャッチ・アトイチ・LP画像）
+- 計画の正本は非公開リポジトリ側（deskclaude/projects/app-articles/PLAN.md の §3.1・§9）。ここには作業結果だけ書く。
+- サイトマップ: 検索に出す記事53本は全部載り、noindex の69本は1本も載っていない（本番で照合）。10/17の監査どおりで異常なし。
+- /guide/ アイキャッチ: frontmatter `image`（`/guide/<slug>/eyecatch.webp`）と `imageAlt`。記事の先頭に表示、og:image・構造化データの image が記事別になる。無ければ従来どおり共通画像。`scripts/check-guide-images.mjs`（`npm run guide:images`、`npm run build` の前に自動実行）が、公開日 2026-11-07 以降の記事に image が無い・ファイルが無い・1200x630でない・WebPでない・60KB超をビルドで止める。既存122本は対象外（11/8以降の全サイト作業で付ける）。README.md の frontmatter 表に追記済み。
+- トップに「使い方ガイドの解説記事」の直接リンク枠を追加（`FEATURED_GUIDES`、入るリンクが少ない検索対象の記事8本）。
+- アトイチ: ASCで 1.0.0 配信中を確認。`apps.ts` に登録（hobby・HealthApplication・relatedTools 1rm）、LPの「近日公開」と差し替えコメントを撤去して App Store リンクに、LP独自のSoftwareApplicationは台帳側（sync-lp）に統一、1RMツール・トップのカードも更新、アイコンは public/app-icons/atoichi-*。LPのFAQに自重種目の項目を追加（実物で確認済み。Apple Watch は未対応のまま）。sync-lp を回すと全LPの「アプリ一覧（N本）」が11→12本になった（そだちのLPだけは触らず戻したので11本のまま）。
+- LP画像: ピッと期限（7月の10枚→1.2.4のストア画像10枚 `shots/NN-v2.jpg`）、まちの安全マップ（旧4枚→今の6枚 `shots/NN-v3.webp`）を差し替え。あるものレシピ・アトイチは今のアプリ画面と一致で据え置き。写っているのは架空データのみ。
+- ビルド約15秒（361ページ）、`vercel deploy --prod` 全体で約2分。公開頻度は週2回まで・記事は8本単位。
+- 本番反映済み（vercel CLI）。記事3本・LP4本・/1rm/・/apps/・/guide/・sitemap が200、画像が読める、ヘッダー5種あり。

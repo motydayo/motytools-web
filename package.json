@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
+    "guide:images": "node scripts/check-guide-images.mjs",
     "lp:shots": "node scripts/lp-shots.mjs inject && node scripts/lp-shots.mjs check",
-    "prebuild": "node scripts/lp-shots.mjs inject && node scripts/lp-shots.mjs check",
+    "prebuild": "node scripts/lp-shots.mjs inject && node scripts/lp-shots.mjs check && node scripts/check-guide-images.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "og": "node scripts/gen-og.mjs"

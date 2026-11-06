@@ -3,38 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>アトイチ｜前回の記録から今日の目標が出る筋トレ記録アプリ（iPhone）</title>
-  <meta name="description" content="筋トレ記録アプリ「アトイチ」は、前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録。休憩タイマー、自己ベスト、1RM計算つき。記録機能はずっと無料、有料は広告の削除のみ。" />
+  <title>筋トレ記録アプリ「アトイチ」｜前回の記録から今日の目標が出る・1RM計算つき</title>
+  <meta name="description" content="前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できるiPhoneの筋トレ記録アプリ「アトイチ」。休憩タイマー・自己ベスト・成長グラフ・1RMとプレートの計算つき。記録は無料・登録不要・端末内保存。" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://motytools.com/atoichi/" />
   <link rel="icon" href="/atoichi/favicon.svg" type="image/svg+xml" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="アトイチ" />
   <meta property="og:locale" content="ja_JP" />
-  <meta property="og:title" content="アトイチ｜前回の記録から今日の目標が出る筋トレ記録アプリ（iPhone）" />
-  <meta property="og:description" content="前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できる筋トレ記録アプリ。記録・タイマー・グラフはずっと無料。" />
+  <meta property="og:title" content="筋トレ記録アプリ「アトイチ」｜前回の記録から今日の目標が出る・1RM計算つき" />
+  <meta property="og:description" content="前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できるiPhoneの筋トレ記録アプリ「アトイチ」。休憩タイマー・自己ベスト・成長グラフ・1RMとプレートの計算つき。記録は無料・登録不要・端末内保存。" />
   <meta property="og:url" content="https://motytools.com/atoichi/" />
   <meta property="og:image" content="https://motytools.com/atoichi/og-atoichi-v1.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="アトイチ｜前回の記録から今日の目標が出る筋トレ記録アプリ" />
-  <meta name="twitter:description" content="前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できる筋トレ記録アプリ。" />
+  <meta name="twitter:title" content="筋トレ記録アプリ「アトイチ」｜前回の記録から今日の目標が出る・1RM計算つき" />
+  <meta name="twitter:description" content="前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できるiPhoneの筋トレ記録アプリ「アトイチ」。休憩タイマー・自己ベスト・成長グラフ・1RMとプレートの計算つき。記録は無料・登録不要・端末内保存。" />
   <meta name="twitter:image" content="https://motytools.com/atoichi/og-atoichi-v1.png" />
-  <!--
-    【App Store公開後の差し替え手順】
-    1. このファイル内の「【差し替え 1/4】〜【差し替え 4/4】」を、それぞれ指示どおりに直す
-    2. 1RM計算ページ（src/pages/1rm/index.astro）の「【差し替え】」コメント1箇所も同様に直す
-    3. スクリーンショットは public/atoichi/img/shot-1.webp 〜 shot-5.webp を「ファイル名を変えて」差し替え、
-       このファイルの参照名も変える（例: shot-1.webp → shot-1-v2.webp。同名で上書きすると古い画像が配信キャッシュに残る）
-  -->
-  <!-- 【差し替え 1/4】App Storeの公開後、次の1行のコメントを外し、app-id を実際のIDに置き換える（iPhoneのSafariにダウンロード帯が出る）
-  <meta name="apple-itunes-app" content="app-id=0000000000" />
-  -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/atoichi/atoichi.v1.css" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"アトイチ","alternateName":"アトイチ - 筋トレ記録","description":"前回の記録から今日の目標の重さと回数を自動で出し、チェック1回で記録できる筋トレ記録アプリ。休憩タイマー、自己ベスト、成長グラフ、1RM・プレート・ウォームアップ計算つき。広告の削除は480円の買い切り。","operatingSystem":"iOS","applicationCategory":"HealthApplication","image":"https://motytools.com/atoichi/img/icon-512.png","url":"https://motytools.com/atoichi/","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"publisher":{"@type":"Organization","name":"motytools","url":"https://motytools.com"}}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"今日の目標はどう決まりますか？","acceptedAnswer":{"@type":"Answer","text":"前回その種目で完了した本番セット（ウォームアップは除く）から決まります。前回の最も重い重さのセットがすべて回数の上限に届いていれば、重さを刻み分（例: 2.5kg）上げて回数は下限から。1セットでも届いていなければ、重さはそのままで各セットの回数を前回より1回増やします。これは「ダブルプログレッション」と呼ばれる方法です。初めて行う種目は目標を出さず、自由に入力できます。"}},{"@type":"Question","name":"無料でどこまで使えますか？","acceptedAnswer":{"@type":"Answer","text":"記録・休憩タイマー・自己ベスト・成長グラフ・メニュー保存・1RM計算などの機能はすべて無料で、これからもずっと無料です。有料なのは広告の削除（480円の買い切り）だけです。広告はトレ・記録・成長タブの下部にバナーで表示され、トレーニング中の画面には出ません。"}},{"@type":"Question","name":"機種変更したらデータはどうなりますか？","acceptedAnswer":{"@type":"Answer","text":"設定の「バックアップを書き出す」でファイルを保存し、新しいiPhoneのアトイチで「バックアップから戻す」を選ぶと、記録がそのまま戻ります。データはiPhoneのバックアップにも含まれます。"}},{"@type":"Question","name":"Apple Watchには対応していますか？","acceptedAnswer":{"@type":"Answer","text":"現在は未対応です。休憩タイマーはiPhoneのロック画面とダイナミックアイランドに残り時間を表示します。"}},{"@type":"Question","name":"記録したデータはどこに保存されますか？","acceptedAnswer":{"@type":"Answer","text":"お使いのiPhoneの中だけに保存されます。アカウント登録は不要で、記録をサーバーに送ることもありません。"}},{"@type":"Question","name":"対応している端末と単位は？","acceptedAnswer":{"@type":"Answer","text":"iPhone向けのアプリです。重さの単位は現在kgのみに対応しています。"}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"今日の目標はどう決まりますか？","acceptedAnswer":{"@type":"Answer","text":"前回その種目で完了した本番セット（ウォームアップは除く）から決まります。前回の最も重い重さのセットがすべて回数の上限に届いていれば、重さを刻み分（例: 2.5kg）上げて回数は下限から。1セットでも届いていなければ、重さはそのままで各セットの回数を前回より1回増やします。これは「ダブルプログレッション」と呼ばれる方法です。初めて行う種目は目標を出さず、自由に入力できます。"}},{"@type":"Question","name":"無料でどこまで使えますか？","acceptedAnswer":{"@type":"Answer","text":"記録・休憩タイマー・自己ベスト・成長グラフ・メニュー保存・1RM計算などの機能はすべて無料で、これからもずっと無料です。有料なのは広告の削除（480円の買い切り）だけです。広告はトレ・記録・成長タブの下部にバナーで表示され、トレーニング中の画面には出ません。"}},{"@type":"Question","name":"機種変更したらデータはどうなりますか？","acceptedAnswer":{"@type":"Answer","text":"設定の「バックアップを書き出す」でファイルを保存し、新しいiPhoneのアトイチで「バックアップから戻す」を選ぶと、記録がそのまま戻ります。データはiPhoneのバックアップにも含まれます。"}},{"@type":"Question","name":"Apple Watchには対応していますか？","acceptedAnswer":{"@type":"Answer","text":"現在は未対応です。休憩タイマーはiPhoneのロック画面とダイナミックアイランドに残り時間を表示します。"}},{"@type":"Question","name":"腕立て伏せや懸垂など、自重の種目も記録できますか？","acceptedAnswer":{"@type":"Answer","text":"できます。腕立て伏せ・懸垂・ディップスなどは回数を記録する種目で、重さの欄は「自重」と表示されます。ベルトやベストで負荷を足す場合は、加重のキロ数も入れられます。プランクなどは秒数で記録できます。"}},{"@type":"Question","name":"記録したデータはどこに保存されますか？","acceptedAnswer":{"@type":"Answer","text":"お使いのiPhoneの中だけに保存されます。アカウント登録は不要で、記録をサーバーに送ることもありません。"}},{"@type":"Question","name":"対応している端末と単位は？","acceptedAnswer":{"@type":"Answer","text":"iPhone向けのアプリです。重さの単位は現在kgのみに対応しています。"}}]}</script>
+  <!-- motytools:app-meta:start -->
+  <meta name="apple-itunes-app" content="app-id=6821775093" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"アトイチ","alternateName":"アトイチ - 1RM・プレート計算もできる筋トレ記録","description":"前回の記録から今日の目標が出る。チェック1回で記録できる筋トレ記録。","operatingSystem":"iOS 16.4 以降","applicationCategory":"HealthApplication","image":"https://motytools.com/app-icons/atoichi-512.png","url":"https://motytools.com/atoichi/","downloadUrl":"https://apps.apple.com/jp/app/id6821775093","installUrl":"https://apps.apple.com/jp/app/id6821775093","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"publisher":{"@type":"Organization","name":"motytools","url":"https://motytools.com"}}</script>
+  <style>
+    section.mt-more { margin: 0; padding: 48px 0 40px; border-top: 1px solid var(--border, var(--line, #e5e5e5)); background: var(--bg-2, #fafaf9); text-align: left; }
+    .mt-more .mt-more-in { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .mt-more .mt-more-h { margin: 0 0 16px; font-size: 20px; font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; color: var(--text, #1d1d1f); text-align: left; }
+    .mt-more .mt-more-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .mt-more .mt-more-card { position: relative; display: grid; gap: 4px; min-height: 64px; padding: 16px 48px 16px 16px; background: #fff; border: 1px solid var(--border, var(--line, #e5e5e5)); border-radius: 12px; color: var(--text, #1d1d1f); text-decoration: none; transition: border-color .15s, transform .15s; }
+    .mt-more .mt-more-card:hover { border-color: var(--accent, #555); transform: translateY(-1px); }
+    .mt-more .mt-more-card:active { transform: translateY(0); }
+    .mt-more .mt-more-t { font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text, #1d1d1f); }
+    .mt-more .mt-more-d { font-size: 13px; line-height: 1.6; color: var(--text-2, var(--sub, #55555c)); }
+    .mt-more .mt-more-card svg { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-3, #8e8e93); }
+    @media (max-width: 640px) { .mt-more .mt-more-grid { grid-template-columns: 1fr; } .mt-more .mt-more-in { padding: 0 16px; } }
+  </style>
+  <!-- motytools:app-meta:end -->
 </head>
 <body>
 
@@ -63,14 +69,8 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>トレーニング中は広告を表示しません</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>アカウント登録なし。データはiPhoneの中だけ</li>
         </ul>
-        <!-- 【差し替え 2/4】App Store公開後、この <span class="store-soon">…</span> 全体を次の1つに置き換える（URLは実際のApp Store URL）
-             <a class="store-live" href="https://apps.apple.com/jp/app/idXXXXXXXXXX" rel="noopener">App Storeでダウンロード</a>
-             ※ 「cta-note」の段落は「無料でダウンロード・広告の削除は480円の買い切り」に直す -->
-        <span class="store-soon" role="img" aria-label="App Storeで近日公開">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-          <span><span class="t1">App Store</span><span class="t2">近日公開</span></span>
-        </span>
-        <p class="cta-note">公開までしばらくお待ちください。</p>
+        <a class="store-live" href="https://apps.apple.com/jp/app/id6821775093" rel="noopener">App Storeでダウンロード</a>
+        <p class="cta-note">無料でダウンロード・広告の削除は480円の買い切り</p>
       </div>
       <div class="shot">
         <img src="/atoichi/img/shot-1.webp" width="900" height="1950" alt="ワークアウト画面。ベンチプレスの今日の目標「62.5kg × 8回」が出ていて、チェックを押すだけで記録できる" fetchpriority="high" decoding="async" />
@@ -242,6 +242,10 @@
           <p class="a">現在は未対応です。休憩タイマーはiPhoneのロック画面とダイナミックアイランドに残り時間を表示します。</p>
         </details>
         <details>
+          <summary>腕立て伏せや懸垂など、自重の種目も記録できますか？</summary>
+          <p class="a">できます。腕立て伏せ・懸垂・ディップスなどは回数を記録する種目で、重さの欄は「自重」と表示されます。ベルトやベストで負荷を足す場合は、加重のキロ数も入れられます。プランクなどは秒数で記録できます。</p>
+        </details>
+        <details>
           <summary>記録したデータはどこに保存されますか？</summary>
           <p class="a">お使いのiPhoneの中だけに保存されます。アカウント登録は不要で、記録をサーバーに送ることもありません。くわしくは<a href="/atoichi/privacy/">プライバシーポリシー</a>をご覧ください。</p>
         </details>
@@ -257,14 +261,30 @@
     <div class="wrap">
       <h2>次のトレから、目標を決める時間をなくす</h2>
       <p>記録・タイマー・グラフは無料。アカウント登録も要りません。</p>
-      <!-- 【差し替え 3/4】App Store公開後、この <span class="store-soon">…</span> 全体を、上の【差し替え 2/4】と同じ <a class="store-live"> に置き換える -->
-      <span class="store-soon" role="img" aria-label="App Storeで近日公開">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-        <span><span class="t1">App Store</span><span class="t2">近日公開</span></span>
-      </span>
+      <a class="store-live" href="https://apps.apple.com/jp/app/id6821775093" rel="noopener">App Storeでダウンロード</a>
     </div>
   </section>
   </main>
+
+  <!-- motytools:more:start -->
+  <section class="mt-more" aria-labelledby="mt-more-h">
+    <div class="mt-more-in">
+      <h2 class="mt-more-h" id="mt-more-h">もっと知る</h2>
+      <div class="mt-more-grid">
+        <a class="mt-more-card" href="/guide/app/atoichi/">
+          <span class="mt-more-t">関連する記事</span>
+          <span class="mt-more-d">アトイチの使い方と、役立つ記事</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+        <a class="mt-more-card" href="/apps/">
+          <span class="mt-more-t">他のアプリ</span>
+          <span class="mt-more-d">motytoolsのiPhoneアプリ一覧（12本）</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+  <!-- motytools:more:end -->
 
   <footer class="foot">
     <div class="wrap">
@@ -278,6 +298,5 @@
     </div>
   </footer>
 
-  <!-- 【差し替え 4/4】構造化データ（SoftwareApplication）に、公開後は "downloadUrl" と "installUrl"（App Store URL）を追加する -->
 </body>
 </html>

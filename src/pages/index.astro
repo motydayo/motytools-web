@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../config';
 import { TOOLS, CATEGORIES } from '../data/tools';
 import { APPS, getApp } from '../data/apps';
+import { getGuides } from '../lib/guide';
 
 const jsonLd = [
   {
@@ -24,6 +25,23 @@ const jsonLd = [
     inLanguage: 'ja',
   },
 ];
+
+// トップから直接リンクする解説記事（検索に出す記事のうち、ほかの記事からのリンクが少ないもの）。
+// トップはGoogleに登録済みの数少ないページなので、ここから張る（2026-11-06）
+const FEATURED_GUIDES = [
+  'tanka-hikaku-keisan',
+  'rimawari-keisan',
+  'yachin-tainou-taiou',
+  'gessha-shukin-houhou',
+  'shomikigen-barcode',
+  'recipe-hozon-jougen',
+  'instagram-recipe-insatsu',
+  'tochi-mukashi-shirabekata',
+];
+const allGuides = await getGuides();
+const featuredGuides = FEATURED_GUIDES.map((id) => allGuides.find((g) => g.id === id)).filter(
+  (g): g is NonNullable<typeof g> => !!g && !g.data.noindex,
+);
 
 const popular = ['tedori', 'wareki', 'moji-count', 'image-compress'].map(
   (slug) => TOOLS.find((t) => t.slug === slug)!,
@@ -117,8 +135,7 @@ const compact: Product[] = [
   appMini('lesson-techo', '習いごとの生徒・月謝・振替を管理。'),
   appMini('tsukulog', 'ハンドメイドの材料・原価・手取りを管理。'),
   appMini('reptile-sns', '爬虫類・両生類の飼育記録SNS。'),
-  // 未配信のため台帳（apps.ts）には載せず、ここだけに置く。公開後は apps.ts に移して appMini に差し替える
-  { href: '/atoichi/', name: 'アトイチ', desc: '筋トレ記録アプリ。App Storeで近日公開。', visual: 'memo', img: '/atoichi/img/icon-256.webp' },
+  appMini('atoichi', '前回の記録から今日の目標が出る筋トレ記録。'),
   {
     ...appMini('machi-anzen-map', '事故・不審者情報を地図で数える。'),
     links: [
@@ -403,6 +420,16 @@ const compact: Product[] = [
           <li><a href="https://roster.motytools.com/articles/kojin-vtuber-ranking-2026-09">個人勢VTuberの登録者数ランキング</a></li>
           <li><a href="https://roster.motytools.com/articles/low-competition-genres-2026-09">YouTubeで今伸びてるジャンルはどれ？</a></li>
           <li><a href="https://roster.motytools.com/articles">記事一覧</a></li>
+        </ul>
+      </nav>
+
+      <nav class="hm-roster-links" aria-label="使い方ガイドの解説記事">
+        <span class="hm-roster-links-h">使い方ガイドの解説記事</span>
+        <ul>
+          {featuredGuides.map((g) => (
+            <li><a href={`/guide/${g.id}/`}>{g.data.title}</a></li>
+          ))}
+          <li><a href="/guide/">解説記事の一覧</a></li>
         </ul>
       </nav>
 

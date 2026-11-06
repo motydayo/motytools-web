@@ -22,6 +22,10 @@ const guide = defineCollection({
     draft: z.boolean().default(false),
     /** true にすると検索に出さない（meta robots noindex,follow・サイトマップから外す）。ページと一覧のリンクは残る */
     noindex: z.boolean().default(false),
+    /** アイキャッチ画像（1200x630・WebP・60KB以下）。public/guide/<slug>/eyecatch.webp を指す絶対パス。2026-11-07以降の新規記事は必須（scripts/check-guide-images.mjs がビルドを止める） */
+    image: z.string().regex(/^\/guide\/[a-z0-9-]+\/[a-z0-9._-]+\.webp$/).optional(),
+    /** アイキャッチの代替テキスト（画像に写っているもの・書かれている文字を説明する。20〜120字） */
+    imageAlt: z.string().min(10).max(160).optional(),
   }),
 });
 

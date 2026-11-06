@@ -1403,6 +1403,7 @@ main {
   margin-bottom: var(--sp-3);
 }
 .guide-lead { color: var(--text-2); }
+.guide-eyecatch { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 630; margin: var(--sp-4) 0 0; border-radius: var(--radius-md, 12px); border: 1px solid var(--border, rgba(0,0,0,.08)); }
 .guide-meta { margin-top: var(--sp-3); font-size: var(--fs-xs); color: var(--text-3); font-variant-numeric: tabular-nums; }
 
 .toc {

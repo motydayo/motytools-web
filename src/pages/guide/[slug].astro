@@ -16,7 +16,7 @@ interface Props {
   entry: GuideEntry;
 }
 const { entry } = Astro.props;
-const { title, description, faq, publishedAt } = entry.data;
+const { title, description, faq, publishedAt, image, imageAlt } = entry.data;
 const app = getApp(entry.data.app);
 const updated = updatedOf(entry);
 const path = `/guide/${entry.id}/`;
@@ -42,7 +42,7 @@ const jsonLd: object[] = [
     inLanguage: 'ja',
     datePublished: isoDate(publishedAt),
     dateModified: isoDate(updated),
-    image: `${SITE.url}${app.icon512}`,
+    image: image ? `${SITE.url}${image}` : `${SITE.url}${app.icon512}`,
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
     author: { '@type': 'Organization', name: SITE.name, url: SITE.url },
     publisher: {
@@ -82,6 +82,7 @@ if (faq.length > 0) {
   description={description}
   path={path}
   ogType="article"
+  ogImage={image}
   noindex={entry.data.noindex}
   appleAppId={app.appId}
   jsonLd={jsonLd}
@@ -104,6 +105,9 @@ if (faq.length > 0) {
         </a>
         <h1>{title}</h1>
         <p class="guide-lead">{description}</p>
+        {image && imageAlt && (
+          <img class="guide-eyecatch" src={image} width="1200" height="630" alt={imageAlt} fetchpriority="high" decoding="async" />
+        )}
         <p class="guide-meta">
           <time datetime={isoDate(updated)}>{jaDate(updated)}更新</time>
           {isoDate(updated) !== isoDate(publishedAt) && <> ・ <time datetime={isoDate(publishedAt)}>{jaDate(publishedAt)}公開</time></>}
