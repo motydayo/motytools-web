@@ -130,3 +130,11 @@
 - LP画像: ピッと期限（7月の10枚→1.2.4のストア画像10枚 `shots/NN-v2.jpg`）、まちの安全マップ（旧4枚→今の6枚 `shots/NN-v3.webp`）を差し替え。あるものレシピ・アトイチは今のアプリ画面と一致で据え置き。写っているのは架空データのみ。
 - ビルド約15秒（361ページ）、`vercel deploy --prod` 全体で約2分。公開頻度は週2回まで・記事は8本単位。
 - 本番反映済み（vercel CLI）。記事3本・LP4本・/1rm/・/apps/・/guide/・sitemap が200、画像が読める、ヘッダー5種あり。
+
+## 2026-11-11 配信を Cloudflare へ移した
+- Vercel の無料チームが 11/9 21時に配信回数の超過で停止（402、再開予定 12/9）。motytools.com を Cloudflare Workers の静的配信に移した（Worker `motytools-web`、経路 motytools.com/* と www.motytools.com/*）。静的ファイルの配信は無料で回数の上限なし。
+- 公開は `npm run deploy`（astro build → wrangler deploy）。git push では本番に出ない。
+- vercel.json の転送・www・共有ページ（api/reptile-post.js）は cloudflare/worker.js で再現。/privacy などは静的配信が自動で .html を返す。
+- 確認：サイトマップ366ページ全部200、/privacy・/anzen/・www→本体の転送OK。/anzen* は machi-anzen-map の Worker のまま。
+- 試し用：motytools-web-preview（wrangler.preview.jsonc、経路なし）。
+- 戻し方：Cloudflare で Worker `motytools-web` の経路2つを外す（Vercel が再開していれば元に戻る）。

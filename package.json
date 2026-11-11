@@ -10,7 +10,8 @@
     "prebuild": "node scripts/lp-shots.mjs inject && node scripts/lp-shots.mjs check && node scripts/check-guide-images.mjs",
     "build": "astro build",
     "preview": "astro preview",
-    "og": "node scripts/gen-og.mjs"
+    "og": "node scripts/gen-og.mjs",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "astro": "^5.0.0",
