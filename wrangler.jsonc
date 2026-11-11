@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // motytools.com の配信。2026-11-09 に Vercel が無料枠超過で止まったため Cloudflare へ移した。
+  // 公開は npm run deploy（astro build → wrangler deploy）。静的ファイルの配信は無料で回数の上限なし。
+  "name": "motytools-web",
+  "main": "cloudflare/worker.js",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": true
+  },
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "motytools.com/*", "zone_name": "motytools.com" },
+    { "pattern": "www.motytools.com/*", "zone_name": "motytools.com" }
+  ]
+}
