@@ -138,3 +138,11 @@
 - 確認：サイトマップ366ページ全部200、/privacy・/anzen/・www→本体の転送OK。/anzen* は machi-anzen-map の Worker のまま。
 - 試し用：motytools-web-preview（wrangler.preview.jsonc、経路なし）。
 - 戻し方：Cloudflare で Worker `motytools-web` の経路2つを外す（Vercel が再開していれば元に戻る）。
+
+## 2026-11-11 アプリ誘導記事・第1段8本（/guide/）
+- 追加: gessha-bukuro-template・kyoshitsu-kiyaku-template・gessha-mibarai-jikou・piano-koushi-keihi（レッスン手帳）、instagram-collection-narabikae・recipe-kanri-excel（レシピスクラップ）、shuzenhi-shihonteki-shishutsu・yachin-tainou-tokusokujo（大家ノート）。publishedAt 2026-11-11。
+- 各記事に配布物（PDF・xlsx・docx・txt）とアイキャッチを `public/guide/<slug>/` に置いた。配布物とアイキャッチの元HTML・生成スクリプトは非公開側（deskclaude/projects/app-articles/deliverables/・eyecatch/）。
+- アイキャッチは `node scripts/gen-guide-eyecatch.mjs <html> <slug>`（Chromeで撮影→WebP・60KB以下）。共通の型は非公開側の eyecatch/base.css。
+- 既存 yachin-tainou-taiou.md に督促状の記事への文中リンクを1本追加（updatedAt据え置き）。
+- 点検: 記事ごとに別担当が一次資料（国税庁・e-Gov・消費者庁・日本郵便・裁判所・Instagram/Microsoft/Google公式ヘルプ）で照合と日本語校閲、題は別担当が題だけで判定。
+- 次の確認: **11/25（14日後）と12/9（28日後）** に8本のURL検査と表示回数を見る。8本のうち4本以上が「登録済み」なら第2段（16本）へ。2本未満なら止めて外部リンク不足の手当てを優先（計画 PLAN.md §3・§9）。
