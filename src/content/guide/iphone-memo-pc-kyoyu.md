@@ -4,6 +4,8 @@ description: iPhoneのメモをパソコンで見る・使う方法を、Mac・W
 app: memomail
 primary: iphone メモ パソコン 共有
 publishedAt: 2026-10-12
+image: /guide/iphone-memo-pc-kyoyu/eyecatch.webp
+imageAlt: "「iPhoneのメモをパソコンと共有する方法」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: WindowsでiPhoneのメモを見るには？

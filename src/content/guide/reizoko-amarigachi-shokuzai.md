@@ -4,6 +4,8 @@ description: 冷蔵庫で余りがちな食材と使い道をまとめました�
 app: arumono-recipe
 primary: 冷蔵庫 余りがち 食材
 publishedAt: 2026-10-12
+image: /guide/reizoko-amarigachi-shokuzai/eyecatch.webp
+imageAlt: "「冷蔵庫で余りがちな食材と使い道」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 一番余りやすい食材は何ですか？

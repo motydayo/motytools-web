@@ -13,6 +13,8 @@ faq:
   - q: 保護者に連絡できるアプリはありますか？
     a: できた！DEKITAはお知らせ配信とメッセージ、LessonMateはチャットと一斉配信、月謝袋アプリはプレミアムで未納の定型文メールを送れます。レッスン手帳とかんたん月謝帳に、保護者へ連絡を送る機能はありません。
 draft: false
+image: /guide/gessha-kanri-app/eyecatch.webp
+imageAlt: "「月謝管理アプリ比較」の解説記事のアイキャッチ。レッスン手帳の使い方ガイド"
 # 2026-10-17 記事監査（docs/guide-audit-2026-10-17.tsv）で検索から外す。ページとリンクは残す
 noindex: true
 ---

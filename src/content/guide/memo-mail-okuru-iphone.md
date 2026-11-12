@@ -4,6 +4,8 @@ description: iPhoneの標準メモアプリのメモをメールで送る方法�
 app: memomail
 primary: メモ を メール で 送る iphone
 publishedAt: 2026-10-12
+image: /guide/memo-mail-okuru-iphone/eyecatch.webp
+imageAlt: "「iPhoneのメモをメールで送る方法」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: メモの「コピーを送信」とは何ですか？

@@ -4,6 +4,8 @@ description: 自分宛てに送ったメモのメールを、受信箱で自動�
 app: memomail
 primary: 自分宛て メール 振り分け
 publishedAt: 2026-10-12
+image: /guide/jibun-ate-mail-furiwake/eyecatch.webp
+imageAlt: "「自分宛てメールを自動で振り分ける方法」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: Gmailで自分宛てのメモのメールだけ分けるには？

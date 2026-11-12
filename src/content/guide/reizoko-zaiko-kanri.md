@@ -4,6 +4,8 @@ description: 冷蔵庫の中身を把握する在庫管理のやり方を4つ比
 app: pitto-kigen
 primary: 冷蔵庫 在庫 管理
 publishedAt: 2026-10-12
+image: /guide/reizoko-zaiko-kanri/eyecatch.webp
+imageAlt: "「冷蔵庫の在庫管理のやり方」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 冷蔵庫の在庫管理は何から始めればいい？

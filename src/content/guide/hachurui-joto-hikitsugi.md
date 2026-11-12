@@ -13,6 +13,8 @@ faq:
   - q: 記録をまとめて渡したいのですが、どうすればよいですか？
     a: 紙やメモに書き出して渡せます。うちの爬虫類のProでは、個体のプロフィールと記録をまとめた個体パスポートをPDFで書き出せます。無料プランでは使えません。
 draft: false
+image: /guide/hachurui-joto-hikitsugi/eyecatch.webp
+imageAlt: "「爬虫類を譲渡するときの引き継ぎ」の解説記事のアイキャッチ。うちの爬虫類の使い方ガイド"
 # 2026-10-17 記事監査（docs/guide-audit-2026-10-17.tsv）で検索から外す。ページとリンクは残す
 noindex: true
 ---

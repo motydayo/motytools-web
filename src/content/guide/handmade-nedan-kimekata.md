@@ -4,6 +4,8 @@ description: ハンドメイド作品の値段の決め方を、計算式と具�
 app: tsukulog
 primary: ハンドメイド 値段 決め方
 publishedAt: 2026-10-12
+image: /guide/handmade-nedan-kimekata/eyecatch.webp
+imageAlt: "「ハンドメイドの値段の決め方」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: ハンドメイドは原価の何倍が目安ですか？

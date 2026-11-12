@@ -4,6 +4,8 @@ description: メモを取る習慣をつける方法を、書く・ためる・�
 app: memomail
 primary: メモ 習慣
 publishedAt: 2026-10-12
+image: /guide/memo-shukan/eyecatch.webp
+imageAlt: "「メモを取る習慣のつけ方」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: メモの習慣は何から始めればよいですか？

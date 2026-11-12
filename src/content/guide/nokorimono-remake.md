@@ -4,6 +4,8 @@ description: 作りすぎたおかずを別の料理に変えるリメイクレ�
 app: arumono-recipe
 primary: 残り物 リメイク レシピ
 publishedAt: 2026-10-12
+image: /guide/nokorimono-remake/eyecatch.webp
+imageAlt: "「残り物リメイクレシピ」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 残ったカレーは、常温で置いておいてもいいですか？

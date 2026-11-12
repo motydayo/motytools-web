@@ -4,6 +4,8 @@ description: 思いついたアイデアを逃さないメモアプリを5つ比
 app: memomail
 primary: アイデア メモ アプリ
 publishedAt: 2026-10-12
+image: /guide/idea-memo-app/eyecatch.webp
+imageAlt: "「アイデアメモアプリおすすめ」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: 一番速くメモできるアプリはどれですか？

@@ -4,6 +4,8 @@ description: しょうゆ・みそ・マヨネーズ・ケチャップ・みり�
 app: pitto-kigen
 primary: 調味料 開封後 賞味期限 一覧
 publishedAt: 2026-10-12
+image: /guide/chomiryo-kaifugo-kigen/eyecatch.webp
+imageAlt: "「調味料の開封後の賞味期限一覧」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: しょうゆは開封後どのくらいもちますか？

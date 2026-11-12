@@ -4,6 +4,8 @@ description: 数年先の期限が付いた水や缶詰など、非常食の賞�
 app: pitto-kigen
 primary: 非常食 賞味期限 管理
 publishedAt: 2026-10-12
+image: /guide/hijoushoku-kigen-kanri/eyecatch.webp
+imageAlt: "「非常食の賞味期限管理」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: 非常食の賞味期限はどのくらい？

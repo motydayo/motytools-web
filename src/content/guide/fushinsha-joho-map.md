@@ -4,6 +4,8 @@ description: 近所や通学路の不審者情報を地図で見る方法を解�
 app: machi-anzen-map
 primary: 不審者情報 マップ
 publishedAt: 2026-10-12
+image: /guide/fushinsha-joho-map/eyecatch.webp
+imageAlt: "「不審者情報をマップで見る方法」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 不審者情報をリアルタイムで見られますか？

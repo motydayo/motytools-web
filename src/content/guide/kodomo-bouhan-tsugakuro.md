@@ -4,6 +4,8 @@ description: 子どもの通学路の不審者対策を、家庭で教えるこ�
 app: machi-anzen-map
 primary: 通学路 不審者 対策
 publishedAt: 2026-10-12
+image: /guide/kodomo-bouhan-tsugakuro/eyecatch.webp
+imageAlt: "「通学路の不審者対策」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 防犯ブザーは効果がありますか？

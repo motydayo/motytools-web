@@ -4,6 +4,8 @@ description: Instagramで見つけたレシピを保存する方法を4つ比べ
 app: recipescrap
 primary: インスタ レシピ 保存
 publishedAt: 2026-10-12
+image: /guide/instagram-recipe-hozon/eyecatch.webp
+imageAlt: "「インスタのレシピを保存する方法4つ」の解説記事のアイキャッチ。レシピスクラップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: インスタで投稿を保存すると、投稿した人に知られますか？

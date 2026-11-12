@@ -4,6 +4,8 @@ description: ハンドメイド販売の経費になるものを一覧で解説�
 app: tsukulog
 primary: ハンドメイド 経費 になるもの
 publishedAt: 2026-10-12
+image: /guide/handmade-keihi/eyecatch.webp
+imageAlt: "「ハンドメイドの経費になるもの一覧」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 材料を買った年に全部経費にできますか？

@@ -4,6 +4,8 @@ description: ローリングストックの管理方法を解説します。備�
 app: pitto-kigen
 primary: ローリングストック 管理
 publishedAt: 2026-10-12
+image: /guide/rolling-stock-kanri/eyecatch.webp
+imageAlt: "「ローリングストックの管理方法」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: ローリングストックは何日分必要ですか？

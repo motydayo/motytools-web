@@ -4,6 +4,8 @@ description: ハンドメイドの売上管理表の作り方を解説します�
 app: tsukulog
 primary: ハンドメイド 売上 管理
 publishedAt: 2026-10-12
+image: /guide/handmade-uriage-kanri/eyecatch.webp
+imageAlt: "「ハンドメイドの売上管理表の作り方」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 売上管理表に必要な項目は？

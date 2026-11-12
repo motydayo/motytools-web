@@ -13,6 +13,8 @@ faq:
   - q: うちの爬虫類は無料で使えますか？
     a: 5匹まで無料で、記録・投稿・部屋への参加・質問箱を使えます。6匹目からは、月額300円または年額2,400円のProが必要です。iPhone専用で、Android版はありません。
 draft: false
+image: /guide/hachurui-sns/eyecatch.webp
+imageAlt: "「爬虫類の飼い主がつながるSNS」の解説記事のアイキャッチ。うちの爬虫類の使い方ガイド"
 # 2026-10-17 記事監査（docs/guide-audit-2026-10-17.tsv）で検索から外す。ページとリンクは残す
 noindex: true
 ---

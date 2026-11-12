@@ -4,6 +4,8 @@ description: 冷蔵庫の余り物でパスタを作る方法を紹介します�
 app: arumono-recipe
 primary: 余り物 パスタ
 publishedAt: 2026-10-12
+image: /guide/amarimono-pasta/eyecatch.webp
+imageAlt: "「冷蔵庫の余り物で作るパスタ」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 余り物パスタで失敗しないコツは何ですか？

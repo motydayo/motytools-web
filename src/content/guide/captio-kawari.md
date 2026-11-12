@@ -4,6 +4,8 @@ description: Captioが使えなくなった人向けに、自分宛てメール�
 app: memomail
 primary: captio 代わり
 publishedAt: 2026-10-12
+image: /guide/captio-kawari/eyecatch.webp
+imageAlt: "「Captioの代わりになるアプリ比較」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: Captioはもう使えませんか？

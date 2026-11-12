@@ -4,6 +4,8 @@ description: ハンドメイド作家が確定申告の前に行う棚卸しの�
 app: tsukulog
 primary: ハンドメイド 確定申告 棚卸し
 publishedAt: 2026-10-12
+image: /guide/handmade-tanaoroshi/eyecatch.webp
+imageAlt: "「ハンドメイドの棚卸しのやり方」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 棚卸しは必ずやりますか？

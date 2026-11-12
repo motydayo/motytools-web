@@ -4,6 +4,8 @@ description: iPhoneで自分宛てにメールを送る方法を、標準のメ�
 app: memomail
 primary: 自分 に メール 送る iphone
 publishedAt: 2026-10-12
+image: /guide/jibun-ni-mail-iphone/eyecatch.webp
+imageAlt: "「iPhoneで自分にメールを送る方法」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 自分宛てに送ったメールはどこに届きますか？

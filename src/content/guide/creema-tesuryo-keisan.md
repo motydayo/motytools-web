@@ -4,6 +4,8 @@ description: Creema（クリーマ）で作品が売れたときの販売手数�
 app: tsukulog
 primary: クリーマ 手数料 計算
 publishedAt: 2026-10-12
+image: /guide/creema-tesuryo-keisan/eyecatch.webp
+imageAlt: "「Creema（クリーマ）の手数料の計算方法」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: Creemaの手数料は何%ですか？

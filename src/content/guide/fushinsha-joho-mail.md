@@ -4,6 +4,8 @@ description: 警察の不審者情報メールの登録方法を解説します�
 app: machi-anzen-map
 primary: 不審者情報 メール 登録
 publishedAt: 2026-10-12
+image: /guide/fushinsha-joho-mail/eyecatch.webp
+imageAlt: "「不審者情報メールの登録方法」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 不審者情報メールは無料ですか？

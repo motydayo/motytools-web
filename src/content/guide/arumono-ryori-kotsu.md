@@ -4,6 +4,8 @@ description: 冷蔵庫にあるもので料理ができない人へ。主役の�
 app: arumono-recipe
 primary: あるもので料理 コツ
 publishedAt: 2026-10-12
+image: /guide/arumono-ryori-kotsu/eyecatch.webp
+imageAlt: "「あるもので料理するコツ5つ」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 料理が苦手でも、あるもので作れるようになりますか？

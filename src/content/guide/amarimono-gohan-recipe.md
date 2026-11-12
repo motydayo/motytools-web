@@ -4,6 +4,8 @@ description: 冷やご飯と冷蔵庫の余り物で作れるレシピを紹介�
 app: arumono-recipe
 primary: 余り物 ご飯 レシピ
 publishedAt: 2026-10-12
+image: /guide/amarimono-gohan-recipe/eyecatch.webp
+imageAlt: "「余り物とご飯で作るレシピ」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: 冷蔵庫に入れたご飯は、いつまで使えますか？

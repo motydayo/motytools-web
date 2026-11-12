@@ -15,6 +15,8 @@ faq:
   - q: レシピスクラップはYouTubeの動画を取り込めますか？
     a: 自社アプリのレシピスクラップの紹介ページで案内しているのは、インスタ、TikTok、レシピサイトです。YouTubeのリンクを渡すことはできますが、概要欄の全文を読み取れるかは動画によるため、取り込めるとは約束できません。概要欄の文章をコピーして貼り付ける方法なら取り込めます。
 draft: false
+image: /guide/youtube-recipe-hozon/eyecatch.webp
+imageAlt: "「YouTubeのレシピ動画を保存する方法」の解説記事のアイキャッチ。レシピスクラップの使い方ガイド"
 # 2026-10-17 記事監査（docs/guide-audit-2026-10-17.tsv）で検索から外す。ページとリンクは残す
 noindex: true
 ---

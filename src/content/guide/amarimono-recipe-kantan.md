@@ -4,6 +4,8 @@ description: 冷蔵庫に残りがちな食材の組み合わせから、すぐ�
 app: arumono-recipe
 primary: 余り物 レシピ 簡単
 publishedAt: 2026-10-12
+image: /guide/amarimono-recipe-kantan/eyecatch.webp
+imageAlt: "「冷蔵庫の余り物で作る簡単レシピ」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 余り物で一番簡単な料理は何ですか？

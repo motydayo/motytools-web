@@ -4,6 +4,8 @@ description: 都道府県警察が公開している犯罪発生マップの探�
 app: machi-anzen-map
 primary: 犯罪 発生 マップ
 publishedAt: 2026-10-12
+image: /guide/hanzai-hassei-map/eyecatch.webp
+imageAlt: "「犯罪発生マップの見方」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 全国の犯罪発生マップはありますか？

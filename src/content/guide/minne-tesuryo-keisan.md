@@ -4,6 +4,8 @@ description: minneで作品が売れたときの販売手数料と振込手数�
 app: tsukulog
 primary: minne 手数料 計算
 publishedAt: 2026-10-12
+image: /guide/minne-tesuryo-keisan/eyecatch.webp
+imageAlt: "「minneの手数料の計算方法」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: minneの手数料は何%ですか？

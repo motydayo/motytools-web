@@ -4,6 +4,8 @@ description: 半端に残った野菜を使い切るレシピを紹介します�
 app: arumono-recipe
 primary: 余り 野菜 レシピ
 publishedAt: 2026-10-12
+image: /guide/amari-yasai-recipe/eyecatch.webp
+imageAlt: "「余り野菜を使い切るレシピ」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: しなびた野菜は使えますか？

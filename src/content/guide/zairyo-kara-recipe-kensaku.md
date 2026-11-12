@@ -4,6 +4,8 @@ description: 手元の材料からレシピを検索する方法を、クック�
 app: arumono-recipe
 primary: 材料 から レシピ 検索
 publishedAt: 2026-10-12
+image: /guide/zairyo-kara-recipe-kensaku/eyecatch.webp
+imageAlt: "「材料からレシピを検索する方法」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 複数の材料でレシピを検索すると、何も出ません。どうすればいいですか？

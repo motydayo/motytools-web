@@ -15,6 +15,8 @@ faq:
   - q: 無料でいくつ取り込めますか？
     a: 取り込みは月10件まで無料です。月150件まで取り込めるプレミアムは、月額800円、年額5,800円です。
 draft: false
+image: /guide/tiktok-recipe-hozon/eyecatch.webp
+imageAlt: "「TikTokのレシピを保存する方法」の解説記事のアイキャッチ。レシピスクラップの使い方ガイド"
 # 2026-10-17 記事監査（docs/guide-audit-2026-10-17.tsv）で検索から外す。ページとリンクは残す
 noindex: true
 ---

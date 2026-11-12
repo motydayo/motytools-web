@@ -4,6 +4,8 @@ description: 家庭の食品の賞味期限を管理するエクセル表の作�
 app: pitto-kigen
 primary: 賞味期限 管理表 エクセル
 publishedAt: 2026-10-12
+image: /guide/shomikigen-kanrihyo/eyecatch.webp
+imageAlt: "「家庭用の賞味期限管理表の作り方」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 残り日数を自動で計算するには？

@@ -4,6 +4,8 @@ description: 消費期限と賞味期限の違いを、農林水産省・消費�
 app: pitto-kigen
 primary: 消費期限 賞味期限 違い
 publishedAt: 2026-10-12
+image: /guide/shomi-shohi-chigai/eyecatch.webp
+imageAlt: "「消費期限と賞味期限の違い」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: 賞味期限が切れたらすぐ捨てるべき？

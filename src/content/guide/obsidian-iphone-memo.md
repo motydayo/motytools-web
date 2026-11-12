@@ -4,6 +4,8 @@ description: iPhoneからObsidianに素早くメモを入れる方法を解説�
 app: memomail
 primary: obsidian iphone メモ 素早く
 publishedAt: 2026-10-12
+image: /guide/obsidian-iphone-memo/eyecatch.webp
+imageAlt: "「iPhoneからObsidianに素早くメモする方法」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: ObsidianのiPhoneアプリは起動が遅いですか？

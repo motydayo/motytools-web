@@ -4,6 +4,8 @@ description: 商品のバーコードを読めば賞味期限がわかるのか�
 app: pitto-kigen
 primary: 賞味期限 バーコード
 publishedAt: 2026-10-12
+image: /guide/shomikigen-barcode/eyecatch.webp
+imageAlt: "「賞味期限はバーコードでわかる？仕組みと家庭での管理方法」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: バーコードアプリで賞味期限はわかりますか？

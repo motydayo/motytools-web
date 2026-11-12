@@ -4,6 +4,8 @@ description: 引っ越し先の治安を、警察や自治体が公開してい�
 app: machi-anzen-map
 primary: 引っ越し 治安 調べ方
 publishedAt: 2026-10-12
+image: /guide/hikkoshi-chian-shirabekata/eyecatch.webp
+imageAlt: "「引っ越し先の治安の調べ方」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 引っ越し先の治安を無料で調べるには？

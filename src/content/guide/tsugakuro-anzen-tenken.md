@@ -4,6 +4,8 @@ description: 子どもの通学路を保護者が歩いて確かめるための�
 app: machi-anzen-map
 primary: 通学路 安全 点検 チェックリスト
 publishedAt: 2026-10-12
+image: /guide/tsugakuro-anzen-tenken/eyecatch.webp
+imageAlt: "「通学路の安全点検チェックリスト」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 通学路の点検はいつやるとよいですか？

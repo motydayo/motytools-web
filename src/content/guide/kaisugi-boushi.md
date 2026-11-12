@@ -4,6 +4,8 @@ description: スーパーで食品を買いすぎる、家にある物をまた�
 app: pitto-kigen
 primary: 食品 買いすぎ 防止
 publishedAt: 2026-10-12
+image: /guide/kaisugi-boushi/eyecatch.webp
+imageAlt: "「食品の買いすぎを防ぐ方法」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: 二重買いを防ぐ一番簡単な方法は？

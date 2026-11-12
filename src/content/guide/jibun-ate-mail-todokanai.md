@@ -4,6 +4,8 @@ description: 自分宛てに送ったメールが受信箱に見当たらない�
 app: memomail
 primary: 自分 に メール を 送る 届か ない
 publishedAt: 2026-10-12
+image: /guide/jibun-ate-mail-todokanai/eyecatch.webp
+imageAlt: "「自分に送ったメールが届かないときの確認点」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: Gmailで自分に送ったメールはどこにありますか？

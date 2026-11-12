@@ -4,6 +4,8 @@ description: ハンドメイド販売で確定申告が必要になる金額を�
 app: tsukulog
 primary: ハンドメイド 確定申告 いくらから
 publishedAt: 2026-10-12
+image: /guide/handmade-kakuteishinkoku-ikurakara/eyecatch.webp
+imageAlt: "「ハンドメイドの確定申告はいくらから？立場別の早見表つき」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: ハンドメイドの売上が20万円以下なら申告は不要ですか？

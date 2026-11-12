@@ -4,6 +4,8 @@ description: ハンドメイド作品の原価計算のやり方を解説しま�
 app: tsukulog
 primary: ハンドメイド 原価計算
 publishedAt: 2026-10-12
+image: /guide/handmade-genka-keisan/eyecatch.webp
+imageAlt: "「ハンドメイドの原価計算のやり方」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 材料の仕入れの送料は原価に入れますか？

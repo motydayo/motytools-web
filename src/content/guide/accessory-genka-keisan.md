@@ -4,6 +4,8 @@ description: ハンドメイドのピアス・イヤリング・レジンアク�
 app: tsukulog
 primary: アクセサリー 原価 計算
 publishedAt: 2026-10-12
+image: /guide/accessory-genka-keisan/eyecatch.webp
+imageAlt: "「ハンドメイドアクセサリーの原価計算」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: ピアスの値段は原価の何倍ですか？

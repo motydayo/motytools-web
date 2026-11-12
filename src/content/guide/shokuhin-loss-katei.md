@@ -4,6 +4,8 @@ description: 家庭から出る食品ロスの量と原因を、農林水産省�
 app: pitto-kigen
 primary: 食品ロス 家庭 でできること
 publishedAt: 2026-10-12
+image: /guide/shokuhin-loss-katei/eyecatch.webp
+imageAlt: "「食品ロスを家庭で減らすためにできること」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: 家庭の食品ロスの量は？

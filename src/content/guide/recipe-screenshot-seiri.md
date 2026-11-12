@@ -13,6 +13,8 @@ faq:
   - q: スクショのレシピを印刷したいときは？
     a: 写真アプリで画像を開き、共有ボタンから「プリント」を選びます。AirPrintに対応したプリンターが必要で、iPhoneとプリンターを同じWi-Fiにつなぎます。長いレシピは複数枚になるので、1枚ずつ印刷します。
 draft: false
+image: /guide/recipe-screenshot-seiri/eyecatch.webp
+imageAlt: "「レシピのスクショを整理する方法」の解説記事のアイキャッチ。レシピスクラップの使い方ガイド"
 # 2026-10-17 記事監査（docs/guide-audit-2026-10-17.tsv）で検索から外す。ページとリンクは残す
 noindex: true
 ---

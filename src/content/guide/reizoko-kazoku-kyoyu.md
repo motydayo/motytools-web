@@ -4,6 +4,8 @@ description: 冷蔵庫の中身を家族と共有できるアプリと使い方�
 app: pitto-kigen
 primary: 冷蔵庫 アプリ 家族 共有
 publishedAt: 2026-10-12
+image: /guide/reizoko-kazoku-kyoyu/eyecatch.webp
+imageAlt: "「冷蔵庫の中身を家族と共有できるアプリ」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 家族と共有するのにアカウント登録は必要？

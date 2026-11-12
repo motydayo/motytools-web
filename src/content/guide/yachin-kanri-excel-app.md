@@ -4,6 +4,8 @@ description: エクセルの家賃管理表をiPhoneアプリに移す手順を�
 app: ooya-note
 primary: 家賃管理 エクセル アプリ
 publishedAt: 2026-10-12
+image: /guide/yachin-kanri-excel-app/eyecatch.webp
+imageAlt: "「家賃管理をエクセルからアプリに変える方法」の解説記事のアイキャッチ。大家ノートの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: エクセルの家賃管理表をそのまま取り込めますか？

@@ -13,6 +13,8 @@ faq:
   - q: 分類はいくつがいいですか？
     a: 3〜5個から始めるのがおすすめです。増えて探しにくくなったら分けます。最初から細かく分けると、入れ先に迷って、入れるのが面倒になります。
 draft: false
+image: /guide/recipe-seiri-houhou/eyecatch.webp
+imageAlt: "「レシピの整理の仕方」の解説記事のアイキャッチ。レシピスクラップの使い方ガイド"
 # 2026-10-17 記事監査（docs/guide-audit-2026-10-17.tsv）で検索から外す。ページとリンクは残す
 noindex: true
 ---

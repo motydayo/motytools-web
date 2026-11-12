@@ -4,6 +4,8 @@ description: 食中毒の発生情報（速報）をどこで確かめられる�
 app: machi-anzen-map
 primary: 食中毒 速報
 publishedAt: 2026-10-12
+image: /guide/shokuchudoku-joho/eyecatch.webp
+imageAlt: "「食中毒の速報はどこで見る？自治体の公表と過去の記録の調べ方」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 食中毒が起きた店は公表されますか？

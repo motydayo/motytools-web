@@ -4,6 +4,8 @@ description: ChatGPTなどの対話型AIに冷蔵庫の中身を伝えてレシ�
 app: arumono-recipe
 primary: 冷蔵庫 に ある もの レシピ ai
 publishedAt: 2026-10-12
+image: /guide/reizoko-recipe-ai/eyecatch.webp
+imageAlt: "「冷蔵庫にあるものでAIにレシピを聞く方法」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: ChatGPTに冷蔵庫の中身を伝えると、レシピを作ってくれますか？

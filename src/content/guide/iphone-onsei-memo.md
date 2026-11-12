@@ -4,6 +4,8 @@ description: iPhoneの音声入力でメモを取る方法を解説します。�
 app: memomail
 primary: iphone 音声入力 メモ
 publishedAt: 2026-10-12
+image: /guide/iphone-onsei-memo/eyecatch.webp
+imageAlt: "「iPhoneの音声入力でメモする方法」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 音声入力で句読点は入りますか？

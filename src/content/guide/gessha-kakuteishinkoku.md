@@ -13,6 +13,8 @@ faq:
   - q: 月謝の記録をCSVで出せますか？
     a: レッスン手帳のPremiumで、月謝台帳をCSVに書き出せます。月謝タブで月を選んで書き出す形で、ファイルは1か月ずつです。1年分を集計するには、12か月分を書き出してエクセルなどでまとめます。確定申告の書類を作る機能はありません。
 draft: false
+image: /guide/gessha-kakuteishinkoku/eyecatch.webp
+imageAlt: "「個人レッスン講師の確定申告」の解説記事のアイキャッチ。レッスン手帳の使い方ガイド"
 # 2026-10-17 記事監査（docs/guide-audit-2026-10-17.tsv）で検索から外す。ページとリンクは残す
 noindex: true
 ---

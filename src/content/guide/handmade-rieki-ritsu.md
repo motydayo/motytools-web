@@ -4,6 +4,8 @@ description: ハンドメイド作品の利益率と原価率の計算方法を�
 app: tsukulog
 primary: ハンドメイド 利益率
 publishedAt: 2026-10-12
+image: /guide/handmade-rieki-ritsu/eyecatch.webp
+imageAlt: "「ハンドメイドの利益率の計算と目安」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: ハンドメイドの利益率の平均はどれくらいですか？

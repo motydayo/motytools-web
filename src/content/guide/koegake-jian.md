@@ -4,6 +4,8 @@ description: 不審者情報でよく見る「声かけ事案」の意味を解�
 app: machi-anzen-map
 primary: 声かけ事案 とは
 publishedAt: 2026-10-12
+image: /guide/koegake-jian/eyecatch.webp
+imageAlt: "「声かけ事案とは？警察が公表する理由と不審者情報の読み方」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 声かけ事案は犯罪ですか？

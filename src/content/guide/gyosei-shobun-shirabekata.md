@@ -4,6 +4,8 @@ description: リフォームや引っ越し、不動産などの業者に頼む�
 app: machi-anzen-map
 primary: 行政処分 業者 調べ方
 publishedAt: 2026-10-12
+image: /guide/gyosei-shobun-shirabekata/eyecatch.webp
+imageAlt: "「業者の行政処分の調べ方」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 業者の処分歴は無料で調べられますか？

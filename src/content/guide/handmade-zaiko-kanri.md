@@ -4,6 +4,8 @@ description: ハンドメイドの材料と作品の在庫管理のやり方を�
 app: tsukulog
 primary: ハンドメイド 在庫管理
 publishedAt: 2026-10-12
+image: /guide/handmade-zaiko-kanri/eyecatch.webp
+imageAlt: "「ハンドメイドの在庫管理のやり方」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 材料の在庫管理に向くアプリはありますか？

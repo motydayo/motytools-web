@@ -15,6 +15,8 @@ faq:
   - q: 多頭飼いでも使えますか？
     a: レプティケア、リモリー、RepFunは複数の個体の管理に対応しています。うちの爬虫類は5匹まで無料で、6匹目からはProの月額300円または年額2,400円が必要です。
 draft: false
+image: /guide/hachurui-shiiku-kiroku-app/eyecatch.webp
+imageAlt: "「爬虫類の飼育記録アプリ比較」の解説記事のアイキャッチ。うちの爬虫類の使い方ガイド"
 # 2026-10-17 記事監査（docs/guide-audit-2026-10-17.tsv）で検索から外す。ページとリンクは残す
 noindex: true
 ---

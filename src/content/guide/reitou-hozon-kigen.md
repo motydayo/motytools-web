@@ -4,6 +4,8 @@ description: 家庭で冷凍した肉・魚・ご飯・野菜の保存期間の�
 app: pitto-kigen
 primary: 冷凍 保存 期限 目安
 publishedAt: 2026-10-12
+image: /guide/reitou-hozon-kigen/eyecatch.webp
+imageAlt: "「冷凍保存の期限の目安」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-29
 faq:
   - q: 冷凍した肉はいつまで食べられますか？

@@ -4,6 +4,8 @@ description: メモを取ったのに忘れてしまう、見返さない悩み�
 app: memomail
 primary: メモ 忘れ 防止
 publishedAt: 2026-10-12
+image: /guide/memo-wasure-boushi/eyecatch.webp
+imageAlt: "「メモしたのに忘れる人へ」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: メモを見返す習慣をつけるには？

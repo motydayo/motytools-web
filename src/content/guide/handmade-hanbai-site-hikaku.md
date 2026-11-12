@@ -4,6 +4,8 @@ description: minne・Creema・BASE・メルカリ・イベント出店の手数�
 app: tsukulog
 primary: ハンドメイド 販売サイト 手数料 比較
 publishedAt: 2026-10-12
+image: /guide/handmade-hanbai-site-hikaku/eyecatch.webp
+imageAlt: "「ハンドメイド販売サイトの手数料比較」の解説記事のアイキャッチ。つくログの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 一番手数料が安いのはどこですか？

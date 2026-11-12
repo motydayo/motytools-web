@@ -4,6 +4,8 @@ description: 自宅や通学路の近くで交通事故が多い場所を調べ�
 app: machi-anzen-map
 primary: 交通事故 多い 場所 調べ方
 publishedAt: 2026-10-12
+image: /guide/koutsujiko-tashuu/eyecatch.webp
+imageAlt: "「交通事故が多い場所の調べ方」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 交通事故の多い場所を無料で調べられますか？

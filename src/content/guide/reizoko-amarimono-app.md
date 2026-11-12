@@ -4,6 +4,8 @@ description: 冷蔵庫の余り物から作れる料理を探せるiPhoneアプ�
 app: arumono-recipe
 primary: 冷蔵庫 余り物 レシピ アプリ
 publishedAt: 2026-10-12
+image: /guide/reizoko-amarimono-app/eyecatch.webp
+imageAlt: "「冷蔵庫の余り物でレシピがわかるアプリ比較」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 冷蔵庫の中身から献立を考えてくれる無料アプリはありますか？

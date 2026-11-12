@@ -4,6 +4,8 @@ description: 賞味期限管理アプリを、商品名と期限の入力方法�
 app: pitto-kigen
 primary: 賞味期限 管理 アプリ おすすめ
 publishedAt: 2026-10-12
+image: /guide/shomikigen-kanri-app/eyecatch.webp
+imageAlt: "「賞味期限管理アプリおすすめ比較」の解説記事のアイキャッチ。ピッと期限の使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 無料で使える賞味期限管理アプリは？

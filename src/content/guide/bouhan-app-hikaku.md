@@ -4,6 +4,8 @@ description: 防犯アプリを、警察の公式アプリ、防犯・防災の�
 app: machi-anzen-map
 primary: 防犯 アプリ おすすめ
 publishedAt: 2026-10-12
+image: /guide/bouhan-app-hikaku/eyecatch.webp
+imageAlt: "「防犯アプリおすすめ比較」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 警察の公式の防犯アプリはありますか？

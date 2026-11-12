@@ -4,6 +4,8 @@ description: 献立アプリを、1週間分を組むタイプ、冷蔵庫の食
 app: arumono-recipe
 primary: 献立 アプリ おすすめ
 publishedAt: 2026-10-12
+image: /guide/kondate-app-hikaku/eyecatch.webp
+imageAlt: "「献立アプリおすすめ比較」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 無料で使える献立アプリはありますか？

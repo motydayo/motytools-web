@@ -13,6 +13,8 @@ faq:
   - q: 記録をPDFで渡せますか？
     a: レッスン手帳のPremiumで、生徒別のカルテをPDFに書き出せます。全期間の日付、種別、出欠の状態、カルテメモがそのまま出るので、渡す前に内容を読み返し、保護者に見せてよい書き方になっているか確認してください。
 draft: false
+image: /guide/lesson-kiroku-karte/eyecatch.webp
+imageAlt: "「レッスン記録の書き方」の解説記事のアイキャッチ。レッスン手帳の使い方ガイド"
 # 2026-10-17 記事監査（docs/guide-audit-2026-10-17.tsv）で検索から外す。ページとリンクは残す
 noindex: true
 ---

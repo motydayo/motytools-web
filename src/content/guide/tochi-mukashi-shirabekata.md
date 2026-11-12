@@ -4,6 +4,8 @@ description: その土地が昔は田んぼや川だったかを調べる方法�
 app: machi-anzen-map
 primary: 土地 昔 調べ方
 publishedAt: 2026-10-12
+image: /guide/tochi-mukashi-shirabekata/eyecatch.webp
+imageAlt: "「土地の昔を調べる方法」の解説記事のアイキャッチ。まちの安全マップの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 昔田んぼだった土地は地盤が弱いですか？

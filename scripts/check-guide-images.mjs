@@ -1,13 +1,13 @@
 // /guide/ 記事のアイキャッチ検品。npm run build の前に走る。
 // - image を書いた記事: ファイルが存在・WebP・1200x630・60KB以下・imageAlt あり
-// - 2026-11-07 以降に公開日を付けた新規記事（draft 除く）は image 必須。
-//   それ以前の既存記事は対象外（画像は 11/8 以降の全サイト作業で順次付ける。付けたら自動で検品対象になる）
+// - draft 以外の全記事は image 必須（無ければビルドを止める）。
+//   無い記事は node scripts/gen-guide-eyecatch-auto.mjs <slug> で自動生成する。
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
 
 const DIR = 'src/content/guide';
-const REQUIRED_FROM = '2026-11-07';
+const REQUIRED_FROM = '0000-00-00'; // 2026-11-12 以降は全記事(draft除く)で必須
 const MAX_BYTES = 60 * 1024;
 const errors = [];
 let withImage = 0;

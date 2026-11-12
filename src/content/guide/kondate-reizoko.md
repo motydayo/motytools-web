@@ -4,6 +4,8 @@ description: 冷蔵庫にあるもので献立を決める手順を解説しま�
 app: arumono-recipe
 primary: 献立 冷蔵庫 に ある もの
 publishedAt: 2026-10-12
+image: /guide/kondate-reizoko/eyecatch.webp
+imageAlt: "「冷蔵庫にあるもので献立を決める手順」の解説記事のアイキャッチ。あるものレシピの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: 献立を考える時間を減らすには、どうすればいいですか？

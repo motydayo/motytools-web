@@ -4,6 +4,8 @@ description: LINEのKeepメモ（自分だけのトーク）でメモを送る�
 app: memomail
 primary: 自分 に LINE メモ
 publishedAt: 2026-10-12
+image: /guide/jibun-line-memo-hikaku/eyecatch.webp
+imageAlt: "「LINEのKeepメモで自分にメモを送る方法」の解説記事のアイキャッチ。メモびゅんの使い方ガイド"
 updatedAt: 2026-10-12
 faq:
   - q: Keepメモが見つかりません。どこにありますか？
