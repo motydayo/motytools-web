@@ -1,4 +1,110 @@
 {
   "_schema": "監視する検索語。items[]: {keyword: 検索語, targetUrl: 狙うページのURL(省略可), priority: high|normal, addedAt: YYYY-MM-DD, note: メモ}",
-  "items": []
+  "items": [
+    {
+      "keyword": "手取り 計算",
+      "targetUrl": "https://motytools.com/tedori/",
+      "priority": "high",
+      "addedAt": "2026-11-14",
+      "note": "検索ボリューム大。競合多いが主力ツール"
+    },
+    {
+      "keyword": "HEIC JPG 変換",
+      "targetUrl": "https://motytools.com/heic-jpg/",
+      "priority": "high",
+      "addedAt": "2026-11-14",
+      "note": "iPhoneユーザーの実需が高い"
+    },
+    {
+      "keyword": "複利 計算",
+      "targetUrl": "https://motytools.com/fukuri/",
+      "priority": "high",
+      "addedAt": "2026-11-14",
+      "note": "新NISA需要"
+    },
+    {
+      "keyword": "住宅ローン シミュレーション",
+      "targetUrl": "https://motytools.com/loan/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "大手銀行・不動産サイトが強い分野"
+    },
+    {
+      "keyword": "QRコード 作成 無料",
+      "targetUrl": "https://motytools.com/qr/",
+      "priority": "high",
+      "addedAt": "2026-11-14",
+      "note": "実需あり。ブラウザ完結の安心感が差別化"
+    },
+    {
+      "keyword": "年齢 計算",
+      "targetUrl": "https://motytools.com/nenrei/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "検索ボリューム大だが競合も多い"
+    },
+    {
+      "keyword": "西暦 和暦 変換",
+      "targetUrl": "https://motytools.com/wareki/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "定番ツール"
+    },
+    {
+      "keyword": "画像 圧縮",
+      "targetUrl": "https://motytools.com/image-compress/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "squoosh等の競合あり"
+    },
+    {
+      "keyword": "電気代 計算",
+      "targetUrl": "https://motytools.com/denkidai/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "季節需要あり"
+    },
+    {
+      "keyword": "1RM 計算",
+      "targetUrl": "https://motytools.com/1rm/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "ニッチだが検索する人は明確"
+    },
+    {
+      "keyword": "営業日 計算",
+      "targetUrl": "https://motytools.com/eigyobi/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "ビジネス用途の定番"
+    },
+    {
+      "keyword": "文字数 カウント",
+      "targetUrl": "https://motytools.com/moji-count/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "ライター・学生の需要"
+    },
+    {
+      "keyword": "減価償却 計算",
+      "targetUrl": "https://motytools.com/genka-shokyaku/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "不動産投資家向け"
+    },
+    {
+      "keyword": "パーセント 計算",
+      "targetUrl": "https://motytools.com/percent/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "日常の計算需要"
+    },
+    {
+      "keyword": "日数 計算",
+      "targetUrl": "https://motytools.com/days/",
+      "priority": "normal",
+      "addedAt": "2026-11-14",
+      "note": "日常需要"
+    }
+  ]
 }

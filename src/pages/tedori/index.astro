@@ -32,7 +32,7 @@ const faqs: Faq[] = [
 ];
 
 // 記事内の静的早見表（独身・40歳未満）をビルド時に同じ関数で生成
-const mitokashiNenshu = [300, 400, 500, 600, 700, 800, 1000, 1200];
+const mitokashiNenshu = [200, 300, 400, 500, 600, 700, 800, 1000, 1200, 1500, 2000];
 const mitokashi = mitokashiNenshu.map((man) => {
   const r = calcTedori(man * 10000, 'u40', 0);
   return { man, tedori: r ? r.tedori : 0 };
@@ -162,7 +162,7 @@ const mitokashi = mitokashiNenshu.map((man) => {
       例えば年収400万円・独身・40歳未満の場合、社会保険料が約58.6万円、所得税が約6.6万円、住民税が約17.7万円かかり、手取りは約317万円（月額換算で約26.4万円）になります。
     </p>
 
-    <h2 id="mitokashi">手取り早見表（独身・40歳未満）</h2>
+    <h2 id="mitokashi">手取り早見表｜年収200万〜2,000万円（独身・40歳未満）</h2>
     <div class="table-wrap">
       <table class="table">
         <thead>
