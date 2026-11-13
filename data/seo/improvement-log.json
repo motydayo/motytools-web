@@ -1,4 +1,20 @@
 {
   "_schema": "改善の記録。entries[]: {id, keyword, targetUrl, actionDate, rankAtAction, impressionsAtAction, intent, gap, action, files[], status: observing|active|achieved, nextReviewDate, reviews: [{date, position7d, impressions7d, verdict, note}]}",
-  "entries": []
+  "entries": [
+    {
+      "id": "2026-11-14-001",
+      "keyword": "手取り 計算",
+      "targetUrl": "https://motytools.com/tedori/",
+      "actionDate": "2026-11-14",
+      "rankAtAction": null,
+      "impressionsAtAction": 0,
+      "intent": "年収から実際に手元に残る金額を知りたい人。転職検討中・家計見直し・就活の人が中心",
+      "gap": "上位サイトはtitleに「早見表」「2026年対応」を入れて鮮度をアピール。早見表も200万〜1億と幅広い。自サイトはtitleに鮮度表示なし、早見表は300〜1,200万の8段階のみ",
+      "action": "titleに「早見表つき・2026年度対応」を追加。descriptionに「年収200万〜2,000万円の早見表つき」を追加。早見表の年収範囲を200〜2,000万（11段階）に拡大",
+      "files": ["src/data/tools.ts", "src/pages/tedori/index.astro"],
+      "status": "observing",
+      "nextReviewDate": "2026-11-21",
+      "reviews": []
+    }
+  ]
 }
